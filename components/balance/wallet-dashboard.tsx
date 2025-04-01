@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import SideDrawerBackHeader from '@/components/side-drawer-back-header';
 import BalanceSection from './balance-section';
 import ActionButtons from './action-buttons';
 import HelpButton from './help-button';
@@ -18,8 +17,6 @@ export default function BalanceDisplay() {
         width: 'clamp(var(--min-width-app), var(--width-sidebar-context), 100%)',
       }}
     >
-      <SideDrawerBackHeader title="Overview" />
-
       <div className="scrollbar-hover flex-grow overflow-y-scroll">
         <div className="mx-auto h-full" style={{ maxWidth: '296px' }}>
           <div className="flex h-full flex-col py-2 sm:py-4">

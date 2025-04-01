@@ -1,5 +1,5 @@
 import MbHeader from './mb-header';
-import SideBar from './sidebar/sidebar';
+import SideBar from './sidebar';
 
 export default function BaseLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,7 +9,6 @@ export default function BaseLayout({ children }: { children: React.ReactNode }) 
       data-v-ead27774=""
     >
       <MbHeader />
-
       {children}
       <SideBar />
     </div>

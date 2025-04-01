@@ -28,10 +28,10 @@ export default function TokenCard({
               height={40}
               src={iconUrl || '/placeholder.svg'}
               className="h-10 w-10 flex-grow object-contain"
-              alt={symbol}
+              alt={name}
             />
           ) : (
-            <div className="to-grey-dark text-11 flex h-full w-full items-center justify-center truncate rounded-full bg-gradient-to-br from-gray-300 leading-none text-white uppercase">
+            <div className="to-gray-900 text-11 flex h-full w-full items-center justify-center truncate rounded-full bg-gradient-to-br from-gray-300 leading-none text-white uppercase">
               {symbol.toLowerCase()}
             </div>
           )}
@@ -39,7 +39,7 @@ export default function TokenCard({
       </div>
 
       <div className="flex flex-col px-4">
-        <div className="text-12 text-navi-pure dark:text-light mb-1 flex items-center font-semibold whitespace-nowrap">
+        <div className="text-xs text-navi-pure dark:text-light mb-1 flex items-center font-semibold whitespace-nowrap">
           {balance} {symbol}
           {coingeckoUrl && (
             <a
@@ -58,7 +58,7 @@ export default function TokenCard({
         <div className="text-12 text-grey-pure font-medium whitespace-nowrap">{value}</div>
       </div>
 
-      <button className="text-11 2xl:text-12 bg-ocean-blue-pure/10 dark:text-ocean-blue-pale dark:bg-ocean-blue-pure/17 hover:bg-ocean-blue-pure/25 focus:bg-ocean-blue-pure/25 active:bg-ocean-blue-pure/30 dark:active:bg-ocean-blue-pure/38 dark:hover:bg-ocean-blue-pure/25 dark:focus:bg-ocean-blue-pure/25 text-ocean-blue-pure ml-auto flex w-18 flex-shrink-0 items-center justify-center rounded-xs py-1 font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50">
+      <button className="text-xs cursor-pointer bg-ocean-blue-pure/10 dark:text-ocean-blue-pale dark:bg-ocean-blue-pure/15 hover:bg-ocean-blue-pure/25 focus:bg-ocean-blue-pure/25 active:bg-ocean-blue-pure/30 dark:active:bg-ocean-blue-pure/38 dark:hover:bg-ocean-blue-pure/25 dark:focus:bg-ocean-blue-pure/25 text-ocean-blue-pure ml-auto flex w-18 flex-shrink-0 items-center justify-center rounded-sm py-1 font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50">
         Trade
       </button>
     </div>

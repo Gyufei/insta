@@ -82,6 +82,7 @@
   --color-light: oklch(0.99 0 0);
   --color-dark-600: oklch(0.27 0.0538 254.92);
   --color-dark-400: oklch(0.37 0.0731 255.26);
+  --color-dark-300: oklch(0.45 0.1365 263.63);
   --color-dark-500: oklch(0.3 0.0646 254.91);
   --color-grey-light: oklch(0.94 0.0087 264.52);
   --color-brand: oklch(0.27 0.0543 254.01);
@@ -91,6 +92,7 @@
   --color-turquese-pure: oklch(0.73 0.1147 198.56);
   --color-navi-pure: oklch(0.25 0.0663 267.84);
   --color-purple-pure: oklch(0.45 0.1489 286.42);
+  --color-passion-orange-pure: oklch(0.7 0.204259 43.491);
   --color-yellow-pure: oklch(0.83 0.1625 88.2);
   --container-container-main: 1016px;
 }
