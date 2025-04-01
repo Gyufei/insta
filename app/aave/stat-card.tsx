@@ -14,13 +14,15 @@ interface StatCardProps {
 
 export default function StatCard({ value, label, icon, className, tooltipText }: StatCardProps) {
   return (
-    <Card className={cn('p-4 flex flex-col items-center justify-center space-y-1', className)}>
-      {icon && <div className="flex items-center justify-center w-10 h-10 rounded-full mb-2">{icon}</div>}
+    <Card className={cn('flex flex-col items-center justify-center space-y-1 p-4', className)}>
+      {icon && (
+        <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full">{icon}</div>
+      )}
       <div className="stat-value">{value}</div>
       <div className="stat-label flex items-center">
         {label}
         {tooltipText && (
-          <span className="ml-1 inline-flex items-center justify-center text-muted-foreground">
+          <span className="text-muted-foreground ml-1 inline-flex items-center justify-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="14"

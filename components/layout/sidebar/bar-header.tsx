@@ -7,7 +7,7 @@ export default function BarHeader({ isCollapsed }: { isCollapsed: boolean }) {
       <Link
         href="/"
         aria-current="page"
-        className="mt-1 flex w-full select-none justify-center py-2 nuxt-link-exact-active nuxt-link-active"
+        className="nuxt-link-exact-active nuxt-link-active mt-1 flex w-full justify-center py-2 select-none"
       >
         {isCollapsed ? (
           <Image src="/icons/logo-small.svg" alt="logo" width={40} height={40} />

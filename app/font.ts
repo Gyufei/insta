@@ -1,4 +1,4 @@
-import localFont from 'next/font/local'
+import localFont from 'next/font/local';
 
 export const montserrat = localFont({
   src: [
@@ -24,4 +24,4 @@ export const montserrat = localFont({
     },
   ],
   variable: '--font-montserrat',
-}) 
+});

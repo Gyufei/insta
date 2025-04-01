@@ -20,27 +20,33 @@ export default function SideBar() {
     <>
       <BarHeader isCollapsed={isCollapsed} />
       <div
-        className={`scrollbar-hover flex h-full select-none flex-col overflow-y-auto pt-4 ${
+        className={`scrollbar-hover flex h-full flex-col overflow-y-auto pt-4 select-none ${
           isCollapsed ? 'items-center' : 'items-start'
         } px-0`}
       >
-        <div data-v-7fd64a2e="" className="flex flex-col w-full flex-grow">
+        <div data-v-7fd64a2e="" className="flex w-full flex-grow flex-col">
           <BarItem
-            icon={<Home className="w-full transition-colors duration-150 group-hover:text-brand dark:group-hover:text-light" />}
+            icon={
+              <Home className="group-hover:text-brand dark:group-hover:text-light w-full transition-colors duration-150" />
+            }
             name="Dashboard"
             href="/"
             isCollapsed={isCollapsed}
           />
 
           <BarItem
-            icon={<HelpCircle className="w-full transition-colors duration-150 group-hover:text-brand dark:group-hover:text-light" />}
+            icon={
+              <HelpCircle className="group-hover:text-brand dark:group-hover:text-light w-full transition-colors duration-150" />
+            }
             name="Refinance"
             href="/"
             isCollapsed={isCollapsed}
           />
 
           <BarWithSubItem
-            icon={<HelpCircle className="h-6 w-6 transition-colors duration-150 hover:text-brand dark:hover:text-light" />}
+            icon={
+              <HelpCircle className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
+            }
             name="Fluid"
             isCollapsed={isCollapsed}
             openSub={openSub}
@@ -50,8 +56,8 @@ export default function SideBar() {
               <a
                 href="/fluid-lending"
                 className={cn(
-                  'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                  pathname === '/fluid-lending' && 'text-brand',
+                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600 relative flex items-center rounded-sm px-3 py-2',
+                  pathname === '/fluid-lending' && 'text-brand'
                 )}
               >
                 <div className="leading-none">Lending</div>
@@ -59,8 +65,8 @@ export default function SideBar() {
               <a
                 href="/fluid-vaults"
                 className={cn(
-                  'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                  pathname === '/fluid-vaults' && 'text-brand',
+                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                  pathname === '/fluid-vaults' && 'text-brand'
                 )}
               >
                 <div className="leading-none">Vaults</div>
@@ -69,7 +75,9 @@ export default function SideBar() {
           </BarWithSubItem>
 
           <BarWithSubItem
-            icon={<HelpCircle className="h-6 w-6 transition-colors duration-150 hover:text-brand dark:hover:text-light" />}
+            icon={
+              <HelpCircle className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
+            }
             name="Protocols"
             isCollapsed={isCollapsed}
             openSub={openSub}
@@ -79,69 +87,69 @@ export default function SideBar() {
               <a
                 href="/inst-pools"
                 className={cn(
-                  'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                  pathname === '/inst-pools' && 'text-brand',
+                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                  pathname === '/inst-pools' && 'text-brand'
                 )}
               >
-                <HelpCircle className="w-4 h-4 mr-4" />
+                <HelpCircle className="mr-4 h-4 w-4" />
                 <div className="leading-none">FLUID Pools</div>
               </a>
               <a
                 href="/makerdao"
                 className={cn(
-                  'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                  pathname === '/makerdao' && 'text-brand',
+                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                  pathname === '/makerdao' && 'text-brand'
                 )}
               >
-                <HelpCircle className="w-4 h-4 mr-4" />
+                <HelpCircle className="mr-4 h-4 w-4" />
                 <div className="leading-none">Maker</div>
               </a>
               <a
                 href="/compound"
                 className={cn(
-                  'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                  pathname === '/compound' && 'text-brand',
+                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                  pathname === '/compound' && 'text-brand'
                 )}
               >
-                <HelpCircle className="w-4 h-4 mr-4" />
+                <HelpCircle className="mr-4 h-4 w-4" />
                 <div className="leading-none">Compound</div>
               </a>
               <a
                 href="/compound-v3"
                 className={cn(
-                  'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                  pathname === '/compound-v3' && 'text-brand',
+                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                  pathname === '/compound-v3' && 'text-brand'
                 )}
               >
-                <HelpCircle className="w-4 h-4 mr-4" />
+                <HelpCircle className="mr-4 h-4 w-4" />
                 <div className="leading-none">Compound v3</div>
               </a>
               <a
                 href="/aave-v2"
                 className={cn(
-                  'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                  pathname === '/aave-v2' && 'text-brand',
+                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600 relative flex items-center rounded-sm px-3 py-2',
+                  pathname === '/aave-v2' && 'text-brand'
                 )}
               >
-                <HelpCircle className="w-4 h-4 mr-4" />
+                <HelpCircle className="mr-4 h-4 w-4" />
                 <div className="leading-none">Aave v2</div>
               </a>
               <a
                 href="/aave-v3"
                 className={cn(
-                  'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                  pathname === '/aave-v3' && 'text-brand',
+                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                  pathname === '/aave-v3' && 'text-brand'
                 )}
               >
-                <HelpCircle className="w-4 h-4 mr-4" />
+                <HelpCircle className="mr-4 h-4 w-4" />
                 <div className="leading-none">Aave v3</div>
               </a>
-              <div className="flex flex-col space-y-1 mt-1">
+              <div className="mt-1 flex flex-col space-y-1">
                 <a
                   href="/aave-v3"
                   className={cn(
-                    'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                    pathname === '/aave-v3' && 'text-brand',
+                    'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                    pathname === '/aave-v3' && 'text-brand'
                   )}
                 >
                   <div className="leading-none">Main</div>
@@ -149,8 +157,8 @@ export default function SideBar() {
                 <a
                   href="/aave-v3-lido"
                   className={cn(
-                    'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                    pathname === '/aave-v3-lido' && 'text-brand',
+                    'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                    pathname === '/aave-v3-lido' && 'text-brand'
                   )}
                 >
                   <div className="leading-none">Lido</div>
@@ -158,8 +166,8 @@ export default function SideBar() {
                 <a
                   href="/aave-v3-etherfi"
                   className={cn(
-                    'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                    pathname === '/aave-v3-etherfi' && 'text-brand',
+                    'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                    pathname === '/aave-v3-etherfi' && 'text-brand'
                   )}
                 >
                   <div className="leading-none">Etherfi</div>
@@ -169,7 +177,9 @@ export default function SideBar() {
           </BarWithSubItem>
 
           <BarWithSubItem
-            icon={<HelpCircle className="h-6 w-6 transition-colors duration-150 hover:text-brand dark:hover:text-light" />}
+            icon={
+              <HelpCircle className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
+            }
             name="Automation"
             isCollapsed={isCollapsed}
             openSub={openSub}
@@ -179,31 +189,31 @@ export default function SideBar() {
               <a
                 href="/automation"
                 className={cn(
-                  'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                  pathname === '/automation' && 'text-brand',
+                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                  pathname === '/automation' && 'text-brand'
                 )}
               >
-                <HelpCircle className="w-4 h-4 mr-4" />
+                <HelpCircle className="mr-4 h-4 w-4" />
                 <div className="leading-none">Automation</div>
               </a>
               <a
                 href="/import-positions"
                 className={cn(
-                  'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                  pathname === '/import-positions' && 'text-brand',
+                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                  pathname === '/import-positions' && 'text-brand'
                 )}
               >
-                <HelpCircle className="w-4 h-4 mr-4" />
+                <HelpCircle className="mr-4 h-4 w-4" />
                 <div className="leading-none">Import Positions</div>
               </a>
               <a
                 href="/sign-eip1271"
                 className={cn(
-                  'relative flex items-center py-2 px-3 hover:text-brand dark:hover:text-light rounded-sm hover:bg-grey-light hover:bg-opacity-38 dark:hover:bg-dark-600',
-                  pathname === '/sign-eip1271' && 'text-brand',
+                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
+                  pathname === '/sign-eip1271' && 'text-brand'
                 )}
               >
-                <HelpCircle className="w-4 h-4 mr-4" />
+                <HelpCircle className="mr-4 h-4 w-4" />
                 <div className="leading-none">Sign in (EIP-1271)</div>
               </a>
             </div>
@@ -216,16 +226,16 @@ export default function SideBar() {
 
   return (
     <nav
-      className={`fixed inset-y-0 left-0 z-10 flex flex-col bg-background text-grey-pure ring-1 ring-black/5 dark:bg-dark-500 dark:text-grey-pure dark:shadow-none  grid-sidebar-nav 2xl:relative 2xl:translate-x-0 2xl:transform-none  -translate-x-full duration-200`}
+      className={`bg-background text-grey-pure dark:bg-dark-500 dark:text-grey-pure grid-sidebar-nav fixed inset-y-0 left-0 z-10 flex -translate-x-full flex-col ring-1 ring-black/5 duration-200 2xl:relative 2xl:translate-x-0 2xl:transform-none dark:shadow-none`}
       style={{ width: isCollapsed ? '60px' : '270px' }}
     >
       {navContent}
       <button
-        className={`flex cursor-pointer items-center justify-center flex-shrink-0 font-semibold transition-colors duration-75 ease-out select-none whitespace-nowrap disabled:opacity-50 focus:outline-none rounded-xs text-xs 2xl:text-12  absolute h-5 w-5 border border-grey-light bg-light text-grey-pure hover:text-ocean-blue-pure dark:border-grey-pure dark:bg-dark-500 dark:text-grey-pure dark:hover:border-grey-light dark:hover:text-light py-1`}
+        className={`2xl:text-12 border-grey-light bg-light text-grey-pure hover:text-ocean-blue-pure dark:border-grey-pure dark:bg-dark-600 dark:text-grey-pure dark:hover:border-grey-light dark:hover:text-light absolute flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50`}
         style={{ top: '71px', right: isCollapsed ? '20px' : '30px' }}
         onClick={toggleCollapse}
       >
-        {isCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
+        {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
       </button>
     </nav>
   );

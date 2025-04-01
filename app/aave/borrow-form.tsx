@@ -10,36 +10,20 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Progress } from '@/components/ui/progress';
 import TokenIcon from '@/components/token-icon';
+import { IToken, tokenData } from '@/lib/data/tokens';
 
-const TOKEN_DATA = {
-  usdc: {
-    symbol: 'USDC',
-    name: 'USD Coin',
-    iconSrc: 'https://ext.same-assets.com/3833913722/2209159731.svg',
-  },
-  eth: {
-    symbol: 'ETH',
-    name: 'Ethereum',
-    iconSrc: 'https://ext.same-assets.com/3833913722/2521633714.svg',
-  },
-  wsteth: {
-    symbol: 'wstETH',
-    name: 'Wrapped Staked Ethereum',
-    iconSrc: 'https://ext.same-assets.com/3833913722/2968622260.svg',
-  },
-  usds: {
-    symbol: 'USDS',
-    name: 'USD Stable',
-    iconSrc: 'https://ext.same-assets.com/3833913722/3007930394.svg',
-  },
+const TOKEN_DATA: Record<string, IToken> = {
+  usdc: tokenData.find((token) => token.symbol === 'USDC') as IToken,
+  eth: tokenData.find((token) => token.symbol === 'ETH') as IToken,
+  wsteth: tokenData.find((token) => token.symbol === 'WETH') as IToken,
 };
 
 export default function BorrowFormSection() {
   const searchParams = useSearchParams();
   const tokenKey = searchParams.get('tokenKey') || 'usdc';
   const token = TOKEN_DATA[tokenKey as keyof typeof TOKEN_DATA] || TOKEN_DATA.usdc;
-  const [aprType, setAprType] = useState("variable");
-  const [amount, setAmount] = useState("");
+  const [aprType, setAprType] = useState('variable');
+  const [amount, setAmount] = useState('');
 
   return (
     <>
@@ -50,11 +34,11 @@ export default function BorrowFormSection() {
         </Link>
       </div>
 
-      <div className="absolute right-6 top-24 w-80 p-6">
+      <div className="absolute top-24 right-6 w-80 p-6">
         <div className="w-full max-w-md">
-          <div className="flex items-center mb-6">
+          <div className="mb-6 flex items-center">
             <div className="flex items-center space-x-2">
-              <TokenIcon symbol={token.symbol} src={token.iconSrc} size="sm" />
+              <TokenIcon symbol={token.symbol} src={token.iconUrl} size="sm" />
               <h2 className="text-lg font-semibold">Borrow {token.symbol}</h2>
             </div>
           </div>
@@ -66,7 +50,7 @@ export default function BorrowFormSection() {
                 <RadioGroupItem value="variable" id="apr-variable" />
                 <label
                   htmlFor="apr-variable"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   Variable
                 </label>
@@ -75,7 +59,7 @@ export default function BorrowFormSection() {
                 <RadioGroupItem value="stable" id="apr-stable" />
                 <label
                   htmlFor="apr-stable"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   Stable (0.00%)
                 </label>
@@ -88,15 +72,21 @@ export default function BorrowFormSection() {
             <div className="text-xl">0</div>
           </div>
 
-          <Card className="p-4 mb-6">
-            <div className="text-sm mb-2">Amount to borrow</div>
-            <Input type="text" placeholder="0.0" value={amount} onChange={(e) => setAmount(e.target.value)} className="text-lg" />
+          <Card className="mb-6 p-4">
+            <div className="mb-2 text-sm">Amount to borrow</div>
+            <Input
+              type="text"
+              placeholder="0.0"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="text-lg"
+            />
           </Card>
 
           <div className="mb-6">
-            <div className="text-lg font-medium mb-4">Projected Debt Position</div>
+            <div className="mb-4 text-lg font-medium">Projected Debt Position</div>
 
-            <div className="flex justify-between items-center mb-2">
+            <div className="mb-2 flex items-center justify-between">
               <div className="flex items-center space-x-1">
                 <div className="text-sm">Status</div>
                 <svg
@@ -116,17 +106,19 @@ export default function BorrowFormSection() {
                   <path d="M12 8h.01" />
                 </svg>
               </div>
-              <div className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">No position</div>
+              <div className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-500">
+                No position
+              </div>
             </div>
 
-            <div className="text-xs text-gray-500 mb-2">Max: L.L. 0.00%</div>
+            <div className="mb-2 text-xs text-gray-500">Max: L.L. 0.00%</div>
 
-            <Progress value={0} className="h-2 mb-4" />
+            <Progress value={0} className="mb-4 h-2" />
 
-            <div className="text-center text-lg mb-6">0.00%</div>
+            <div className="mb-6 text-center text-lg">0.00%</div>
 
             <div>
-              <div className="text-sm mb-2">Liquidation Price (ETH)</div>
+              <div className="mb-2 text-sm">Liquidation Price (ETH)</div>
               <div className="text-lg">$0.00 / $0.00</div>
             </div>
           </div>
