@@ -4,6 +4,7 @@ import './globals.css';
 import BaseLayout from '@/components/layout/base-layout';
 import Web3AppKitContextProvider from '@/components/context/appkit';
 import { headers } from 'next/headers';
+import { Toaster } from 'sonner';
 
 const montserrat = Montserrat({
   variable: '--font-montserrat',
@@ -29,6 +30,7 @@ export default async function RootLayout({
       <body className={`${montserrat.variable} antialiased`}>
         <Web3AppKitContextProvider cookies={cookies}>
           <BaseLayout>{children}</BaseLayout>
+          <Toaster richColors />
         </Web3AppKitContextProvider>
       </body>
     </html>

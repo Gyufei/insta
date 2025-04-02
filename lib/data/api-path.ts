@@ -8,4 +8,6 @@ export const ApiHost = isProduction ? ProdHost : DevHost;
 
 export const ApiPath = {
   account: `${ApiHost}/account/sandbox_account`,
+  addAuthority: `${ApiHost}/account/enable`,
+  deleteAuthority: `${ApiHost}/account/disable`,
 };

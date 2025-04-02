@@ -1,3 +1,4 @@
+import SideDrawer from '../side-drawer';
 import MbHeader from './mb-header';
 import SideBar from './sidebar';
 
@@ -9,7 +10,14 @@ export default function BaseLayout({ children }: { children: React.ReactNode }) 
       data-v-ead27774=""
     >
       <MbHeader />
-      {children}
+      <div
+        className="grid-main dark:bg-dark-600 relative flex flex-grow flex-col overflow-x-hidden 2xl:bg-white"
+        data-v-ead27774=""
+      >
+        {children}
+      </div>
+
+      <SideDrawer />
       <SideBar />
     </div>
   );

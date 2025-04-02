@@ -1,7 +1,6 @@
-// context/index.tsx
 'use client'
 
-import { wagmiAdapter, projectId } from './wagmi-config'
+import { wagmiAdapter, projectId } from '../../config/wagmi-config'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react' 
 import { mainnet, arbitrum, avalanche, base, optimism, polygon } from '@reown/appkit/networks'

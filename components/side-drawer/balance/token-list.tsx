@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import TokenCard from './token-card';
 import { tokenData } from '@/lib/data/tokens';
-import { NoSearchResults } from './no-result';
+import { NoSearchResult } from './no-search-result';
 
 interface TokenListProps {
   searchQuery: string;
@@ -27,7 +27,7 @@ export default function TokenList({ searchQuery }: TokenListProps) {
     <div className="mt-2 flex flex-grow flex-col sm:mt-4">
       <div className="pb-6">
         {searchQuery && filteredTokens.length === 0 ? (
-          <NoSearchResults searchQuery={searchQuery} onAddCustomToken={() => {}} />
+          <NoSearchResult searchQuery={searchQuery} />
         ) : (
           <>
             {filteredTokens.map((token, index) => (
@@ -38,7 +38,6 @@ export default function TokenList({ searchQuery }: TokenListProps) {
                 balance="0.00"
                 value="$0.00"
                 iconUrl={token.iconUrl}
-                coingeckoUrl={token.coingeckoUrl}
               />
             ))}
           </>

@@ -3,6 +3,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function BarItem({
   icon,
@@ -78,7 +79,7 @@ export function BarWithSubItem({
     <div
       data-v-7fd64a2e=""
       className={cn(
-        'flex flex-col overflow-hidden transition-all duration-300',
+        'flex flex-col overflow-hidden',
         isCollapsed && isSubOpen && 'shadow-inner'
       )}
     >
@@ -113,23 +114,29 @@ export function BarWithSubItem({
             >
               {name}
             </div>
-            <div
+            <motion.div
               data-v-7fd64a2e=""
-              className="group-hover:text-brand dark:group-hover:text-light h-2 w-2 transition-colors duration-150"
+              className="group-hover:text-brand dark:group-hover:text-light h-2 w-2"
+              animate={{ rotate: isSubOpen ? 180 : 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <ChevronDown
-                className={`h-full w-full transition-transform duration-300 ${isSubOpen ? 'rotate-180' : 'rotate-0'}`}
-              />
-            </div>
+              <ChevronDown className="h-full w-full" />
+            </motion.div>
           </div>
-          <div
-            data-v-7fd64a2e=""
-            className={`bg-grey-light/35 dark:bg-dark-600/35 flex flex-col pr-8 pl-14 transition-all duration-300 select-none ${
-              isSubOpen ? 'h-fit' : 'h-0'
-            }`}
-          >
-            {children}
-          </div>
+          <AnimatePresence>
+            {isSubOpen && (
+              <motion.div
+                data-v-7fd64a2e=""
+                className="bg-grey-light/35 dark:bg-dark-600/35 flex flex-col pr-8 pl-14 select-none"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                {children}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </>
       )}
       <hr data-v-7fd64a2e="" className="border-grey-light/50 dark:border-grey-light/10 mx-8 my-0" />

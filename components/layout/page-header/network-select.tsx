@@ -2,26 +2,26 @@ import Image from 'next/image';
 import { Check, ChevronDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { useClickOutside } from '@/lib/hooks/use-click-outside';
+import { useClickOutside } from '@/lib/utils/use-click-outside';
+import { INetworkConfig, NetworkConfigs } from '@/config/network-config';
 
 const NETWORKS = [
   {
+    ...NetworkConfigs.monadTestnet,
     name: 'Monad',
-    icon: '/icons/monad.svg',
-    chainId: 10143,
   },
 ] as const;
 
 export default function NetworkSelect() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedNetwork, setSelectedNetwork] = useState(NETWORKS[0]);
+  const [selectedNetwork, setSelectedNetwork] = useState<INetworkConfig>(NETWORKS[0]);
   const [ref, hasClickedOutside] = useClickOutside();
 
   function toggleOpen() {
     setIsOpen(!isOpen);
   }
 
-  function handleClick(network: (typeof NETWORKS)[number]) {
+  function handleClick(network: INetworkConfig) {
     setSelectedNetwork(network);
     setIsOpen(false);
   }

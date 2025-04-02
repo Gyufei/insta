@@ -1,10 +1,13 @@
-export async function Fetcher(input: URL | RequestInfo, init?: RequestInit | undefined) {
+export async function Fetcher<T = unknown>(
+  input: URL | RequestInfo,
+  init?: RequestInit | undefined
+): Promise<T> {
   try {
     const result = await fetch(input, init);
     const res = await parsedRes(result);
 
     return res;
-  } catch (e) {
+  } catch (e: unknown) {
     console.log(e);
     throw e;
   }
@@ -14,22 +17,19 @@ async function parsedRes(res: Response) {
   try {
     if (!res.ok) {
       const error = new Error('An error occurred while fetching the data.') as Error & {
-        info?: string;
         status?: number;
       };
+      
 
       if (res.status === 401) {
-        error.info = 'Unauthorized';
+        error.message = 'Unauthorized';
       }
 
-      if (res.status === 422) {
-        error.info = 'params error, sign failed';
-      }
-
-      if (!error.info) {
+      if (!error.message) {
         const resBody = await res.text();
+        console.log(resBody);
         const errorTip = resBody.length > 100 ? 'Failed: An error occurred' : resBody;
-        error.info = errorTip;
+        error.message = errorTip;
       }
 
       error.status = res.status;
@@ -45,7 +45,6 @@ async function parsedRes(res: Response) {
 
     return json?.data || json;
   } catch (e) {
-    console.log(e);
     throw e;
   }
 }

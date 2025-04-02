@@ -2,7 +2,7 @@ import { HelpCircle } from 'lucide-react';
 
 export default function HelpButton() {
   return (
-    <div className="mt-4 flex flex-1 justify-start">
+    <div className="mt-4 h-10 flex justify-start">
       <button
         className="text-xs bg-yellow-pure/10 hover:bg-yellow-pure/25 active:bg-yellow-pure/20 text-yellow-pure flex flex-1 flex-shrink-0 items-center justify-center rounded-xs px-4 py-2 font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
         style={{ justifyContent: 'start' }}
