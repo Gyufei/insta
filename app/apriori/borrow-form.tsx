@@ -10,12 +10,12 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Progress } from '@/components/ui/progress';
 import TokenIcon from '@/components/token-icon';
-import { IToken, tokenData } from '@/lib/data/tokens';
+import { IToken, TokenData } from '@/lib/data/tokens';
 
 const TOKEN_DATA: Record<string, IToken> = {
-  usdc: tokenData.find((token) => token.symbol === 'USDC') as IToken,
-  eth: tokenData.find((token) => token.symbol === 'ETH') as IToken,
-  wsteth: tokenData.find((token) => token.symbol === 'WETH') as IToken,
+  usdc: TokenData.find((token) => token.symbol === 'USDC') as IToken,
+  eth: TokenData.find((token) => token.symbol === 'ETH') as IToken,
+  wsteth: TokenData.find((token) => token.symbol === 'WETH') as IToken,
 };
 
 export default function BorrowFormSection() {

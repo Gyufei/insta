@@ -7,19 +7,18 @@ import NetworkSelect from './network-select';
 import PageTitle from './page-title';
 import { AccountBtn } from './account-btn';
 
-export function PageHeader({ title }: { title: string }) {
+export function PageHeader({ title, src }: { title: string; src: string }) {
   const { open } = useAppKit();
   const { disconnect } = useDisconnect();
+  const { isConnected } = useAppKitAccount();
 
   function openWeb3Modal() {
     open();
   }
 
-  const { isConnected } = useAppKitAccount();
-
   return (
     <header className="border-grey-light dark:border-dark-600 2xl:dark:bg-dark-500 flex flex-wrap items-center justify-between gap-4 border-b px-4 py-4 sm:flex-nowrap 2xl:px-12 2xl:py-[20.5px]">
-      <PageTitle title={title} src="/icons/aave.svg" />
+      <PageTitle title={title} src={src} />
 
       <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
         {isConnected ? (

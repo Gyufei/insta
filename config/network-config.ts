@@ -9,5 +9,16 @@ export const NetworkConfigs = {
   monadTestnet: {
     ...monadTestnet,
     icon: '/icons/monad.svg',
+    contracts: {
+      ...monadTestnet.contracts,
+      dsa: {
+        address: '0x0000000000000000000000000000000000000000',
+        abi: [],
+      },
+    },
   },
 };
+
+export const MonadTestnetName = 'Monad';
+
+export const ZeroAddress = '0x0000000000000000000000000000000000000000';

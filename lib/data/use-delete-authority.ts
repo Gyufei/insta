@@ -4,6 +4,7 @@ import { Fetcher } from '../fetcher';
 import { ITxData } from '../model';
 import { useSendTx } from '../web3/use-send-tx';
 import { toast } from 'sonner';
+import { ERROR_MESSAGES } from '@/config/error-msg';
 
 export interface DeleteAuthorityParams {
   wallet: string;
@@ -16,7 +17,7 @@ export function useDeleteAuthority() {
 
   async function deleteAuthority(params: DeleteAuthorityParams) {
     if (!params.wallet) {
-      toast.info('Please connect wallet first');
+      toast.info(ERROR_MESSAGES.WALLET_NOT_CONNECTED);
       return;
     }
 
@@ -31,14 +32,14 @@ export function useDeleteAuthority() {
         body: JSON.stringify(params),
       });
 
-      if (!txData.status || !txData.data) {
-        toast.error('Invalid transaction data');
+      if (!txData) {
+        toast.error(ERROR_MESSAGES.INVALID_TX_DATA);
         return;
       }
 
       await send(txData);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Delete authority failed');
+      toast.error(ERROR_MESSAGES.DELETE_AUTHORITY_FAILED);
       throw err;
     }
   }
@@ -51,4 +52,4 @@ export function useDeleteAuthority() {
     ...mutation,
     isPending: mutation.isPending || isSending,
   };
-} 
+}

@@ -1,11 +1,14 @@
 import { HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useAccountBalance } from '@/lib/web3/use-account-balance';
+import { multiply } from 'safebase';
+import { TokenPriceMap } from '@/lib/data/tokens';
+import { formatNumber } from '@/lib/utils/number';
+import { WithLoading } from '@/components/with-loading';
+export default function BalanceSection() {
+  const { balance, isPending } = useAccountBalance();
+  const priceValue = multiply(balance, String(TokenPriceMap['MON'] || 0));
 
-interface BalanceSectionProps {
-  balance: string;
-}
-
-export default function BalanceSection({ balance }: BalanceSectionProps) {
   return (
     <div className="mt-6 mb-2 flex w-full flex-shrink-0 flex-col items-center px-8 text-center sm:mb-10">
       <h3 className="flex items-center leading-none">
@@ -23,7 +26,9 @@ export default function BalanceSection({ balance }: BalanceSectionProps) {
           </Tooltip>
         </TooltipProvider>
       </h3>
-      <div className="mt-4 text-[32px] font-semibold">${balance}</div>
+      <div className="mt-4 text-[32px] font-semibold">
+        <WithLoading isPending={!!isPending} className='h-8 w-8'>${formatNumber(priceValue)}</WithLoading>
+      </div>
     </div>
   );
 }

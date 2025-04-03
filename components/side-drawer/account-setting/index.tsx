@@ -1,5 +1,4 @@
-import { useAppKitAccount } from '@reown/appkit/react';
-
+import { useAccount } from 'wagmi';
 import { ConnectWalletButton } from './connect-wallet-button';
 import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
 import { formatAddress } from '@/lib/utils';
@@ -10,7 +9,7 @@ import { NoAccountDisplay } from './no-account-display';
 import { AccountDisplay } from './account-display';
 
 export function AccountSetting() {
-  const { address } = useAppKitAccount();
+  const { address } = useAccount();
   const { setCurrentComponent } = useSideDrawerStore();
   const { data: accountInfo } = useGetAccount();
 

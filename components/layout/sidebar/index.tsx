@@ -1,11 +1,12 @@
 'use client';
+import Image from 'next/image';
 import { useState } from 'react';
-import { HelpCircle, ChevronLeft, ChevronRight, Home } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Home, ServerCog, Cog, CircleUserRound } from 'lucide-react';
 import BarFooter from './bar-footer';
 import BarHeader from './bar-header';
 import { BarItem, BarWithSubItem } from './bar-item';
-import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import SubMenu from './sub-menu';
 
 export default function SideBar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -15,6 +16,105 @@ export default function SideBar() {
   function toggleCollapse() {
     setIsCollapsed(!isCollapsed);
   }
+
+  const protocolItems = [
+    {
+      href: '/apriori',
+      label: 'Apriori',
+      icon: (
+        <Image
+          src="/icons/apriori.svg"
+          alt="aprior"
+          width={16}
+          height={16}
+          className="mr-4 h-4 w-4"
+        />
+      ),
+    },
+    {
+      href: '/nad-fun',
+      label: 'Nad.Fun',
+      icon: (
+        <Image
+          src="/icons/nad-fun.svg"
+          alt="nad-fun"
+          width={16}
+          height={16}
+          className="mr-4 h-4 w-4"
+        />
+      ),
+    },
+    {
+      href: '/uniswap',
+      label: 'Uniswap V3',
+      icon: (
+        <Image
+          src="/icons/uniswap.svg"
+          alt="uniswap"
+          width={16}
+          height={16}
+          className="mr-4 h-4 w-4"
+        />
+      ),
+    },
+    {
+      href: '/magma',
+      label: 'Magma',
+      icon: (
+        <Image src="/icons/magma.jpg" alt="magma" width={16} height={16} className="mr-4 h-4 w-4" />
+      ),
+    },
+    {
+      href: '/nad-name-server',
+      label: 'Nad Name Server',
+      icon: (
+        <Image
+          src="/icons/nad-name-server.svg"
+          alt="nad-name-server"
+          width={16}
+          height={16}
+          className="mr-4 h-4 w-4"
+        />
+      ),
+    },
+    {
+      href: '/ambient',
+      label: 'Ambient',
+      icon: (
+        <Image
+          src="/icons/ambient.svg"
+          alt="ambient"
+          width={16}
+          height={16}
+          className="mr-4 h-4 w-4"
+        />
+      ),
+    },
+    {
+      href: '/meme',
+      label: 'Meme',
+      icon: (
+        <Image src="/icons/monad.svg" alt="meme" width={16} height={16} className="mr-4 h-4 w-4" />
+      ),
+    },
+    {
+      href: '/curvance',
+      label: 'Curvance',
+      icon: (
+        <Image
+          src="/icons/curvance.svg"
+          alt="curvance"
+          width={16}
+          height={16}
+          className="mr-4 h-4 w-4"
+        />
+      ),
+    },
+  ];
+
+  const utilitiesItems = [
+    { href: '/authority', label: 'Authority', icon: <CircleUserRound className="mr-4 h-4 w-4" /> },
+  ];
 
   const navContent = (
     <>
@@ -34,189 +134,28 @@ export default function SideBar() {
             isCollapsed={isCollapsed}
           />
 
-          <BarItem
-            icon={
-              <HelpCircle className="group-hover:text-brand dark:group-hover:text-light w-full transition-colors duration-150" />
-            }
-            name="Refinance"
-            href="/"
-            isCollapsed={isCollapsed}
-          />
-
           <BarWithSubItem
             icon={
-              <HelpCircle className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
-            }
-            name="Fluid"
-            isCollapsed={isCollapsed}
-            openSub={openSub}
-            setOpenSub={setOpenSub}
-          >
-            <div className="flex flex-col space-y-1">
-              <a
-                href="/fluid-lending"
-                className={cn(
-                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600 relative flex items-center rounded-sm px-3 py-2',
-                  pathname === '/fluid-lending' && 'text-brand'
-                )}
-              >
-                <div className="leading-none">Lending</div>
-              </a>
-              <a
-                href="/fluid-vaults"
-                className={cn(
-                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                  pathname === '/fluid-vaults' && 'text-brand'
-                )}
-              >
-                <div className="leading-none">Vaults</div>
-              </a>
-            </div>
-          </BarWithSubItem>
-
-          <BarWithSubItem
-            icon={
-              <HelpCircle className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
+              <ServerCog className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
             }
             name="Protocols"
             isCollapsed={isCollapsed}
             openSub={openSub}
             setOpenSub={setOpenSub}
           >
-            <div className="flex flex-col space-y-1">
-              <a
-                href="/inst-pools"
-                className={cn(
-                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                  pathname === '/inst-pools' && 'text-brand'
-                )}
-              >
-                <HelpCircle className="mr-4 h-4 w-4" />
-                <div className="leading-none">FLUID Pools</div>
-              </a>
-              <a
-                href="/makerdao"
-                className={cn(
-                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                  pathname === '/makerdao' && 'text-brand'
-                )}
-              >
-                <HelpCircle className="mr-4 h-4 w-4" />
-                <div className="leading-none">Maker</div>
-              </a>
-              <a
-                href="/compound"
-                className={cn(
-                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                  pathname === '/compound' && 'text-brand'
-                )}
-              >
-                <HelpCircle className="mr-4 h-4 w-4" />
-                <div className="leading-none">Compound</div>
-              </a>
-              <a
-                href="/compound-v3"
-                className={cn(
-                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                  pathname === '/compound-v3' && 'text-brand'
-                )}
-              >
-                <HelpCircle className="mr-4 h-4 w-4" />
-                <div className="leading-none">Compound v3</div>
-              </a>
-              <a
-                href="/aave-v2"
-                className={cn(
-                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600 relative flex items-center rounded-sm px-3 py-2',
-                  pathname === '/aave-v2' && 'text-brand'
-                )}
-              >
-                <HelpCircle className="mr-4 h-4 w-4" />
-                <div className="leading-none">Aave v2</div>
-              </a>
-              <a
-                href="/aave-v3"
-                className={cn(
-                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                  pathname === '/aave-v3' && 'text-brand'
-                )}
-              >
-                <HelpCircle className="mr-4 h-4 w-4" />
-                <div className="leading-none">Aave v3</div>
-              </a>
-              <div className="mt-1 flex flex-col space-y-1">
-                <a
-                  href="/aave-v3"
-                  className={cn(
-                    'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                    pathname === '/aave-v3' && 'text-brand'
-                  )}
-                >
-                  <div className="leading-none">Main</div>
-                </a>
-                <a
-                  href="/aave-v3-lido"
-                  className={cn(
-                    'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                    pathname === '/aave-v3-lido' && 'text-brand'
-                  )}
-                >
-                  <div className="leading-none">Lido</div>
-                </a>
-                <a
-                  href="/aave-v3-etherfi"
-                  className={cn(
-                    'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                    pathname === '/aave-v3-etherfi' && 'text-brand'
-                  )}
-                >
-                  <div className="leading-none">Etherfi</div>
-                </a>
-              </div>
-            </div>
+            <SubMenu items={protocolItems} currentPath={pathname} />
           </BarWithSubItem>
 
           <BarWithSubItem
             icon={
-              <HelpCircle className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
+              <Cog className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
             }
-            name="Automation"
+            name="Utilities"
             isCollapsed={isCollapsed}
             openSub={openSub}
             setOpenSub={setOpenSub}
           >
-            <div className="flex flex-col space-y-1">
-              <a
-                href="/automation"
-                className={cn(
-                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                  pathname === '/automation' && 'text-brand'
-                )}
-              >
-                <HelpCircle className="mr-4 h-4 w-4" />
-                <div className="leading-none">Automation</div>
-              </a>
-              <a
-                href="/import-positions"
-                className={cn(
-                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                  pathname === '/import-positions' && 'text-brand'
-                )}
-              >
-                <HelpCircle className="mr-4 h-4 w-4" />
-                <div className="leading-none">Import Positions</div>
-              </a>
-              <a
-                href="/sign-eip1271"
-                className={cn(
-                  'hover:text-brand dark:hover:text-light hover:bg-grey-light/35 dark:hover:bg-dark-600/35 relative flex items-center rounded-sm px-3 py-2',
-                  pathname === '/sign-eip1271' && 'text-brand'
-                )}
-              >
-                <HelpCircle className="mr-4 h-4 w-4" />
-                <div className="leading-none">Sign in (EIP-1271)</div>
-              </a>
-            </div>
+            <SubMenu items={utilitiesItems} currentPath={pathname} />
           </BarWithSubItem>
         </div>
         <BarFooter isCollapsed={isCollapsed} />

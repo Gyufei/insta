@@ -1,5 +1,5 @@
-import Aave from '@/app/aave';
+import Apriori from '@/app/apriori/page';
 
 export default function Home() {
-  return <Aave />;
+  return <Apriori />;
 }

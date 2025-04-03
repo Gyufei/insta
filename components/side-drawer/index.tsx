@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { Balance } from './balance';
 import { AccountSetting } from './account-setting';
+import { DepositToken } from './deposit-token';
+import { WithdrawToken } from './withdraw-token';
 
 const SideDrawer = () => {
   const { currentComponent } = useSideDrawerStore();
@@ -12,11 +14,11 @@ const SideDrawer = () => {
       case 'Balance':
         return <Balance />;
       case 'AccountSetting':
-        return (
-          <>
-            <AccountSetting />
-          </>
-        );
+        return <AccountSetting />;
+      case 'DepositMon':
+        return <DepositToken />;
+      case 'WithdrawMon':
+        return <WithdrawToken />;
       default:
         return null;
     }
@@ -32,12 +34,6 @@ const SideDrawer = () => {
       style={{ maxWidth: 'clamp(var(--min-width-app), var(--width-sidebar-context), 100%' }}
       data-v-ead27774=""
     >
-      {/* <div
-        className="bg-background dark:bg-dark-500 flex h-full flex-col"
-        style={{
-          width: 'clamp(var(--min-width-app), var(--width-sidebar-context), 100%)',
-        }}
-      > */}
       <AnimatePresence mode="wait">
         <motion.div
           className="h-full"

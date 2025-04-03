@@ -10,4 +10,7 @@ export const ApiPath = {
   account: `${ApiHost}/account/sandbox_account`,
   addAuthority: `${ApiHost}/account/enable`,
   deleteAuthority: `${ApiHost}/account/disable`,
+  deposit: `${ApiHost}/account/deposit`,
+  withdraw: `${ApiHost}/account/withdraw`,
+  sendTx: `${ApiHost}/transaction/send`,
 };

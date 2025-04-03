@@ -1,9 +1,10 @@
+import { useAccount } from 'wagmi';
 import { DSAInfo } from './dsa-info';
-import { useAppKitAccount } from '@reown/appkit/react';
 import { useCreateAccount } from '@/lib/data/use-create-account';
+import { WithLoading } from '@/components/with-loading';
 
 export function NoAccountDisplay() {
-  const { address } = useAppKitAccount();
+  const { address } = useAccount();
   const { mutateAsync: createAccount, isPending } = useCreateAccount();
 
   return (
@@ -16,7 +17,8 @@ export function NoAccountDisplay() {
         style={{ minHeight: '24px' }}
         disabled={isPending || !address}
       >
-        {isPending ? 'Creating...' : 'Create DSA Account'}
+        <WithLoading isPending={!!isPending} className="mr-2" />
+        Create DSA Account
       </button>
     </div>
   );

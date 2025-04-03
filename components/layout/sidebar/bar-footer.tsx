@@ -1,4 +1,14 @@
-import { Mail, X, MessageCircle, BookOpen, Sun } from 'lucide-react';
+import { Mail, X, MessageCircle, BookOpen } from 'lucide-react';
+import { ToggleTheme } from './toggle-theme';
+import { SocialLink } from './social-link';
+import { Version } from './version';
+
+const SOCIAL_LINKS = [
+  { href: '', icon: Mail },
+  { href: 'https://twitter.com/instadapp', icon: X },
+  { href: 'https://discord.gg/instadapp', icon: MessageCircle },
+  { href: 'https://docs.instadapp.io', icon: BookOpen },
+];
 
 export default function BarFooter({ isCollapsed }: { isCollapsed: boolean }) {
   return (
@@ -6,46 +16,12 @@ export default function BarFooter({ isCollapsed }: { isCollapsed: boolean }) {
       <div
         className={`mt-10 flex w-full items-center justify-center ${isCollapsed ? 'flex-col space-y-3' : 'space-x-4'}`}
       >
-        <a
-          href="mailto:info@instadapp.io"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-brand dark:hover:text-light flex h-5 w-5 items-center justify-center"
-        >
-          <Mail className="h-full" />
-        </a>
-        <a
-          href="https://twitter.com/instadapp"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-brand dark:hover:text-light flex h-5 w-5 items-center justify-center"
-        >
-          <X className="h-full" />
-        </a>
-        <a
-          href="https://discord.gg/instadapp"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-brand dark:hover:text-light flex h-5 w-5 items-center justify-center"
-        >
-          <MessageCircle className="h-full" />
-        </a>
-        <a
-          href="https://docs.instadapp.io"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-brand dark:hover:text-light flex h-5 w-5 items-center justify-center"
-        >
-          <BookOpen className="h-full" />
-        </a>
+        {SOCIAL_LINKS.map((link, index) => (
+          <SocialLink key={index} href={link.href} icon={link.icon} />
+        ))}
       </div>
       <hr className="border-grey-light/50 dark:border-grey-light/10 mx-8 my-4 w-9/12" />
-      <div className="flex w-full items-center justify-center px-8">
-        <div className="hover:text-brand dark:hover:text-light flex w-full cursor-pointer items-center justify-between px-6 leading-none transition-colors duration-150">
-          <Sun className="h-5" />
-          {!isCollapsed && <div className="ml-4 whitespace-nowrap">Switch to dark</div>}
-        </div>
-      </div>
+      <ToggleTheme isCollapsed={isCollapsed} />
       {!isCollapsed && (
         <div className="mt-12 w-full px-8">
           <a
@@ -58,11 +34,7 @@ export default function BarFooter({ isCollapsed }: { isCollapsed: boolean }) {
           </a>
         </div>
       )}
-      {!isCollapsed && (
-        <div className="text-grey-pure mt-auto w-full justify-self-end py-4 text-center text-xs">
-          v7.1.81
-        </div>
-      )}
+      {!isCollapsed && <Version version="v7.1.81" />}
     </>
   );
 }

@@ -14,7 +14,7 @@ export function Balance() {
     <div className="scrollbar-hover flex-grow overflow-y-scroll">
       <div className="mx-auto h-full" style={{ maxWidth: '296px' }}>
         <div className="flex h-full flex-col py-2 sm:py-4">
-          <BalanceSection balance="0.00" />
+          <BalanceSection />
           <ActionButtons />
           <HelpButton />
 

@@ -41,10 +41,10 @@ const tokens = [
   },
 ];
 
-export default function Aave() {
+export default function Apriori() {
   return (
     <div className="flex min-h-screen flex-col">
-      <PageHeader title="Aave v3 Lido" />
+      <PageHeader title="Apriori" src="/icons/apriori.svg" />
       <div className="scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6 2xl:py-12">
         <div className="max-w-container-main flex w-full flex-col">
           <div className="mb-8">

@@ -4,6 +4,7 @@ import { Fetcher } from '../fetcher';
 import { ITxData } from '../model';
 import { useSendTx } from '../web3/use-send-tx';
 import { toast } from 'sonner';
+import { ERROR_MESSAGES } from '@/config/error-msg';
 
 interface RequestBody {
   owner: string;
@@ -14,7 +15,7 @@ export function useCreateAccount() {
 
   async function createAccount(address: string) {
     if (!address) {
-      toast.info('Please connect wallet first');
+      toast.info(ERROR_MESSAGES.WALLET_NOT_CONNECTED);
       return;
     }
 
@@ -32,14 +33,14 @@ export function useCreateAccount() {
         body: JSON.stringify(body),
       });
 
-      if (!txData.status || !txData.data) {
-        toast.error('Invalid transaction data');
+      if (!txData.data) {
+        toast.error(ERROR_MESSAGES.INVALID_TX_DATA);
         return;
       }
 
       await send(txData);
     } catch (err) {
-      toast.error('Create account failed');
+      toast.error(ERROR_MESSAGES.CREATE_ACCOUNT_FAILED);
       throw err;
     }
   }

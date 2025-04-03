@@ -18,7 +18,7 @@ export default function SearchBar({ placeholder, value, onChange }: SearchBarPro
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="h-10 w-full pr-2 pl-9 leading-none rounded-sm border border-light bg-white outline-none"
+        className="form-input h-10 w-full pr-2! pl-9! leading-none"
       />
       <Search className="search-icon absolute h-4 w-4" style={{ left: '12px' }} />
     </div>

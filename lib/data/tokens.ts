@@ -3,13 +3,19 @@ export interface IToken {
   symbol: string;
   iconUrl: string;
   decimals: number;
+  address: string;
 }
 
-export const tokenData: IToken[] = [
+export const TokenData: IToken[] = [
   {
     name: 'Monad',
     symbol: 'MON',
-    iconUrl: '/icons/mon.png',
+    iconUrl: '/icons/mon.svg',
     decimals: 18,
+    address: '0x0000000000000000000000000000000000000000',
   },
 ];
+
+export const TokenPriceMap: Record<string, number> = {
+  MON: 1700,
+};

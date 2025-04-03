@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import TokenCard from './token-card';
-import { tokenData } from '@/lib/data/tokens';
+import { IToken, TokenData } from '@/lib/data/tokens';
 import { NoSearchResult } from './no-search-result';
 
 interface TokenListProps {
@@ -10,16 +10,16 @@ interface TokenListProps {
 }
 
 export default function TokenList({ searchQuery }: TokenListProps) {
-  const [filteredTokens, setFilteredTokens] = useState(tokenData);
+  const [filteredTokens, setFilteredTokens] = useState<IToken[]>(TokenData);
 
   useEffect(() => {
     if (searchQuery) {
-      const filtered = tokenData.filter((token) =>
+      const filtered = TokenData.filter((token) =>
         token.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredTokens(filtered);
     } else {
-      setFilteredTokens(tokenData);
+      setFilteredTokens(TokenData);
     }
   }, [searchQuery]);
 
@@ -35,8 +35,8 @@ export default function TokenList({ searchQuery }: TokenListProps) {
                 key={index}
                 name={token.name}
                 symbol={token.symbol}
-                balance="0.00"
-                value="$0.00"
+                decimals={token.decimals}
+                address={token.address}
                 iconUrl={token.iconUrl}
               />
             ))}

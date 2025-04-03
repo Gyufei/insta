@@ -4,6 +4,9 @@ import { Fetcher } from '../fetcher';
 import { ITxData } from '../model';
 import { useSendTx } from '../web3/use-send-tx';
 import { toast } from 'sonner';
+import { useGetAccount } from './use-get-account';
+import { useAccount } from 'wagmi';
+import { ERROR_MESSAGES } from '@/config/error-msg';
 
 export interface CreateAuthorityParams {
   wallet: string;
@@ -12,13 +15,26 @@ export interface CreateAuthorityParams {
 }
 
 export function useCreateAuthority() {
+  const { address } = useAccount();
+  const { data: accountInfo } = useGetAccount();
   const { send, isPending: isSending } = useSendTx();
 
-  async function createAuthority(params: CreateAuthorityParams) {
-    if (!params.wallet) {
-      toast.info('Please connect wallet first');
+  async function createAuthority(manager: string) {
+    if (!address) {
+      toast.info(ERROR_MESSAGES.WALLET_NOT_CONNECTED);
       return;
     }
+
+    if (!accountInfo?.sandbox_account) {
+      toast.info(ERROR_MESSAGES.ACCOUNT_NOT_CREATED);
+      return;
+    }
+
+    const params = {
+      wallet: address,
+      sandbox_account: accountInfo?.sandbox_account,
+      manager,
+    };
 
     const url = new URL(ApiPath.addAuthority);
 
@@ -31,14 +47,14 @@ export function useCreateAuthority() {
         body: JSON.stringify(params),
       });
 
-      if (!txData.status || !txData.data) {
-        toast.error('Invalid transaction data');
+      if (!txData) {
+        toast.error(ERROR_MESSAGES.INVALID_TX_DATA);
         return;
       }
 
       await send(txData);
     } catch (err) {
-      toast.error('Create authority failed');
+      toast.error(ERROR_MESSAGES.CREATE_AUTHORITY_FAILED);
       throw err;
     }
   }

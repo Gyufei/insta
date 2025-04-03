@@ -1,7 +1,7 @@
-import { ApiPath } from '../data/api-path';
+// import { ApiPath } from '../data/api-path';
+// import { Fetcher } from '../fetcher';
 import { useQuery } from '@tanstack/react-query';
-import { Fetcher } from '../fetcher';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useAccount } from 'wagmi';
 
 export interface IAccountInfo {
   id: string;
@@ -10,7 +10,7 @@ export interface IAccountInfo {
 }
 
 export function useGetAccount() {
-  const { address } = useAppKitAccount();
+  const { address } = useAccount();
 
   async function getAccount(): Promise<IAccountInfo | null> {
     if (!address) {
@@ -23,12 +23,12 @@ export function useGetAccount() {
       managers: ['0x370CfDbf56B50B1169557078bDC8fcE1477089b8'],
     } as IAccountInfo;
 
-    const url = new URL(ApiPath.account);
-    url.searchParams.set('address', address);
+    // const url = new URL(ApiPath.account);
+    // url.searchParams.set('address', address);
 
-    const res = await Fetcher<IAccountInfo>(url);
+    // const res = await Fetcher<IAccountInfo>(url);
 
-    return res;
+    // return res;
   }
 
   const queryResult = useQuery({

@@ -3,12 +3,12 @@ import { Check, ChevronDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useClickOutside } from '@/lib/utils/use-click-outside';
-import { INetworkConfig, NetworkConfigs } from '@/config/network-config';
+import { INetworkConfig, MonadTestnetName, NetworkConfigs } from '@/config/network-config';
 
 const NETWORKS = [
   {
     ...NetworkConfigs.monadTestnet,
-    name: 'Monad',
+    name: MonadTestnetName,
   },
 ] as const;
 

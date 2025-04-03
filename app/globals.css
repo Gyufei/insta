@@ -78,14 +78,14 @@
 }
 
 @theme {
-  --color-grey-pure: oklch(0.75 0.0371 271.43);
   --color-light: oklch(0.99 0 0);
+  --color-brand: oklch(0.27 0.0543 254.01);
   --color-dark-600: oklch(0.27 0.0538 254.92);
   --color-dark-400: oklch(0.37 0.0731 255.26);
   --color-dark-300: oklch(0.45 0.1365 263.63);
   --color-dark-500: oklch(0.3 0.0646 254.91);
+  --color-grey-pure: oklch(0.75 0.0371 271.43);
   --color-grey-light: oklch(0.94 0.0087 264.52);
-  --color-brand: oklch(0.27 0.0543 254.01);
   --color-ocean-blue-light: oklch(0.96 0.0195 270.21);
   --color-ocean-blue-pure: oklch(0.6 0.2136 264.61);
   --color-ocean-blue-pale: oklch(0.6 0.2136 264.61);
@@ -96,8 +96,10 @@
   --color-passion-orange-light: oklch(0.96 0.0219 58.79);
   --color-passion-orange-pure: oklch(0.7 0.204259 43.491);
   --color-green-pure: oklch(0.72 0.2021 145.47);
-  --color-yellow-pure: oklch(0.83 0.1625 88.2);
   --color-avo-green: oklch(0.64 0.1584 154.27);
+  --color-green-light: oklch(0.97 0.0216 149.72);
+  --color-yellow-pure: oklch(0.83 0.1625 88.2);
+  --color-yellow-light: oklch(0.95 0.2025 107.88);
   --container-container-main: 1016px;
   --container-navbar: var(--height-navbar);
 }
@@ -146,6 +148,12 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .form-input {
+    @apply border-grey-light appearance-none rounded-sm border-1 bg-white px-3 py-2 text-xs leading-3.5 font-medium outline-none focus:border-cyan-500 focus:shadow-cyan-500/40 focus:shadow-sm dark:text-black;
   }
 }
 
