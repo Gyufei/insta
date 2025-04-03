@@ -35,8 +35,6 @@ export default function TokenList({ searchQuery }: TokenListProps) {
                 key={index}
                 name={token.name}
                 symbol={token.symbol}
-                decimals={token.decimals}
-                address={token.address}
                 iconUrl={token.iconUrl}
               />
             ))}
