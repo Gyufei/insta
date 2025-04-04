@@ -2,7 +2,6 @@ import { PageHeader } from '@/components/layout/page-header';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BarChart, Users, Wallet, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 
 const stats = [
