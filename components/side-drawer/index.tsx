@@ -30,7 +30,7 @@ const SideDrawer = () => {
 
   return (
     <div
-      className="grid-sidebar-context absolute inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden ring-1 ring-black/5 duration-200 2xl:relative 2xl:transform-none dark:shadow-none"
+      className="grid-sidebar-context absolute inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden ring-1 ring-black/5 duration-200 xxl:relative xxl:transform-none dark:shadow-none"
       style={{ maxWidth: 'clamp(var(--min-width-app), var(--width-sidebar-context), 100%' }}
       data-v-ead27774=""
     >

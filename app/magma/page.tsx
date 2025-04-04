@@ -53,10 +53,10 @@ export default function Magma() {
   return (
     <div className="flex min-h-screen flex-col">
       <PageHeader title="Magma" src="/icons/magma.jpg" />
-      <div className="scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6 2xl:py-12">
+      <div className="scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6 xxl:py-12 xxl:px-4">
         <div className="max-w-container-main flex w-full flex-col">
           <div className="mb-8">
-            <h2 className="mb-6 text-2xl font-semibold">Mining Dashboard</h2>
+            <h2 className="mb-6 text-xxl font-semibold">Mining Dashboard</h2>
 
             <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
               {stats.map((stat, index) => (
@@ -85,7 +85,7 @@ export default function Magma() {
 
           <div>
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Mining Pools</h2>
+              <h2 className="text-xxl font-semibold">Mining Pools</h2>
               <div className="flex items-center space-x-3">
                 <Button
                   variant="outline"

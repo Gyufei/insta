@@ -56,10 +56,10 @@ export default function Curvance() {
   return (
     <div className="flex min-h-screen flex-col">
       <PageHeader title="Curvance" src="/icons/curvance.svg" />
-      <div className="scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6 2xl:py-12">
+      <div className="scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6 xxl:py-12 xxl:px-4">
         <div className="max-w-container-main flex w-full flex-col">
           <div className="mb-8">
-            <h2 className="mb-6 text-2xl font-semibold">Curve Trading</h2>
+            <h2 className="mb-6 text-xxl font-semibold">Curve Trading</h2>
 
             <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
               {stats.map((stat, index) => (
@@ -88,7 +88,7 @@ export default function Curvance() {
 
           <div>
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Curve Pools</h2>
+              <h2 className="text-xxl font-semibold">Curve Pools</h2>
               <div className="flex items-center space-x-3">
                 <Button
                   variant="outline"
@@ -157,7 +157,7 @@ export default function Curvance() {
           </div>
 
           <div className="mt-8">
-            <h2 className="mb-6 text-2xl font-semibold">Curve Analytics</h2>
+            <h2 className="mb-6 text-xxl font-semibold">Curve Analytics</h2>
             <Card className="p-6">
               <div className="mb-4">
                 <h3 className="mb-2 text-lg font-medium">ETH/USDC Curve</h3>

@@ -13,8 +13,8 @@ export function DSAInfo() {
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col items-center justify-center">
-        <h2 className="text-2xl">DeFi Smart Account</h2>
-        <h3 className="text-2xl">(DSA)</h3>
+        <h2 className="text-xxl">DeFi Smart Account</h2>
+        <h3 className="text-xxl">(DSA)</h3>
       </div>
 
       <Image src="/images/account-cover.png" alt="Account Cover" width={290} height={190} />

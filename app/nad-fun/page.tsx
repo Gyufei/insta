@@ -50,10 +50,10 @@ export default function NadFun() {
   return (
     <div className="flex min-h-screen flex-col">
       <PageHeader title="Nad.Fun" src="/icons/nad-fun.svg" />
-      <div className="scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6 2xl:py-12">
+      <div className="scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6 xxl:py-12 xxl:px-4">
         <div className="max-w-container-main flex w-full flex-col">
           <div className="mb-8">
-            <h2 className="mb-6 text-2xl font-semibold">Overview</h2>
+            <h2 className="mb-6 text-xxl font-semibold">Overview</h2>
 
             <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
               {stats.map((stat, index) => (
@@ -92,7 +92,7 @@ export default function NadFun() {
 
           <div>
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Features</h2>
+              <h2 className="text-xxl font-semibold">Features</h2>
               <Button variant="outline" size="sm" className="border-primary bg-blue-light text-primary h-9 hover:bg-blue-100">
                 Explore All
               </Button>
