@@ -167,6 +167,7 @@ export default function SideBar() {
     <nav
       className={`bg-background text-grey-pure dark:bg-dark-500 dark:text-grey-pure grid-sidebar-nav fixed inset-y-0 left-0 z-10 flex -translate-x-full flex-col ring-1 ring-black/5 duration-200 2xl:relative 2xl:translate-x-0 2xl:transform-none dark:shadow-none`}
       style={{ width: isCollapsed ? '60px' : '270px' }}
+      data-v-ead27774
     >
       {navContent}
       <button

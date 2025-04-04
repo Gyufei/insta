@@ -233,7 +233,7 @@ body {
 .grid[data-v-ead27774] {
   grid-template-columns: auto;
   grid-template-rows: var(--height-navbar) calc(100vh - var(--height-navbar));
-  grid-template-areas: 'navbar' 'main';
+    grid-template-areas: 'sidebar-nav main sidebar-context';
 }
 
 .grid.has-top-banner[data-v-ead27774] {
