@@ -19,7 +19,7 @@ export function useCreateAccount() {
       return;
     }
 
-    const url = new URL(ApiPath.account);
+    const url = new URL(ApiPath.createAccount);
     const body: RequestBody = {
       owner: address,
     };

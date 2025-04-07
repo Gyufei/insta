@@ -7,11 +7,14 @@ import BarHeader from './bar-header';
 import { BarItem, BarWithSubItem } from './bar-item';
 import { usePathname } from 'next/navigation';
 import SubMenu from './sub-menu';
+import { useSidebarStore } from '@/lib/state/sidebar';
+import { cn } from '@/lib/utils';
 
 export default function SideBar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openSub, setOpenSub] = useState<string | null>(null);
   const pathname = usePathname();
+  const { isOpen, setIsOpen } = useSidebarStore();
 
   function toggleCollapse() {
     setIsCollapsed(!isCollapsed);
@@ -164,19 +167,30 @@ export default function SideBar() {
   );
 
   return (
-    <nav
-      className={`bg-background text-grey-pure dark:bg-dark-500 dark:text-grey-pure grid-sidebar-nav fixed inset-y-0 left-0 z-10 flex -translate-x-full flex-col ring-1 ring-black/5 duration-200 xxl:relative xxl:translate-x-0 xxl:transform-none dark:shadow-none`}
-      style={{ width: isCollapsed ? '60px' : '270px' }}
-      data-v-ead27774
-    >
-      {navContent}
-      <button
-        className={`xxl:text-12 border-grey-light bg-light text-grey-pure hover:text-ocean-blue-pure dark:border-grey-pure dark:bg-dark-600 dark:text-grey-pure dark:hover:border-grey-light dark:hover:text-light absolute flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50`}
-        style={{ top: '71px', right: isCollapsed ? '20px' : '30px' }}
-        onClick={toggleCollapse}
+    <>
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="dark:bg-dark-500/70 fixed top-0 right-0 bottom-0 left-0 z-10 bg-white/70 2xl:hidden"
+        ></div>
+      )}
+      <nav
+        className={cn(
+          'bg-background text-grey-pure dark:bg-dark-500 dark:text-grey-pure grid-sidebar-nav fixed inset-y-0 left-0 z-10 flex flex-col ring-1 ring-black/5 duration-200 2xl:relative 2xl:transform-none dark:shadow-none',
+          isOpen ? 'translate-x-0' : '-translate-x-full 2xl:translate-x-0'
+        )}
+        style={{ width: isCollapsed ? '60px' : '270px' }}
+        data-v-ead27774
       >
-        {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
-      </button>
-    </nav>
+        {navContent}
+        <button
+          className={`2xl:text-12 border-grey-light bg-light text-grey-pure hover:text-ocean-blue-pure dark:border-grey-pure dark:bg-dark-600 dark:text-grey-pure dark:hover:border-grey-light dark:hover:text-light absolute flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50`}
+          style={{ top: '71px', right: isCollapsed ? '20px' : '30px' }}
+          onClick={toggleCollapse}
+        >
+          {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
+        </button>
+      </nav>
+    </>
   );
 }

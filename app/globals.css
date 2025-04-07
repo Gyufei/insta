@@ -102,7 +102,7 @@
   --color-yellow-light: oklch(0.95 0.2025 107.88);
   --container-container-main: 1016px;
   --container-navbar: var(--height-navbar);
-  --breakpoint-xxl: 1244px;
+  --breakpoint-2xl: 1244px;
 }
 
 @theme inline {
@@ -154,7 +154,7 @@
 
 @layer utilities {
   .form-input {
-    @apply border-grey-light appearance-none rounded-sm border-1 bg-white px-3 py-2 text-xs leading-3.5 font-medium outline-none focus:border-cyan-500 focus:shadow-cyan-500/40 focus:shadow-sm dark:text-black;
+    @apply border-grey-light appearance-none rounded-sm border-1 bg-white px-3 py-2 text-xs leading-3.5 font-medium outline-none focus:border-cyan-500 focus:shadow-sm focus:shadow-cyan-500/40 dark:text-black;
   }
 }
 
@@ -234,7 +234,9 @@ body {
 .grid[data-v-ead27774] {
   grid-template-columns: auto;
   grid-template-rows: var(--height-navbar) calc(100vh - var(--height-navbar));
-    grid-template-areas: 'sidebar-nav main sidebar-context';
+  grid-template-areas:
+    'navbar'
+    'main';
 }
 
 .grid.has-top-banner[data-v-ead27774] {

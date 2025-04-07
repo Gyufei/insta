@@ -5,9 +5,12 @@ import { Balance } from './balance';
 import { AccountSetting } from './account-setting';
 import { DepositToken } from './deposit-token';
 import { WithdrawToken } from './withdraw-token';
+import { cn } from '@/lib/utils';
+import { AprioriDeposit } from '@/app/apriori/apriori-deposit';
+import { AprioriWithdraw } from '@/app/apriori/apriori-withdraw';
 
 const SideDrawer = () => {
-  const { currentComponent } = useSideDrawerStore();
+  const { isOpen, currentComponent } = useSideDrawerStore();
 
   const renderContent = () => {
     switch (currentComponent) {
@@ -19,6 +22,10 @@ const SideDrawer = () => {
         return <DepositToken />;
       case 'WithdrawMon':
         return <WithdrawToken />;
+      case 'AprioriDeposit':
+        return <AprioriDeposit />;
+      case 'AprioriWithdraw':
+        return <AprioriWithdraw />;
       default:
         return null;
     }
@@ -30,8 +37,11 @@ const SideDrawer = () => {
 
   return (
     <div
-      className="grid-sidebar-context absolute inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden ring-1 ring-black/5 duration-200 xxl:relative xxl:transform-none dark:shadow-none"
-      style={{ maxWidth: 'clamp(var(--min-width-app), var(--width-sidebar-context), 100%' }}
+      className={cn(
+        'grid-sidebar-context absolute inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden ring-1 ring-black/5 duration-200 2xl:relative 2xl:transform-none dark:shadow-none',
+        isOpen ? 'translate-x-0' : 'translate-x-full 2xl:translate-x-0'
+      )}
+      style={{ maxWidth: 'clamp(var(--min-width-app), var(--width-sidebar-context), 100%)' }}
       data-v-ead27774=""
     >
       <AnimatePresence mode="wait">

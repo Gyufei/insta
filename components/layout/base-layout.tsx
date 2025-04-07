@@ -11,7 +11,7 @@ export default function BaseLayout({ children }: { children: React.ReactNode }) 
     >
       <MbHeader />
       <div
-        className="grid-main dark:bg-dark-600 relative flex flex-grow flex-col overflow-x-hidden xxl:bg-white"
+        className="grid-main dark:bg-dark-600 relative flex flex-grow flex-col overflow-x-hidden 2xl:bg-white"
         data-v-ead27774=""
       >
         {children}

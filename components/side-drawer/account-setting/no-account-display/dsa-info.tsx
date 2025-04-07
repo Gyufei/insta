@@ -17,7 +17,7 @@ export function DSAInfo() {
         <h3 className="text-xxl">(DSA)</h3>
       </div>
 
-      <Image src="/images/account-cover.png" alt="Account Cover" width={290} height={190} />
+      <Image src="/images/account-cover.png" alt="DeFi Smart Account Cover" width={290} height={190} />
 
       <div>
         <h3 className="text-grey-pure mb-6">

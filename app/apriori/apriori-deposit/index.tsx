@@ -1,29 +1,33 @@
 import { multiply } from 'safebase';
-import SideDrawerBackHeader from '../side-drawer-back-header';
+import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { TokenData } from '@/lib/data/tokens';
-import { useDeposit } from '@/lib/data/use-deposit';
-import { TokenDisplay } from '../common/token-display';
-import { TokenInput } from '../common/token-input';
-import { ActionButton } from '../common/action-button';
-import { ErrorMessage } from '../common/error-message';
+import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';
+import { TokenDisplay } from '@/components/side-drawer/common/token-display';
+import { TokenInput } from '@/components/side-drawer/common/token-input';
+import { ActionButton } from '@/components/side-drawer/common/action-button';
+import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { HrLine } from '../common/hr-line';
-import { SetMax } from '../common/set-max';
+import { HrLine } from '@/components/side-drawer/common/hr-line';
+import { SetMax } from '@/components/side-drawer/common/set-max';
 import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
+import { DepositEstReceive } from './deposit-est-receive';
 
-export function DepositToken() {
-  const token = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
+export function AprioriDeposit() {
+  const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
+  const aprMonToken = TokenData.find((token) => token.symbol === 'aprMON') || TokenData[1];
 
   const { setIsOpen } = useSideDrawerStore();
-  const { mutate: deposit, isPending } = useDeposit();
+  const { mutate: deposit, isPending } = useAprioriDeposit();
 
   const { balance, isPending: isBalancePending } = useWalletBalance();
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
 
+  const receiveAmount = inputValue || '0';
+
   const handleDeposit = () => {
     if (!inputValue || btnDisabled || isPending) return;
-    const amount = multiply(inputValue, String(10 ** (token?.decimals || 18)));
+    const amount = multiply(inputValue, String(10 ** (monToken?.decimals || 18)));
     deposit(amount);
   };
 
@@ -35,7 +39,7 @@ export function DepositToken() {
           <div className="pt-2 pb-10 sm:pt-4">
             <TokenDisplay
               isPending={isBalancePending}
-              token={token}
+              token={monToken}
               balance={balance}
               balanceLabel="Token Balance"
             />
@@ -51,6 +55,8 @@ export function DepositToken() {
               disabled={true}
               tooltip="You can't set max amount since gas fee amount should be left"
             />
+            <HrLine />
+            <DepositEstReceive receiveToken={aprMonToken} receiveAmount={receiveAmount} />
             <HrLine />
             <ActionButton disabled={btnDisabled} onClick={handleDeposit} isPending={isPending}>
               Deposit

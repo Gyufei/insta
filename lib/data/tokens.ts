@@ -14,8 +14,16 @@ export const TokenData: IToken[] = [
     decimals: 18,
     address: '0x0000000000000000000000000000000000000000',
   },
+  {
+    name: 'aprMON',
+    symbol: 'aprMON',
+    iconUrl: '/icons/aprmon.svg',
+    decimals: 18,
+    address: '0x0000000000000000000000000000000000000000',
+  },
 ];
 
 export const TokenPriceMap: Record<string, number> = {
-  MON: 1700,
+  MON: 9.82,
+  aprMON: 9.82,
 };

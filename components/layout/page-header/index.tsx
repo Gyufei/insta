@@ -17,7 +17,7 @@ export function PageHeader({ title, src }: { title: string; src: string }) {
   }
 
   return (
-    <header className="border-grey-light dark:border-dark-600 xxl:dark:bg-dark-500 flex flex-wrap items-center justify-between gap-4 border-b px-4 py-4 sm:flex-nowrap xxl:px-12 xxl:py-[20.5px]">
+    <header className="border-grey-light dark:border-dark-600 2xl:dark:bg-dark-500 flex flex-wrap items-center justify-between gap-4 border-b px-4 py-4 sm:flex-nowrap 2xl:px-12 2xl:py-[20.5px]">
       <PageTitle title={title} src={src} />
 
       <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
@@ -32,7 +32,7 @@ export function PageHeader({ title, src }: { title: string; src: string }) {
           </>
         ) : (
           <button
-            className="bg-ocean-blue-pure/10 dark:text-ocean-blue-pale dark:bg-ocean-blue-pure/17 hover:bg-ocean-blue-pure/25 focus:bg-ocean-blue-pure/25 active:bg-ocean-blue-pure/30 dark:active:bg-ocean-blue-pure/38 dark:hover:bg-ocean-blue-pure/25 dark:focus:bg-ocean-blue-pure/25 text-ocean-blue-pure hover:text-ocean-blue-pure flex w-18 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-2 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50 xxl:w-[92px]"
+            className="bg-ocean-blue-pure/10 dark:text-ocean-blue-pale dark:bg-ocean-blue-pure/17 hover:bg-ocean-blue-pure/25 focus:bg-ocean-blue-pure/25 active:bg-ocean-blue-pure/30 dark:active:bg-ocean-blue-pure/38 dark:hover:bg-ocean-blue-pure/25 dark:focus:bg-ocean-blue-pure/25 text-ocean-blue-pure hover:text-ocean-blue-pure flex w-18 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-2 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50 2xl:w-[92px]"
             onClick={openWeb3Modal}
           >
             <div className="leading-5">Connect</div>

@@ -34,20 +34,22 @@ export function useWithdraw() {
   const { data: accountInfo } = useGetAccount();
   const { send, isPending: isSending } = useSendTx();
 
+  const account = accountInfo?.sandbox_account;
+
   async function withdraw(amount: string) {
     if (!address) {
       toast.info(ERROR_MESSAGES.WALLET_NOT_CONNECTED);
       return;
     }
 
-    if (!accountInfo?.sandbox_account) {
+    if (!account) {
       toast.info(ERROR_MESSAGES.ACCOUNT_NOT_CREATED);
       return;
     }
 
     const params: WithdrawParams = {
       wallet: address,
-      sandbox_account: accountInfo.sandbox_account,
+      sandbox_account: account,
       amount,
     };
 

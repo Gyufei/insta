@@ -6,24 +6,28 @@ import { useGetAccount } from '../data/use-get-account';
 export function useAccountBalance() {
   const { data: accountInfo, isPending: isAccountInfoPending } = useGetAccount();
 
+  const hasAccount = Boolean(accountInfo?.sandbox_account);
+
   const { data: balanceData, isPending: isBalancePending } = useBalance({
     address: accountInfo?.sandbox_account as `0x${string}`,
     query: {
-      enabled: Boolean(accountInfo?.sandbox_account && !isAccountInfoPending),
+      enabled: hasAccount && !isAccountInfoPending,
     },
   });
 
   const balanceBig = useMemo(() => {
+    if (!hasAccount) return '0';
     return balanceData?.value;
-  }, [balanceData]);
+  }, [balanceData, hasAccount]);
 
   const balance = useMemo(() => {
+    if (!hasAccount) return '0';
     return divide(String(balanceBig), String(10 ** (balanceData?.decimals || 18)));
-  }, [balanceBig, balanceData?.decimals]);
+  }, [balanceBig, balanceData?.decimals, hasAccount]);
 
   return {
     balanceBig,
     balance,
-    isPending: isAccountInfoPending || isBalancePending,
+    isPending: hasAccount && (isAccountInfoPending || isBalancePending),
   };
 }

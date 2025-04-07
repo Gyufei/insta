@@ -13,7 +13,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: 'Aave v3 Lido | Instadapp',
+  title: 'Tadle',
   description: 'The Most Powerful DeFi Management Platform',
 };
 

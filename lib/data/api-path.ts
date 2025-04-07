@@ -8,9 +8,14 @@ export const ApiHost = isProduction ? ProdHost : DevHost;
 
 export const ApiPath = {
   account: `${ApiHost}/account/sandbox_account`,
+  createAccount: `${ApiHost}/account/create_sandbox_account`,
   addAuthority: `${ApiHost}/account/enable`,
   deleteAuthority: `${ApiHost}/account/disable`,
   deposit: `${ApiHost}/account/deposit`,
   withdraw: `${ApiHost}/account/withdraw`,
   sendTx: `${ApiHost}/transaction/send`,
+
+  aprioriBalance: `${ApiHost}/aprior/balance`,
+  aprioriDeposit: `${ApiHost}/aprior/deposit`,
+  aprioriWithdraw: `${ApiHost}/aprior/request_redeem`,
 };

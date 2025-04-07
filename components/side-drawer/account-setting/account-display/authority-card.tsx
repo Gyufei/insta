@@ -12,16 +12,17 @@ export function AuthorityCard({ manager }: { manager: string }) {
   const { address } = useAccount();
   const { data: accountInfo } = useGetAccount();
   const { mutateAsync: deleteAuthority, isPending } = useDeleteAuthority();
+  const account = accountInfo?.sandbox_account;
 
   const handleDelete = async () => {
-    if (!address || !accountInfo?.sandbox_account) {
+    if (!address || !account) {
       return;
     }
 
     try {
       await deleteAuthority({
         wallet: address,
-        sandbox_account: accountInfo.sandbox_account,
+        sandbox_account: account,
         manager,
       });
       toast.success('Authority removed successfully');

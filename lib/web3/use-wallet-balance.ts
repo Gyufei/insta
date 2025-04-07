@@ -13,15 +13,17 @@ export function useWalletBalance() {
   });
 
   const balanceBig = useMemo(() => {
+    if (!address) return '0';
     return balanceData?.value;
-  }, [balanceData]);
+  }, [balanceData, address]);
 
   const balance = useMemo(() => {
+    if (!address) return '0';
     return divide(String(balanceBig), String(10 ** (balanceData?.decimals || 18)));
-  }, [balanceBig, balanceData?.decimals]);
+  }, [balanceBig, balanceData?.decimals, address]);
 
   return {
-    isPending,
+    isPending: address && isPending,
     balanceBig,
     balance,
   };

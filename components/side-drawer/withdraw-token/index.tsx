@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { multiply } from 'safebase';
 
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
@@ -6,16 +5,17 @@ import SideDrawerBackHeader from '../side-drawer-back-header';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { TokenData } from '@/lib/data/tokens';
 import { useWithdraw } from '@/lib/data/use-withdraw';
-import { SetMax } from '../deposit-token/set-max';
-import { TokenDisplay } from '../deposit-token/token-display';
-import { TokenInput } from '../deposit-token/token-input';
-import { ActionButton } from '../deposit-token/action-button';
-import { ErrorMessage } from '../deposit-token/error-message';
-import { HrLine } from '../deposit-token/hr-line';
+import { SetMax } from '../common/set-max';
+import { TokenDisplay } from '../common/token-display';
+import { TokenInput } from '../common/token-input';
+import { ActionButton } from '../common/action-button';
+import { ErrorMessage } from '../common/error-message';
+import { HrLine } from '../common/hr-line';
 import { useAccountBalance } from '@/lib/web3/use-account-balance';
+import { useSetMax } from '../common/use-set-max';
 
 export function WithdrawToken() {
-  const { setCurrentComponent } = useSideDrawerStore();
+  const { setIsOpen } = useSideDrawerStore();
 
   const token = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
 
@@ -23,10 +23,8 @@ export function WithdrawToken() {
 
   const { mutate: withdraw, isPending } = useWithdraw();
 
-  const [isMax, setIsMax] = useState(false);
-  const [prevValue, setPrevValue] = useState('');
-
-  const { inputValue, btnDisabled, showError, handleInputChange } = useTokenInput(balance);
+  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
+  const { isMax, handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
 
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
@@ -34,19 +32,9 @@ export function WithdrawToken() {
     withdraw(amount);
   };
 
-  const handleSetMax = (checked: boolean) => {
-    setIsMax(checked);
-    if (checked) {
-      setPrevValue(inputValue);
-      handleInputChange(balance);
-    } else {
-      handleInputChange(prevValue);
-    }
-  };
-
   return (
     <>
-      <SideDrawerBackHeader title="Withdraw" onClick={() => setCurrentComponent('Balance')} />
+      <SideDrawerBackHeader title="Withdraw" onClick={() => setIsOpen(false)} />
       <div className="scrollbar-hover flex-grow overflow-x-hidden overflow-y-scroll">
         <div className="mx-auto" style={{ maxWidth: '296px' }}>
           <div className="pt-2 pb-10 sm:pt-4">
@@ -54,7 +42,7 @@ export function WithdrawToken() {
             <HrLine />
             <TokenInput
               inputValue={inputValue}
-              onInputChange={handleInputChange}
+              onInputChange={handleInput}
               placeholder="Amount to withdraw"
             />
             <HrLine />
@@ -63,7 +51,7 @@ export function WithdrawToken() {
             <ActionButton disabled={btnDisabled} onClick={handleWithdraw} isPending={isPending}>
               Withdraw
             </ActionButton>
-            <ErrorMessage show={showError} />
+            <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
           </div>
         </div>
       </div>

@@ -2,10 +2,10 @@ import { CircleX } from 'lucide-react';
 
 interface ErrorMessageProps {
   show: boolean;
-  message?: string;
+  message: string;
 }
 
-export function ErrorMessage({ show, message = 'Your amount exceeds maximum limit.' }: ErrorMessageProps) {
+export function ErrorMessage({ show, message }: ErrorMessageProps) {
   if (!show) return null;
 
   return (
@@ -24,4 +24,4 @@ export function ErrorMessage({ show, message = 'Your amount exceeds maximum limi
       </div>
     </div>
   );
-} 
+}

@@ -1,7 +1,5 @@
 import numbro from 'numbro';
 
-numbro.zeroFormat('N/A');
-
 export function formatNumber(num: string | number) {
   return numbro(num).format({
     thousandSeparated: true,

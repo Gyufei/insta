@@ -1,26 +1,27 @@
+import { toast } from 'sonner';
+import { useAccount } from 'wagmi';
 import { ApiPath } from './api-path';
 import { useMutation } from '@tanstack/react-query';
 import { Fetcher } from '../fetcher';
 import { ITxData } from '../model';
 import { useSendTx } from '../web3/use-send-tx';
-import { toast } from 'sonner';
 import { useGetAccount } from './use-get-account';
-import { useAccount } from 'wagmi';
 import { ERROR_MESSAGES } from '@/config/error-msg';
 
-export interface CreateAuthorityParams {
+interface AprioriDepositParams {
   wallet: string;
   sandbox_account: string;
-  manager: string;
+  deposit_amount: string;
 }
 
-export function useCreateAuthority() {
+export function useAprioriDeposit() {
   const { address } = useAccount();
   const { data: accountInfo } = useGetAccount();
   const { send, isPending: isSending } = useSendTx();
+
   const account = accountInfo?.sandbox_account;
 
-  async function createAuthority(manager: string) {
+  async function aprioriDeposit(amount: string) {
     if (!address) {
       toast.info(ERROR_MESSAGES.WALLET_NOT_CONNECTED);
       return;
@@ -31,13 +32,13 @@ export function useCreateAuthority() {
       return;
     }
 
-    const params = {
+    const url = new URL(ApiPath.aprioriDeposit);
+
+    const params: AprioriDepositParams = {
       wallet: address,
       sandbox_account: account,
-      manager,
+      deposit_amount: amount,
     };
-
-    const url = new URL(ApiPath.addAuthority);
 
     try {
       const txData = await Fetcher<ITxData>(url, {
@@ -55,17 +56,17 @@ export function useCreateAuthority() {
 
       await send(txData);
     } catch (err) {
-      toast.error(ERROR_MESSAGES.CREATE_AUTHORITY_FAILED);
+      toast.error(ERROR_MESSAGES.DEPOSIT_FAILED);
       throw err;
     }
   }
 
   const mutation = useMutation({
-    mutationFn: createAuthority,
+    mutationFn: aprioriDeposit,
   });
 
   return {
     ...mutation,
     isPending: mutation.isPending || isSending,
   };
-}
+} 

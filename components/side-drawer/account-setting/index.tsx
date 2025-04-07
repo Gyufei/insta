@@ -10,21 +10,19 @@ import { AccountDisplay } from './account-display';
 
 export function AccountSetting() {
   const { address } = useAccount();
-  const { setCurrentComponent } = useSideDrawerStore();
+  const { setIsOpen } = useSideDrawerStore();
   const { data: accountInfo } = useGetAccount();
+  const account = accountInfo?.sandbox_account;
 
   return (
     <>
-      <SideDrawerBackHeader
-        title="Account Settings"
-        onClick={() => setCurrentComponent('Balance')}
-      />
+      <SideDrawerBackHeader title="Account Settings" onClick={() => setIsOpen(false)} />
 
       <div className="scrollbar-hover flex flex-grow flex-col overflow-x-hidden overflow-y-scroll py-6">
         <div className="mb-10 flex flex-col gap-2 px-8">
           <ConnectWalletButton address={formatAddress(address || '')} />
         </div>
-        {accountInfo ? <AccountDisplay /> : <NoAccountDisplay />}
+        {account ? <AccountDisplay /> : <NoAccountDisplay />}
       </div>
       <Disconnect />
     </>

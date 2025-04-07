@@ -80,7 +80,7 @@ export default function Meme() {
   return (
     <div className="flex min-h-screen flex-col">
       <PageHeader title="Meme" src="/icons/monad.svg" />
-      <div className="scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6 xxl:py-12 xxl:px-4">
+      <div className="scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6 2xl:py-12 2xl:px-4">
         <div className="max-w-container-main flex w-full flex-col">
           <div className="mb-8">
             <h2 className="mb-6 text-xxl font-semibold">Meme Token Market</h2>

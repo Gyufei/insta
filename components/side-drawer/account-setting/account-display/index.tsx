@@ -5,11 +5,12 @@ import { AuthorityManage } from './authority-manage';
 
 export function AccountDisplay() {
   const { data: accountInfo } = useGetAccount();
+  const account = accountInfo?.sandbox_account;
 
   return (
     <div>
       <div className="px-8 text-center text-[19px] font-semibold">Accounts</div>
-      {accountInfo && (
+      {account && (
         <>
           <div className="mt-4 grid grid-cols-1 pr-4 pl-8">
             <AccountCard accountInfo={accountInfo} />
