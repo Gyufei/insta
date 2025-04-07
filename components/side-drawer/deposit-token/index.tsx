@@ -11,7 +11,7 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { HrLine } from '../common/hr-line';
 import { SetMax } from '../common/set-max';
 import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
-
+import { SideDrawerLayout } from '../common/side-drawer-layout';
 export function DepositToken() {
   const token = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
 
@@ -30,35 +30,31 @@ export function DepositToken() {
   return (
     <>
       <SideDrawerBackHeader title="Deposit" onClick={() => setIsOpen(false)} />
-      <div className="scrollbar-hover flex-grow overflow-x-hidden overflow-y-scroll">
-        <div className="mx-auto" style={{ maxWidth: '296px' }}>
-          <div className="pt-2 pb-10 sm:pt-4">
-            <TokenDisplay
-              isPending={isBalancePending}
-              token={token}
-              balance={balance}
-              balanceLabel="Token Balance"
-            />
-            <HrLine />
-            <TokenInput
-              inputValue={inputValue}
-              onInputChange={handleInputChange}
-              placeholder="Amount to deposit"
-            />
-            <HrLine />
-            <SetMax
-              checked={false}
-              disabled={true}
-              tooltip="You can't set max amount since gas fee amount should be left"
-            />
-            <HrLine />
-            <ActionButton disabled={btnDisabled} onClick={handleDeposit} isPending={isPending}>
-              Deposit
-            </ActionButton>
-            <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
-          </div>
-        </div>
-      </div>
+      <SideDrawerLayout>
+        <TokenDisplay
+          isPending={isBalancePending}
+          token={token}
+          balance={balance}
+          balanceLabel="Token Balance"
+        />
+        <HrLine />
+        <TokenInput
+          inputValue={inputValue}
+          onInputChange={handleInputChange}
+          placeholder="Amount to deposit"
+        />
+        <HrLine />
+        <SetMax
+          checked={false}
+          disabled={true}
+          tooltip="You can't set max amount since gas fee amount should be left"
+        />
+        <HrLine />
+        <ActionButton disabled={btnDisabled} onClick={handleDeposit} isPending={isPending}>
+          Deposit
+        </ActionButton>
+        <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
+      </SideDrawerLayout>
     </>
   );
 }

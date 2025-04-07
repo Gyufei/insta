@@ -8,20 +8,20 @@ import { useSendTx } from '../web3/use-send-tx';
 import { useGetAccount } from './use-get-account';
 import { ERROR_MESSAGES } from '@/config/error-msg';
 
-interface AprioriWithdrawParams {
+interface AprioriClaimParams {
   wallet: string;
   sandbox_account: string;
-  shares: string;
+  request_id: string;
 }
 
-export function useAprioriWithdraw() {
+export function useAprioriClaim() {
   const { address } = useAccount();
   const { data: accountInfo } = useGetAccount();
   const { send, isPending: isSending } = useSendTx();
 
   const account = accountInfo?.sandbox_account;
 
-  async function aprioriWithdraw(shares: string) {
+  async function aprioriClaim(requestId: string) {
     if (!address) {
       toast.info(ERROR_MESSAGES.WALLET_NOT_CONNECTED);
       return;
@@ -32,12 +32,12 @@ export function useAprioriWithdraw() {
       return;
     }
 
-    const url = new URL(ApiPath.aprioriRequestClaim);
+    const url = new URL(ApiPath.aprioriClaim);
 
-    const params: AprioriWithdrawParams = {
+    const params: AprioriClaimParams = {
       wallet: address,
       sandbox_account: account,
-      shares,
+      request_id: requestId,
     };
 
     try {
@@ -62,7 +62,7 @@ export function useAprioriWithdraw() {
   }
 
   const mutation = useMutation({
-    mutationFn: aprioriWithdraw,
+    mutationFn: aprioriClaim,
   });
 
   return {

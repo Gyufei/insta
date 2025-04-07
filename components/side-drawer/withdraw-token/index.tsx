@@ -13,6 +13,7 @@ import { ErrorMessage } from '../common/error-message';
 import { HrLine } from '../common/hr-line';
 import { useAccountBalance } from '@/lib/web3/use-account-balance';
 import { useSetMax } from '../common/use-set-max';
+import { SideDrawerLayout } from '../common/side-drawer-layout';
 
 export function WithdrawToken() {
   const { setIsOpen } = useSideDrawerStore();
@@ -35,26 +36,22 @@ export function WithdrawToken() {
   return (
     <>
       <SideDrawerBackHeader title="Withdraw" onClick={() => setIsOpen(false)} />
-      <div className="scrollbar-hover flex-grow overflow-x-hidden overflow-y-scroll">
-        <div className="mx-auto" style={{ maxWidth: '296px' }}>
-          <div className="pt-2 pb-10 sm:pt-4">
-            <TokenDisplay token={token} balance={balance} balanceLabel="Supply" />
-            <HrLine />
-            <TokenInput
-              inputValue={inputValue}
-              onInputChange={handleInput}
-              placeholder="Amount to withdraw"
-            />
-            <HrLine />
-            <SetMax checked={isMax} disabled={false} onChange={handleSetMax} />
-            <HrLine />
-            <ActionButton disabled={btnDisabled} onClick={handleWithdraw} isPending={isPending}>
-              Withdraw
-            </ActionButton>
-            <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
-          </div>
-        </div>
-      </div>
+      <SideDrawerLayout>
+        <TokenDisplay token={token} balance={balance} balanceLabel="Supply" />
+        <HrLine />
+        <TokenInput
+          inputValue={inputValue}
+          onInputChange={handleInput}
+          placeholder="Amount to withdraw"
+        />
+        <HrLine />
+        <SetMax checked={isMax} disabled={false} onChange={handleSetMax} />
+        <HrLine />
+        <ActionButton disabled={btnDisabled} onClick={handleWithdraw} isPending={isPending}>
+          Withdraw
+        </ActionButton>
+        <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
+      </SideDrawerLayout>
     </>
   );
 }

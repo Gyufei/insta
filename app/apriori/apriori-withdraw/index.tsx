@@ -1,69 +1,80 @@
-import { multiply } from 'safebase';
 import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { TokenData } from '@/lib/data/tokens';
-import { useAprioriWithdraw } from '@/lib/data/use-apriori-withdraw';
-import { TokenDisplay } from '@/components/side-drawer/common/token-display';
-import { TokenInput } from '@/components/side-drawer/common/token-input';
-import { ActionButton } from '@/components/side-drawer/common/action-button';
-import { ErrorMessage } from '@/components/side-drawer/common/error-message';
-import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { HrLine } from '@/components/side-drawer/common/hr-line';
-import { SetMax } from '@/components/side-drawer/common/set-max';
-import { useAprioriBalance } from '@/lib/data/use-aprior-balance';
-import { EstReceive } from './withdraw-est-receive';
-import { useSetMax } from '@/components/side-drawer/common/use-set-max';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { Withdraw } from './withdraw';
+import { Claim } from './claim';
+import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
+import { useState } from 'react';
+import { CircleCheckBig } from 'lucide-react';
+
+interface TabButtonProps {
+  label: string;
+  value: string;
+  activeTab: string;
+  onClick: () => void;
+}
+
+function TabButton({ label, value, activeTab, onClick }: TabButtonProps) {
+  const isActive = activeTab === value;
+
+  return (
+    <div className="flex">
+      <button
+        className={`relative flex flex-1 cursor-pointer items-center gap-2 rounded-sm border bg-white px-4 py-3 outline-none select-none focus:outline-none ${
+          isActive
+            ? 'border-ocean-blue-pure dark:border-grey-light'
+            : 'border-grey-light hover:border-ocean-blue-pure dark:border-grey-pure dark:hover:border-grey-light'
+        } dark:bg-dark-400`}
+        onClick={onClick}
+      >
+        <p className="text-14 leading-none font-semibold">{label}</p>
+        {isActive && (
+          <div
+            className="bg-ocean-blue-pure dark:bg-grey-light dark:text-dark-600 absolute flex h-4 w-4 cursor-pointer items-center justify-center rounded-full text-white"
+            style={{ top: '-6px', right: '-6px' }}
+          >
+            <CircleCheckBig className="h-3.5 w-3.5 dark:opacity-90" />
+          </div>
+        )}
+      </button>
+    </div>
+  );
+}
 
 export function AprioriWithdraw() {
-  const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
-  const aprMonToken = TokenData.find((token) => token.symbol === 'aprMON') || TokenData[1];
-
   const { setIsOpen } = useSideDrawerStore();
-  const { mutate: withdraw, isPending } = useAprioriWithdraw();
-
-  const { data: aprioriBalance, isLoading: isBalancePending } = useAprioriBalance();
-  const balance = aprioriBalance?.balance || '0';
-  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
-  const { isMax, handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
-
-  const receiveAmount = inputValue || '0';
-
-  const handleWithdraw = () => {
-    if (!inputValue || btnDisabled || isPending) return;
-    const amount = multiply(inputValue, String(10 ** (aprMonToken?.decimals || 18)));
-    withdraw(amount);
-  };
+  const [activeTab, setActiveTab] = useState('withdraw');
 
   return (
     <>
       <SideDrawerBackHeader title="Withdraw" onClick={() => setIsOpen(false)} />
-      <div className="scrollbar-hover flex-grow overflow-x-hidden overflow-y-scroll">
-        <div className="mx-auto" style={{ maxWidth: '296px' }}>
-          <div className="pt-2 pb-10 sm:pt-4">
-            <TokenDisplay
-              isPending={isBalancePending}
-              token={aprMonToken}
-              balance={balance}
-              balanceLabel="Token Balance"
+      <SideDrawerLayout>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full py-0">
+          <div
+            className="mx-auto grid w-full grid-cols-2 gap-2 whitespace-nowrap"
+            style={{ maxWidth: '296px' }}
+          >
+            <TabButton
+              label="Request"
+              value="withdraw"
+              activeTab={activeTab}
+              onClick={() => setActiveTab('withdraw')}
             />
-            <HrLine />
-            <TokenInput
-              inputValue={inputValue}
-              onInputChange={handleInput}
-              placeholder="Amount to withdraw"
+            <TabButton
+              label="Claim"
+              value="claim"
+              activeTab={activeTab}
+              onClick={() => setActiveTab('claim')}
             />
-            <HrLine />
-            <SetMax checked={isMax} onChange={handleSetMax} />
-            <HrLine />
-            <EstReceive receiveToken={monToken} receiveAmount={receiveAmount} />
-            <HrLine />
-            <ActionButton disabled={btnDisabled} onClick={handleWithdraw} isPending={isPending}>
-              Withdraw
-            </ActionButton>
-            <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
           </div>
-        </div>
-      </div>
+          <TabsContent value="withdraw" className="mt-2">
+            <Withdraw />
+          </TabsContent>
+          <TabsContent value="claim" className="mt-2">
+            <Claim />
+          </TabsContent>
+        </Tabs>
+      </SideDrawerLayout>
     </>
   );
 }

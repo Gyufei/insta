@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import TokenCard from './token-card';
 import { IToken, TokenData } from '@/lib/data/tokens';
 import { NoSearchResult } from './no-search-result';
+import { AprMONTokenCard } from './apr-mon-token-card';
 
 interface TokenListProps {
   searchQuery: string;
@@ -30,14 +31,24 @@ export default function TokenList({ searchQuery }: TokenListProps) {
           <NoSearchResult searchQuery={searchQuery} />
         ) : (
           <>
-            {filteredTokens.map((token, index) => (
-              <TokenCard
-                key={index}
-                name={token.name}
-                symbol={token.symbol}
-                iconUrl={token.iconUrl}
-              />
-            ))}
+            {filteredTokens.map((token, index) => {
+              if (token.symbol === 'MON') {
+                return (
+                  <TokenCard
+                    key={index}
+                    name={token.name}
+                    symbol={token.symbol}
+                    iconUrl={token.iconUrl}
+                  />
+                );
+              }
+
+              if (token.symbol === 'aprMON') {
+                return <AprMONTokenCard key={index} />;
+              }
+
+              return null;
+            })}
           </>
         )}
       </div>

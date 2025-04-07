@@ -17,5 +17,6 @@ export const ApiPath = {
 
   aprioriBalance: `${ApiHost}/aprior/balance`,
   aprioriDeposit: `${ApiHost}/aprior/deposit`,
-  aprioriWithdraw: `${ApiHost}/aprior/request_redeem`,
+  aprioriRequestClaim: `${ApiHost}/aprior/request_redeem`,
+  aprioriClaim: `${ApiHost}/aprior/redeem`,
 };
