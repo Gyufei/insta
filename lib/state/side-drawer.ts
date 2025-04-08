@@ -7,13 +7,31 @@ export type SideDrawerComponent =
   | 'WithdrawMon'
   | 'AprioriDeposit'
   | 'AprioriWithdraw'
+  | 'NadFunBuyToken'
+  | 'NadFunSellToken'
   | null;
+
+type CurrentComponent = {
+  name: SideDrawerComponent;
+  props?: CompProps;
+};
+
+type CompProps = {
+  token?: {
+    address: string;
+    symbol: string;
+    name: string;
+    logo: string;
+    balance: string;
+  };
+  [key: string]: unknown;
+} | null;
 
 type SideDrawerState = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  currentComponent: SideDrawerComponent;
-  setCurrentComponent: (component: SideDrawerComponent) => void;
+  currentComponent: CurrentComponent | null;
+  setCurrentComponent: (comp: CurrentComponent) => void;
 };
 
 export const useSideDrawerStore = create<SideDrawerState>((set) => ({
@@ -21,9 +39,10 @@ export const useSideDrawerStore = create<SideDrawerState>((set) => ({
   setIsOpen: (isOpen) => {
     set({ isOpen });
     if (!isOpen) {
-      set({ currentComponent: 'Balance' });
+      set({ currentComponent: { name: 'Balance' } });
     }
   },
-  currentComponent: 'Balance',
-  setCurrentComponent: (component) => set({ currentComponent: component }),
+  currentComponent: { name: 'Balance' },
+  setCurrentComponent: ({ name, props }: CurrentComponent) =>
+    set({ currentComponent: { name, props } }),
 }));

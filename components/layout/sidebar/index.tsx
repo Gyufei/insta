@@ -9,8 +9,10 @@ import { usePathname } from 'next/navigation';
 import SubMenu from './sub-menu';
 import { useSidebarStore } from '@/lib/state/sidebar';
 import { cn } from '@/lib/utils';
+import { useSelectedAccount } from '@/lib/data/use-account';
 
 export default function SideBar() {
+  const { data: accountInfo } = useSelectedAccount();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openSub, setOpenSub] = useState<string | null>(null);
   const pathname = usePathname();
@@ -149,17 +151,19 @@ export default function SideBar() {
             <SubMenu items={protocolItems} currentPath={pathname} />
           </BarWithSubItem>
 
-          <BarWithSubItem
-            icon={
-              <Cog className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
-            }
-            name="Utilities"
-            isCollapsed={isCollapsed}
-            openSub={openSub}
-            setOpenSub={setOpenSub}
-          >
-            <SubMenu items={utilitiesItems} currentPath={pathname} />
-          </BarWithSubItem>
+          {accountInfo?.sandbox_account && (
+            <BarWithSubItem
+              icon={
+                <Cog className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
+              }
+              name="Utilities"
+              isCollapsed={isCollapsed}
+              openSub={openSub}
+              setOpenSub={setOpenSub}
+            >
+              <SubMenu items={utilitiesItems} currentPath={pathname} />
+            </BarWithSubItem>
+          )}
         </div>
         <BarFooter isCollapsed={isCollapsed} />
       </div>
@@ -184,7 +188,7 @@ export default function SideBar() {
       >
         {navContent}
         <button
-          className={`2xl:text-xs border-grey-light bg-light text-grey-pure hover:text-ocean-blue-pure dark:border-grey-pure dark:bg-dark-600 dark:text-grey-pure dark:hover:border-grey-light dark:hover:text-light absolute flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50`}
+          className={`border-grey-light bg-light text-grey-pure hover:text-ocean-blue-pure dark:border-grey-pure dark:bg-dark-600 dark:text-grey-pure dark:hover:border-grey-light dark:hover:text-light absolute flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50 2xl:text-xs`}
           style={{ top: '71px', right: isCollapsed ? '20px' : '30px' }}
           onClick={toggleCollapse}
         >

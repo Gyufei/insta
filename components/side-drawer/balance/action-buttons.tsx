@@ -15,7 +15,7 @@ function DepositButton() {
   const { setCurrentComponent } = useSideDrawerStore();
 
   function handleDeposit() {
-    setCurrentComponent('DepositMon');
+    setCurrentComponent({ name: 'DepositMon' });
   }
 
   return (
@@ -35,7 +35,7 @@ function WithdrawButton() {
   const { setCurrentComponent } = useSideDrawerStore();
 
   function handleWithdraw() {
-    setCurrentComponent('WithdrawMon');
+    setCurrentComponent({ name: 'WithdrawMon' });
   }
 
   return (

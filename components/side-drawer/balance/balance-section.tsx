@@ -27,7 +27,7 @@ export default function BalanceSection() {
         </TooltipProvider>
       </h3>
       <div className="mt-4 text-[32px] font-semibold">
-        <WithLoading isPending={!!isPending} className="h-8 w-8">
+        <WithLoading isLoading={!!isPending} className="h-8 w-8">
           ${Number(priceValue) > 0 ? formatNumber(priceValue) : '0.00'}
         </WithLoading>
       </div>

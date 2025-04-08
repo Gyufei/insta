@@ -2,6 +2,7 @@ import { IAprioriClaim } from '@/lib/data/use-get-apriori-claim';
 import { TokenData } from '@/lib/data/tokens';
 import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
+import { formatBig, formatNumber } from '@/lib/utils/number';
 
 interface ClaimCardProps {
   claim: IAprioriClaim;
@@ -11,15 +12,11 @@ interface ClaimCardProps {
 
 export function ClaimCard({ claim, isSelected = false, onSelect }: ClaimCardProps) {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
+  const tokenAmount = formatNumber(formatBig(claim.token_amount));
 
-  // 将 token_amount 从 wei 转换为 ether
-  const tokenAmount = (parseFloat(claim.token_amount) / 1e18).toFixed(4);
-
-  // 将时间戳转换为相对时间
   const requestTime = new Date(claim.request_at * 1000);
   const timeAgo = formatDistanceToNow(requestTime, { addSuffix: true });
 
-  // 根据状态设置不同的样式
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'completed':

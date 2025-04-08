@@ -4,16 +4,16 @@ import { toast } from 'sonner';
 import { ERROR_MESSAGES } from '@/config/error-msg';
 import { useSendTx } from '../web3/use-send-tx';
 import { useAccount } from 'wagmi';
-import { useGetAccount } from './use-get-account';
+import { useSelectedAccount } from './use-account';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-// 通用参数接口
+// Common parameter interface
 export interface BaseParams {
   wallet: string;
   sandbox_account: string;
 }
 
-// 通用 API 请求函数
+// Common API request function
 export async function sendApiRequest<T>(url: string, params: Record<string, unknown>): Promise<T> {
   return Fetcher<T>(url, {
     method: 'POST',
@@ -24,12 +24,12 @@ export async function sendApiRequest<T>(url: string, params: Record<string, unkn
   });
 }
 
-// 通用 GET 请求函数
+// Common GET request function
 export async function fetchApiRequest<T>(url: string): Promise<T> {
   return Fetcher<T>(url);
 }
 
-// 通用交易处理函数
+// Common transaction handling function
 export async function handleTransaction(
   txRes: ITxData | null | undefined,
   send: (txData: ITxData) => Promise<unknown>,
@@ -43,10 +43,10 @@ export async function handleTransaction(
   await send(txRes);
 }
 
-// 通用钱包和账户检查
+// Common wallet and account check
 export function useWalletAndAccountCheck() {
   const { address } = useAccount();
-  const { data: accountInfo } = useGetAccount();
+  const { data: accountInfo } = useSelectedAccount();
   const account = accountInfo?.sandbox_account;
 
   const checkWalletAndAccount = (checkAddress: boolean, checkAccount: boolean) => {
@@ -70,7 +70,7 @@ export function useWalletAndAccountCheck() {
   };
 }
 
-// 通用 mutation hook 工厂
+// Common mutation hook factory
 export function createMutationHook<TParams extends Record<string, unknown>>(
   apiPath: string,
   buildParams: (args: unknown, address: string, account: string) => TParams,
@@ -119,14 +119,17 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
   };
 }
 
-// 通用 query hook 工厂
+// Common query hook factory
 export function createQueryHook<TResponse>(
   apiPath: string,
   buildQueryKey: (account: string | undefined) => string[],
-  buildUrl: (url: URL, account: string | undefined) => URL | null
+  buildUrl: (url: URL, account: string | undefined) => URL | null,
+  extraArgs: {
+    withAccount: boolean;
+  }
 ) {
   return function useCustomQuery() {
-    const { data: accountInfo } = useGetAccount();
+    const { data: accountInfo } = useSelectedAccount();
     const account = accountInfo?.sandbox_account;
 
     async function executeQuery(): Promise<TResponse | null> {
@@ -139,9 +142,9 @@ export function createQueryHook<TResponse>(
     }
 
     const queryResult = useQuery({
-      queryKey: buildQueryKey(account),
+      queryKey: buildQueryKey(extraArgs.withAccount ? account : undefined),
       queryFn: () => executeQuery(),
-      enabled: !!account,
+      enabled: !extraArgs.withAccount || (extraArgs.withAccount && !!account),
     });
 
     return queryResult;

@@ -22,3 +22,5 @@ export const NetworkConfigs = {
 export const MonadTestnetName = 'Monad';
 
 export const ZeroAddress = '0x0000000000000000000000000000000000000000';
+
+export const DefaultTokenDecimals = 18;

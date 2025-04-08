@@ -21,6 +21,6 @@ export function useAprioriClaim() {
       };
     },
     ERROR_MESSAGES.WITHDRAW_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['apriorBalance'] }
+    { checkAddress: true, checkAccount: true, refreshQueryKey: ['aprior', 'balance'] }
   )();
 }

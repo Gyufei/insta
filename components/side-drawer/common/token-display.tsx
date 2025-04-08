@@ -18,7 +18,7 @@ export function TokenDisplay({ token, balance, balanceLabel, isPending }: TokenD
           <div className="flex">{balanceLabel}</div>
         </div>
         <div className="h-6 text-xl leading-none font-medium">
-          <WithLoading isPending={!!isPending}>{formatNumber(balance)}</WithLoading>
+          <WithLoading isLoading={!!isPending}>{formatNumber(balance)}</WithLoading>
         </div>
       </div>
       <div className="flex h-10 w-10 items-center justify-center dark:opacity-90">

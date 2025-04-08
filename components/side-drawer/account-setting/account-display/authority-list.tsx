@@ -1,9 +1,9 @@
 'use client';
-import { useGetAccount } from '@/lib/data/use-get-account';
+import { useSelectedAccount } from '@/lib/data/use-account';
 import { AuthorityCard } from './authority-card';
 
 export function AuthorityList() {
-  const { data: accountInfo } = useGetAccount();
+  const { data: accountInfo } = useSelectedAccount();
 
   if (!accountInfo?.managers?.length) return null;
 

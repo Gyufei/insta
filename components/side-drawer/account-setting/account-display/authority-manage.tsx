@@ -5,7 +5,7 @@ import { AuthorityList } from './authority-list';
 
 export function AuthorityManage() {
   return (
-    <div className="mt-10 flex flex-col px-8">
+    <div className="mt-10 flex flex-col">
       <div className="text-xl flex items-center justify-center text-center font-semibold">
         Authorities
         <TooltipProvider>

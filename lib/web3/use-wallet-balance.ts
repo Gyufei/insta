@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { divide } from 'safebase';
 import { useAccount, useBalance } from 'wagmi';
+import { formatBig } from '../utils/number';
 
 export function useWalletBalance() {
   const { address } = useAccount();
@@ -19,7 +19,7 @@ export function useWalletBalance() {
 
   const balance = useMemo(() => {
     if (!address) return '0';
-    return divide(String(balanceBig), String(10 ** (balanceData?.decimals || 18)));
+    return formatBig(String(balanceBig), balanceData?.decimals);
   }, [balanceBig, balanceData?.decimals, address]);
 
   return {

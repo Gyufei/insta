@@ -17,7 +17,7 @@ export function NoAccountDisplay() {
         style={{ minHeight: '24px' }}
         disabled={isPending || !address}
       >
-        <WithLoading isPending={!!isPending} className="mr-2" />
+        <WithLoading isLoading={!!isPending} className="mr-2" />
         Create DSA Account
       </button>
     </div>

@@ -21,6 +21,6 @@ export function useAprioriDeposit() {
       };
     },
     ERROR_MESSAGES.DEPOSIT_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['apriorBalance'] }
+    { checkAddress: true, checkAccount: true, refreshQueryKey: ['aprior', 'balance'] }
   )();
-} 
+}

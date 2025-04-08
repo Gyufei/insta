@@ -2,7 +2,7 @@ import { AccountAddressCopy } from './account-address-copy';
 
 export function AccountAddressContainer() {
   return (
-    <div className="mt-6 px-8">
+    <div className="mt-6">
       <label
         htmlFor="dsa-address"
         className="text-navi-pure-light dark:text-light text-xs font-semibold"

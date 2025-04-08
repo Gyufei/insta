@@ -1,11 +1,10 @@
 import { TokenData } from '@/lib/data/tokens';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
-import { HrLine } from '@/components/side-drawer/common/hr-line';
+import { HrLine } from '@/components/hr-line';
 import { useGetAprioriClaim } from '@/lib/data/use-get-apriori-claim';
 import { useAprioriClaim } from '@/lib/data/use-apriori-claim';
 import { ClaimCard } from './claim-card';
-import { divide } from 'safebase';
-import { formatNumber } from '@/lib/utils/number';
+import { formatBig, formatNumber } from '@/lib/utils/number';
 import { useMemo, useState } from 'react';
 
 export function Claim() {
@@ -17,13 +16,13 @@ export function Claim() {
   // 找到选中的 claim 记录
   const selectedClaim = useMemo(() => {
     if (!selectedRequestId || !claimRecords) return null;
-    return claimRecords.find(claim => claim.request_id === selectedRequestId);
+    return claimRecords.find((claim) => claim.request_id === selectedRequestId);
   }, [selectedRequestId, claimRecords]);
 
   // 计算选中 claim 的金额
   const canClaimAmount = useMemo(() => {
     if (!selectedClaim) return '0';
-    return divide(String(selectedClaim.token_amount), String(10 ** (aprMonToken?.decimals || 18)));
+    return formatBig(String(selectedClaim.token_amount), aprMonToken?.decimals);
   }, [selectedClaim, aprMonToken]);
 
   const handleClaim = () => {
@@ -41,9 +40,9 @@ export function Claim() {
         ) : claimRecords && claimRecords.length > 0 ? (
           <div className="space-y-3">
             {claimRecords.map((claim) => (
-              <ClaimCard 
-                key={claim.request_id} 
-                claim={claim} 
+              <ClaimCard
+                key={claim.request_id}
+                claim={claim}
                 isSelected={selectedRequestId === claim.request_id}
                 onSelect={() => setSelectedRequestId(claim.request_id)}
               />

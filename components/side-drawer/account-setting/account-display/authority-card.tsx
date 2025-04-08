@@ -3,14 +3,14 @@ import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 import { NetworkConfigs } from '@/config/network-config';
 import { formatAddress } from '@/lib/utils';
-import { useGetAccount } from '@/lib/data/use-get-account';
+import { useSelectedAccount } from '@/lib/data/use-account';
 import { useDeleteAuthority } from '@/lib/data/use-delete-authority';
 
 export function AuthorityCard({ manager }: { manager: string }) {
   const network = NetworkConfigs.monadTestnet;
 
   const { address } = useAccount();
-  const { data: accountInfo } = useGetAccount();
+  const { data: accountInfo } = useSelectedAccount();
   const { mutateAsync: deleteAuthority, isPending } = useDeleteAuthority();
   const account = accountInfo?.sandbox_account;
 

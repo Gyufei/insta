@@ -10,4 +10,6 @@ export const ERROR_MESSAGES = {
   CREATE_AUTHORITY_FAILED: 'Create authority failed',
   DELETE_AUTHORITY_FAILED: 'Delete authority failed',
   INVALID_ADDRESS: 'Invalid address',
+  BUY_TOKEN_FAILED: 'Buy token failed',
+  SELL_TOKEN_FAILED: 'Sell token failed',
 } as const;

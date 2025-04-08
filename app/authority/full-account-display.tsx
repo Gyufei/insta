@@ -1,5 +1,5 @@
 import { AccountCard } from '@/components/side-drawer/account-setting/account-display/account-card';
-import { HrLine } from '@/components/side-drawer/common/hr-line';
+import { HrLine } from '@/components/hr-line';
 import { FullAccountAddress } from './full-account-address';
 import { FullAuthorityManage } from './full-authority-manage';
 

@@ -3,11 +3,11 @@
 import Image from 'next/image';
 import { cn, formatAddress } from '@/lib/utils';
 import { NetworkConfigs } from '@/config/network-config';
-import { useGetAccount } from '@/lib/data/use-get-account';
+import { useSelectedAccount } from '@/lib/data/use-account';
 
 export function AccountCard({ className }: { className?: string }) {
   const network = NetworkConfigs.monadTestnet;
-  const { data: accountInfo } = useGetAccount();
+  const { data: accountInfo } = useSelectedAccount();
 
   if (!accountInfo) return null;
 

@@ -5,9 +5,9 @@ import Image from 'next/image';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { TokenData, TokenPriceMap } from '@/lib/data/tokens';
 import { useAprioriBalance } from '@/lib/data/use-aprior-balance';
-import { divide, multiply } from 'safebase';
+import { multiply } from 'safebase';
 import { WithLoading } from '@/components/with-loading';
-import { formatNumber } from '@/lib/utils/number';
+import { formatBig, formatNumber } from '@/lib/utils/number';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 export function AprMonStake() {
@@ -16,23 +16,20 @@ export function AprMonStake() {
   const token = TokenData.find((token) => token.symbol === 'aprMON') || TokenData[1];
   const aprPrice = TokenPriceMap[token?.symbol];
   const { data: aprioriBalance, isLoading } = useAprioriBalance();
-  const balance = divide(aprioriBalance?.balance || '0', String(token?.decimals || 18));
+  const balance = formatBig(aprioriBalance?.balance || '0');
   const priceValue = aprioriBalance ? multiply(balance, aprPrice) : '0';
 
   function handleDeposit() {
-    setCurrentComponent('AprioriDeposit');
+    setCurrentComponent({ name: 'AprioriDeposit' });
   }
 
   function handleWithdraw() {
-    setCurrentComponent('AprioriWithdraw');
+    setCurrentComponent({ name: 'AprioriWithdraw' });
   }
 
   return (
     <div className="mt-4 grid w-full min-w-max grid-cols-1 gap-4 px-4 2xl:mt-6 2xl:gap-6 2xl:px-12">
-      <div
-        data-v-7afb5e18=""
-        className="dark:bg-dark-500 relative flex flex-1 flex-shrink-0 flex-col rounded bg-white px-4 py-6 shadow dark:shadow-none"
-      >
+      <div className="dark:bg-dark-500 relative flex flex-1 flex-shrink-0 flex-col rounded bg-white px-4 py-6 shadow dark:shadow-none">
         <div data-v-7afb5e18="" className="flex items-center">
           <div className="flex h-12 w-12 items-center justify-center dark:opacity-90">
             <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full">
@@ -45,21 +42,18 @@ export function AprMonStake() {
               />
             </div>
           </div>
-          <div data-v-7afb5e18="" className="mx-4 flex flex-grow flex-col">
-            <div
-              data-v-7afb5e18=""
-              className="text-xl mb-1 leading-none font-medium whitespace-nowrap"
-            >
-              <WithLoading isPending={isLoading}>${priceValue}</WithLoading>
-            </div>{' '}
+          <div className="mx-4 flex flex-grow flex-col">
+            <div className="mb-1 text-xl leading-none font-medium whitespace-nowrap">
+              <WithLoading isLoading={isLoading}>${priceValue}</WithLoading>
+            </div>
             <div className="flex leading-none whitespace-nowrap">
-              <span className="text-sm text-grey-pure">
-                <WithLoading isPending={isLoading}>{`${formatNumber(balance)} aprMon`}</WithLoading>
+              <span className="text-grey-pure text-sm">
+                <WithLoading isLoading={isLoading}>{`${formatNumber(balance)} aprMon`}</WithLoading>
               </span>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="text-xs text-grey-pure hover:text-ocean-blue-pure dark:hover:text-light ml-1 flex h-4 w-4 cursor-pointer items-center justify-center leading-none transition-colors duration-150">
+                    <div className="text-grey-pure hover:text-ocean-blue-pure dark:hover:text-light ml-1 flex h-4 w-4 cursor-pointer items-center justify-center text-xs leading-none transition-colors duration-150">
                       <CircleDollarSign className="h-4 w-4" />
                     </div>
                   </TooltipTrigger>

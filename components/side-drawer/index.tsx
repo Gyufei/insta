@@ -8,12 +8,14 @@ import { WithdrawToken } from './withdraw-token';
 import { cn } from '@/lib/utils';
 import { AprioriDeposit } from '@/app/apriori/apriori-deposit';
 import { AprioriWithdraw } from '@/app/apriori/apriori-withdraw';
+import { NadFunBuyToken } from '@/app/nad-fun/nadfun-buy-token';
+import { NadFunSellToken } from '@/app/nad-fun/nadfun-sell-token';
 
 const SideDrawer = () => {
   const { isOpen, currentComponent } = useSideDrawerStore();
 
   const renderContent = () => {
-    switch (currentComponent) {
+    switch (currentComponent?.name) {
       case 'Balance':
         return <Balance />;
       case 'AccountSetting':
@@ -26,6 +28,10 @@ const SideDrawer = () => {
         return <AprioriDeposit />;
       case 'AprioriWithdraw':
         return <AprioriWithdraw />;
+      case 'NadFunBuyToken':
+        return <NadFunBuyToken />;
+      case 'NadFunSellToken':
+        return <NadFunSellToken />;
       default:
         return null;
     }
@@ -47,7 +53,7 @@ const SideDrawer = () => {
       <AnimatePresence mode="wait">
         <motion.div
           className="h-full"
-          key={currentComponent}
+          key={currentComponent?.name}
           initial={{ x: '100%' }}
           animate={{ x: 0 }}
           exit={{ x: 0 }}

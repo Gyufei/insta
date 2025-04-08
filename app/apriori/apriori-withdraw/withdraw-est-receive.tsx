@@ -1,7 +1,7 @@
 import { IToken } from '@/lib/data/tokens';
 import { Card } from '@/components/ui/card';
 
-export function EstReceive({
+export function WithdrawEstReceive({
   receiveToken,
   receiveAmount,
 }: {

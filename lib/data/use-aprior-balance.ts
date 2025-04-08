@@ -8,13 +8,16 @@ export interface IApriorBalance {
 export function useAprioriBalance() {
   return createQueryHook<IApriorBalance>(
     ApiPath.aprioriBalance,
-    (account) => ['apriorBalance', account ?? ''],
+    (account) => ['aprior', 'balance', account ?? ''],
     (url, account) => {
       if (!account) {
         return url;
       }
       url.searchParams.set('sandbox_account', account);
       return url;
+    },
+    {
+      withAccount: true,
     }
   )();
-} 
+}

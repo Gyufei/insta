@@ -3,9 +3,8 @@
 import { Percent } from 'lucide-react';
 import { BetweenCard } from '@/components/page-common/between-card';
 import { DescCard } from '@/components/page-common/desc-card';
-import { formatNumber } from '@/lib/utils/number';
+import { formatBig, formatNumber } from '@/lib/utils/number';
 import { useAprioriInfo } from '@/lib/data/use-apriori-info';
-import { divide } from 'safebase';
 import { useMemo } from 'react';
 
 export function AprioriStats() {
@@ -14,7 +13,7 @@ export function AprioriStats() {
   const tvl = useMemo(() => {
     if (!aprioriInfo || !aprioriInfo.tvl) return '0';
 
-    const tvlValue = divide(aprioriInfo.tvl, String(10 ** 18));
+    const tvlValue = formatBig(aprioriInfo.tvl);
     return formatNumber(tvlValue);
   }, [aprioriInfo]);
 
@@ -40,10 +39,10 @@ export function AprioriStats() {
           icon={<Percent className="h-12 w-12" />}
           isLoading={isLoading}
         />
-        <DescCard 
-          title="Your aprMON worth" 
-          value="0.00" 
-          icon="/icons/aprmon.svg" 
+        <DescCard
+          title="Your aprMON worth"
+          value="0.00"
+          icon="/icons/aprmon.svg"
           isLoading={isLoading}
         />
       </BetweenCard>
@@ -64,4 +63,4 @@ export function AprioriStats() {
       </BetweenCard>
     </>
   );
-} 
+}

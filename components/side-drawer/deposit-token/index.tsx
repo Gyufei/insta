@@ -1,4 +1,3 @@
-import { multiply } from 'safebase';
 import SideDrawerBackHeader from '../side-drawer-back-header';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { TokenData } from '@/lib/data/tokens';
@@ -8,10 +7,12 @@ import { TokenInput } from '../common/token-input';
 import { ActionButton } from '../common/action-button';
 import { ErrorMessage } from '../common/error-message';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { HrLine } from '../common/hr-line';
+import { HrLine } from '../../hr-line';
 import { SetMax } from '../common/set-max';
 import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
 import { SideDrawerLayout } from '../common/side-drawer-layout';
+import { parseBig } from '@/lib/utils/number';
+
 export function DepositToken() {
   const token = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
 
@@ -23,7 +24,7 @@ export function DepositToken() {
 
   const handleDeposit = () => {
     if (!inputValue || btnDisabled || isPending) return;
-    const amount = multiply(inputValue, String(10 ** (token?.decimals || 18)));
+    const amount = parseBig(inputValue, token?.decimals);
     deposit(amount);
   };
 

@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import { divide } from 'safebase';
 import { useBalance } from 'wagmi';
-import { useGetAccount } from '../data/use-get-account';
+import { useSelectedAccount } from '../data/use-account';
+import { formatBig } from '../utils/number';
 
 export function useAccountBalance() {
-  const { data: accountInfo, isPending: isAccountInfoPending } = useGetAccount();
+  const { data: accountInfo, isLoading: isAccountInfoPending } = useSelectedAccount();
 
   const hasAccount = Boolean(accountInfo?.sandbox_account);
 
@@ -22,7 +22,7 @@ export function useAccountBalance() {
 
   const balance = useMemo(() => {
     if (!hasAccount) return '0';
-    return divide(String(balanceBig), String(10 ** (balanceData?.decimals || 18)));
+    return formatBig(String(balanceBig), balanceData?.decimals);
   }, [balanceBig, balanceData?.decimals, hasAccount]);
 
   return {

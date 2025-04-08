@@ -1,5 +1,3 @@
-import { multiply } from 'safebase';
-
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import SideDrawerBackHeader from '../side-drawer-back-header';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
@@ -10,10 +8,11 @@ import { TokenDisplay } from '../common/token-display';
 import { TokenInput } from '../common/token-input';
 import { ActionButton } from '../common/action-button';
 import { ErrorMessage } from '../common/error-message';
-import { HrLine } from '../common/hr-line';
+import { HrLine } from '../../hr-line';
 import { useAccountBalance } from '@/lib/web3/use-account-balance';
 import { useSetMax } from '../common/use-set-max';
 import { SideDrawerLayout } from '../common/side-drawer-layout';
+import { parseBig } from '@/lib/utils/number';
 
 export function WithdrawToken() {
   const { setIsOpen } = useSideDrawerStore();
@@ -29,7 +28,7 @@ export function WithdrawToken() {
 
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
-    const amount = multiply(inputValue, String(10 ** (token?.decimals || 18)));
+    const amount = parseBig(inputValue, token?.decimals);
     withdraw(amount);
   };
 

@@ -20,4 +20,10 @@ export const ApiPath = {
   aprioriDeposit: `${ApiHost}/aprior/deposit`,
   aprioriRequestClaim: `${ApiHost}/aprior/request_redeem`,
   aprioriClaim: `${ApiHost}/aprior/redeem`,
+
+  nadfunTokens: `${ApiHost}/nadfun/tokens`,
+  nadfunMyTokens: `${ApiHost}/nadfun/my_tokens`,
+  nadfunTokenInfo: `${ApiHost}/nadfun/token_market_info`,
+  nadfunBuyToken: `${ApiHost}/nadfun/buy`,
+  nadfunSellToken: `${ApiHost}/nadfun/sell`,
 };

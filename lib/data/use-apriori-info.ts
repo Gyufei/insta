@@ -1,6 +1,5 @@
 import { ApiPath } from './api-path';
-import { Fetcher } from '../fetcher';
-import { useQuery } from '@tanstack/react-query';
+import { createQueryHook } from './helpers';
 
 export interface IAprioriInfo {
   apr: number;
@@ -9,15 +8,12 @@ export interface IAprioriInfo {
 }
 
 export function useAprioriInfo() {
-  async function getAprioriInfo(): Promise<IAprioriInfo> {
-    const url = new URL(ApiPath.aprioriInfo);
-    return Fetcher<IAprioriInfo>(url);
-  }
-
-  const queryResult = useQuery({
-    queryKey: ['aprioriInfo'],
-    queryFn: () => getAprioriInfo(),
-  });
-
-  return queryResult;
-} 
+  return createQueryHook<IAprioriInfo>(
+    ApiPath.aprioriInfo,
+    () => ['apriori', 'info'],
+    (url) => url,
+    {
+      withAccount: false,
+    }
+  )();
+}

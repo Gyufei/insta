@@ -12,13 +12,16 @@ export interface IAprioriClaim {
 export function useGetAprioriClaim() {
   return createQueryHook<IAprioriClaim[]>(
     ApiPath.aprioriRequestClaim,
-    (account) => ['aprioriClaim', account ?? ''],
+    (account) => ['apriori', 'claim', account ?? ''],
     (url, account) => {
       if (!account) {
         return null;
       }
       url.searchParams.set('sandbox_account', account);
       return url;
+    },
+    {
+      withAccount: true,
     }
   )();
 }

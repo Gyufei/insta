@@ -100,6 +100,7 @@
   --color-green-light: oklch(0.97 0.0216 149.72);
   --color-yellow-pure: oklch(0.83 0.1625 88.2);
   --color-yellow-light: oklch(0.95 0.2025 107.88);
+  --color-teal-pure: oklch(0.65 0.0946 238.35);
   --container-container-main: 1016px;
   --container-navbar: var(--height-navbar);
   --breakpoint-2xl: 1244px;

@@ -1,15 +1,15 @@
-import { useGetAccount } from '@/lib/data/use-get-account';
+import { useSelectedAccount } from '@/lib/data/use-account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 export function AccountBtn() {
-  const { data: accountInfo, isLoading } = useGetAccount();
+  const { data: accountInfo, isLoading } = useSelectedAccount();
   const account = accountInfo?.sandbox_account;
 
   const { setCurrentComponent } = useSideDrawerStore();
 
   function handleCreate() {
-    if (!accountInfo || isLoading) return;
-    setCurrentComponent('AccountSetting');
+    if (!accountInfo) return;
+    setCurrentComponent({ name: 'AccountSetting' });
   }
 
   return (
