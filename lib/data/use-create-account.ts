@@ -1,56 +1,21 @@
 import { ApiPath } from './api-path';
-import { useMutation } from '@tanstack/react-query';
-import { Fetcher } from '../fetcher';
-import { ITxData } from '../model';
-import { useSendTx } from '../web3/use-send-tx';
-import { toast } from 'sonner';
 import { ERROR_MESSAGES } from '@/config/error-msg';
+import { createMutationHook } from './helpers';
 
-interface RequestBody {
+export interface CreateAccountParams {
   owner: string;
+  [key: string]: string;
 }
 
 export function useCreateAccount() {
-  const { send, isPending: isSending } = useSendTx();
-
-  async function createAccount(address: string) {
-    if (!address) {
-      toast.info(ERROR_MESSAGES.WALLET_NOT_CONNECTED);
-      return;
-    }
-
-    const url = new URL(ApiPath.createAccount);
-    const body: RequestBody = {
-      owner: address,
-    };
-
-    try {
-      const txData = await Fetcher<ITxData>(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!txData.data) {
-        toast.error(ERROR_MESSAGES.INVALID_TX_DATA);
-        return;
-      }
-
-      await send(txData);
-    } catch (err) {
-      toast.error(ERROR_MESSAGES.CREATE_ACCOUNT_FAILED);
-      throw err;
-    }
-  }
-
-  const mutation = useMutation({
-    mutationFn: createAccount,
-  });
-
-  return {
-    ...mutation,
-    isPending: mutation.isPending || isSending,
-  };
+  return createMutationHook<CreateAccountParams>(
+    ApiPath.createAccount,
+    (args: unknown, address: string) => {
+      return {
+        owner: address,
+      };
+    },
+    ERROR_MESSAGES.CREATE_AUTHORITY_FAILED,
+    { checkAddress: true, checkAccount: false, refreshQueryKey: ['account'] }
+  )();
 }

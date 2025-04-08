@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAccount, useWalletClient } from 'wagmi';
 import { ITxData } from '../model';
-import { toast } from 'sonner';
 import { ApiPath } from '../data/api-path';
 import { Fetcher } from '../fetcher';
 
@@ -36,40 +35,38 @@ export function useSendTx() {
     return res;
   }
 
-  const send = async (txData: ITxData) => {
+  const send = async (txRes: ITxData) => {
     if (!walletClient) {
       throw new Error('Wallet client not found');
     }
 
-    if (!txData) {
+    if (!txRes.tx_data) {
       throw new Error('Invalid transaction data');
     }
 
-    const { to, data, gas, value } = txData;
-
-    const toAddress = to.startsWith('0x') ? to : `0x${to}`;
-    const txDataHex = data.startsWith('0x') ? data : `0x${data}`;
+    const { from, to, data, gas, value } = txRes.tx_data;
 
     try {
       setIsPending(true);
-      const txReq = await walletClient.prepareTransactionRequest({
+
+      const txParams = {
         account: address,
-        to: toAddress as `0x${string}`,
-        data: txDataHex as `0x${string}`,
+        from: from as `0x${string}`,
+        to: to as `0x${string}`,
+        data: data as `0x${string}`,
         gas: BigInt(gas),
         ...(value ? { value: BigInt(value) } : {}),
-      });
+      };
 
-      const signature = await walletClient.signTransaction(txReq);
+      const signature = await walletClient.signTransaction(txParams);
+      console.log('signature', signature);
 
       const res = await sendTxApi(signature);
-
       setIsSuccess(true);
       return res;
     } catch (err) {
       setIsError(true);
       setError(err as Error);
-      toast.error('Transaction failed');
       throw err;
     } finally {
       setIsPending(false);

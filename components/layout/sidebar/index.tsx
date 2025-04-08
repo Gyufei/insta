@@ -184,7 +184,7 @@ export default function SideBar() {
       >
         {navContent}
         <button
-          className={`2xl:text-12 border-grey-light bg-light text-grey-pure hover:text-ocean-blue-pure dark:border-grey-pure dark:bg-dark-600 dark:text-grey-pure dark:hover:border-grey-light dark:hover:text-light absolute flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50`}
+          className={`2xl:text-xs border-grey-light bg-light text-grey-pure hover:text-ocean-blue-pure dark:border-grey-pure dark:bg-dark-600 dark:text-grey-pure dark:hover:border-grey-light dark:hover:text-light absolute flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50`}
           style={{ top: '71px', right: isCollapsed ? '20px' : '30px' }}
           onClick={toggleCollapse}
         >

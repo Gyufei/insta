@@ -19,7 +19,9 @@ export const wagmiAdapter = new WagmiAdapter({
   ssr: true,
   projectId,
   transports: {
-    [monadTestnet.id]: http(),
+    [monadTestnet.id]: http(
+      'https://monad-testnet.g.alchemy.com/v2/bfymTBaCxbOXIaaiLdi61zqHlJ5ZDix4'
+    ),
   },
   networks,
 });

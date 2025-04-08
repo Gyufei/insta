@@ -27,7 +27,7 @@ function TabButton({ label, value, activeTab, onClick }: TabButtonProps) {
         } dark:bg-dark-400`}
         onClick={onClick}
       >
-        <p className="text-14 leading-none font-semibold">{label}</p>
+        <p className="text-sm leading-none font-semibold">{label}</p>
         {isActive && (
           <div
             className="bg-ocean-blue-pure dark:bg-grey-light dark:text-dark-600 absolute flex h-4 w-4 cursor-pointer items-center justify-center rounded-full text-white"

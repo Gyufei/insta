@@ -41,11 +41,11 @@ export default function NetworkSelect() {
           className="bg-grey-pure/10 hover:bg-grey-pure/20 focus:bg-grey-pure/20 flex w-full flex-shrink-0 cursor-pointer items-center justify-center rounded-sm px-2 py-2 text-xs leading-5 font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
           onClick={toggleOpen}
         >
-          <div className="mr-2 inline-flex h-5 w-5 items-center justify-center overflow-hidden rounded-xs dark:opacity-90">
+          <div className="mr-2 inline-flex h-5 w-5 items-center justify-center overflow-hidden rounded-sm dark:opacity-90">
             <Image src={selectedNetwork.icon} alt={selectedNetwork.name} width={20} height={20} />
           </div>
           <span className="mr-4 hidden capitalize md:inline">{selectedNetwork.name}</span>
-          <div className="ml-auto flex h-5 w-5 items-center justify-center rounded-xs bg-white dark:bg-white/15">
+          <div className="ml-auto flex h-5 w-5 items-center justify-center rounded-sm bg-white dark:bg-white/15">
             <ChevronDown size={16} className={cn(isOpen && 'rotate-180')} />
           </div>
         </button>

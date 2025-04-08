@@ -25,7 +25,7 @@ export function DSAInfo() {
         </h3>
         <ul className="mb-6 flex flex-col gap-4">
           {features.map((feature, index) => (
-            <li key={index} className="text-16 flex items-center justify-between">
+            <li key={index} className="text-base flex items-center justify-between">
               {feature.text}
               <Check className="text-green-pure h-5 w-5 dark:opacity-90" strokeWidth={2} />
             </li>

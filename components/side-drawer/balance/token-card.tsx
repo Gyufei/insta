@@ -27,7 +27,7 @@ export default function TokenCard({ name, symbol, iconUrl }: TokenCardProps) {
               alt={name}
             />
           ) : (
-            <div className="text-11 flex h-full w-full items-center justify-center truncate rounded-full bg-gradient-to-br from-gray-300 to-gray-900 leading-none text-white uppercase">
+            <div className="text-xs flex h-full w-full items-center justify-center truncate rounded-full bg-gradient-to-br from-gray-300 to-gray-900 leading-none text-white uppercase">
               {symbol.toLowerCase()}
             </div>
           )}
@@ -38,7 +38,7 @@ export default function TokenCard({ name, symbol, iconUrl }: TokenCardProps) {
         <div className="text-navi-pure dark:text-light mb-1 flex items-center text-xs font-semibold whitespace-nowrap">
           {formatNumber(balance)} {symbol}
         </div>
-        <div className="text-12 text-grey-pure font-medium whitespace-nowrap">
+        <div className="text-xs text-grey-pure font-medium whitespace-nowrap">
           ${formatNumber(priceValue)}
         </div>
       </div>

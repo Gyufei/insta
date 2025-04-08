@@ -16,7 +16,7 @@ export default function BalanceSection() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="text-9 text-grey-pure hover:text-ocean-blue-pure dark:hover:text-light ml-1 flex h-4 w-4 cursor-pointer items-center justify-center leading-none transition-colors duration-150">
+              <div className="text-xs text-grey-pure hover:text-ocean-blue-pure dark:hover:text-light ml-1 flex h-4 w-4 cursor-pointer items-center justify-center leading-none transition-colors duration-150">
                 <HelpCircle className="h-4 w-4" />
               </div>
             </TooltipTrigger>

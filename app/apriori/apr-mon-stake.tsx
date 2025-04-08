@@ -48,18 +48,18 @@ export function AprMonStake() {
           <div data-v-7afb5e18="" className="mx-4 flex flex-grow flex-col">
             <div
               data-v-7afb5e18=""
-              className="text-19 mb-1 leading-none font-medium whitespace-nowrap"
+              className="text-xl mb-1 leading-none font-medium whitespace-nowrap"
             >
               <WithLoading isPending={isLoading}>${priceValue}</WithLoading>
             </div>{' '}
             <div className="flex leading-none whitespace-nowrap">
-              <span className="text-14 text-grey-pure">
+              <span className="text-sm text-grey-pure">
                 <WithLoading isPending={isLoading}>{`${formatNumber(balance)} aprMon`}</WithLoading>
               </span>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="text-9 text-grey-pure hover:text-ocean-blue-pure dark:hover:text-light ml-1 flex h-4 w-4 cursor-pointer items-center justify-center leading-none transition-colors duration-150">
+                    <div className="text-xs text-grey-pure hover:text-ocean-blue-pure dark:hover:text-light ml-1 flex h-4 w-4 cursor-pointer items-center justify-center leading-none transition-colors duration-150">
                       <CircleDollarSign className="h-4 w-4" />
                     </div>
                   </TooltipTrigger>
@@ -77,13 +77,13 @@ export function AprMonStake() {
         <div className="mt-6 flex items-center justify-around gap-2 px-4">
           <button
             onClick={handleDeposit}
-            className="bg-ocean-blue-pure/10 dark:text-ocean-blue-pale dark:bg-ocean-blue-pure/15 hover:bg-ocean-blue-pure/20 focus:bg-ocean-blue-pure/25 active:bg-ocean-blue-pure/40 dark:active:bg-ocean-blue-pure/40 dark:hover:bg-ocean-blue-pure/25 dark:focus:bg-ocean-blue-pure/25 text-ocean-blue-pure flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            className="bg-ocean-blue-pure/10 dark:text-ocean-blue-pale dark:bg-ocean-blue-pure/15 hover:bg-ocean-blue-pure/20 focus:bg-ocean-blue-pure/25 active:bg-ocean-blue-pure/40 dark:active:bg-ocean-blue-pure/40 dark:hover:bg-ocean-blue-pure/25 dark:focus:bg-ocean-blue-pure/25 text-ocean-blue-pure flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
           >
             Deposit
           </button>
           <button
             onClick={handleWithdraw}
-            className="bg-ocean-blue-pure/10 dark:text-ocean-blue-pale dark:bg-ocean-blue-pure/15 hover:bg-ocean-blue-pure/20 focus:bg-ocean-blue-pure/25 active:bg-ocean-blue-pure/40 dark:active:bg-ocean-blue-pure/40 dark:hover:bg-ocean-blue-pure/25 dark:focus:bg-ocean-blue-pure/25 text-ocean-blue-pure flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            className="bg-ocean-blue-pure/10 dark:text-ocean-blue-pale dark:bg-ocean-blue-pure/15 hover:bg-ocean-blue-pure/20 focus:bg-ocean-blue-pure/25 active:bg-ocean-blue-pure/40 dark:active:bg-ocean-blue-pure/40 dark:hover:bg-ocean-blue-pure/25 dark:focus:bg-ocean-blue-pure/25 text-ocean-blue-pure flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
           >
             Withdraw
           </button>

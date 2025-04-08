@@ -15,6 +15,7 @@ export const ApiPath = {
   withdraw: `${ApiHost}/account/withdraw`,
   sendTx: `${ApiHost}/transaction/send`,
 
+  aprioriInfo: `https://stake-api.apr.io/info`,
   aprioriBalance: `${ApiHost}/aprior/balance`,
   aprioriDeposit: `${ApiHost}/aprior/deposit`,
   aprioriRequestClaim: `${ApiHost}/aprior/request_redeem`,

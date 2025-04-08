@@ -1,7 +1,5 @@
 import { ApiPath } from './api-path';
-import { Fetcher } from '../fetcher';
-import { useQuery } from '@tanstack/react-query';
-import { useGetAccount } from './use-get-account';
+import { createQueryHook } from './helpers';
 
 export interface IAprioriClaim {
   request_id: string;
@@ -12,27 +10,15 @@ export interface IAprioriClaim {
 }
 
 export function useGetAprioriClaim() {
-  const { data: accountInfo } = useGetAccount();
-  const sandboxAccount = accountInfo?.sandbox_account;
-
-  async function getAprioriClaim(): Promise<IAprioriClaim[]> {
-    if (!sandboxAccount) {
-      return [];
+  return createQueryHook<IAprioriClaim[]>(
+    ApiPath.aprioriRequestClaim,
+    (account) => ['aprioriClaim', account ?? ''],
+    (url, account) => {
+      if (!account) {
+        return null;
+      }
+      url.searchParams.set('sandbox_account', account);
+      return url;
     }
-
-    const url = new URL(ApiPath.aprioriRequestClaim);
-    url.searchParams.set('sandbox_account', sandboxAccount);
-
-    const res = await Fetcher<IAprioriClaim[]>(url);
-
-    return res || [];
-  }
-
-  const queryResult = useQuery({
-    queryKey: ['aprioriClaim', sandboxAccount],
-    queryFn: () => getAprioriClaim(),
-    enabled: !!sandboxAccount,
-  });
-
-  return queryResult;
+  )();
 }

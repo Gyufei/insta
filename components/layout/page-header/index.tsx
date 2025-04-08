@@ -7,7 +7,7 @@ import NetworkSelect from './network-select';
 import PageTitle from './page-title';
 import { AccountBtn } from './account-btn';
 
-export function PageHeader({ title, src }: { title: string; src: string }) {
+export function PageHeader({ title, src }: { title: string; src: string | null }) {
   const { open } = useAppKit();
   const { disconnect } = useDisconnect();
   const { isConnected } = useAppKitAccount();

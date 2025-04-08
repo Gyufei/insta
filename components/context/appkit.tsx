@@ -30,7 +30,7 @@ createAppKit({
   metadata: metadata,
   features: {
     analytics: true, // Optional - defaults to your Cloud configuration
-  }
+  },
 })
 
 function Web3AppKitContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {

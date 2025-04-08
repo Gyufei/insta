@@ -28,7 +28,7 @@ export default function BarFooter({ isCollapsed }: { isCollapsed: boolean }) {
             href="https://instadapp.io/newsletter"
             target="_blank"
             rel="noopener noreferrer"
-            className="border-ocean-blue-pure text-12 text-ocean-blue-pure hover:bg-light dark:border-light dark:text-light dark:hover:bg-light/15 flex w-full items-center justify-center rounded-sm border py-2"
+            className="border-ocean-blue-pure text-xs text-ocean-blue-pure hover:bg-light dark:border-light dark:text-light dark:hover:bg-light/15 flex w-full items-center justify-center rounded-sm border py-2"
           >
             <div className="leading-none">Stay in the loop</div>
           </a>

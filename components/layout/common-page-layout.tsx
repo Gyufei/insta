@@ -6,7 +6,7 @@ export function CommonPageLayout({
   children,
 }: {
   title: string;
-  src: string;
+  src: string | null;
   children: React.ReactNode;
 }) {
   return (

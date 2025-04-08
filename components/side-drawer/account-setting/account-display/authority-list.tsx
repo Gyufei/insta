@@ -1,3 +1,4 @@
+'use client';
 import { useGetAccount } from '@/lib/data/use-get-account';
 import { AuthorityCard } from './authority-card';
 

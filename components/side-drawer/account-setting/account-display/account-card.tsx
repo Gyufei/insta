@@ -1,13 +1,23 @@
-import Image from 'next/image';
-import { formatAddress } from '@/lib/utils';
-import { NetworkConfigs } from '@/config/network-config';
-import { IAccountInfo } from '@/lib/data/use-get-account';
+'use client';
 
-export function AccountCard({ accountInfo }: { accountInfo: IAccountInfo }) {
+import Image from 'next/image';
+import { cn, formatAddress } from '@/lib/utils';
+import { NetworkConfigs } from '@/config/network-config';
+import { useGetAccount } from '@/lib/data/use-get-account';
+
+export function AccountCard({ className }: { className?: string }) {
   const network = NetworkConfigs.monadTestnet;
+  const { data: accountInfo } = useGetAccount();
+
+  if (!accountInfo) return null;
 
   return (
-    <button className="border-ocean-blue-pure bg-ocean-blue-pure dark:border-dark-300 dark:bg-dark-300 flex h-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm border text-xs font-semibold whitespace-nowrap text-white shadow-sm transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50">
+    <button
+      className={cn(
+        'border-ocean-blue-pure bg-ocean-blue-pure dark:border-dark-300 dark:bg-dark-300 flex h-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm border text-xs font-semibold whitespace-nowrap text-white shadow-sm transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50',
+        className
+      )}
+    >
       <div className="flex w-full flex-col">
         <div className="pointer-events-none flex items-center justify-between">
           <div className="text-ocean-blue-light flex w-7 items-center justify-center text-center text-xs leading-none">
