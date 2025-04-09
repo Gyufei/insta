@@ -6,10 +6,10 @@ import { AccountSetting } from './account-setting';
 import { DepositToken } from './deposit-token';
 import { WithdrawToken } from './withdraw-token';
 import { cn } from '@/lib/utils';
-import { AprioriDeposit } from '@/app/apriori/apriori-deposit';
-import { AprioriWithdraw } from '@/app/apriori/apriori-withdraw';
-import { NadFunBuyToken } from '@/app/nad-fun/nadfun-buy-token';
-import { NadFunSellToken } from '@/app/nad-fun/nadfun-sell-token';
+import { AprioriDeposit } from '@/app/(protocols)/apriori/apriori-deposit';
+import { AprioriWithdraw } from '@/app/(protocols)/apriori/apriori-withdraw';
+import { NadFunBuyToken } from '@/app/(protocols)/nad-fun/nadfun-buy-token';
+import { NadFunSellToken } from '@/app/(protocols)/nad-fun/nadfun-sell-token';
 
 const SideDrawer = () => {
   const { isOpen, currentComponent } = useSideDrawerStore();

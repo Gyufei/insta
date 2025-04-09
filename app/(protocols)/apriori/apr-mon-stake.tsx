@@ -17,7 +17,7 @@ export function AprMonStake() {
   const aprPrice = TokenPriceMap[token?.symbol];
   const { data: aprioriBalance, isLoading } = useAprioriBalance();
   const balance = formatBig(aprioriBalance?.balance || '0');
-  const priceValue = aprioriBalance ? multiply(balance, aprPrice) : '0';
+  const priceValue = aprioriBalance ? multiply(balance, String(aprPrice)) : '0';
 
   function handleDeposit() {
     setCurrentComponent({ name: 'AprioriDeposit' });

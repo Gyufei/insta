@@ -1,73 +1,110 @@
 'use client';
 import Image from 'next/image';
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Home, ServerCog, Cog, CircleUserRound } from 'lucide-react';
-import BarFooter from './bar-footer';
-import BarHeader from './bar-header';
-import { BarItem, BarWithSubItem } from './bar-item';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import SubMenu from './sub-menu';
-import { useSidebarStore } from '@/lib/state/sidebar';
-import { cn } from '@/lib/utils';
+import {
+  CircleUserRound,
+  Circle,
+  Orbit,
+  ChevronDown,
+  Mail,
+  X,
+  MessageCircle,
+  BookOpen,
+  ServerCog,
+  Package,
+  Waypoints,
+  Cog,
+} from 'lucide-react';
 import { useSelectedAccount } from '@/lib/data/use-account';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
+  useSidebar,
+  SidebarSeparator,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from '@/components/ui/sidebar';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ToggleTheme } from './toggle-theme';
+import { Version } from './version';
+
+const SOCIAL_LINKS = [
+  { href: '', icon: Mail },
+  { href: 'https://twitter.com/instadapp', icon: X },
+  { href: 'https://discord.gg/instadapp', icon: MessageCircle },
+  { href: 'https://docs.instadapp.io', icon: BookOpen },
+];
+
+// 定义菜单组类型
+type MenuGroup = {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  items: Array<{
+    href: string;
+    label: string;
+    icon: React.ReactNode;
+  }>;
+};
 
 export default function SideBar() {
   const { data: accountInfo } = useSelectedAccount();
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [openSub, setOpenSub] = useState<string | null>(null);
   const pathname = usePathname();
-  const { isOpen, setIsOpen } = useSidebarStore();
+  const { open } = useSidebar();
+  const isMobile = false; // 可以根据需要设置移动设备检测
 
-  function toggleCollapse() {
-    setIsCollapsed(!isCollapsed);
-  }
+  const testnetItems = [{ href: '/faucet', label: 'Faucet', icon: <Orbit className="h-4 w-4" /> }];
+
+  const modules = [
+    {
+      href: 'https://odds.tadle.com/',
+      label: 'Odds',
+      icon: <Circle className="h-4 w-4" />,
+    },
+  ];
 
   const protocolItems = [
     {
       href: '/apriori',
       label: 'Apriori',
       icon: (
-        <Image
-          src="/icons/apriori.svg"
-          alt="aprior"
-          width={16}
-          height={16}
-          className="mr-4 h-4 w-4"
-        />
+        <Image src="/icons/apriori.svg" alt="aprior" width={16} height={16} className="h-4 w-4 rounded-full" />
       ),
     },
     {
       href: '/nad-fun',
       label: 'Nad.Fun',
       icon: (
-        <Image
-          src="/icons/nad-fun.svg"
-          alt="nad-fun"
-          width={16}
-          height={16}
-          className="mr-4 h-4 w-4"
-        />
+        <Image src="/icons/nad-fun.svg" alt="nad-fun" width={16} height={16} className="h-4 w-4 rounded-full" />
       ),
     },
     {
       href: '/uniswap',
       label: 'Uniswap V3',
       icon: (
-        <Image
-          src="/icons/uniswap.svg"
-          alt="uniswap"
-          width={16}
-          height={16}
-          className="mr-4 h-4 w-4"
-        />
+        <Image src="/icons/uniswap.svg" alt="uniswap" width={16} height={16} className="h-4 w-4 rounded-full" />
       ),
     },
     {
       href: '/magma',
       label: 'Magma',
-      icon: (
-        <Image src="/icons/magma.jpg" alt="magma" width={16} height={16} className="mr-4 h-4 w-4" />
-      ),
+      icon: <Image src="/icons/magma.jpg" alt="magma" width={16} height={16} className="h-4 w-4 rounded-full" />,
     },
     {
       href: '/nad-name-server',
@@ -78,7 +115,7 @@ export default function SideBar() {
           alt="nad-name-server"
           width={16}
           height={16}
-          className="mr-4 h-4 w-4"
+          className="h-4 w-4"
         />
       ),
     },
@@ -86,21 +123,13 @@ export default function SideBar() {
       href: '/ambient',
       label: 'Ambient',
       icon: (
-        <Image
-          src="/icons/ambient.svg"
-          alt="ambient"
-          width={16}
-          height={16}
-          className="mr-4 h-4 w-4"
-        />
+        <Image src="/icons/ambient.svg" alt="ambient" width={16} height={16} className="h-4 w-4 rounded-full" />
       ),
     },
     {
       href: '/meme',
       label: 'Meme',
-      icon: (
-        <Image src="/icons/monad.svg" alt="meme" width={16} height={16} className="mr-4 h-4 w-4" />
-      ),
+      icon: <Image src="/icons/monad.svg" alt="meme" width={16} height={16} className="h-4 w-4 rounded-full" />,
     },
     {
       href: '/curvance',
@@ -111,90 +140,195 @@ export default function SideBar() {
           alt="curvance"
           width={16}
           height={16}
-          className="mr-4 h-4 w-4"
+          className="h-4 w-4 rounded-full"
         />
       ),
     },
   ];
 
   const utilitiesItems = [
-    { href: '/authority', label: 'Authority', icon: <CircleUserRound className="mr-4 h-4 w-4" /> },
+    { href: '/authority', label: 'Authority', icon: <CircleUserRound className="h-4 w-4" /> },
   ];
 
-  const navContent = (
-    <>
-      <BarHeader isCollapsed={isCollapsed} />
-      <div
-        className={`scrollbar-hover flex h-full flex-col overflow-y-auto pt-4 select-none ${
-          isCollapsed ? 'items-center' : 'items-start'
-        } px-0`}
-      >
-        <div data-v-7fd64a2e="" className="flex w-full flex-grow flex-col">
-          <BarItem
-            icon={
-              <Home className="group-hover:text-brand dark:group-hover:text-light w-full transition-colors duration-150" />
-            }
-            name="Dashboard"
-            href="/"
-            isCollapsed={isCollapsed}
-          />
+  // 定义菜单组
+  const menuGroups: MenuGroup[] = [
+    {
+      id: 'protocols',
+      label: 'Protocols',
+      icon: <ServerCog className="h-4 w-4" />,
+      items: protocolItems,
+    },
+    {
+      id: 'modules',
+      label: 'Modules',
+      icon: <Package className="h-4 w-4" />,
+      items: modules,
+    },
+    {
+      id: 'testnet',
+      label: 'Testnet',
+      icon: <Waypoints className="h-4 w-4" />,
+      items: testnetItems,
+    },
+  ];
 
-          <BarWithSubItem
-            icon={
-              <ServerCog className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
-            }
-            name="Protocols"
-            isCollapsed={isCollapsed}
-            openSub={openSub}
-            setOpenSub={setOpenSub}
-          >
-            <SubMenu items={protocolItems} currentPath={pathname} />
-          </BarWithSubItem>
-
-          {accountInfo?.sandbox_account && (
-            <BarWithSubItem
-              icon={
-                <Cog className="hover:text-brand dark:hover:text-light h-6 w-6 transition-colors duration-150" />
-              }
-              name="Utilities"
-              isCollapsed={isCollapsed}
-              openSub={openSub}
-              setOpenSub={setOpenSub}
+  // 条件渲染菜单组
+  const renderMenuGroup = (group: MenuGroup) => {
+    if (open) {
+      return (
+        <Collapsible key={group.id} defaultOpen className="group/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger className="flex w-full items-center">
+                {group.icon}
+                <span className="ml-2">{group.label}</span>
+                <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+              </CollapsibleTrigger>
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenuSub>
+                  {group.items.map((item) => (
+                    <SidebarMenuSubItem key={item.href}>
+                      <SidebarMenuSubButton asChild isActive={pathname === item.href}>
+                        <Link href={item.href} className="flex items-center">
+                          {item.icon}
+                          <span className="ml-2">{item.label}</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  ))}
+                </SidebarMenuSub>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
+      );
+    } else {
+      return (
+        <DropdownMenu key={group.id}>
+          <SidebarMenuItem>
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground ml-2">
+                {group.icon}
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side={isMobile ? 'bottom' : 'right'}
+              align={isMobile ? 'end' : 'start'}
+              className="min-w-56 rounded-lg"
             >
-              <SubMenu items={utilitiesItems} currentPath={pathname} />
-            </BarWithSubItem>
-          )}
-        </div>
-        <BarFooter isCollapsed={isCollapsed} />
-      </div>
-    </>
-  );
+              {group.items.map((item) => (
+                <DropdownMenuItem asChild key={item.href}>
+                  <Link href={item.href} className="flex items-center">
+                    {item.icon}
+                    <span className="ml-2">{item.label}</span>
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </SidebarMenuItem>
+        </DropdownMenu>
+      );
+    }
+  };
 
   return (
-    <>
-      {isOpen && (
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="relative flex items-center justify-center py-4">
+        <Link href="/" className="flex items-center justify-center">
+          {open ? (
+            <Image src="/icons/logo.svg" alt="logo" width={140} height={40} />
+          ) : (
+            <Image src="/icons/logo-small.svg" alt="logo" width={30} height={30} />
+          )}
+        </Link>
+      </SidebarHeader>
+
+      <SidebarContent className="scrollbar-hover">
+        <SidebarMenu>
+          {menuGroups.map(renderMenuGroup)}
+
+          {accountInfo?.sandbox_account && (
+            <>
+              {open ? (
+                <Collapsible defaultOpen className="group/collapsible">
+                  <SidebarGroup>
+                    <SidebarGroupLabel asChild>
+                      <CollapsibleTrigger className="flex w-full items-center">
+                        <Cog className="h-4 w-4" />
+                        <span className="ml-2">Utilities</span>
+                        <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                      </CollapsibleTrigger>
+                    </SidebarGroupLabel>
+                    <CollapsibleContent>
+                      <SidebarGroupContent>
+                        <SidebarMenuSub>
+                          {utilitiesItems.map((item) => (
+                            <SidebarMenuSubItem key={item.href}>
+                              <SidebarMenuSubButton asChild isActive={pathname === item.href}>
+                                <Link href={item.href} className="flex items-center">
+                                  {item.icon}
+                                  <span className="ml-2">{item.label}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </SidebarGroupContent>
+                    </CollapsibleContent>
+                  </SidebarGroup>
+                </Collapsible>
+              ) : (
+                <DropdownMenu>
+                  <SidebarMenuItem>
+                    <DropdownMenuTrigger asChild>
+                      <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground ml-2">
+                        <Cog className="h-4 w-4" />
+                      </SidebarMenuButton>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      side={isMobile ? 'bottom' : 'right'}
+                      align={isMobile ? 'end' : 'start'}
+                      className="min-w-56 rounded-lg"
+                    >
+                      {utilitiesItems.map((item) => (
+                        <DropdownMenuItem asChild key={item.href}>
+                          <Link href={item.href} className="flex items-center">
+                            {item.icon}
+                            <span className="ml-2">{item.label}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </SidebarMenuItem>
+                </DropdownMenu>
+              )}
+            </>
+          )}
+        </SidebarMenu>
+      </SidebarContent>
+
+      <SidebarFooter>
         <div
-          onClick={() => setIsOpen(false)}
-          className="dark:bg-dark-500/70 fixed top-0 right-0 bottom-0 left-0 z-10 bg-white/70 2xl:hidden"
-        ></div>
-      )}
-      <nav
-        className={cn(
-          'bg-background text-grey-pure dark:bg-dark-500 dark:text-grey-pure grid-sidebar-nav fixed inset-y-0 left-0 z-10 flex flex-col ring-1 ring-black/5 duration-200 2xl:relative 2xl:transform-none dark:shadow-none',
-          isOpen ? 'translate-x-0' : '-translate-x-full 2xl:translate-x-0'
-        )}
-        style={{ width: isCollapsed ? '60px' : '270px' }}
-        data-v-ead27774
-      >
-        {navContent}
-        <button
-          className={`border-grey-light bg-light text-grey-pure hover:text-ocean-blue-pure dark:border-grey-pure dark:bg-dark-600 dark:text-grey-pure dark:hover:border-grey-light dark:hover:text-light absolute flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50 2xl:text-xs`}
-          style={{ top: '71px', right: isCollapsed ? '20px' : '30px' }}
-          onClick={toggleCollapse}
+          className={`flex w-full items-center justify-center ${!open ? 'flex-col space-y-3' : 'space-x-4'}`}
         >
-          {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
-        </button>
-      </nav>
-    </>
+          {SOCIAL_LINKS.map((link, index) => (
+            <a
+              key={index}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-brand dark:hover:text-light flex h-4 w-4 items-center justify-center"
+            >
+              <link.icon className="h-full" />
+            </a>
+          ))}
+        </div>
+        <SidebarSeparator />
+        <ToggleTheme isCollapsed={!open} />
+        {open && <Version version="v0.1.0" />}
+      </SidebarFooter>
+    </Sidebar>
   );
 }

@@ -26,8 +26,8 @@ export function CurrentNetwork() {
       {isRightNetwork ? (
         <div className="bg-green-light text-green-pure dark:bg-green-pure/15 ml-4 hidden items-center rounded-sm px-2 py-1 text-xs font-medium whitespace-nowrap select-none sm:flex">
           <div>
-            <div className="text-xs text-center leading-none uppercase">{networkName}</div>
-            <div className="text-xs font-regular text-center leading-none">connected</div>
+            <div className="text-center text-xs leading-none uppercase">{networkName}</div>
+            <div className="font-regular text-center text-xs leading-none">connected</div>
           </div>
         </div>
       ) : (

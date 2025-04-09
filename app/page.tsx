@@ -1,5 +1,5 @@
-import Apriori from '@/app/apriori/page';
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-  return <Apriori />;
+  redirect('/apriori');
 }
