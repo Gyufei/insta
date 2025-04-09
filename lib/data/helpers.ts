@@ -1,5 +1,5 @@
 import { Fetcher } from '../fetcher';
-import { ITxData } from '../model';
+import { ITxResponse } from '../model';
 import { toast } from 'sonner';
 import { ERROR_MESSAGES } from '@/config/error-msg';
 import { useSendTx } from '../web3/use-send-tx';
@@ -31,8 +31,8 @@ export async function fetchApiRequest<T>(url: string): Promise<T> {
 
 // Common transaction handling function
 export async function handleTransaction(
-  txRes: ITxData | null | undefined,
-  send: (txData: ITxData) => Promise<unknown>,
+  txRes: ITxResponse | null | undefined,
+  send: (txRes: ITxResponse) => Promise<unknown>,
   _errorMessage: string
 ): Promise<void> {
   if (!txRes || !txRes.tx_data) {
@@ -95,7 +95,7 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
       const params = buildParams(args, address!, account!);
 
       try {
-        const txRes = await sendApiRequest<ITxData>(url.toString(), params);
+        const txRes = await sendApiRequest<ITxResponse>(url.toString(), params);
         await handleTransaction(txRes, send, errorMessage);
       } catch (err) {
         toast.error(errorMessage);

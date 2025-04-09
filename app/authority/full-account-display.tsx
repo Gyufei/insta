@@ -2,16 +2,12 @@ import { AccountCard } from '@/components/side-drawer/account-setting/account-di
 import { HrLine } from '@/components/hr-line';
 import { FullAccountAddress } from './full-account-address';
 import { FullAuthorityManage } from './full-authority-manage';
+import { FullAccountList } from './full-account-list';
 
 export default function FullAccountDisplay() {
   return (
     <>
-      <div className="mt-4 flex w-full flex-shrink-0 items-center justify-between px-4 2xl:mt-0 2xl:px-12">
-        <h2 className="text-[18px] 2xl:text-2xl">Accounts</h2>
-      </div>
-      <div className="mt-16 flex w-full flex-shrink-0 px-4 2xl:px-12">
-        <AccountCard className="w-32" />
-      </div>
+      <FullAccountList />
       <div className="my-4 flex w-full items-center justify-center px-4 2xl:px-12">
         <HrLine className="w-full" />
       </div>

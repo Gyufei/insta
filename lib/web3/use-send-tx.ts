@@ -1,26 +1,35 @@
 import { useState } from 'react';
-import { useAccount, useWalletClient } from 'wagmi';
-import { ITxData } from '../model';
+import { useAccount, useSendTransaction, useSignTypedData } from 'wagmi';
+import { ITxData, ITxResponse } from '../model';
 import { ApiPath } from '../data/api-path';
 import { Fetcher } from '../fetcher';
+import { keccak256, toHex } from 'viem';
+import { ERROR_MESSAGES } from '@/config/error-msg';
+import { getTxTypeData } from './tx-type-data';
 
 export function useSendTx() {
+  const PaymentProxyHash = keccak256(toHex('PaymentProxy v2'));
+
   const { address } = useAccount();
-  const { data: walletClient } = useWalletClient();
+  const { sendTransactionAsync } = useSendTransaction();
+  const { signTypedDataAsync } = useSignTypedData();
+
   const [isPending, setIsPending] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  async function sendTxApi(signature: string) {
+  async function sendTxApi(txData: ITxData, signature: string) {
     const params = {
+      nonce: 0,
+      ...txData,
       wallet: address,
       signature,
     };
 
     const url = new URL(ApiPath.sendTx);
 
-    const res = await Fetcher<ITxData>(url, {
+    const res = await Fetcher<ITxResponse>(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -29,19 +38,15 @@ export function useSendTx() {
     });
 
     if (!res) {
-      throw new Error('Send transaction failed');
+      throw new Error(ERROR_MESSAGES.SEND_TX_FAILED);
     }
 
     return res;
   }
 
-  const send = async (txRes: ITxData) => {
-    if (!walletClient) {
-      throw new Error('Wallet client not found');
-    }
-
+  const send = async (txRes: ITxResponse) => {
     if (!txRes.tx_data) {
-      throw new Error('Invalid transaction data');
+      throw new Error(ERROR_MESSAGES.INVALID_TX_DATA);
     }
 
     const { from, to, data, gas, value } = txRes.tx_data;
@@ -58,12 +63,17 @@ export function useSendTx() {
         ...(value ? { value: BigInt(value) } : {}),
       };
 
-      const signature = await walletClient.signTransaction(txParams);
-      console.log('signature', signature);
-
-      const res = await sendTxApi(signature);
-      setIsSuccess(true);
-      return res;
+      if (data.startsWith(PaymentProxyHash)) {
+        const txTypeData = getTxTypeData(txRes.tx_data);
+        const signature = await signTypedDataAsync(txTypeData);
+        const res = await sendTxApi(txRes.tx_data, signature);
+        setIsSuccess(true);
+        return res;
+      } else {
+        const hash = await sendTransactionAsync(txParams);
+        setIsSuccess(true);
+        return hash;
+      }
     } catch (err) {
       setIsError(true);
       setError(err as Error);

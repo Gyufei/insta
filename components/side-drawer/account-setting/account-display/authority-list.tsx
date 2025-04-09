@@ -8,10 +8,10 @@ export function AuthorityList() {
   if (!accountInfo?.managers?.length) return null;
 
   return (
-    <div className="mt-4 space-y-4">
+    <>
       {accountInfo.managers.map((manager) => (
         <AuthorityCard key={manager} manager={manager} />
       ))}
-    </div>
+    </>
   );
 }

@@ -11,6 +11,7 @@ import { TokenData } from '@/lib/data/tokens';
 import { TokenHeader } from '../common/token-header';
 import { TokenInputSection } from '../common/token-input-section';
 import { EstimatedReceive } from '../common/estimated-receive';
+import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
 
 export function NadFunBuyToken() {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -50,12 +51,9 @@ export function NadFunBuyToken() {
 
   return (
     <>
-      <TokenHeader 
-        token={token} 
-        title={`Buy ${token?.symbol}`} 
-        onBackClick={() => setIsOpen(false)} 
-      />
+      <SideDrawerBackHeader title={`Buy ${token?.symbol}`} onClick={() => setIsOpen(false)} />
       <SideDrawerLayout>
+        <TokenHeader token={token} />
         <TokenInputSection
           inputValue={inputValue}
           onInputChange={handleInputChange}
@@ -65,10 +63,7 @@ export function NadFunBuyToken() {
           setInputButtons={setInputButtons}
         />
 
-        <EstimatedReceive
-          inputValue={inputValue}
-          receiveTokenSymbol={token?.symbol}
-        />
+        <EstimatedReceive inputValue={inputValue} receiveTokenSymbol={token?.symbol} />
 
         <ActionButton disabled={btnDisabled} onClick={handleBuyToken} isPending={isPending}>
           Buy

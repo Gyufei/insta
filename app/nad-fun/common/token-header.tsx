@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { useCopyToClipboard } from '@/lib/hooks/use-copy-to-clipboard';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
-import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
 
 interface TokenHeaderProps {
   token: {
@@ -12,11 +11,9 @@ interface TokenHeaderProps {
     logo?: string;
     address?: string;
   };
-  title: string;
-  onBackClick: () => void;
 }
 
-export function TokenHeader({ token, title, onBackClick }: TokenHeaderProps) {
+export function TokenHeader({ token }: TokenHeaderProps) {
   const { isCopied, copyToClipboard } = useCopyToClipboard(token?.address || '');
 
   useEffect(() => {
@@ -27,7 +24,6 @@ export function TokenHeader({ token, title, onBackClick }: TokenHeaderProps) {
 
   return (
     <>
-      <SideDrawerBackHeader title={title} onClick={onBackClick} />
       <div className="mb-1 flex items-center justify-between gap-2">
         <div className="flex items-center">
           <h2 className="text-3xl font-bold">{token?.symbol}</h2>
@@ -56,4 +52,4 @@ export function TokenHeader({ token, title, onBackClick }: TokenHeaderProps) {
       </div>
     </>
   );
-} 
+}

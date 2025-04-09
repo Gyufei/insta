@@ -1,16 +1,14 @@
-import { AccountCard } from './account-card';
 import { AccountAddressContainer } from './account-address-container';
 import { AuthorityManage } from './authority-manage';
+import { AccountList } from './account-list';
 
 export function AccountDisplay() {
   return (
-    <div>
+    <>
       <div className="text-center text-[19px] font-semibold">Accounts</div>
-      <div className="mt-4 grid grid-cols-1 px-8">
-        <AccountCard />
-      </div>
+      <AccountList />
       <AccountAddressContainer />
       <AuthorityManage />
-    </div>
+    </>
   );
 }

@@ -12,6 +12,7 @@ import { formatBig } from '@/lib/utils/number';
 import { TokenHeader } from '../common/token-header';
 import { TokenInputSection } from '../common/token-input-section';
 import { EstimatedReceive } from '../common/estimated-receive';
+import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
 
 export function NadFunSellToken() {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -57,12 +58,9 @@ export function NadFunSellToken() {
 
   return (
     <>
-      <TokenHeader 
-        token={token} 
-        title={`Sell ${token?.symbol}`} 
-        onBackClick={() => setIsOpen(false)} 
-      />
+      <SideDrawerBackHeader title={`Sell ${token?.symbol}`} onClick={() => setIsOpen(false)} />
       <SideDrawerLayout>
+        <TokenHeader token={token} />
         <TokenInputSection
           inputValue={inputValue}
           onInputChange={handleInputChange}
@@ -72,10 +70,7 @@ export function NadFunSellToken() {
           setInputButtons={setInputButtons}
         />
 
-        <EstimatedReceive
-          inputValue={inputValue}
-          receiveTokenSymbol={monToken?.symbol}
-        />
+        <EstimatedReceive inputValue={inputValue} receiveTokenSymbol={monToken?.symbol} />
 
         <ActionButton disabled={btnDisabled} onClick={handleSellToken} isPending={isPending}>
           Sell

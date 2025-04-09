@@ -4,6 +4,7 @@ export const ERROR_MESSAGES = {
   WALLET_NOT_CONNECTED: 'Please connect wallet first',
   ACCOUNT_NOT_CREATED: 'Please create account first',
   INVALID_TX_DATA: 'Invalid transaction data',
+  SEND_TX_FAILED: 'Send transaction failed',
   WITHDRAW_FAILED: 'Withdraw failed',
   DEPOSIT_FAILED: 'Deposit failed',
   CREATE_ACCOUNT_FAILED: 'Create account failed',

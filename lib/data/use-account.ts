@@ -2,6 +2,8 @@ import { ApiPath } from './api-path';
 import { Fetcher } from '../fetcher';
 import { useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
+import { useEffect, useMemo } from 'react';
+import { useAccountStore } from '../state/account';
 
 export type IAccountInfo = {
   id: string;
@@ -9,7 +11,7 @@ export type IAccountInfo = {
   managers: string[];
 };
 
-export function useGetAccounts() {
+export function useAccounts() {
   const { address } = useAccount();
 
   async function getAccounts(): Promise<IAccountInfo[]> {
@@ -33,35 +35,30 @@ export function useGetAccounts() {
   return queryResult;
 }
 
-const CurrentAccountAddressKey = 'Current_Account_Address';
-
 export function useSelectedAccount() {
-  const { data: accountInfo, isLoading } = useGetAccounts();
-  const selectedAccountAddress = localStorage.getItem(CurrentAccountAddressKey);
-  let selectedAccount = null;
+  const { data: accountInfo, isLoading } = useAccounts();
+  const { currentAccountAddress, setCurrentAccountAddress } = useAccountStore();
 
-  if (!selectedAccountAddress && accountInfo && accountInfo.length > 0) {
-    selectedAccount = accountInfo[0];
-    localStorage.setItem('Current_Account_Address', selectedAccount.id);
-  } else if (selectedAccountAddress && accountInfo) {
-    selectedAccount = accountInfo.find((account) => account.id === selectedAccountAddress);
-  }
+  const selectedAccount = useMemo(() => {
+    if (!currentAccountAddress) return null;
+    return (
+      accountInfo?.find((account) => account.sandbox_account === currentAccountAddress) || null
+    );
+  }, [currentAccountAddress, accountInfo]);
 
-  const setSelectedAccountById = (accountId: string) => {
-    const address = accountInfo?.find((account) => account.id === accountId)?.sandbox_account;
-    if (address) {
-      localStorage.setItem(CurrentAccountAddressKey, address);
+  useEffect(() => {
+    const findAccount = currentAccountAddress
+      ? accountInfo?.find((account) => account.sandbox_account === currentAccountAddress)
+      : null;
+
+    if (!findAccount && accountInfo && accountInfo.length > 0) {
+      const firstAccount = accountInfo[0];
+      setCurrentAccountAddress(firstAccount.sandbox_account);
     }
-  };
-
-  const setSelectedAccountByAddress = (accountAddress: string) => {
-    localStorage.setItem(CurrentAccountAddressKey, accountAddress);
-  };
+  }, [currentAccountAddress, accountInfo, setCurrentAccountAddress]);
 
   return {
     isLoading,
     data: selectedAccount,
-    setSelectedAccountById,
-    setSelectedAccountByAddress,
   };
 }
