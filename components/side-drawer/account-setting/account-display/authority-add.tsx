@@ -48,7 +48,7 @@ export function AuthorityAdd() {
       <button
         disabled={!inputValue || isPending}
         onClick={handleAdd}
-        className="bg-ocean-blue-pure disabled:bg-grey-light dark:disabled:bg-dark-300 scale-down-sm hover:bg-ocean-blue-pale active:bg-ocean-blue-deep disabled:text-grey-pure absolute top-1 right-1 flex h-8 w-16 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm px-3 text-sm leading-none font-semibold text-white shadow-none duration-0 outline-none select-none focus:outline-none active:shadow-none"
+        className="bg-blue disabled:bg-gray-200 dark:disabled:bg-slate-200 scale-down-sm hover:bg-blue active:bg-blue disabled:text-gray-300 absolute top-1 right-1 flex h-8 w-16 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm px-3 text-sm leading-none font-semibold text-white shadow-none duration-0 outline-none select-none focus:outline-none active:shadow-none"
       >
         <div className="flex w-full items-center justify-center truncate">
           <WithLoading isLoading={!!isPending} className="mr-2" />

@@ -78,7 +78,7 @@ export default function Magma() {
                   <div className="text-sm font-medium">92%</div>
                 </div>
                 <Progress value={92} className="h-2" />
-                <div className="mt-2 text-xs text-gray-500">Optimal performance</div>
+                <div className="mt-2 text-xs text-gray-300-500">Optimal performance</div>
               </Card>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function Magma() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-primary bg-blue-light text-primary h-9 hover:bg-blue-100"
+                  className="border-primary bg-blue-200 text-primary h-9 hover:bg-blue-100"
                 >
                   <BarChart className="mr-2 h-4 w-4" />
                   Statistics
@@ -98,7 +98,7 @@ export default function Magma() {
 
                 <div className="relative">
                   <Search
-                    className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-400"
+                    className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-300-400"
                     size={16}
                   />
                   <input

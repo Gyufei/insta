@@ -11,7 +11,7 @@ export function CommonPageLayout({
 }) {
   return (
     <div
-      className="grid-main dark:bg-dark-600 relative flex flex-grow flex-col overflow-x-hidden 2xl:bg-white"
+      className="grid-main dark:bg-slate-500 relative flex flex-grow flex-col overflow-x-hidden 2xl:bg-white"
       data-v-ead27774
     >
       <PageHeader title={title} src={src} />

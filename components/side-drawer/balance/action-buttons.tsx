@@ -21,11 +21,13 @@ function DepositButton() {
   return (
     <button
       onClick={handleDeposit}
-      className="bg-turquese-pure/10 hover:bg-turquese-pure/25 focus:bg-turquese-pure/25 dark:hover:bg-turquese-pure/25 dark:focus:bg-turquese-pure/25 text-turquese-pure mr-2 flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm px-4 py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+      className="text-cyan mr-2 flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-cyan-300/10 px-4 py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none hover:bg-cyan-300/25 focus:bg-cyan-300/25 focus:outline-none disabled:opacity-50 dark:hover:bg-cyan-300/25 dark:focus:bg-cyan-300/25"
     >
       <div className="flex flex-col items-center">
         <DepositIcon />
-        <div className="text-navi-pure dark:text-light mt-2 font-medium sm:mt-4">Deposit</div>
+        <div className="text-primary dark:text-primary-foreground mt-2 font-medium sm:mt-4">
+          Deposit
+        </div>
       </div>
     </button>
   );
@@ -41,11 +43,13 @@ function WithdrawButton() {
   return (
     <button
       onClick={handleWithdraw}
-      className="bg-purple-pure/10 hover:bg-purple-pure/25 focus:bg-purple-pure/25 dark:hover:bg-purple-pure/25 dark:focus:bg-purple-pure/25 text-purple-pure mr-2 flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm px-4 py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+      className="text-purple mr-2 flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-purple-300/10 px-4 py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none hover:bg-purple-300/25 focus:bg-purple-300/25 focus:outline-none disabled:opacity-50 dark:hover:bg-purple-300/25 dark:focus:bg-purple-300/25"
     >
       <div className="flex flex-col items-center">
         <WithdrawIcon />
-        <div className="text-navi-pure dark:text-light mt-2 font-medium sm:mt-4">Withdraw</div>
+        <div className="text-primary dark:text-primary-foreground mt-2 font-medium sm:mt-4">
+          Withdraw
+        </div>
       </div>
     </button>
   );

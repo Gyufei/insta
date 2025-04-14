@@ -29,7 +29,7 @@ export function AccountSetting() {
         <div className="pt-6 text-center">
           <Link
             href="/authority"
-            className="text-grey-pure hover:text-ocean-blue-pure dark:hover:text-light underline"
+            className="text-gray-300 hover:text-blue dark:hover:text-primary-foreground underline"
           >
             View Full Page
           </Link>

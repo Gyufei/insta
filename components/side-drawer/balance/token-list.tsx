@@ -26,7 +26,7 @@ export default function TokenList({ searchQuery }: TokenListProps) {
 
   return (
     <div className="mt-2 flex flex-grow flex-col sm:mt-4">
-      <div className="pb-6">
+      <div className="pb-6 flex flex-col gap-2">
         {searchQuery && filteredTokens.length === 0 ? (
           <NoSearchResult searchQuery={searchQuery} />
         ) : (

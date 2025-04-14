@@ -25,7 +25,7 @@ export function ToggleTheme({ isCollapsed }: { isCollapsed: boolean }) {
     <div className="flex w-full items-center justify-center px-8">
       <div
         onClick={toggleTheme}
-        className="hover:text-brand dark:hover:text-light flex w-full cursor-pointer items-center justify-between px-6 leading-none transition-colors duration-150"
+        className="hover:text-primary dark:hover:text-primary-foreground flex w-full cursor-pointer items-center justify-between px-3 leading-none transition-colors duration-150"
       >
         {isDark ? <Sun className="h-5" /> : <Moon className="h-5" />}
         {!isCollapsed && (

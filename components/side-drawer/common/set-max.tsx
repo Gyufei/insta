@@ -1,4 +1,4 @@
-import { Switch } from '@/components/switch';
+import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useState } from 'react';
 
@@ -31,13 +31,13 @@ export function SetMax({
     <TooltipProvider>
       <Tooltip open={showTooltip}>
         <TooltipTrigger asChild>
-          <div 
-            className="mt-6 flex items-center justify-between cursor-pointer" 
+          <div
+            className="px-1 py-2 rounded-sm flex cursor-pointer items-center justify-between"
             onClick={handleClick}
           >
-            <div className="font-semibold">Set Max</div>
+            <div className="font-semibold text-xs">Set Max</div>
             <div>
-              <Switch checked={checked} onChange={handleMaxSwitchChange} disabled={disabled} />
+              <Switch checked={checked} onCheckedChange={handleMaxSwitchChange} disabled={disabled} />
             </div>
           </div>
         </TooltipTrigger>

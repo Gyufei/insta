@@ -23,7 +23,7 @@ export function FullAccountList() {
         <h2 className="text-[18px] 2xl:text-2xl">Accounts</h2>
         <button
           disabled={isCreatePending}
-          className="bg-ocean-blue-pure scale-xs flex w-24 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-2 text-sm leading-none font-semibold whitespace-nowrap text-white shadow-sm duration-75 ease-out select-none focus:outline-none 2xl:w-36 dark:shadow-none"
+          className="bg-blue scale-xs flex w-24 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-2 text-sm leading-none font-semibold whitespace-nowrap text-white shadow-sm duration-75 ease-out select-none focus:outline-none 2xl:w-36 dark:shadow-none"
           style={{ minHeight: '24px' }}
           onClick={handleCreateAccountClick}
         >

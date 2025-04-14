@@ -7,8 +7,6 @@ import { TokenInput } from '../common/token-input';
 import { ActionButton } from '../common/action-button';
 import { ErrorMessage } from '../common/error-message';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { HrLine } from '../../hr-line';
-import { SetMax } from '../common/set-max';
 import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
 import { SideDrawerLayout } from '../common/side-drawer-layout';
 import { parseBig } from '@/lib/utils/number';
@@ -38,19 +36,11 @@ export function DepositToken() {
           balance={balance}
           balanceLabel="Token Balance"
         />
-        <HrLine />
         <TokenInput
           inputValue={inputValue}
           onInputChange={handleInputChange}
           placeholder="Amount to deposit"
         />
-        <HrLine />
-        <SetMax
-          checked={false}
-          disabled={true}
-          tooltip="You can't set max amount since gas fee amount should be left"
-        />
-        <HrLine />
         <ActionButton disabled={btnDisabled} onClick={handleDeposit} isPending={isPending}>
           Deposit
         </ActionButton>

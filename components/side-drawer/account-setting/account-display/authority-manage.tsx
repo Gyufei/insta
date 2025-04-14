@@ -11,7 +11,7 @@ export function AuthorityManage() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="text-grey-pure hover:text-ocean-blue-pure dark:hover:text-light ml-2 flex h-4 w-4 cursor-pointer items-center justify-center text-[9px] leading-none transition-colors duration-150">
+              <div className="text-gray-300 hover:text-blue dark:hover:text-primary-foreground ml-2 flex h-4 w-4 cursor-pointer items-center justify-center text-[9px] leading-none transition-colors duration-150">
                 <InfoIcon className="h-4 w-4" />
               </div>
             </TooltipTrigger>

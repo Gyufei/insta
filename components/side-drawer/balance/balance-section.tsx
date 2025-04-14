@@ -16,7 +16,7 @@ export default function BalanceSection() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="text-xs text-grey-pure hover:text-ocean-blue-pure dark:hover:text-light ml-1 flex h-4 w-4 cursor-pointer items-center justify-center leading-none transition-colors duration-150">
+              <div className="text-primary hover:text-muted-foreground ml-1 flex h-4 w-4 cursor-pointer items-center justify-center text-xs leading-none transition-colors duration-150">
                 <HelpCircle className="h-4 w-4" />
               </div>
             </TooltipTrigger>
@@ -26,7 +26,7 @@ export default function BalanceSection() {
           </Tooltip>
         </TooltipProvider>
       </h3>
-      <div className="mt-4 text-[32px] font-semibold">
+      <div className="mt-4 text-[32px] font-semibold text-primary">
         <WithLoading isLoading={!!isPending} className="h-8 w-8">
           ${Number(priceValue) > 0 ? formatNumber(priceValue) : '0.00'}
         </WithLoading>

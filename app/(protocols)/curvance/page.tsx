@@ -81,7 +81,7 @@ export default function Curvance() {
                   <div className="text-sm font-medium">78%</div>
                 </div>
                 <Progress value={78} className="h-2" />
-                <div className="mt-2 text-xs text-gray-500">Target: 85% utilization</div>
+                <div className="mt-2 text-xs text-gray-300-500">Target: 85% utilization</div>
               </Card>
             </div>
           </div>
@@ -93,7 +93,7 @@ export default function Curvance() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-primary bg-blue-light text-primary h-9 hover:bg-blue-100"
+                  className="border-primary bg-blue-200 text-primary h-9 hover:bg-blue-100"
                 >
                   <ArrowDownUp className="mr-2 h-4 w-4" />
                   Sort
@@ -101,7 +101,7 @@ export default function Curvance() {
 
                 <div className="relative">
                   <Search
-                    className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-400"
+                    className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-300-400"
                     size={16}
                   />
                   <input
@@ -162,7 +162,7 @@ export default function Curvance() {
               <div className="mb-4">
                 <h3 className="mb-2 text-lg font-medium">ETH/USDC Curve</h3>
                 <div className="h-64 w-full rounded-md bg-gray-100 flex items-center justify-center">
-                  <div className="text-gray-500">Curve visualization would appear here</div>
+                  <div className="text-gray-300-500">Curve visualization would appear here</div>
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

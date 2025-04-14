@@ -1,7 +1,7 @@
 import { TokenInput } from '@/components/side-drawer/common/token-input';
 import { SetInputBtn } from './set-input-btn';
 import { formatNumber } from '@/lib/utils/number';
-import { HrLine } from '@/components/hr-line';
+import { Separator } from '@/components/ui/separator';
 
 interface TokenInputSectionProps {
   inputValue: string;
@@ -33,7 +33,7 @@ export function TokenInputSection({
       />
 
       <div
-        className="group text-grey-pure mt-2 cursor-pointer pl-1 text-xs"
+        className="group text-gray-300 mt-2 cursor-pointer pl-1 text-xs"
         onClick={() => onInputChange(balance)}
       >
         <span className="font-semibold">
@@ -41,12 +41,12 @@ export function TokenInputSection({
           <span className="group-hover:text-black">{formatNumber(balance)}</span>
         </span>
       </div>
-      <div className="text-grey-pure mt-2 flex gap-2">
+      <div className="text-gray-300 mt-2 flex gap-2">
         {setInputButtons.map((button, index) => (
           <SetInputBtn key={index} label={button.label} onClick={button.onClick} />
         ))}
       </div>
-      <HrLine />
+      <Separator/>
     </>
   );
 } 

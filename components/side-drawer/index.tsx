@@ -65,7 +65,7 @@ const SideDrawer = () => {
           }}
         >
           <div
-            className="bg-background dark:bg-dark-500 flex h-full flex-col"
+            className="bg-background dark:bg-slate-600 flex h-full flex-col"
             style={{
               width: 'clamp(var(--min-width-app), var(--width-sidebar-context), 100%)',
             }}

@@ -5,7 +5,7 @@ export function AccountAddressContainer() {
     <div className="mt-6">
       <label
         htmlFor="dsa-address"
-        className="text-navi-pure-light dark:text-light text-xs font-semibold"
+        className="text-primary text-xs font-semibold"
       >
         Account address
       </label>

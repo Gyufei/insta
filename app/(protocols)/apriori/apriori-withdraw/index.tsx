@@ -6,6 +6,7 @@ import { Claim } from './claim';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { useState } from 'react';
 import { CircleCheckBig } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface TabButtonProps {
   label: string;
@@ -19,24 +20,23 @@ function TabButton({ label, value, activeTab, onClick }: TabButtonProps) {
 
   return (
     <div className="flex">
-      <button
-        className={`relative flex flex-1 cursor-pointer items-center gap-2 rounded-sm border bg-white px-4 py-3 outline-none select-none focus:outline-none ${
-          isActive
-            ? 'border-ocean-blue-pure dark:border-grey-light'
-            : 'border-grey-light hover:border-ocean-blue-pure dark:border-grey-pure dark:hover:border-grey-light'
-        } dark:bg-dark-400`}
+      <Button
+        variant="outline"
+        className={`relative flex flex-1 cursor-pointer items-center gap-2 rounded-sm border px-4 py-3 outline-none select-none focus:outline-none ${
+          isActive ? 'border-blue-500' : 'hover:border-blue-500'
+        }`}
         onClick={onClick}
       >
         <p className="text-sm leading-none font-semibold">{label}</p>
         {isActive && (
           <div
-            className="bg-ocean-blue-pure dark:bg-grey-light dark:text-dark-600 absolute flex h-4 w-4 cursor-pointer items-center justify-center rounded-full text-white"
+            className="absolute flex h-4 w-4 cursor-pointer items-center justify-center rounded-full bg-blue-500 text-white"
             style={{ top: '-6px', right: '-6px' }}
           >
             <CircleCheckBig className="h-3.5 w-3.5 dark:opacity-90" />
           </div>
         )}
-      </button>
+      </Button>
     </div>
   );
 }

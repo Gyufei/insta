@@ -20,14 +20,14 @@ export function DSAInfo() {
       <Image src="/images/account-cover.png" alt="DeFi Smart Account Cover" width={290} height={190} />
 
       <div>
-        <h3 className="text-grey-pure mb-6">
+        <h3 className="text-gray-300 mb-6">
           Build your Smart Account to enable Smart DeFi things.
         </h3>
         <ul className="mb-6 flex flex-col gap-4">
           {features.map((feature, index) => (
             <li key={index} className="text-base flex items-center justify-between">
               {feature.text}
-              <Check className="text-green-pure h-5 w-5 dark:opacity-90" strokeWidth={2} />
+              <Check className="text-green h-5 w-5 dark:opacity-90" strokeWidth={2} />
             </li>
           ))}
         </ul>

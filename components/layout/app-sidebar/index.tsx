@@ -43,6 +43,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ToggleTheme } from './toggle-theme';
 import { Version } from './version';
+import { cn } from '@/lib/utils';
 
 const SOCIAL_LINKS = [
   { href: '', icon: Mail },
@@ -63,7 +64,7 @@ type MenuGroup = {
   }>;
 };
 
-export default function SideBar() {
+export default function AppSidebar() {
   const { data: accountInfo } = useSelectedAccount();
   const pathname = usePathname();
   const { open } = useSidebar();
@@ -84,27 +85,53 @@ export default function SideBar() {
       href: '/apriori',
       label: 'Apriori',
       icon: (
-        <Image src="/icons/apriori.svg" alt="aprior" width={16} height={16} className="h-4 w-4 rounded-full" />
+        <Image
+          src="/icons/apriori.svg"
+          alt="aprior"
+          width={16}
+          height={16}
+          className="h-4 w-4 rounded-full"
+        />
       ),
     },
     {
       href: '/nad-fun',
       label: 'Nad.Fun',
       icon: (
-        <Image src="/icons/nad-fun.svg" alt="nad-fun" width={16} height={16} className="h-4 w-4 rounded-full" />
+        <Image
+          src="/icons/nad-fun.svg"
+          alt="nad-fun"
+          width={16}
+          height={16}
+          className="h-4 w-4 rounded-full"
+        />
       ),
     },
     {
       href: '/uniswap',
       label: 'Uniswap V3',
       icon: (
-        <Image src="/icons/uniswap.svg" alt="uniswap" width={16} height={16} className="h-4 w-4 rounded-full" />
+        <Image
+          src="/icons/uniswap.svg"
+          alt="uniswap"
+          width={16}
+          height={16}
+          className="h-4 w-4 rounded-full"
+        />
       ),
     },
     {
       href: '/magma',
       label: 'Magma',
-      icon: <Image src="/icons/magma.jpg" alt="magma" width={16} height={16} className="h-4 w-4 rounded-full" />,
+      icon: (
+        <Image
+          src="/icons/magma.jpg"
+          alt="magma"
+          width={16}
+          height={16}
+          className="h-4 w-4 rounded-full"
+        />
+      ),
     },
     {
       href: '/nad-name-server',
@@ -123,13 +150,27 @@ export default function SideBar() {
       href: '/ambient',
       label: 'Ambient',
       icon: (
-        <Image src="/icons/ambient.svg" alt="ambient" width={16} height={16} className="h-4 w-4 rounded-full" />
+        <Image
+          src="/icons/ambient.svg"
+          alt="ambient"
+          width={16}
+          height={16}
+          className="h-4 w-4 rounded-full"
+        />
       ),
     },
     {
       href: '/meme',
       label: 'Meme',
-      icon: <Image src="/icons/monad.svg" alt="meme" width={16} height={16} className="h-4 w-4 rounded-full" />,
+      icon: (
+        <Image
+          src="/icons/monad.svg"
+          alt="meme"
+          width={16}
+          height={16}
+          className="h-4 w-4 rounded-full"
+        />
+      ),
     },
     {
       href: '/curvance',
@@ -319,7 +360,7 @@ export default function SideBar() {
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-brand dark:hover:text-light flex h-4 w-4 items-center justify-center"
+              className="hover:text-primary dark:hover:text-primary-foreground flex h-4 w-4 items-center justify-center"
             >
               <link.icon className="h-full" />
             </a>

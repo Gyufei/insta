@@ -8,7 +8,6 @@ import { TokenDisplay } from '../common/token-display';
 import { TokenInput } from '../common/token-input';
 import { ActionButton } from '../common/action-button';
 import { ErrorMessage } from '../common/error-message';
-import { HrLine } from '../../hr-line';
 import { useAccountBalance } from '@/lib/web3/use-account-balance';
 import { useSetMax } from '../common/use-set-max';
 import { SideDrawerLayout } from '../common/side-drawer-layout';
@@ -37,15 +36,12 @@ export function WithdrawToken() {
       <SideDrawerBackHeader title="Withdraw" onClick={() => setIsOpen(false)} />
       <SideDrawerLayout>
         <TokenDisplay token={token} balance={balance} balanceLabel="Supply" />
-        <HrLine />
         <TokenInput
           inputValue={inputValue}
           onInputChange={handleInput}
           placeholder="Amount to withdraw"
         />
-        <HrLine />
         <SetMax checked={isMax} disabled={false} onChange={handleSetMax} />
-        <HrLine />
         <ActionButton disabled={btnDisabled} onClick={handleWithdraw} isPending={isPending}>
           Withdraw
         </ActionButton>

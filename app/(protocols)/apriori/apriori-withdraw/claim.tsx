@@ -1,6 +1,6 @@
 import { TokenData } from '@/lib/data/tokens';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
-import { HrLine } from '@/components/hr-line';
+import { Separator } from '@/components/ui/separator';
 import { useGetAprioriClaim } from '@/lib/data/use-get-apriori-claim';
 import { useAprioriClaim } from '@/lib/data/use-apriori-claim';
 import { ClaimCard } from './claim-card';
@@ -36,7 +36,7 @@ export function Claim() {
       <div className="mt-3">
         <h3 className="mb-3 text-center text-lg font-medium">Unstake MON</h3>
         {isClaimRecordsPending ? (
-          <div className="py-4 text-center text-gray-400">Loading request...</div>
+          <div className="py-4 text-center text-gray-300-400">Loading request...</div>
         ) : claimRecords && claimRecords.length > 0 ? (
           <div className="space-y-3">
             {claimRecords.map((claim) => (
@@ -49,10 +49,10 @@ export function Claim() {
             ))}
           </div>
         ) : (
-          <div className="py-4 text-center text-gray-400">No request found</div>
+          <div className="py-4 text-center text-gray-300-400">No request found</div>
         )}
       </div>
-      <HrLine />
+      <Separator/>
       <ActionButton
         disabled={isClaimRecordsPending || canClaimAmount === '0' || !selectedRequestId}
         onClick={handleClaim}

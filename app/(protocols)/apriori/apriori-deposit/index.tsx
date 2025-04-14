@@ -7,12 +7,13 @@ import { TokenInput } from '@/components/side-drawer/common/token-input';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { HrLine } from '@/components/hr-line';
+import { Separator } from '@/components/ui/separator';
 import { SetMax } from '@/components/side-drawer/common/set-max';
-import { EstReceive } from '@/components/est-receive';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { useAccountBalance } from '@/lib/web3/use-account-balance';
 import { parseBig } from '@/lib/utils/number';
+import { useSetMax } from '@/components/side-drawer/common/use-set-max';
+import { TokenDisplayCard } from '@/components/token-display-card';
 
 export function AprioriDeposit() {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -23,6 +24,7 @@ export function AprioriDeposit() {
 
   const { balance, isPending: isBalancePending } = useAccountBalance();
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
+  const { isMax, handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
 
   const receiveAmount = inputValue || '0';
 
@@ -43,25 +45,19 @@ export function AprioriDeposit() {
             balance={balance}
             balanceLabel="Token Balance"
           />
-          <HrLine />
           <TokenInput
             inputValue={inputValue}
-            onInputChange={handleInputChange}
+            onInputChange={handleInput}
             placeholder="Amount to deposit"
           />
-          <HrLine />
-          <SetMax
-            checked={false}
-            disabled={true}
-            tooltip="You can't set max amount since gas fee amount should be left"
-          />
-          <HrLine />
-          <EstReceive
-            symbol={aprMonToken.symbol}
+          <SetMax checked={isMax} onChange={handleSetMax} />
+          <TokenDisplayCard
             logo={aprMonToken.iconUrl}
-            amount={receiveAmount}
+            symbol={aprMonToken.symbol}
+            title="Estimated Receive"
+            content={receiveAmount}
           />
-          <HrLine />
+          <Separator />
           <ActionButton disabled={btnDisabled} onClick={handleDeposit} isPending={isPending}>
             Deposit
           </ActionButton>

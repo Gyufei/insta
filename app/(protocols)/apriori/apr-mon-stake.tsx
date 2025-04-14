@@ -9,6 +9,9 @@ import { multiply } from 'safebase';
 import { WithLoading } from '@/components/with-loading';
 import { formatBig, formatNumber } from '@/lib/utils/number';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 
 export function AprMonStake() {
   const { setCurrentComponent } = useSideDrawerStore();
@@ -29,8 +32,8 @@ export function AprMonStake() {
 
   return (
     <div className="mt-4 grid w-full min-w-max grid-cols-1 gap-4 px-4 2xl:mt-6 2xl:gap-6 2xl:px-12">
-      <div className="dark:bg-dark-500 relative flex flex-1 flex-shrink-0 flex-col rounded bg-white px-4 py-6 shadow dark:shadow-none">
-        <div data-v-7afb5e18="" className="flex items-center">
+      <Card className="relative flex flex-1 flex-shrink-0 flex-col shadow dark:bg-slate-600 dark:shadow-none">
+        <CardContent className="flex items-center px-4">
           <div className="flex h-12 w-12 items-center justify-center dark:opacity-90">
             <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full">
               <Image
@@ -47,13 +50,13 @@ export function AprMonStake() {
               <WithLoading isLoading={isLoading}>${priceValue}</WithLoading>
             </div>
             <div className="flex leading-none whitespace-nowrap">
-              <span className="text-grey-pure text-sm">
+              <span className="text-sm text-gray-300">
                 <WithLoading isLoading={isLoading}>{`${formatNumber(balance)} aprMon`}</WithLoading>
               </span>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="text-grey-pure hover:text-ocean-blue-pure dark:hover:text-light ml-1 flex h-4 w-4 cursor-pointer items-center justify-center text-xs leading-none transition-colors duration-150">
+                    <div className="hover:text-blue dark:hover:text-primary-foreground ml-1 flex h-4 w-4 cursor-pointer items-center justify-center text-xs leading-none text-gray-300 transition-colors duration-150">
                       <CircleDollarSign className="h-4 w-4" />
                     </div>
                   </TooltipTrigger>
@@ -64,25 +67,25 @@ export function AprMonStake() {
               </TooltipProvider>
             </div>
           </div>
-        </div>
-        <div className="mt-4 flex w-full items-center justify-center">
-          <hr className="bg-grey-light dark:bg-grey-light/10 mt-0 w-full" />
-        </div>
-        <div className="mt-6 flex items-center justify-around gap-2 px-4">
-          <button
+        </CardContent>
+        <Separator />
+        <CardFooter className="flex items-center justify-around gap-2 px-4">
+          <Button
             onClick={handleDeposit}
-            className="bg-ocean-blue-pure/10 dark:text-ocean-blue-pale dark:bg-ocean-blue-pure/15 hover:bg-ocean-blue-pure/20 focus:bg-ocean-blue-pure/25 active:bg-ocean-blue-pure/40 dark:active:bg-ocean-blue-pure/40 dark:hover:bg-ocean-blue-pure/25 dark:focus:bg-ocean-blue-pure/25 text-ocean-blue-pure flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            size="default"
+            className="flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
           >
             Deposit
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleWithdraw}
-            className="bg-ocean-blue-pure/10 dark:text-ocean-blue-pale dark:bg-ocean-blue-pure/15 hover:bg-ocean-blue-pure/20 focus:bg-ocean-blue-pure/25 active:bg-ocean-blue-pure/40 dark:active:bg-ocean-blue-pure/40 dark:hover:bg-ocean-blue-pure/25 dark:focus:bg-ocean-blue-pure/25 text-ocean-blue-pure flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            size="default"
+            className="flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
           >
             Withdraw
-          </button>
-        </div>
-      </div>
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

@@ -37,7 +37,7 @@ export function PageHeader({ title, src }: { title: string; src: string | null }
 
         <NetworkSelect />
 
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" className="h-8 w-8">
           <Settings size={16} />
         </Button>
 
@@ -45,11 +45,12 @@ export function PageHeader({ title, src }: { title: string; src: string | null }
           <Button
             variant="outline"
             size="icon"
+            className="h-8 w-8"
             onClick={() => {
               disconnect();
             }}
           >
-            <Power className="text-passion-orange-pure h-4 w-4" />
+            <Power className="h-4 w-4 text-orange-500" />
           </Button>
         )}
       </div>

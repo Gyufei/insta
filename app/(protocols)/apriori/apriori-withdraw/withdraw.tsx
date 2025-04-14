@@ -5,7 +5,7 @@ import { TokenInput } from '@/components/side-drawer/common/token-input';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { HrLine } from '@/components/hr-line';
+import { Separator } from '@/components/ui/separator';
 import { SetMax } from '@/components/side-drawer/common/set-max';
 import { useAprioriBalance } from '@/lib/data/use-aprior-balance';
 import { WithdrawEstReceive } from './withdraw-est-receive';
@@ -39,17 +39,14 @@ export function Withdraw() {
         balance={balance}
         balanceLabel="Token Balance"
       />
-      <HrLine />
       <TokenInput
         inputValue={inputValue}
         onInputChange={handleInput}
         placeholder="Amount to withdraw"
       />
-      <HrLine />
       <SetMax checked={isMax} onChange={handleSetMax} />
-      <HrLine />
       <WithdrawEstReceive receiveToken={monToken} receiveAmount={receiveAmount} />
-      <HrLine />
+      <Separator/>
       <ActionButton disabled={btnDisabled} onClick={handleWithdraw} isPending={isPending}>
         Withdraw
       </ActionButton>
