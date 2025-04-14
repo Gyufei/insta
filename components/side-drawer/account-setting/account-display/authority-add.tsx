@@ -6,6 +6,9 @@ import { isAddress } from 'viem';
 import { useCreateAuthority } from '@/lib/data/use-create-authority';
 import { ERROR_MESSAGES } from '@/config/error-msg';
 import { WithLoading } from '@/components/with-loading';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+
 export function AuthorityAdd() {
   const { mutateAsync: createAuthority, isPending } = useCreateAuthority();
 
@@ -36,25 +39,24 @@ export function AuthorityAdd() {
 
   return (
     <div className="relative mt-4 flex flex-grow items-center">
-      <input
+      <Input
         type="text"
         autoComplete="off"
         placeholder="New Authority"
-        className={`form-input h-10 w-full py-3! pr-18! ${isError ? 'border-red-500!' : ''}`}
-        style={{ paddingLeft: '0.75rem' }}
+        className={isError ? 'border-destructive' : ''}
         value={inputValue}
         onChange={handleInputChange}
+        aria-invalid={isError}
       />
-      <button
+      <Button
         disabled={!inputValue || isPending}
         onClick={handleAdd}
-        className="bg-blue disabled:bg-gray-200 dark:disabled:bg-slate-200 scale-down-sm hover:bg-blue active:bg-blue disabled:text-gray-300 absolute top-1 right-1 flex h-8 w-16 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm px-3 text-sm leading-none font-semibold text-white shadow-none duration-0 outline-none select-none focus:outline-none active:shadow-none"
+        size="sm"
+        className="absolute top-[2px] right-1"
       >
-        <div className="flex w-full items-center justify-center truncate">
-          <WithLoading isLoading={!!isPending} className="mr-2" />
-          <div className="flex items-center truncate py-0.5">Add</div>
-        </div>
-      </button>
+        <WithLoading isLoading={!!isPending} className="mr-2" />
+        Add
+      </Button>
     </div>
   );
 }

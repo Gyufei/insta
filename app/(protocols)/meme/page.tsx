@@ -212,7 +212,7 @@ export default function Meme() {
                         <MessageCircle className="h-4 w-4 text-blue-500" />
                         <span className="text-sm">{post.comments}</span>
                       </div>
-                      <Button size="sm" variant="ghost" className="text-primary hover:bg-blue-50">
+                      <Button size="sm" variant="ghost" className="text-primary hover:bg-blue-500/50">
                         View
                       </Button>
                     </div>

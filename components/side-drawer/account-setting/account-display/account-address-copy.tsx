@@ -20,6 +20,7 @@ export function AccountAddressCopy({ className }: { className?: string }) {
           href={`${network.blockExplorers.default.url}/address/${accountAddress}`}
           target="_blank"
           rel="noopener noreferrer"
+          className="text-blue-500"
         >
           {accountAddress}
         </a>
