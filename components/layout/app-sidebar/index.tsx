@@ -43,7 +43,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ToggleTheme } from './toggle-theme';
 import { Version } from './version';
-import { cn } from '@/lib/utils';
 
 const SOCIAL_LINKS = [
   { href: '', icon: Mail },
@@ -88,9 +87,9 @@ export default function AppSidebar() {
         <Image
           src="/icons/apriori.svg"
           alt="aprior"
-          width={16}
-          height={16}
-          className="h-4 w-4 rounded-full"
+          width={20}
+          height={20}
+          className="h-4 w-4"
         />
       ),
     },
@@ -101,8 +100,8 @@ export default function AppSidebar() {
         <Image
           src="/icons/nad-fun.svg"
           alt="nad-fun"
-          width={16}
-          height={16}
+          width={20}
+          height={20}
           className="h-4 w-4 rounded-full"
         />
       ),
@@ -114,9 +113,9 @@ export default function AppSidebar() {
         <Image
           src="/icons/uniswap.svg"
           alt="uniswap"
-          width={16}
-          height={16}
-          className="h-4 w-4 rounded-full"
+          width={20}
+          height={20}
+          className="h-4 w-4"
         />
       ),
     },
@@ -127,8 +126,8 @@ export default function AppSidebar() {
         <Image
           src="/icons/magma.jpg"
           alt="magma"
-          width={16}
-          height={16}
+          width={20}
+          height={20}
           className="h-4 w-4 rounded-full"
         />
       ),
@@ -140,8 +139,8 @@ export default function AppSidebar() {
         <Image
           src="/icons/nad-name-server.svg"
           alt="nad-name-server"
-          width={16}
-          height={16}
+          width={20}
+          height={20}
           className="h-4 w-4"
         />
       ),
@@ -153,9 +152,9 @@ export default function AppSidebar() {
         <Image
           src="/icons/ambient.svg"
           alt="ambient"
-          width={16}
-          height={16}
-          className="h-4 w-4 rounded-full"
+          width={20}
+          height={20}
+          className="h-4 w-4"
         />
       ),
     },
@@ -166,8 +165,8 @@ export default function AppSidebar() {
         <Image
           src="/icons/monad.svg"
           alt="meme"
-          width={16}
-          height={16}
+          width={20}
+          height={20}
           className="h-4 w-4 rounded-full"
         />
       ),
@@ -179,9 +178,9 @@ export default function AppSidebar() {
         <Image
           src="/icons/curvance.svg"
           alt="curvance"
-          width={16}
-          height={16}
-          className="h-4 w-4 rounded-full"
+          width={20}
+          height={20}
+          className="h-4 w-4"
         />
       ),
     },
@@ -351,6 +350,7 @@ export default function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
+        <SidebarSeparator />
         <div
           className={`flex w-full items-center justify-center ${!open ? 'flex-col space-y-3' : 'space-x-4'}`}
         >
@@ -366,7 +366,6 @@ export default function AppSidebar() {
             </a>
           ))}
         </div>
-        <SidebarSeparator />
         <ToggleTheme isCollapsed={!open} />
         {open && <Version version="v0.1.0" />}
       </SidebarFooter>

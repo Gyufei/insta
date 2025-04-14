@@ -267,3 +267,7 @@ body {
     grid-area: sidebar-context;
   }
 }
+
+input::placeholder {
+  @apply text-gray-400 font-normal;
+}

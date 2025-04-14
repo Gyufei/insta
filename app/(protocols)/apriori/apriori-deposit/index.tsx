@@ -7,7 +7,6 @@ import { TokenInput } from '@/components/side-drawer/common/token-input';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { Separator } from '@/components/ui/separator';
 import { SetMax } from '@/components/side-drawer/common/set-max';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { useAccountBalance } from '@/lib/web3/use-account-balance';
@@ -57,7 +56,6 @@ export function AprioriDeposit() {
             title="Estimated Receive"
             content={receiveAmount}
           />
-          <Separator />
           <ActionButton disabled={btnDisabled} onClick={handleDeposit} isPending={isPending}>
             Deposit
           </ActionButton>

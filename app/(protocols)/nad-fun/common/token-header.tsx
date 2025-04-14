@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useCopyToClipboard } from '@/lib/hooks/use-copy-to-clipboard';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface TokenHeaderProps {
   token: {
@@ -23,33 +24,39 @@ export function TokenHeader({ token }: TokenHeaderProps) {
   }, [isCopied]);
 
   return (
-    <>
-      <div className="mb-1 flex items-center justify-between gap-2">
-        <div className="flex items-center">
-          <h2 className="text-3xl font-bold">{token?.symbol}</h2>
-          <span className="rounded px-2 py-1 text-sm text-gray-300-400">{token?.name}</span>
+    <Card className="py-0">
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-col items-start">
+            <div className="text-muted-foreground mb-1 flex text-xs font-medium">{token?.name}</div>
+            <div className="text-foreground text-2xl leading-none font-semibold">
+              {token?.symbol}
+            </div>
+          </div>
+          <div className="flex h-10 w-10 items-center justify-center">
+            {token?.logo && (
+              <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full bg-white/80 p-1 shadow-sm dark:bg-white/10">
+                <Image
+                  src={token?.logo}
+                  alt={token?.name}
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 object-contain rounded-full"
+                />
+              </div>
+            )}
+          </div>
         </div>
-        <div className="flex h-12 w-12 items-center rounded-full">
-          {token?.logo && (
-            <Image
-              src={token?.logo}
-              alt={token?.name}
-              width={48}
-              height={48}
-              className="rounded-full"
-            />
-          )}
-        </div>
-      </div>
 
-      <div className="bg-gray/20 mt-4 mb-4 flex items-center gap-2 rounded-sm p-1">
-        <span className="flex items-center truncate font-mono text-xs text-gray-300-500">
-          {token?.address || '0x916e57F62e068635E93942Cd9Ee65e3fd4De2379'}
-        </span>
-        <button onClick={copyToClipboard} className="flex cursor-pointer items-center">
-          <Copy className="h-4 w-4 text-gray-300-500" />
-        </button>
-      </div>
-    </>
+        <div className="mt-4 flex items-center gap-2 rounded-sm bg-gray-200/20 p-1 text-gray-400">
+          <span className="text-gray-400 flex items-center truncate font-mono text-xs">
+            {token?.address || '0x916e57F62e068635E93942Cd9Ee65e3fd4De2379'}
+          </span>
+          <button onClick={copyToClipboard} className="flex cursor-pointer items-center">
+            <Copy className="text-gray-300-500 h-4 w-4" />
+          </button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

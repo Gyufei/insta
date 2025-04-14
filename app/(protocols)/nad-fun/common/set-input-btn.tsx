@@ -1,10 +1,14 @@
+import { Button } from "@/components/ui/button";
+
 export function SetInputBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
-    <button
+    <Button
       onClick={onClick}
-      className="border-grey hover:border-slate-600 mt-1 flex cursor-pointer items-center rounded-sm border px-1 py-1 text-xs font-semibold select-none hover:text-black"
+      variant="outline"
+      size="sm"
+      className="mt-1 w-14 px-1 py-0 h-6 text-xs font-semibold select-none"
     >
       {label}
-    </button>
+    </Button>
   );
 }

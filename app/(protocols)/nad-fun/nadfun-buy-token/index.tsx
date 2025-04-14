@@ -10,8 +10,8 @@ import { useNadFunBuy } from '@/lib/data/use-nadfun-buy';
 import { TokenData } from '@/lib/data/tokens';
 import { TokenHeader } from '../common/token-header';
 import { TokenInputSection } from '../common/token-input-section';
-import { EstimatedReceive } from '../common/estimated-receive';
 import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
+import { TokenDisplayCard } from '@/components/token-display-card';
 
 export function NadFunBuyToken() {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -63,7 +63,12 @@ export function NadFunBuyToken() {
           setInputButtons={setInputButtons}
         />
 
-        <EstimatedReceive inputValue={inputValue} receiveTokenSymbol={token?.symbol} />
+        <TokenDisplayCard
+          logo={token?.logo}
+          symbol={token?.symbol}
+          title="Estimated Receive"
+          content={inputValue || '0'}
+        />
 
         <ActionButton disabled={btnDisabled} onClick={handleBuyToken} isPending={isPending}>
           Buy

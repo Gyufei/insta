@@ -7,12 +7,12 @@ import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { TokenData } from '@/lib/data/tokens';
 import { useNadFunSell } from '@/lib/data/use-nadfun-sell';
-import { multiply } from 'safebase';
+import { multiply, utils } from 'safebase';
 import { formatBig } from '@/lib/utils/number';
 import { TokenHeader } from '../common/token-header';
 import { TokenInputSection } from '../common/token-input-section';
-import { EstimatedReceive } from '../common/estimated-receive';
 import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
+import { TokenDisplayCard } from '@/components/token-display-card';
 
 export function NadFunSellToken() {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -41,7 +41,8 @@ export function NadFunSellToken() {
 
   function handlePercentage(percentage: number) {
     const amount = multiply(balance, String(percentage));
-    handleInputChange(amount);
+    const roundedAmount = utils.roundResult(amount, 10);
+    handleInputChange(roundedAmount);
   }
 
   if (!token) {
@@ -70,7 +71,12 @@ export function NadFunSellToken() {
           setInputButtons={setInputButtons}
         />
 
-        <EstimatedReceive inputValue={inputValue} receiveTokenSymbol={monToken?.symbol} />
+        <TokenDisplayCard
+          logo={monToken.iconUrl}
+          symbol={monToken.symbol}
+          title="Estimated Receive"
+          content={inputValue || '0'}
+        />
 
         <ActionButton disabled={btnDisabled} onClick={handleSellToken} isPending={isPending}>
           Sell
