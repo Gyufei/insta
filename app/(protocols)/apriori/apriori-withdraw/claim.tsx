@@ -36,7 +36,7 @@ export function Claim() {
       <div className="mt-3">
         <h3 className="mb-3 text-center text-lg font-medium">Unstake MON</h3>
         {isClaimRecordsPending ? (
-          <div className="py-4 text-center text-gray-300-400">Loading request...</div>
+          <div className="text-gray-300-400 py-4 text-center">Loading request...</div>
         ) : claimRecords && claimRecords.length > 0 ? (
           <div className="space-y-3">
             {claimRecords.map((claim) => (
@@ -49,10 +49,10 @@ export function Claim() {
             ))}
           </div>
         ) : (
-          <div className="py-4 text-center text-gray-300-400">No request found</div>
+          <div className="text-gray-300-400 py-4 text-center">No request found</div>
         )}
       </div>
-      <Separator/>
+      <Separator />
       <ActionButton
         disabled={isClaimRecordsPending || canClaimAmount === '0' || !selectedRequestId}
         onClick={handleClaim}

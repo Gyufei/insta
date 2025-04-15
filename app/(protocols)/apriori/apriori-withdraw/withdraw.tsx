@@ -10,7 +10,7 @@ import { SetMax } from '@/components/side-drawer/common/set-max';
 import { useAprioriBalance } from '@/lib/data/use-aprior-balance';
 import { WithdrawEstReceive } from './withdraw-est-receive';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
-import { parseBig } from '@/lib/utils/number';
+import { formatBig, parseBig } from '@/lib/utils/number';
 
 export function Withdraw() {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -19,7 +19,7 @@ export function Withdraw() {
   const { mutate: withdraw, isPending } = useAprioriWithdraw();
 
   const { data: aprioriBalance, isLoading: isBalancePending } = useAprioriBalance();
-  const balance = aprioriBalance?.balance || '0';
+  const balance = formatBig(aprioriBalance?.balance || '0');
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
   const { isMax, handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
 
@@ -46,7 +46,7 @@ export function Withdraw() {
       />
       <SetMax checked={isMax} onChange={handleSetMax} />
       <WithdrawEstReceive receiveToken={monToken} receiveAmount={receiveAmount} />
-      <Separator/>
+      <Separator />
       <ActionButton disabled={btnDisabled} onClick={handleWithdraw} isPending={isPending}>
         Withdraw
       </ActionButton>

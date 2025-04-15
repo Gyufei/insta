@@ -1,6 +1,6 @@
 import { TokenData, TokenPriceMap } from '@/lib/data/tokens';
 import { useAprioriBalance } from '@/lib/data/use-aprior-balance';
-import { formatNumber } from '@/lib/utils/number';
+import { formatBig, formatNumber } from '@/lib/utils/number';
 import Image from 'next/image';
 import { multiply } from 'safebase';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 export function AprMONTokenCard({ className }: { className?: string }) {
   const aprMonToken = TokenData.find((token) => token.symbol === 'aprMON') || TokenData[1];
   const { data: aprioriBalance } = useAprioriBalance();
-  const balance = aprioriBalance?.balance || '0';
+  const balance = formatBig(aprioriBalance?.balance || '0');
   const priceValue = multiply(balance, String(TokenPriceMap[aprMonToken.symbol] || 0));
 
   return (
@@ -26,7 +26,7 @@ export function AprMONTokenCard({ className }: { className?: string }) {
                 alt={aprMonToken.name}
               />
             ) : (
-              <div className="text-xs flex h-full w-full items-center justify-center truncate rounded-full bg-gradient-to-br from-gray-300 to-gray-900 leading-none text-white uppercase">
+              <div className="flex h-full w-full items-center justify-center truncate rounded-full bg-gradient-to-br from-gray-300 to-gray-900 text-xs leading-none text-white uppercase">
                 {aprMonToken.symbol.toLowerCase()}
               </div>
             )}
@@ -37,7 +37,7 @@ export function AprMONTokenCard({ className }: { className?: string }) {
           <div className="text-primary dark:text-primary-foreground mb-1 flex items-center text-xs font-semibold whitespace-nowrap">
             {formatNumber(balance)} {aprMonToken.symbol}
           </div>
-          <div className="text-xs text-gray-300 font-medium whitespace-nowrap">
+          <div className="text-xs font-medium whitespace-nowrap text-gray-300">
             ${formatNumber(priceValue)}
           </div>
         </div>

@@ -12,6 +12,10 @@ import { TokenHeader } from '../common/token-header';
 import { TokenInputSection } from '../common/token-input-section';
 import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
 import { TokenDisplayCard } from '@/components/token-display-card';
+import { useNadFunReceiveAmount } from '../common/use-nadfun-receive-amount';
+import { useEffect, useMemo, useState } from 'react';
+import { formatBig, parseBig } from '@/lib/utils/number';
+import { utils } from 'safebase';
 
 export function NadFunBuyToken() {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -21,14 +25,60 @@ export function NadFunBuyToken() {
   const { balance } = useAccountBalance();
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
   const { mutateAsync: buyToken, isPending } = useNadFunBuy();
+  const { calcTokenOut } = useNadFunReceiveAmount(token?.address);
 
+  const [error, setError] = useState({
+    showError: false,
+    errorMessage: '',
+  });
+
+  const allError = useMemo(() => {
+    return {
+      ...errorData,
+      ...error,
+    };
+  }, [errorData, error]);
+
+  const [tokenOut, setTokenOut] = useState<bigint>(BigInt(0));
+
+  const tokenOutDisplay = useMemo(() => {
+    return utils.roundResult(formatBig(tokenOut.toString()), 6);
+  }, [tokenOut]);
+
+  function handleInput(value: string) {
+    setError({
+      showError: false,
+      errorMessage: '',
+    });
+
+    try {
+      handleInputChange(value);
+
+      if (Number(value) === 0) {
+        setTokenOut(BigInt(0));
+        return;
+      }
+
+      const tokenOut = calcTokenOut(value);
+      setTokenOut(tokenOut);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError({
+          showError: true,
+          errorMessage: error.message,
+        });
+      }
+    }
+  }
   async function handleBuyToken() {
     if (!token?.address) return;
+    
+    const amountIn = parseBig(inputValue);
 
     try {
       await buyToken({
-        amount_in: inputValue,
-        amount_out_min: '0',
+        amount_in: amountIn,
+        amount_out_min: tokenOut.toString(),
         token: token.address,
       });
       toast.success('Token purchased successfully');
@@ -37,16 +87,25 @@ export function NadFunBuyToken() {
     }
   }
 
+  useEffect(() => {
+    handleInputChange('');
+    setError({
+      showError: false,
+      errorMessage: '',
+    });
+    setTokenOut(BigInt(0));
+  }, [token]);
+
   if (!token) {
     return null;
   }
 
   const setInputButtons = [
-    { label: 'Reset', onClick: () => handleInputChange('') },
-    { label: '0.5 MON', onClick: () => handleInputChange('0.5') },
-    { label: '1 MON', onClick: () => handleInputChange('1') },
-    { label: '2 MON', onClick: () => handleInputChange('2') },
-    { label: '5 MON', onClick: () => handleInputChange('5') },
+    { label: 'Reset', onClick: () => handleInput('') },
+    { label: '0.5 MON', onClick: () => handleInput('0.5') },
+    { label: '1 MON', onClick: () => handleInput('1') },
+    { label: '2 MON', onClick: () => handleInput('2') },
+    { label: '5 MON', onClick: () => handleInput('5') },
   ];
 
   return (
@@ -56,7 +115,7 @@ export function NadFunBuyToken() {
         <TokenHeader token={token} />
         <TokenInputSection
           inputValue={inputValue}
-          onInputChange={handleInputChange}
+          onInputChange={handleInput}
           balance={balance}
           tokenSymbol="Mon"
           suffix={monToken?.symbol}
@@ -67,14 +126,14 @@ export function NadFunBuyToken() {
           logo={token?.logo}
           symbol={token?.symbol}
           title="Estimated Receive"
-          content={inputValue || '0'}
+          content={tokenOutDisplay || '0'}
         />
 
         <ActionButton disabled={btnDisabled} onClick={handleBuyToken} isPending={isPending}>
           Buy
         </ActionButton>
 
-        <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
+        <ErrorMessage show={allError.showError} message={allError.errorMessage} />
       </SideDrawerLayout>
     </>
   );

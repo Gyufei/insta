@@ -20,7 +20,7 @@ export function PageHeader({ title, src }: { title: string; src: string | null }
   return (
     <header className="border-border flex flex-wrap items-center justify-between gap-4 border-b px-4 py-4 sm:flex-nowrap 2xl:px-12 2xl:py-[20.5px]">
       <div className="relative">
-        <SidebarTrigger className="absolute top-2 -left-10" />
+        <SidebarTrigger className="absolute top-[1px] -left-10" />
         <PageTitle title={title} src={src} />
       </div>
 

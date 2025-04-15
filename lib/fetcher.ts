@@ -3,6 +3,7 @@ export async function Fetcher<T = unknown>(
   init?: RequestInit | undefined
 ): Promise<T> {
   try {
+    console.log(123, input);
     const result = await fetch(input, init);
     const res = await parsedRes(result);
 
@@ -19,7 +20,6 @@ async function parsedRes(res: Response) {
       const error = new Error('An error occurred while fetching the data.') as Error & {
         status?: number;
       };
-      
 
       if (res.status === 401) {
         error.message = 'Unauthorized';
