@@ -1,5 +1,3 @@
-import { toast } from 'sonner';
-
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
@@ -11,10 +9,11 @@ import { multiply, utils } from 'safebase';
 import { formatBig, parseBig } from '@/lib/utils/number';
 import { TokenHeader } from '../common/token-header';
 import { TokenInputSection } from '../common/token-input-section';
-import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { TokenDisplayCard } from '@/components/token-display-card';
 import { useNadFunReceiveAmount } from '../common/use-nadfun-receive-amount';
 import { useEffect, useMemo, useState } from 'react';
+import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
 
 export function NadFunSellToken() {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -23,21 +22,13 @@ export function NadFunSellToken() {
 
   const balance = token?.balance ? formatBig(token.balance) : '0';
 
-  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
+  const { inputValue, btnDisabled, errorData, setErrorData, handleInputChange } =
+    useTokenInput(balance);
   const { mutateAsync: sellToken, isPending } = useNadFunSell();
-  const { calcTokenIn } = useNadFunReceiveAmount(token?.address);
-
-  const [error, setError] = useState({
-    showError: false,
-    errorMessage: '',
-  });
-
-  const allError = useMemo(() => {
-    return {
-      ...errorData,
-      ...error,
-    };
-  }, [errorData, error]);
+  const { data: marketInfo, isLoading: isMarketInfoLoading } = useNadFunTokenMarketInfo(
+    token?.address
+  );
+  const { calcTokenIn } = useNadFunReceiveAmount(token?.address, marketInfo);
 
   const [tokenOut, setTokenOut] = useState<bigint>(BigInt(0));
 
@@ -46,11 +37,6 @@ export function NadFunSellToken() {
   }, [tokenOut]);
 
   function handleInput(value: string) {
-    setError({
-      showError: false,
-      errorMessage: '',
-    });
-
     try {
       handleInputChange(value);
 
@@ -63,7 +49,7 @@ export function NadFunSellToken() {
       setTokenOut(tokenOut);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        setError({
+        setErrorData({
           showError: true,
           errorMessage: error.message,
         });
@@ -78,11 +64,10 @@ export function NadFunSellToken() {
 
     try {
       await sellToken({
-        amount_in: amountIn,
+        amount_in: amountIn.toString(),
         amount_out_min: tokenOut.toString(),
         token: token.address,
       });
-      toast.success('Token sold successfully');
     } catch (error) {
       // Error is already handled in the hook
     }
@@ -96,12 +81,19 @@ export function NadFunSellToken() {
 
   useEffect(() => {
     handleInputChange('');
-    setError({
+    setErrorData({
       showError: false,
       errorMessage: '',
     });
     setTokenOut(BigInt(0));
   }, [token]);
+
+  useEffect(() => {
+    if (!isMarketInfoLoading && Number(inputValue) > 0) {
+      const tokenOut = calcTokenIn(inputValue);
+      setTokenOut(tokenOut);
+    }
+  }, [isMarketInfoLoading, inputValue]);
 
   if (!token) {
     return null;
@@ -140,7 +132,7 @@ export function NadFunSellToken() {
           Sell
         </ActionButton>
 
-        <ErrorMessage show={allError.showError} message={allError.errorMessage} />
+        <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
       </SideDrawerLayout>
     </>
   );

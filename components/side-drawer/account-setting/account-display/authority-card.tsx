@@ -1,5 +1,4 @@
 import { Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 import { NetworkConfigs } from '@/config/network-config';
 import { formatAddress } from '@/lib/utils';
@@ -26,7 +25,6 @@ export function AuthorityCard({ manager }: { manager: string }) {
         sandbox_account: account,
         manager,
       });
-      toast.success('Authority removed successfully');
     } catch (error) {
       // Error is already handled in the hook
     }

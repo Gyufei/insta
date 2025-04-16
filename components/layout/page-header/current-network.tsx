@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES } from '@/config/error-msg';
+import { ERROR_MESSAGES } from '@/config/const-msg';
 import { MonadTestnetName, NetworkConfigs } from '@/config/network-config';
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { TriangleAlert, CheckCircle2, Link2 } from 'lucide-react';

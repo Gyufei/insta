@@ -1,4 +1,4 @@
-import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Withdraw } from './withdraw';

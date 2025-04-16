@@ -1,5 +1,5 @@
 import { ApiPath } from './api-path';
-import { ERROR_MESSAGES } from '@/config/error-msg';
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { createMutationHook } from './helpers';
 
 interface AprioriDepositParams {
@@ -20,6 +20,7 @@ export function useAprioriDeposit() {
         deposit_amount: amount,
       };
     },
+    SUCCESS_MESSAGES.DEPOSIT_SUCCESS,
     ERROR_MESSAGES.DEPOSIT_FAILED,
     { checkAddress: true, checkAccount: true, refreshQueryKey: ['aprior', 'balance'] }
   )();

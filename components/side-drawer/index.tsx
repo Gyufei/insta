@@ -10,6 +10,7 @@ import { AprioriDeposit } from '@/app/(protocols)/apriori/apriori-deposit';
 import { AprioriWithdraw } from '@/app/(protocols)/apriori/apriori-withdraw';
 import { NadFunBuyToken } from '@/app/(protocols)/nad-fun/nadfun-buy-token';
 import { NadFunSellToken } from '@/app/(protocols)/nad-fun/nadfun-sell-token';
+import { NadFunCreateToken } from '@/app/(protocols)/nad-fun/nad-fun-create-token';
 
 const SideDrawer = () => {
   const { isOpen, currentComponent } = useSideDrawerStore();
@@ -32,6 +33,8 @@ const SideDrawer = () => {
         return <NadFunBuyToken />;
       case 'NadFunSellToken':
         return <NadFunSellToken />;
+      case 'NadFunCreateToken':
+        return <NadFunCreateToken />;
       default:
         return null;
     }

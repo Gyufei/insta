@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
-import { isValidNumberInput } from '@/lib/utils/input';
+import { ERROR_MESSAGES } from '@/config/const-msg';
 import { useAccount } from 'wagmi';
-import { ERROR_MESSAGES } from '@/config/error-msg';
+
+import { useEffect, useState } from 'react';
+
+import { useSelectedAccount } from '@/lib/data/use-account';
+import { isValidNumberInput } from '@/lib/utils/input';
 
 export function useTokenInput(balance: string) {
   const { address } = useAccount();
+  const { data: accountInfo } = useSelectedAccount();
   const [inputValue, setInputValue] = useState('');
   const [btnDisabled, setBtnDisabled] = useState(true);
   const [errorData, setErrorData] = useState({
@@ -18,6 +22,15 @@ export function useTokenInput(balance: string) {
       setErrorData({
         showError: true,
         errorMessage: ERROR_MESSAGES.WALLET_NOT_CONNECTED,
+      });
+      return;
+    }
+
+    if (!accountInfo) {
+      setBtnDisabled(true);
+      setErrorData({
+        showError: true,
+        errorMessage: ERROR_MESSAGES.ACCOUNT_NOT_CREATED,
       });
       return;
     }
@@ -48,6 +61,11 @@ export function useTokenInput(balance: string) {
   }, [inputValue, address, balance]);
 
   const handleInputChange = (value: string) => {
+    setErrorData({
+      showError: false,
+      errorMessage: '',
+    });
+
     if (!isValidNumberInput(value)) {
       return;
     }
@@ -59,6 +77,7 @@ export function useTokenInput(balance: string) {
     inputValue,
     btnDisabled,
     errorData,
+    setErrorData,
     handleInputChange,
   };
 }

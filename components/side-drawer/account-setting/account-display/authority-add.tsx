@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useCreateAuthority } from '@/lib/data/use-create-authority';
-import { ERROR_MESSAGES } from '@/config/error-msg';
+import { ERROR_MESSAGES } from '@/config/const-msg';
 import { WithLoading } from '@/components/with-loading';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,6 @@ export function AuthorityAdd() {
     try {
       await createAuthority(inputValue);
       setInputValue('');
-      toast.success('Authority added successfully');
     } catch (error) {
       // Error is already handled in the hook
     }

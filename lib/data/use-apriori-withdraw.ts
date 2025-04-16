@@ -1,5 +1,5 @@
 import { ApiPath } from './api-path';
-import { ERROR_MESSAGES } from '@/config/error-msg';
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { createMutationHook } from './helpers';
 
 interface AprioriWithdrawParams {
@@ -20,6 +20,7 @@ export function useAprioriWithdraw() {
         shares: amount,
       };
     },
+    SUCCESS_MESSAGES.REQUEST_WITHDRAW_SUCCESS,
     ERROR_MESSAGES.WITHDRAW_FAILED,
     { checkAddress: true, checkAccount: true, refreshQueryKey: ['aprior', 'balance'] }
   )();

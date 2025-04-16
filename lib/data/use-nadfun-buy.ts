@@ -1,5 +1,5 @@
 import { ApiPath } from './api-path';
-import { ERROR_MESSAGES } from '@/config/error-msg';
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { createMutationHook } from './helpers';
 
 interface NadFunBuyParams {
@@ -28,6 +28,7 @@ export function useNadFunBuy() {
         token: params.token,
       };
     },
+    SUCCESS_MESSAGES.BUY_TOKEN_SUCCESS,
     ERROR_MESSAGES.BUY_TOKEN_FAILED,
     { checkAddress: true, checkAccount: true, refreshQueryKey: ['nadfun', 'my-tokens'] }
   )();

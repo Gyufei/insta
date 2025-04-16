@@ -3,7 +3,6 @@ export async function Fetcher<T = unknown>(
   init?: RequestInit | undefined
 ): Promise<T> {
   try {
-    console.log(123, input);
     const result = await fetch(input, init);
     const res = await parsedRes(result);
 

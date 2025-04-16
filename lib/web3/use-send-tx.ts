@@ -4,7 +4,7 @@ import { ITxData, ITxResponse } from '../model';
 import { ApiPath } from '../data/api-path';
 import { Fetcher } from '../fetcher';
 import { keccak256, toHex } from 'viem';
-import { ERROR_MESSAGES } from '@/config/error-msg';
+import { ERROR_MESSAGES } from '@/config/const-msg';
 import { getTxTypeData } from './tx-type-data';
 
 export function useSendTx() {

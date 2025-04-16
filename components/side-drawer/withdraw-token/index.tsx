@@ -1,5 +1,5 @@
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import SideDrawerBackHeader from '../side-drawer-back-header';
+import { SideDrawerBackHeader } from '../side-drawer-back-header';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { TokenData } from '@/lib/data/tokens';
 import { useWithdraw } from '@/lib/data/use-withdraw';

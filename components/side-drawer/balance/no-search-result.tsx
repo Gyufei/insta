@@ -1,8 +1,9 @@
-"use client"
-import { Search } from "lucide-react"
+'use client';
+
+import { Search } from 'lucide-react';
 
 interface NoSearchResultsProps {
-  searchQuery: string
+  searchQuery: string;
 }
 
 export function NoSearchResult({ searchQuery }: NoSearchResultsProps) {
@@ -17,11 +18,6 @@ export function NoSearchResult({ searchQuery }: NoSearchResultsProps) {
           for &quot;{searchQuery}&quot;
         </div>
       </div>
-
-      <div className="flex flex-col items-center">
-        <div className="text-center font-medium text-gray-300-400">Can&apos;t find existing token?</div>
-      </div>
     </div>
-  )
+  );
 }
-

@@ -7,6 +7,7 @@ export type SideDrawerComponent =
   | 'WithdrawMon'
   | 'AprioriDeposit'
   | 'AprioriWithdraw'
+  | 'NadFunCreateToken'
   | 'NadFunBuyToken'
   | 'NadFunSellToken'
   | null;

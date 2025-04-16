@@ -1,7 +1,7 @@
 import { Fetcher } from '../fetcher';
 import { ITxResponse } from '../model';
 import { toast } from 'sonner';
-import { ERROR_MESSAGES } from '@/config/error-msg';
+import { ERROR_MESSAGES } from '@/config/const-msg';
 import { useSendTx } from '../web3/use-send-tx';
 import { useAccount } from 'wagmi';
 import { useSelectedAccount } from './use-account';
@@ -15,13 +15,14 @@ export interface BaseParams {
 
 // Common API request function
 export async function sendApiRequest<T>(url: string, params: Record<string, unknown>): Promise<T> {
-  return Fetcher<T>(url, {
+  const res = await Fetcher<T>(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(params),
   });
+  return res;
 }
 
 // Common GET request function
@@ -36,7 +37,9 @@ export async function handleTransaction(
   _errorMessage: string
 ): Promise<void> {
   if (!txRes || !txRes.tx_data) {
-    toast.error(ERROR_MESSAGES.INVALID_TX_DATA);
+    toast.error(
+      txRes ? (txRes as unknown as { message: string }).message : ERROR_MESSAGES.INVALID_TX_DATA
+    );
     return;
   }
 
@@ -74,6 +77,7 @@ export function useWalletAndAccountCheck() {
 export function createMutationHook<TParams extends Record<string, unknown>>(
   apiPath: string,
   buildParams: (args: unknown, address: string, account: string) => TParams,
+  successMessage: string,
   errorMessage: string,
   extraArgs: {
     checkAddress: boolean;

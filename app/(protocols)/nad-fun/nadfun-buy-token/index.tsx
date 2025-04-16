@@ -1,21 +1,24 @@
-import { toast } from 'sonner';
+import { utils } from 'safebase';
 
-import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { useAccountBalance } from '@/lib/web3/use-account-balance';
+import { useEffect, useMemo, useState } from 'react';
+
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { ErrorMessage } from '@/components/side-drawer/common/error-message';
-import { useNadFunBuy } from '@/lib/data/use-nadfun-buy';
+import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
+import { useTokenInput } from '@/components/side-drawer/use-token-input';
+import { TokenDisplayCard } from '@/components/token-display-card';
+
 import { TokenData } from '@/lib/data/tokens';
+import { useNadFunBuy } from '@/lib/data/use-nadfun-buy';
+import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { formatBig, parseBig } from '@/lib/utils/number';
+import { useAccountBalance } from '@/lib/web3/use-account-balance';
+
 import { TokenHeader } from '../common/token-header';
 import { TokenInputSection } from '../common/token-input-section';
-import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
-import { TokenDisplayCard } from '@/components/token-display-card';
 import { useNadFunReceiveAmount } from '../common/use-nadfun-receive-amount';
-import { useEffect, useMemo, useState } from 'react';
-import { formatBig, parseBig } from '@/lib/utils/number';
-import { utils } from 'safebase';
 
 export function NadFunBuyToken() {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -23,21 +26,13 @@ export function NadFunBuyToken() {
   const { token } = currentComponent?.props || { token: null };
 
   const { balance } = useAccountBalance();
-  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
+  const { inputValue, btnDisabled, errorData, setErrorData, handleInputChange } =
+    useTokenInput(balance);
   const { mutateAsync: buyToken, isPending } = useNadFunBuy();
-  const { calcTokenOut } = useNadFunReceiveAmount(token?.address);
-
-  const [error, setError] = useState({
-    showError: false,
-    errorMessage: '',
-  });
-
-  const allError = useMemo(() => {
-    return {
-      ...errorData,
-      ...error,
-    };
-  }, [errorData, error]);
+  const { data: marketInfo, isLoading: isMarketInfoLoading } = useNadFunTokenMarketInfo(
+    token?.address
+  );
+  const { calcTokenOut } = useNadFunReceiveAmount(token?.address, marketInfo);
 
   const [tokenOut, setTokenOut] = useState<bigint>(BigInt(0));
 
@@ -46,11 +41,6 @@ export function NadFunBuyToken() {
   }, [tokenOut]);
 
   function handleInput(value: string) {
-    setError({
-      showError: false,
-      errorMessage: '',
-    });
-
     try {
       handleInputChange(value);
 
@@ -63,7 +53,7 @@ export function NadFunBuyToken() {
       setTokenOut(tokenOut);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        setError({
+        setErrorData({
           showError: true,
           errorMessage: error.message,
         });
@@ -72,16 +62,15 @@ export function NadFunBuyToken() {
   }
   async function handleBuyToken() {
     if (!token?.address) return;
-    
+
     const amountIn = parseBig(inputValue);
 
     try {
       await buyToken({
-        amount_in: amountIn,
+        amount_in: amountIn.toString(),
         amount_out_min: tokenOut.toString(),
         token: token.address,
       });
-      toast.success('Token purchased successfully');
     } catch (error) {
       // Error is already handled in the hook
     }
@@ -89,12 +78,19 @@ export function NadFunBuyToken() {
 
   useEffect(() => {
     handleInputChange('');
-    setError({
+    setErrorData({
       showError: false,
       errorMessage: '',
     });
     setTokenOut(BigInt(0));
   }, [token]);
+
+  useEffect(() => {
+    if (!isMarketInfoLoading && Number(inputValue) > 0) {
+      const tokenOut = calcTokenOut(inputValue);
+      setTokenOut(tokenOut);
+    }
+  }, [isMarketInfoLoading, inputValue]);
 
   if (!token) {
     return null;
@@ -107,6 +103,8 @@ export function NadFunBuyToken() {
     { label: '2 MON', onClick: () => handleInput('2') },
     { label: '5 MON', onClick: () => handleInput('5') },
   ];
+
+  console.log(errorData);
 
   return (
     <>
@@ -133,7 +131,7 @@ export function NadFunBuyToken() {
           Buy
         </ActionButton>
 
-        <ErrorMessage show={allError.showError} message={allError.errorMessage} />
+        <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
       </SideDrawerLayout>
     </>
   );

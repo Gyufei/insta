@@ -1,4 +1,4 @@
-import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { TokenData } from '@/lib/data/tokens';
 import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';

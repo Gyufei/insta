@@ -23,6 +23,7 @@ export const ApiPath = {
 
   nadfunTokens: `${ApiHost}/nadfun/tokens`,
   nadfunMyTokens: `${ApiHost}/nadfun/my_tokens`,
+  nadfunCreateToken: `${ApiHost}/nadfun/create_token`,
   nadfunTokenInfo: `${ApiHost}/nadfun/token_market_info`,
   nadfunBuyToken: `${ApiHost}/nadfun/buy`,
   nadfunSellToken: `${ApiHost}/nadfun/sell`,

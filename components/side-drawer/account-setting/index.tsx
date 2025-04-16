@@ -1,7 +1,7 @@
 'use client';
 import { useAccount } from 'wagmi';
 import { ConnectWalletButton } from './connect-wallet-button';
-import SideDrawerBackHeader from '@/components/side-drawer/side-drawer-back-header';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { formatAddress } from '@/lib/utils';
 import { Disconnect } from './disconnect';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';

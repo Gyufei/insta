@@ -1,5 +1,5 @@
 import { ApiPath } from './api-path';
-import { ERROR_MESSAGES } from '@/config/error-msg';
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { createMutationHook } from './helpers';
 import { useBalance } from 'wagmi';
 
@@ -22,6 +22,7 @@ export function useWithdraw() {
         amount,
       };
     },
+    SUCCESS_MESSAGES.WITHDRAW_SUCCESS,
     ERROR_MESSAGES.WITHDRAW_FAILED,
     { checkAddress: true, checkAccount: true, refreshQueryKey: queryKey }
   )();

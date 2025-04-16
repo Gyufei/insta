@@ -5,7 +5,7 @@ interface HeaderProps {
   onClick: () => void;
 }
 
-export default function SideDrawerBackHeader({ title, onClick }: HeaderProps) {
+export function SideDrawerBackHeader({ title, onClick }: HeaderProps) {
   return (
     <div
       className="items h-navbar border-gray-200 dark:border-slate-500 relative flex w-full flex-shrink-0 border-b"

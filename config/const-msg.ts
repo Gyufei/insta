@@ -13,4 +13,18 @@ export const ERROR_MESSAGES = {
   INVALID_ADDRESS: 'Invalid address',
   BUY_TOKEN_FAILED: 'Buy token failed',
   SELL_TOKEN_FAILED: 'Sell token failed',
+  CREATE_TOKEN_FAILED: 'Create token failed',
+} as const;
+
+export const SUCCESS_MESSAGES = {
+  WITHDRAW_SUCCESS: 'Withdraw successfully',
+  REQUEST_WITHDRAW_SUCCESS: 'Request withdraw successfully',
+  CLAIM_SUCCESS: 'Claim successfully',
+  DEPOSIT_SUCCESS: 'deposit successfully',
+  CREATE_ACCOUNT_SUCCESS: 'Create account successfully',
+  CREATE_AUTHORITY_SUCCESS: 'Create authority successfully',
+  DELETE_AUTHORITY_SUCCESS: 'Delete authority successfully',
+  BUY_TOKEN_SUCCESS: 'Token bought successfully',
+  SELL_TOKEN_SUCCESS: 'Token sold successfully',
+  CREATE_TOKEN_SUCCESS: 'Token created successfully',
 } as const;
