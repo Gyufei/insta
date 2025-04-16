@@ -5,7 +5,7 @@ import SidebarToggle from './sidebar-toggle';
 export default function MbHeader() {
   return (
     <header
-      className="h-navbar grid-navbar flex flex-shrink-0 items-center justify-between bg-white px-4 2xl:hidden dark:bg-slate-600"
+      className="h-navbar grid-navbar flex flex-shrink-0 items-center justify-between bg-white px-4 2xl:hidden"
       data-v-ead27774=""
     >
       <Link href="/">

@@ -27,4 +27,11 @@ export const ApiPath = {
   nadfunTokenInfo: `${ApiHost}/nadfun/token_market_info`,
   nadfunBuyToken: `${ApiHost}/nadfun/buy`,
   nadfunSellToken: `${ApiHost}/nadfun/sell`,
+  
+  nadNameMyNames: `${ApiHost}/nadname/names`,
+  nadNameMyPrimaryName: `${ApiHost}/nadname/primary_name`,
+  nadNameSetPrimary: `${ApiHost}/nadname/set_primary_name`,
+  nadNameRegister: `${ApiHost}/nadname/register`,
+  nadNameCheckAvailable: `${ApiHost}/nadname/check_name_availability`,
+  nadNamePrice: `${ApiHost}/nadname/registering_price`,
 };

@@ -18,7 +18,7 @@ export function NoAccountDisplay() {
 
       <button
         onClick={handleCreateAccount}
-        className="shadow-cta scale-xs flex flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-blue-500 px-4 py-2 text-sm leading-none font-semibold whitespace-nowrap text-white duration-75 ease-out select-none focus:outline-none dark:shadow-none"
+        className="shadow-cta scale-xs flex flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-blue-500 px-4 py-2 text-sm leading-none font-semibold whitespace-nowrap text-primary-foreground duration-75 ease-out select-none focus:outline-none dark:shadow-none"
         style={{ minHeight: '24px' }}
         disabled={isPending || !address}
       >

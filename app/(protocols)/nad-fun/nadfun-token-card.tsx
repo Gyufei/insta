@@ -38,7 +38,7 @@ export function NadFunTokenCard({
   const displayBalance = realBalance ? formatNumber(realBalance) : '';
 
   return (
-    <Card className="flex flex-1 flex-shrink-0 flex-col dark:bg-slate-600 dark:shadow-none">
+    <Card className="flex flex-1 flex-shrink-0 flex-col">
       <CardHeader className="flex h-14 items-center justify-between px-4">
         <div className="flex items-center gap-3">
           <div className="mr-4 flex -space-x-3 overflow-hidden">

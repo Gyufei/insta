@@ -146,7 +146,7 @@ export default function Curvance() {
                           {pool.curve}
                         </div>
                       </div>
-                      <Button size="sm" className="bg-primary text-white hover:bg-primary/90">
+                      <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
                         Trade
                       </Button>
                     </div>

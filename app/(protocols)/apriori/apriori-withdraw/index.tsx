@@ -30,7 +30,7 @@ function TabButton({ label, value, activeTab, onClick }: TabButtonProps) {
         <p className="text-sm leading-none font-semibold">{label}</p>
         {isActive && (
           <div
-            className="absolute flex h-4 w-4 cursor-pointer items-center justify-center rounded-full bg-blue-500 text-white"
+            className="absolute flex h-4 w-4 cursor-pointer items-center justify-center rounded-full bg-blue-500 text-primary-foreground"
             style={{ top: '-6px', right: '-6px' }}
           >
             <CircleCheckBig className="h-3.5 w-3.5 dark:opacity-90" />

@@ -26,7 +26,7 @@ export function AprMONTokenCard({ className }: { className?: string }) {
                 alt={aprMonToken.name}
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center truncate rounded-full bg-gradient-to-br from-gray-300 to-gray-900 text-xs leading-none text-white uppercase">
+              <div className="flex h-full w-full items-center justify-center truncate rounded-full bg-gradient-to-br from-gray-300 to-gray-900 text-xs leading-none text-primary-foreground uppercase">
                 {aprMonToken.symbol.toLowerCase()}
               </div>
             )}

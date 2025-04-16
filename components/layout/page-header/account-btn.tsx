@@ -1,6 +1,7 @@
+import { Button } from '@/components/ui/button';
+
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { Button } from '@/components/ui/button';
 
 export function AccountBtn() {
   const { data: accountInfo, isLoading } = useSelectedAccount();
@@ -21,7 +22,7 @@ export function AccountBtn() {
       onClick={handleCreate}
       disabled={isLoading}
     >
-      <div className="flex items-center justify-center leading-5">
+      <div className="flex items-center justify-center leading-5 text-primary">
         {account ? <>Account(#{accountInfo.id})</> : <>Create Account</>}
       </div>
     </Button>

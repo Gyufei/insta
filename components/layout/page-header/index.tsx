@@ -37,7 +37,7 @@ export function PageHeader({ title, src }: { title: string; src: string | null }
 
         <NetworkSelect />
 
-        <Button variant="outline" size="icon" className="h-8 w-8">
+        <Button variant="outline" size="icon" className="text-primary h-8 w-8">
           <Settings size={16} />
         </Button>
 

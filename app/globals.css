@@ -133,7 +133,7 @@
 
 @layer utilities {
   .form-input {
-    @apply appearance-none rounded-sm border-1 border-gray-200 bg-white px-3 py-2 text-xs leading-3.5 font-medium outline-none focus:border-cyan-500 focus:shadow-sm focus:shadow-cyan-500/40 dark:text-black;
+    @apply appearance-none rounded-sm border-1 border-gray-200 bg-white px-3 py-2 text-xs leading-3.5 font-medium outline-none focus:border-cyan-500 focus:shadow-sm focus:shadow-cyan-500/40 dark:text-primary;
   }
 }
 

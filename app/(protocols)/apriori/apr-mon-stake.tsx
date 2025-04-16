@@ -1,17 +1,20 @@
 'use client';
 
 import { CircleDollarSign } from 'lucide-react';
-import Image from 'next/image';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { TokenData, TokenPriceMap } from '@/lib/data/tokens';
-import { useAprioriBalance } from '@/lib/data/use-aprior-balance';
 import { multiply } from 'safebase';
-import { WithLoading } from '@/components/with-loading';
-import { formatBig, formatNumber } from '@/lib/utils/number';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
+
+import Image from 'next/image';
+
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { WithLoading } from '@/components/with-loading';
+
+import { TokenData, TokenPriceMap } from '@/lib/data/tokens';
+import { useAprioriBalance } from '@/lib/data/use-aprior-balance';
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { formatBig, formatNumber } from '@/lib/utils/number';
 
 export function AprMonStake() {
   const { setCurrentComponent } = useSideDrawerStore();
@@ -32,7 +35,7 @@ export function AprMonStake() {
 
   return (
     <div className="mt-4 grid w-full min-w-max grid-cols-1 gap-4 px-4 2xl:mt-6 2xl:gap-6 2xl:px-12">
-      <Card className="relative flex flex-1 flex-shrink-0 flex-col shadow dark:bg-slate-600 dark:shadow-none">
+      <Card className="relative flex flex-1 flex-shrink-0 flex-col shadow">
         <CardContent className="flex items-center px-4">
           <div className="flex h-12 w-12 items-center justify-center dark:opacity-90">
             <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full">

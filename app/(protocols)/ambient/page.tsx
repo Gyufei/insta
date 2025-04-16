@@ -138,7 +138,7 @@ export default function Ambient() {
                         <div className="text-muted-foreground text-xs">Threshold</div>
                         <div className="font-medium">{sensor.threshold}</div>
                       </div>
-                      <Button size="sm" className="bg-primary text-white hover:bg-primary/90">
+                      <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
                         Details
                       </Button>
                     </div>

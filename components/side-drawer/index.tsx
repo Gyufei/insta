@@ -47,7 +47,7 @@ const SideDrawer = () => {
   return (
     <div
       className={cn(
-        'grid-sidebar-context absolute inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden ring-1 ring-black/5 duration-200 2xl:relative 2xl:transform-none dark:shadow-none',
+        'grid-sidebar-context absolute inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden ring-1 ring-black/5 duration-200 2xl:relative 2xl:transform-none',
         isOpen ? 'translate-x-0' : 'translate-x-full 2xl:translate-x-0'
       )}
       style={{ maxWidth: 'clamp(var(--min-width-app), var(--width-sidebar-context), 100%)' }}
@@ -68,7 +68,7 @@ const SideDrawer = () => {
           }}
         >
           <div
-            className="bg-background dark:bg-slate-600 flex h-full flex-col"
+            className="bg-background flex h-full flex-col"
             style={{
               width: 'clamp(var(--min-width-app), var(--width-sidebar-context), 100%)',
             }}

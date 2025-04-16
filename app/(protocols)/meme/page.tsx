@@ -165,7 +165,7 @@ export default function Meme() {
                         <div className="text-muted-foreground text-xs">24h Volume</div>
                         <div className="font-medium">{token.volume24h}</div>
                       </div>
-                      <Button size="sm" className="bg-primary text-white hover:bg-primary/90">
+                      <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
                         Trade
                       </Button>
                     </div>

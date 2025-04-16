@@ -39,7 +39,7 @@ export function NadFunTokenList({
           className
         )}
       >
-        {title && <h2 className="hidden text-xl font-medium sm:inline">{title}</h2>}
+        {title && <h2 className="text-2xl font-semibold text-primary">{title}</h2>}
 
         {children}
       </div>

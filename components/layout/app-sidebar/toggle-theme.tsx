@@ -33,7 +33,7 @@ export function ToggleTheme({ className, isCollapsed = false }: ThemeToggleProps
         <div
           className={cn(
             'flex h-6 w-6 cursor-pointer items-center justify-center rounded-full transition-all duration-300',
-            isDark ? 'bg-zinc-800 text-white' : 'bg-gray-200 text-gray-700',
+            isDark ? 'bg-zinc-800 text-primary-foreground' : 'bg-gray-200 text-gray-700',
             className
           )}
           onClick={toggleTheme}
@@ -67,7 +67,7 @@ export function ToggleTheme({ className, isCollapsed = false }: ThemeToggleProps
               )}
             >
               {isDark ? (
-                <Moon className="h-3 w-3 text-white" strokeWidth={1.5} />
+                <Moon className="h-3 w-3 text-primary-foreground" strokeWidth={1.5} />
               ) : (
                 <Sun className="h-3 w-3 text-gray-700" strokeWidth={1.5} />
               )}
@@ -81,7 +81,7 @@ export function ToggleTheme({ className, isCollapsed = false }: ThemeToggleProps
               {isDark ? (
                 <Sun className="h-3 w-3 text-gray-500" strokeWidth={1.5} />
               ) : (
-                <Moon className="h-3 w-3 text-black" strokeWidth={1.5} />
+                <Moon className="h-3 w-3 text-primary" strokeWidth={1.5} />
               )}
             </div>
           </div>

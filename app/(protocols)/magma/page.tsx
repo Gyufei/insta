@@ -136,7 +136,7 @@ export default function Magma() {
                         <div className="text-muted-foreground text-xs">Difficulty</div>
                         <div className="font-medium">{pool.difficulty}</div>
                       </div>
-                      <Button size="sm" className="bg-primary text-white hover:bg-primary/90">
+                      <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
                         Join Pool
                       </Button>
                     </div>

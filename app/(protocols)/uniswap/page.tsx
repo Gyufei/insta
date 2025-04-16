@@ -137,7 +137,7 @@ export default function Uniswap() {
                         <div className="text-muted-foreground text-xs">APY</div>
                         <div className="font-medium text-green-500">{pool.apy}</div>
                       </div>
-                      <Button size="sm" className="bg-primary text-white hover:bg-primary/90">
+                      <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
                         Add Liquidity
                       </Button>
                     </div>

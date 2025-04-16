@@ -37,7 +37,7 @@ export function TokenInputSection({
       >
         <span className="font-semibold text-gray-400">
           {tokenSymbol} Balance:&nbsp;
-          <span className="group-hover:text-black">{formatNumber(balance)}</span>
+          <span className="group-hover:text-primary">{formatNumber(balance)}</span>
         </span>
       </div>
 

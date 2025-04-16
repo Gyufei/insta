@@ -15,7 +15,7 @@ export function DescCard({
   isLoading?: boolean;
 }) {
   return (
-    <Card className="dark:bg-slate-600 min-w-card flex flex-1 flex-shrink-0 flex-grow items-center justify-between shadow md:overflow-x-auto dark:shadow-none">
+    <Card className="min-w-card flex flex-1 flex-shrink-0 flex-grow items-center justify-between shadow md:overflow-x-auto">
       <CardContent className="flex w-full items-center justify-between px-4">
         <div className="mr-2 flex flex-col">
           <div className="text-xl mb-4 font-medium whitespace-nowrap">
