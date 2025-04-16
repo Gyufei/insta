@@ -17,6 +17,7 @@ export function NadFunTokens() {
         tokens={tokens || undefined}
         isLoading={isLoading}
         title="Recently Active Tokens"
+        emptyDesc="No recently active tokens found"
       >
         <Button
           className="w-fit self-end"

@@ -22,6 +22,7 @@ interface NadFunTokenListProps {
   title?: string;
   className?: string;
   children?: React.ReactNode;
+  emptyDesc?: string;
 }
 
 export function NadFunTokenList({
@@ -30,6 +31,7 @@ export function NadFunTokenList({
   title,
   className,
   children,
+  emptyDesc,
 }: NadFunTokenListProps) {
   return (
     <>
@@ -52,7 +54,7 @@ export function NadFunTokenList({
           )}
           {!isLoading && (!tokens || tokens.length === 0) && (
             <div className="mt-4">
-              <Empty title="No Token" description="You don't have any tokens" />
+              <Empty title="No Token" description={emptyDesc || 'No tokens found'} />
             </div>
           )}
           {tokens && tokens.length > 0 && (
