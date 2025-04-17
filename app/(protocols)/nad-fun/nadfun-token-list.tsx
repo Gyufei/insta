@@ -1,6 +1,7 @@
 'use client';
 
 import { Empty } from '@/components/empty';
+import { TitleH2 } from '@/components/title-h2';
 import { WithLoading } from '@/components/with-loading';
 
 import { cn } from '@/lib/utils';
@@ -41,8 +42,7 @@ export function NadFunTokenList({
           className
         )}
       >
-        {title && <h2 className="text-2xl font-semibold text-primary">{title}</h2>}
-
+        {title && <TitleH2>{title}</TitleH2>}
         {children}
       </div>
       <div className="mt-4 flex w-full flex-shrink-0 flex-col px-4 2xl:mt-6 2xl:px-12">

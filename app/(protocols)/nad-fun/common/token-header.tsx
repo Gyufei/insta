@@ -1,9 +1,13 @@
 import { Copy } from 'lucide-react';
-import Image from 'next/image';
-import { useCopyToClipboard } from '@/lib/hooks/use-copy-to-clipboard';
-import { useEffect } from 'react';
 import { toast } from 'sonner';
+
+import { useEffect } from 'react';
+
+import Image from 'next/image';
+
 import { Card, CardContent } from '@/components/ui/card';
+
+import { useCopyToClipboard } from '@/lib/hooks/use-copy-to-clipboard';
 
 interface TokenHeaderProps {
   token: {
@@ -29,7 +33,7 @@ export function TokenHeader({ token }: TokenHeaderProps) {
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-col items-start">
             <div className="text-muted-foreground mb-1 flex text-xs font-medium">{token?.name}</div>
-            <div className="text-foreground text-2xl leading-none font-semibold">
+            <div className="text-foreground text-xl leading-none font-semibold">
               {token?.symbol}
             </div>
           </div>

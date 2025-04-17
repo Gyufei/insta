@@ -12,6 +12,8 @@ export type SideDrawerComponent =
   | 'NadFunSellToken'
   | 'NadNameSetPrimary'
   | 'NadNameRegister'
+  | 'MagmaDeposit'
+  | 'MagmaWithdraw'
   | null;
 
 type CurrentComponent = {

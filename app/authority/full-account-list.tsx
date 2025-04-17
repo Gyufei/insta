@@ -1,8 +1,11 @@
 'use client';
-import { AccountCard } from '@/components/side-drawer/account-setting/account-display/account-card';
+
 import { useAccountList } from '@/app/authority/use-account-list';
-import { WithLoading } from '@/components/with-loading';
+
+import { AccountCard } from '@/components/side-drawer/account-setting/account-display/account-card';
+import { TitleH2 } from '@/components/title-h2';
 import { Button } from '@/components/ui/button';
+import { WithLoading } from '@/components/with-loading';
 
 export function FullAccountList() {
   const {
@@ -21,7 +24,7 @@ export function FullAccountList() {
   return (
     <>
       <div className="mt-4 flex w-full flex-shrink-0 items-center justify-between px-4 2xl:mt-0 2xl:px-12">
-        <h2 className="text-[18px] 2xl:text-2xl">Accounts</h2>
+        <TitleH2>Accounts</TitleH2>
         <Button
           size="sm"
           disabled={isCreatePending}

@@ -7,7 +7,7 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { Separator } from '@/components/ui/separator';
 
 import { TokenData } from '@/lib/data/tokens';
-import { useAprioriBalance } from '@/lib/data/use-aprior-balance';
+import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useAprioriWithdraw } from '@/lib/data/use-apriori-withdraw';
 import { formatBig, parseBig } from '@/lib/utils/number';
 

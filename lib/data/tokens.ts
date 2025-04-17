@@ -21,9 +21,17 @@ export const TokenData: IToken[] = [
     decimals: 18,
     address: '0x0000000000000000000000000000000000000000',
   },
+  {
+    name: 'gMON',
+    symbol: 'gMON',
+    iconUrl: '/icons/gmon.svg',
+    decimals: 18,
+    address: '0x0000000000000000000000000000000000000000',
+  },
 ];
 
 export const TokenPriceMap: Record<string, number> = {
   MON: 9.82,
   aprMON: 9.82,
+  gMON: 9.82,
 };

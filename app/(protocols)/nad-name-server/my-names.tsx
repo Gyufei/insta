@@ -3,6 +3,7 @@
 import { Sparkle } from 'lucide-react';
 
 import { Empty } from '@/components/empty';
+import { TitleH2 } from '@/components/title-h2';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -27,7 +28,7 @@ export function MyNames() {
 
   return (
     <div className="container px-4 2xl:px-12 mt-6 2xl:mt-4">
-      <h2 className="text-2xl font-semibold text-primary">My names</h2>
+      <TitleH2>My names</TitleH2>
 
       {isLoading ? (
         <div className="mt-4 flex h-[200px] w-full items-center justify-center">

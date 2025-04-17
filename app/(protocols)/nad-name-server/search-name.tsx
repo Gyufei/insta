@@ -4,6 +4,7 @@ import { ChevronRight, X } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
 
+import { TitleH2 } from '@/components/title-h2';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { WithLoading } from '@/components/with-loading';
@@ -68,7 +69,7 @@ export function SearchName() {
 
   return (
     <div className="container px-4 2xl:px-12">
-      <h2 className="text-2xl font-semibold text-primary">Search name</h2>
+      <TitleH2>Search name</TitleH2>
       <div className="relative mt-4">
         <div className="relative bg-gradient-78 from-[#5A00C8] bg-linear-78 to-[#FB0899] p-[2px] rounded-sm">
           <Input

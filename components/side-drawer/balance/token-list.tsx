@@ -1,10 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import TokenCard from './token-card';
+import { useEffect, useState } from 'react';
+
 import { IToken, TokenData } from '@/lib/data/tokens';
-import { NoSearchResult } from './no-search-result';
+
 import { AprMONTokenCard } from './apr-mon-token-card';
+import { MagmaMonTokenCard } from './magma-mon-token-card';
+import { NoSearchResult } from './no-search-result';
+import BalanceTokenCard from './balance-token-card';
 
 interface TokenListProps {
   searchQuery: string;
@@ -34,7 +37,7 @@ export default function TokenList({ searchQuery }: TokenListProps) {
             {filteredTokens.map((token, index) => {
               if (token.symbol === 'MON') {
                 return (
-                  <TokenCard
+                  <BalanceTokenCard
                     key={index}
                     name={token.name}
                     symbol={token.symbol}
@@ -45,6 +48,10 @@ export default function TokenList({ searchQuery }: TokenListProps) {
 
               if (token.symbol === 'aprMON') {
                 return <AprMONTokenCard key={index} />;
+              }
+
+              if (token.symbol === 'gMON') {
+                return <MagmaMonTokenCard key={index} />;
               }
 
               return null;

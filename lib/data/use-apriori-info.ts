@@ -5,6 +5,7 @@ export interface IAprioriInfo {
   apr: number;
   stakers: number;
   tvl: string;
+  vault_contract_address: string;
 }
 
 export function useAprioriInfo() {

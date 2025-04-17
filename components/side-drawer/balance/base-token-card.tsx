@@ -1,20 +1,19 @@
 import { TokenPriceMap } from '@/lib/data/tokens';
 import { formatNumber } from '@/lib/utils/number';
-import { useAccountBalance } from '@/lib/web3/use-account-balance';
 import Image from 'next/image';
 import { multiply } from 'safebase';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-interface TokenCardProps {
+interface BaseTokenCardProps {
   name: string;
   symbol: string;
   iconUrl: string;
+  balance: string;
   className?: string;
 }
 
-export default function TokenCard({ name, symbol, iconUrl, className }: TokenCardProps) {
-  const { balance } = useAccountBalance();
+export function BaseTokenCard({ name, symbol, iconUrl, balance, className }: BaseTokenCardProps) {
   const priceValue = multiply(balance, String(TokenPriceMap[symbol] || 0));
 
   return (
@@ -39,17 +38,13 @@ export default function TokenCard({ name, symbol, iconUrl, className }: TokenCar
         </div>
 
         <div className="flex flex-col px-4">
-          <div className="text-primary mb-1 flex items-center text-xs font-semibold whitespace-nowrap">
+          <div className="text-primary dark:text-primary-foreground mb-1 flex items-center text-xs font-semibold whitespace-nowrap">
             {formatNumber(balance)} {symbol}
           </div>
           <div className="text-xs font-medium whitespace-nowrap text-gray-300">
             ${formatNumber(priceValue)}
           </div>
         </div>
-
-        {/* <button className="bg-blue-300/10 dark:text-blue dark:bg-blue-300/15 hover:bg-blue-300/25 focus:bg-blue-300/25 active:bg-blue-300/30 dark:active:bg-blue-300/38 dark:hover:bg-blue-300/25 dark:focus:bg-blue-300/25 text-blue ml-auto flex w-18 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50">
-          Trade
-        </button> */}
       </CardContent>
     </Card>
   );

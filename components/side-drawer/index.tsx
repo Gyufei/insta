@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { AprioriDeposit } from '@/app/(protocols)/apriori/apriori-deposit';
 import { AprioriWithdraw } from '@/app/(protocols)/apriori/apriori-withdraw';
+import { MagmaDeposit } from '@/app/(protocols)/magma/magma-deposit';
+import { MagmaWithdraw } from '@/app/(protocols)/magma/magma-withdraw';
 import { NadFunCreateToken } from '@/app/(protocols)/nad-fun/nad-fun-create-token';
 import { NadFunBuyToken } from '@/app/(protocols)/nad-fun/nadfun-buy-token';
 import { NadFunSellToken } from '@/app/(protocols)/nad-fun/nadfun-sell-token';
@@ -45,6 +47,10 @@ const SideDrawer = () => {
         return <NadNameSetPrimary />;
       case 'NadNameRegister':
         return <NadNameRegister />;
+      case 'MagmaDeposit':
+        return <MagmaDeposit />;
+      case 'MagmaWithdraw':
+        return <MagmaWithdraw />;
       default:
         return null;
     }

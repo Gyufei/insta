@@ -1,32 +1,38 @@
 'use client';
 
 import { Percent } from 'lucide-react';
+
 import { BetweenCard } from '@/components/page-common/between-card';
 import { DescCard } from '@/components/page-common/desc-card';
-import { formatBig, formatNumber } from '@/lib/utils/number';
+
+import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useAprioriInfo } from '@/lib/data/use-apriori-info';
-import { useMemo } from 'react';
+import { formatBig, formatNumber } from '@/lib/utils/number';
 
 export function AprioriStats() {
   const { data: aprioriInfo, isLoading } = useAprioriInfo();
-
-  const tvl = useMemo(() => {
-    if (!aprioriInfo || !aprioriInfo.tvl) return '0';
-
-    const tvlValue = formatBig(aprioriInfo.tvl);
-    return formatNumber(tvlValue);
-  }, [aprioriInfo]);
+  const { data: aprioriBalance, isLoading: isLoadingBalance } = useAprioriBalance();
 
   const Stats = {
+    apr: {
+      label: 'Mon Savings Rate',
+      value: '1 MON = 1 aprMON',
+      icon: <Percent className="h-12 w-12" />,
+    },
     tvl: {
-      label: 'aPriori TVL',
-      value: tvl,
+      label: 'TVL',
+      value: formatNumber(formatBig(aprioriInfo?.tvl || '0')),
       icon: '/icons/hero-cog-tvl.svg',
     },
     holders: {
       label: 'Holders',
-      value: aprioriInfo?.stakers?.toString() || '0',
+      value: formatNumber(aprioriInfo?.stakers || '0'),
       icon: '/icons/hero-cog-holders.svg',
+    },
+    aprMon: {
+      label: 'Your aprMON',
+      value: formatNumber(formatBig(aprioriBalance?.balance || '0')),
+      icon: '/icons/aprmon.svg',
     },
   };
 
@@ -34,16 +40,16 @@ export function AprioriStats() {
     <>
       <BetweenCard>
         <DescCard
-          title="Mon Savings Rate"
-          value="1 MON = 1 aprMON"
-          icon={<Percent className="h-12 w-12" />}
+          title={Stats.apr.label}
+          value={Stats.apr.value}
+          icon={Stats.apr.icon}
           isLoading={isLoading}
         />
         <DescCard
-          title="Your aprMON worth"
-          value="0.00"
-          icon="/icons/aprmon.svg"
-          isLoading={isLoading}
+          title={Stats.aprMon.label}
+          value={Stats.aprMon.value}
+          icon={Stats.aprMon.icon}
+          isLoading={isLoadingBalance}
         />
       </BetweenCard>
 

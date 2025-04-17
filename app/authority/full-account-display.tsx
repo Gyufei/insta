@@ -2,6 +2,7 @@ import { Separator } from '@/components/ui/separator';
 import { FullAccountAddress } from './full-account-address';
 import { FullAuthorityManage } from './full-authority-manage';
 import { FullAccountList } from './full-account-list';
+import { TitleH2 } from '@/components/title-h2';
 
 export default function FullAccountDisplay() {
   return (
@@ -14,7 +15,7 @@ export default function FullAccountDisplay() {
         <FullAccountAddress />
       </div>
       <div className="mt-10 flex w-full flex-shrink-0 items-center justify-between px-4 2xl:px-12">
-        <h2 className="text-xl 2xl:text-2xl">Authorities</h2>
+        <TitleH2>Authorities</TitleH2>
       </div>
       <div className="mt-6 flex w-full flex-shrink-0 px-4 2xl:px-12">
         <FullAuthorityManage />

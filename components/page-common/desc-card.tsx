@@ -19,9 +19,9 @@ export function DescCard({
       <CardContent className="flex w-full items-center justify-between px-4">
         <div className="mr-2 flex flex-col">
           <div className="text-xl mb-4 font-medium whitespace-nowrap">
-            <WithLoading className='h-5 w-5' isLoading={isLoading}>{value}</WithLoading>
+            <WithLoading className='h-7 w-7' isLoading={isLoading}>{value}</WithLoading>
           </div>
-          <div className="text-gray-300 flex whitespace-nowrap">{title}</div>
+          <div className="text-gray-400 flex whitespace-nowrap">{title}</div>
         </div>
         <div className="text-blue">
           {typeof icon === 'string' ? <Image src={icon} alt={title} width={48} height={48} /> : icon}
