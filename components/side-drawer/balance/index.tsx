@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import BalanceSection from './balance-section';
-import ActionButtons from './action-buttons';
-import HelpButton from './help-button';
-import TokenList from './token-list';
-import SearchBar from './search-bar';
+
 import { SideDrawerLayout } from '../common/side-drawer-layout';
+import BalanceActionButtons from './balance-action-buttons';
+import BalanceSection from './balance-section';
+import HelpButton from './help-button';
+import SearchBar from './search-bar';
+import TokenList from './token-list';
 
 export function Balance() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,7 +15,7 @@ export function Balance() {
   return (
     <SideDrawerLayout>
       <BalanceSection />
-      <ActionButtons />
+      <BalanceActionButtons />
       <HelpButton />
 
       <div className="mt-2 flex flex-grow flex-col sm:mt-4">

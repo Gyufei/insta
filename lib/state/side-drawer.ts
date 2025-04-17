@@ -10,6 +10,8 @@ export type SideDrawerComponent =
   | 'NadFunCreateToken'
   | 'NadFunBuyToken'
   | 'NadFunSellToken'
+  | 'NadNameSetPrimary'
+  | 'NadNameRegister'
   | null;
 
 type CurrentComponent = {
@@ -25,6 +27,7 @@ type CompProps = {
     logo: string;
     balance: string;
   };
+  registerName?: string;
   [key: string]: unknown;
 } | null;
 

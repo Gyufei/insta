@@ -10,6 +10,8 @@ export function useNadNameCheckAvailability(name: string) {
     ApiPath.nadNameCheckAvailable,
     (_account) => ['nadname', 'check-availability', name],
     (url, _account) => {
+      if (!name) return null;
+
       url.searchParams.set('name', name);
       return url;
     },
@@ -17,4 +19,4 @@ export function useNadNameCheckAvailability(name: string) {
       withAccount: false,
     }
   )();
-} 
+}

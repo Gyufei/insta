@@ -1,16 +1,19 @@
-import { TokenData } from '@/lib/data/tokens';
+import { useMemo, useState } from 'react';
+
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { Separator } from '@/components/ui/separator';
-import { useGetAprioriClaim } from '@/lib/data/use-get-apriori-claim';
+
+import { TokenData } from '@/lib/data/tokens';
 import { useAprioriClaim } from '@/lib/data/use-apriori-claim';
-import { ClaimCard } from './claim-card';
+import { useGetAprioriClaim } from '@/lib/data/use-get-apriori-claim';
 import { formatBig, formatNumber } from '@/lib/utils/number';
-import { useMemo, useState } from 'react';
+
+import { ClaimCard } from './claim-card';
 
 export function Claim() {
   const aprMonToken = TokenData.find((token) => token.symbol === 'aprMON') || TokenData[1];
   const { data: claimRecords, isLoading: isClaimRecordsPending } = useGetAprioriClaim();
-  const { mutate: claim, isPending: isClaiming } = useAprioriClaim();
+  const { mutate: claim, isPending: isClaiming, error: claimError } = useAprioriClaim();
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
 
   // 找到选中的 claim 记录
@@ -30,6 +33,19 @@ export function Claim() {
       claim(selectedRequestId);
     }
   };
+
+  const errorData = useMemo(() => {
+    if (claimError) {
+      return {
+        showError: true,
+        errorMessage: claimError.message,
+      };
+    }
+    return {
+      showError: false,
+      errorMessage: '',
+    };
+  }, [claimError]);
 
   return (
     <>
@@ -57,6 +73,7 @@ export function Claim() {
         disabled={isClaimRecordsPending || canClaimAmount === '0' || !selectedRequestId}
         onClick={handleClaim}
         isPending={isClaiming}
+        error={errorData}
       >
         Claim {formatNumber(canClaimAmount)} MON
       </ActionButton>

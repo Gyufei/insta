@@ -8,10 +8,10 @@ export interface INadNameMyPrimaryName {
 export function useNadNameMyPrimaryName() {
   return createQueryHook<INadNameMyPrimaryName>(
     ApiPath.nadNameMyPrimaryName,
-    (account) => ['nadname', 'my-primary-name', account ?? ''],
+    (account) => ['nadname', 'my-names', 'primary', account ?? ''],
     (url, account) => {
       if (!account) {
-        return url;
+        return null;
       }
       url.searchParams.set('wallet', account);
       return url;
@@ -20,4 +20,4 @@ export function useNadNameMyPrimaryName() {
       withAccount: true,
     }
   )();
-} 
+}

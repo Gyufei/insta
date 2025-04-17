@@ -1,5 +1,6 @@
 // Constants
 export const ERROR_MESSAGES = {
+  EXCEED_MAX_BALANCE: 'Your amount exceeds maximum balance.',
   FAIL_TO_SWITCH_NETWORK: 'Failed to switch network',
   WALLET_NOT_CONNECTED: 'Please connect wallet first',
   ACCOUNT_NOT_CREATED: 'Please create account first',
@@ -14,6 +15,8 @@ export const ERROR_MESSAGES = {
   BUY_TOKEN_FAILED: 'Buy token failed',
   SELL_TOKEN_FAILED: 'Sell token failed',
   CREATE_TOKEN_FAILED: 'Create token failed',
+  REGISTER_FAILED: 'Register nad name failed',
+  SET_PRIMARY_NAME_FAILED: 'Set primary name failed',
 } as const;
 
 export const SUCCESS_MESSAGES = {
@@ -27,4 +30,6 @@ export const SUCCESS_MESSAGES = {
   BUY_TOKEN_SUCCESS: 'Token bought successfully',
   SELL_TOKEN_SUCCESS: 'Token sold successfully',
   CREATE_TOKEN_SUCCESS: 'Token created successfully',
+  REGISTER_SUCCESS: 'Nad name registered successfully',
+  SET_PRIMARY_NAME_SUCCESS: 'Primary name set successfully',
 } as const;

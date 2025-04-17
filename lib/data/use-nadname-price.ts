@@ -11,6 +11,7 @@ export function useNadNamePrice(name: string) {
     ApiPath.nadNamePrice,
     (_account) => ['nadname', 'price', name],
     (url, _account) => {
+      if (!name) return null;
       url.searchParams.set('name', name);
       return url;
     },
@@ -18,4 +19,4 @@ export function useNadNamePrice(name: string) {
       withAccount: false,
     }
   )();
-} 
+}

@@ -78,8 +78,7 @@
 }
 
 @theme {
-  --color-primary: oklch(0.25 0.0663 267.84);
-  --container-container-main: 1016px;
+  --container-container-main: var(--width-container-main);
   --container-navbar: var(--height-navbar);
   --breakpoint-2xl: 1244px;
 }
@@ -128,12 +127,6 @@
   }
   body {
     @apply bg-background text-foreground;
-  }
-}
-
-@layer utilities {
-  .form-input {
-    @apply appearance-none rounded-sm border-1 border-gray-200 bg-white px-3 py-2 text-xs leading-3.5 font-medium outline-none focus:border-cyan-500 focus:shadow-sm focus:shadow-cyan-500/40 dark:text-primary;
   }
 }
 
@@ -269,5 +262,5 @@ body {
 }
 
 input::placeholder {
-  @apply text-gray-400 font-normal;
+  @apply font-normal text-gray-400;
 }

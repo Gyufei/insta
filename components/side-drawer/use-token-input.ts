@@ -1,40 +1,19 @@
 import { ERROR_MESSAGES } from '@/config/const-msg';
-import { useAccount } from 'wagmi';
 
 import { useEffect, useState } from 'react';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { ErrorVO } from '@/lib/model/error-vo';
 import { isValidNumberInput } from '@/lib/utils/input';
 
 export function useTokenInput(balance: string) {
-  const { address } = useAccount();
-  const { data: accountInfo } = useSelectedAccount();
   const [inputValue, setInputValue] = useState('');
   const [btnDisabled, setBtnDisabled] = useState(true);
-  const [errorData, setErrorData] = useState({
+  const [errorData, setErrorData] = useState<ErrorVO>({
     showError: false,
     errorMessage: '',
   });
 
   useEffect(() => {
-    if (!address) {
-      setBtnDisabled(true);
-      setErrorData({
-        showError: true,
-        errorMessage: ERROR_MESSAGES.WALLET_NOT_CONNECTED,
-      });
-      return;
-    }
-
-    if (!accountInfo) {
-      setBtnDisabled(true);
-      setErrorData({
-        showError: true,
-        errorMessage: ERROR_MESSAGES.ACCOUNT_NOT_CREATED,
-      });
-      return;
-    }
-
     if (!inputValue || Number(inputValue) === 0) {
       setBtnDisabled(true);
       setErrorData({
@@ -48,7 +27,7 @@ export function useTokenInput(balance: string) {
       setBtnDisabled(true);
       setErrorData({
         showError: true,
-        errorMessage: 'Your amount exceeds maximum limit.',
+        errorMessage: ERROR_MESSAGES.EXCEED_MAX_BALANCE,
       });
       return;
     }
@@ -58,7 +37,7 @@ export function useTokenInput(balance: string) {
       showError: false,
       errorMessage: '',
     });
-  }, [inputValue, address, balance]);
+  }, [inputValue, balance]);
 
   const handleInputChange = (value: string) => {
     setErrorData({

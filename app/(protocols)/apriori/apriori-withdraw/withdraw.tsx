@@ -1,16 +1,17 @@
-import { TokenData } from '@/lib/data/tokens';
-import { useAprioriWithdraw } from '@/lib/data/use-apriori-withdraw';
+import { ActionButton } from '@/components/side-drawer/common/action-button';
+import { SetMax } from '@/components/side-drawer/common/set-max';
 import { TokenDisplay } from '@/components/side-drawer/common/token-display';
 import { TokenInput } from '@/components/side-drawer/common/token-input';
-import { ActionButton } from '@/components/side-drawer/common/action-button';
-import { ErrorMessage } from '@/components/side-drawer/common/error-message';
+import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { Separator } from '@/components/ui/separator';
-import { SetMax } from '@/components/side-drawer/common/set-max';
+
+import { TokenData } from '@/lib/data/tokens';
 import { useAprioriBalance } from '@/lib/data/use-aprior-balance';
-import { WithdrawEstReceive } from './withdraw-est-receive';
-import { useSetMax } from '@/components/side-drawer/common/use-set-max';
+import { useAprioriWithdraw } from '@/lib/data/use-apriori-withdraw';
 import { formatBig, parseBig } from '@/lib/utils/number';
+
+import { WithdrawEstReceive } from './withdraw-est-receive';
 
 export function Withdraw() {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -47,10 +48,14 @@ export function Withdraw() {
       <SetMax checked={isMax} onChange={handleSetMax} />
       <WithdrawEstReceive receiveToken={monToken} receiveAmount={receiveAmount} />
       <Separator />
-      <ActionButton disabled={btnDisabled} onClick={handleWithdraw} isPending={isPending}>
+      <ActionButton
+        disabled={btnDisabled}
+        onClick={handleWithdraw}
+        isPending={isPending}
+        error={errorData}
+      >
         Withdraw
       </ActionButton>
-      <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
     </>
   );
 }

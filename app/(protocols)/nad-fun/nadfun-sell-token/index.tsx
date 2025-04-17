@@ -1,19 +1,22 @@
-import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { useTokenInput } from '@/components/side-drawer/use-token-input';
+import { multiply, utils } from 'safebase';
+
+import { useEffect, useMemo, useState } from 'react';
+
 import { ActionButton } from '@/components/side-drawer/common/action-button';
-import { ErrorMessage } from '@/components/side-drawer/common/error-message';
+import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
+import { useTokenInput } from '@/components/side-drawer/use-token-input';
+import { TokenDisplayCard } from '@/components/token-display-card';
+
 import { TokenData } from '@/lib/data/tokens';
 import { useNadFunSell } from '@/lib/data/use-nadfun-sell';
-import { multiply, utils } from 'safebase';
+import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { formatBig, parseBig } from '@/lib/utils/number';
+
 import { TokenHeader } from '../common/token-header';
 import { TokenInputSection } from '../common/token-input-section';
-import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
-import { TokenDisplayCard } from '@/components/token-display-card';
 import { useNadFunReceiveAmount } from '../common/use-nadfun-receive-amount';
-import { useEffect, useMemo, useState } from 'react';
-import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
 
 export function NadFunSellToken() {
   const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -128,11 +131,14 @@ export function NadFunSellToken() {
           content={tokenOutDisplay || '0'}
         />
 
-        <ActionButton disabled={btnDisabled} onClick={handleSellToken} isPending={isPending}>
+        <ActionButton
+          disabled={btnDisabled}
+          onClick={handleSellToken}
+          isPending={isPending}
+          error={errorData}
+        >
           Sell
         </ActionButton>
-
-        <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
       </SideDrawerLayout>
     </>
   );

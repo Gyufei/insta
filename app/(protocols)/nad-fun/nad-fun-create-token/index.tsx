@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
-import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import {
@@ -20,6 +19,7 @@ import { Input } from '@/components/ui/input';
 
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { useNadFunCreateToken } from '@/lib/data/use-nadfun-create-token';
+import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';
 
@@ -39,7 +39,7 @@ export function NadFunCreateToken() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
   const [btnDisabled, setBtnDisabled] = useState(true);
-  const [errorData, setErrorData] = useState({
+  const [errorData, setErrorData] = useState<ErrorVO>({
     showError: false,
     errorMessage: '',
   });
@@ -187,10 +187,10 @@ export function NadFunCreateToken() {
               disabled={btnDisabled}
               onClick={() => {}}
               isPending={isPending}
+              error={errorData}
             >
               Create Coin
             </ActionButton>
-            <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
           </form>
         </Form>
       </SideDrawerLayout>

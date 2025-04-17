@@ -11,6 +11,12 @@ export function NadFunTokens() {
   const { setCurrentComponent } = useSideDrawerStore();
   const { data: tokens, isLoading } = useNadFunTokens();
 
+  function handleCreateToken() {
+    setCurrentComponent({
+      name: 'NadFunCreateToken',
+    });
+  }
+
   return (
     <>
       <NadFunTokenList
@@ -19,14 +25,7 @@ export function NadFunTokens() {
         title="Recently Active Tokens"
         emptyDesc="No recently active tokens found"
       >
-        <Button
-          className="w-fit self-end"
-          onClick={() =>
-            setCurrentComponent({
-              name: 'NadFunCreateToken',
-            })
-          }
-        >
+        <Button className="w-fit self-end" onClick={handleCreateToken}>
           Create Token
         </Button>
       </NadFunTokenList>

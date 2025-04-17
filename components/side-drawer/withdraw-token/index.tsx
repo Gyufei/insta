@@ -1,17 +1,18 @@
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { SideDrawerBackHeader } from '../side-drawer-back-header';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
+
 import { TokenData } from '@/lib/data/tokens';
 import { useWithdraw } from '@/lib/data/use-withdraw';
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { parseBig } from '@/lib/utils/number';
+import { useAccountBalance } from '@/lib/web3/use-account-balance';
+
+import { ActionButton } from '../common/action-button';
 import { SetMax } from '../common/set-max';
+import { SideDrawerLayout } from '../common/side-drawer-layout';
 import { TokenDisplay } from '../common/token-display';
 import { TokenInput } from '../common/token-input';
-import { ActionButton } from '../common/action-button';
-import { ErrorMessage } from '../common/error-message';
-import { useAccountBalance } from '@/lib/web3/use-account-balance';
 import { useSetMax } from '../common/use-set-max';
-import { SideDrawerLayout } from '../common/side-drawer-layout';
-import { parseBig } from '@/lib/utils/number';
+import { SideDrawerBackHeader } from '../side-drawer-back-header';
 
 export function WithdrawToken() {
   const { setIsOpen } = useSideDrawerStore();
@@ -42,10 +43,14 @@ export function WithdrawToken() {
           placeholder="Amount to withdraw"
         />
         <SetMax checked={isMax} disabled={false} onChange={handleSetMax} />
-        <ActionButton disabled={btnDisabled} onClick={handleWithdraw} isPending={isPending}>
+        <ActionButton
+          disabled={btnDisabled}
+          onClick={handleWithdraw}
+          isPending={isPending}
+          error={errorData}
+        >
           Withdraw
         </ActionButton>
-        <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
       </SideDrawerLayout>
     </>
   );

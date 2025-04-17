@@ -15,8 +15,9 @@ export function useNadFunMyTokens() {
     (account) => ['nadfun', 'my-tokens', account ?? ''],
     (url, account) => {
       if (!account) {
-        return url;
+        return null;
       }
+
       url.searchParams.set('sandbox_account', account);
       return url;
     },
@@ -24,4 +25,4 @@ export function useNadFunMyTokens() {
       withAccount: true,
     }
   )();
-} 
+}

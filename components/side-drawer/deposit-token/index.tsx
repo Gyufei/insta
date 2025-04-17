@@ -1,15 +1,16 @@
-import { SideDrawerBackHeader } from '../side-drawer-back-header';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useTokenInput } from '@/components/side-drawer/use-token-input';
+
 import { TokenData } from '@/lib/data/tokens';
 import { useDeposit } from '@/lib/data/use-deposit';
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { parseBig } from '@/lib/utils/number';
+import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
+
+import { ActionButton } from '../common/action-button';
+import { SideDrawerLayout } from '../common/side-drawer-layout';
 import { TokenDisplay } from '../common/token-display';
 import { TokenInput } from '../common/token-input';
-import { ActionButton } from '../common/action-button';
-import { ErrorMessage } from '../common/error-message';
-import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
-import { SideDrawerLayout } from '../common/side-drawer-layout';
-import { parseBig } from '@/lib/utils/number';
+import { SideDrawerBackHeader } from '../side-drawer-back-header';
 
 export function DepositToken() {
   const token = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
@@ -41,10 +42,14 @@ export function DepositToken() {
           onInputChange={handleInputChange}
           placeholder="Amount to deposit"
         />
-        <ActionButton disabled={btnDisabled} onClick={handleDeposit} isPending={isPending}>
+        <ActionButton
+          disabled={btnDisabled}
+          onClick={handleDeposit}
+          isPending={isPending}
+          error={errorData}
+        >
           Deposit
         </ActionButton>
-        <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
       </SideDrawerLayout>
     </>
   );

@@ -3,7 +3,6 @@ import { utils } from 'safebase';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
-import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
@@ -127,11 +126,14 @@ export function NadFunBuyToken() {
           content={tokenOutDisplay || '0'}
         />
 
-        <ActionButton disabled={btnDisabled} onClick={handleBuyToken} isPending={isPending}>
+        <ActionButton
+          disabled={btnDisabled}
+          onClick={handleBuyToken}
+          isPending={isPending}
+          error={errorData}
+        >
           Buy
         </ActionButton>
-
-        <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
       </SideDrawerLayout>
     </>
   );

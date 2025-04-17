@@ -1,16 +1,22 @@
 'use client';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { Balance } from './balance';
-import { AccountSetting } from './account-setting';
-import { DepositToken } from './deposit-token';
-import { WithdrawToken } from './withdraw-token';
-import { cn } from '@/lib/utils';
+
+import { AnimatePresence, motion } from 'framer-motion';
+
 import { AprioriDeposit } from '@/app/(protocols)/apriori/apriori-deposit';
 import { AprioriWithdraw } from '@/app/(protocols)/apriori/apriori-withdraw';
+import { NadFunCreateToken } from '@/app/(protocols)/nad-fun/nad-fun-create-token';
 import { NadFunBuyToken } from '@/app/(protocols)/nad-fun/nadfun-buy-token';
 import { NadFunSellToken } from '@/app/(protocols)/nad-fun/nadfun-sell-token';
-import { NadFunCreateToken } from '@/app/(protocols)/nad-fun/nad-fun-create-token';
+import { NadNameRegister } from '@/app/(protocols)/nad-name-server/nad-name-register';
+import { NadNameSetPrimary } from '@/app/(protocols)/nad-name-server/nad-name-set-primary';
+
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { cn } from '@/lib/utils';
+
+import { AccountSetting } from './account-setting';
+import { Balance } from './balance';
+import { DepositToken } from './deposit-token';
+import { WithdrawToken } from './withdraw-token';
 
 const SideDrawer = () => {
   const { isOpen, currentComponent } = useSideDrawerStore();
@@ -35,6 +41,10 @@ const SideDrawer = () => {
         return <NadFunSellToken />;
       case 'NadFunCreateToken':
         return <NadFunCreateToken />;
+      case 'NadNameSetPrimary':
+        return <NadNameSetPrimary />;
+      case 'NadNameRegister':
+        return <NadNameRegister />;
       default:
         return null;
     }

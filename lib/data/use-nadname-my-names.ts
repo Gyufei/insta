@@ -11,7 +11,7 @@ export function useNadNameMyNames() {
     (account) => ['nadname', 'my-names', account ?? ''],
     (url, account) => {
       if (!account) {
-        return url;
+        return null;
       }
       url.searchParams.set('wallet', account);
       return url;

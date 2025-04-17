@@ -11,7 +11,7 @@ export function useAprioriBalance() {
     (account) => ['aprior', 'balance', account ?? ''],
     (url, account) => {
       if (!account) {
-        return url;
+        return null;
       }
       url.searchParams.set('sandbox_account', account);
       return url;

@@ -8,19 +8,26 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { WithLoading } from '@/components/with-loading';
 
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
+
 import { useNadNameCombinedNames } from './use-my-names';
 
 export function MyNames() {
+  const { setCurrentComponent } = useSideDrawerStore();
   const { data: names, isLoading } = useNadNameCombinedNames();
 
+  function handleSetPrimary(name: string) {
+    setCurrentComponent({
+      name: 'NadNameSetPrimary',
+      props: {
+        registerName: name,
+      },
+    });
+  }
+
   return (
-    <div className="container px-4 2xl:px-12">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold text-primary">My names</h2>
-        <Button onClick={() => {}} size="sm">
-          Add name
-        </Button>
-      </div>
+    <div className="container px-4 2xl:px-12 mt-6 2xl:mt-4">
+      <h2 className="text-2xl font-semibold text-primary">My names</h2>
 
       {isLoading ? (
         <div className="mt-4 flex h-[200px] w-full items-center justify-center">
@@ -39,7 +46,7 @@ export function MyNames() {
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-900 to-purple-500" />
                   <div className="flex items-center gap-3">
-                    <span className="text-xl font-medium">{name.name}</span>
+                    <span className="text-xl font-medium">{name.name}.nad</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -52,7 +59,12 @@ export function MyNames() {
                       Your primary name
                     </Badge>
                   ) : (
-                    <Button variant="outline" size="sm" className='bg-primary-foreground text-primary'>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-primary-foreground text-primary"
+                      onClick={() => handleSetPrimary(name.name)}
+                    >
                       Set as primary
                     </Button>
                   )}
