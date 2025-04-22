@@ -9,7 +9,7 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { TokenDisplayCard } from '@/components/token-display-card';
 import { Separator } from '@/components/ui/separator';
 
-import { TokenData } from '@/lib/data/tokens';
+import { G_MONAD, MONAD } from '@/lib/data/tokens';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useMagmaWithdraw } from '@/lib/data/use-magma-withdraw';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
@@ -18,8 +18,8 @@ import { formatBig, parseBig } from '@/lib/utils/number';
 export function MagmaWithdraw() {
   const { setIsOpen } = useSideDrawerStore();
 
-  const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
-  const gMonToken = TokenData.find((token) => token.symbol === 'gMON') || TokenData[2];
+  const monToken = MONAD;
+  const gMonToken = G_MONAD;
 
   const { mutate: withdraw, isPending } = useMagmaWithdraw();
 
@@ -53,7 +53,7 @@ export function MagmaWithdraw() {
         />
         <SetMax checked={isMax} onChange={handleSetMax} />
         <TokenDisplayCard
-          logo={monToken.iconUrl}
+          logo={monToken.logo}
           symbol={monToken.symbol}
           title="Estimated Receive"
           content={receiveAmount}

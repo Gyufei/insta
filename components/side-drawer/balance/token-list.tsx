@@ -2,16 +2,18 @@
 
 import { useEffect, useState } from 'react';
 
-import { IToken, TokenData } from '@/lib/data/tokens';
+import { APR_MONAD, G_MONAD, IToken, MONAD } from '@/lib/data/tokens';
 
 import { AprMONTokenCard } from './apr-mon-token-card';
+import BalanceTokenCard from './balance-token-card';
 import { MagmaMonTokenCard } from './magma-mon-token-card';
 import { NoSearchResult } from './no-search-result';
-import BalanceTokenCard from './balance-token-card';
 
 interface TokenListProps {
   searchQuery: string;
 }
+
+const TokenData = [MONAD, APR_MONAD, G_MONAD];
 
 export default function TokenList({ searchQuery }: TokenListProps) {
   const [filteredTokens, setFilteredTokens] = useState<IToken[]>(TokenData);
@@ -36,14 +38,7 @@ export default function TokenList({ searchQuery }: TokenListProps) {
           <>
             {filteredTokens.map((token, index) => {
               if (token.symbol === 'MON') {
-                return (
-                  <BalanceTokenCard
-                    key={index}
-                    name={token.name}
-                    symbol={token.symbol}
-                    iconUrl={token.iconUrl}
-                  />
-                );
+                return <BalanceTokenCard key={index} token={token} />;
               }
 
               if (token.symbol === 'aprMON') {

@@ -1,6 +1,6 @@
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
-import { TokenData } from '@/lib/data/tokens';
+import { MONAD } from '@/lib/data/tokens';
 import { useDeposit } from '@/lib/data/use-deposit';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';
@@ -13,7 +13,7 @@ import { TokenInput } from '../common/token-input';
 import { SideDrawerBackHeader } from '../side-drawer-back-header';
 
 export function DepositToken() {
-  const token = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
+  const token = MONAD;
 
   const { setIsOpen } = useSideDrawerStore();
   const { mutate: deposit, isPending } = useDeposit();

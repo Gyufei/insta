@@ -1,10 +1,13 @@
-import { IAprioriClaim } from '@/lib/data/use-get-apriori-claim';
-import { TokenData } from '@/lib/data/tokens';
 import { formatDistanceToNow } from 'date-fns';
+
 import Image from 'next/image';
-import { formatBig, formatNumber } from '@/lib/utils/number';
+
 import { Card, CardContent } from '@/components/ui/card';
+
+import { MONAD } from '@/lib/data/tokens';
+import { IAprioriClaim } from '@/lib/data/use-get-apriori-claim';
 import { cn } from '@/lib/utils';
+import { formatBig, formatNumber } from '@/lib/utils/number';
 
 interface ClaimCardProps {
   claim: IAprioriClaim;
@@ -13,7 +16,7 @@ interface ClaimCardProps {
 }
 
 export function ClaimCard({ claim, isSelected = false, onSelect }: ClaimCardProps) {
-  const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
+  const monToken = MONAD;
   const tokenAmount = formatNumber(formatBig(claim.token_amount));
 
   const requestTime = new Date(claim.request_at * 1000);
@@ -33,9 +36,9 @@ export function ClaimCard({ claim, isSelected = false, onSelect }: ClaimCardProp
   };
 
   return (
-    <Card 
+    <Card
       className={cn(
-        "group relative flex flex-shrink-0 cursor-pointer overflow-hidden select-none first:mt-0 py-0",
+        'group relative flex flex-shrink-0 cursor-pointer overflow-hidden select-none first:mt-0 py-0',
         isSelected ? 'border-2 border-blue-500' : ''
       )}
       onClick={onSelect}
@@ -56,7 +59,7 @@ export function ClaimCard({ claim, isSelected = false, onSelect }: ClaimCardProp
             <dt className="text-gray-300 flex-1 text-xs font-medium">Amount</dt>
             <dd className="flex w-1/2 items-center justify-end text-right text-xs font-semibold">
               <Image
-                src={monToken.iconUrl}
+                src={monToken.logo}
                 alt={monToken.symbol}
                 width={16}
                 height={16}

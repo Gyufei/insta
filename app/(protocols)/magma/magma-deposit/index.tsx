@@ -8,15 +8,15 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { TokenDisplayCard } from '@/components/token-display-card';
 
-import { TokenData } from '@/lib/data/tokens';
+import { G_MONAD, MONAD } from '@/lib/data/tokens';
 import { useMagmaDeposit } from '@/lib/data/use-magma-deposit';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';
 import { useAccountBalance } from '@/lib/web3/use-account-balance';
 
 export function MagmaDeposit() {
-  const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
-  const gMonToken = TokenData.find((token) => token.symbol === 'gMON') || TokenData[2];
+  const monToken = MONAD;
+  const gMonToken = G_MONAD;
 
   const { setIsOpen } = useSideDrawerStore();
   const { mutate: deposit, isPending } = useMagmaDeposit();
@@ -51,7 +51,7 @@ export function MagmaDeposit() {
           />
           <SetMax checked={isMax} onChange={handleSetMax} />
           <TokenDisplayCard
-            logo={gMonToken.iconUrl}
+            logo={gMonToken.logo}
             symbol={gMonToken.symbol}
             title="Estimated Receive"
             content={receiveAmount}

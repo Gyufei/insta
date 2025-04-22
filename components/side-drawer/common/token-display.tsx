@@ -13,7 +13,7 @@ interface TokenDisplayProps {
 export function TokenDisplay({ token, balance, balanceLabel, isPending }: TokenDisplayProps) {
   return (
     <TokenDisplayCard
-      logo={token?.iconUrl || ''}
+      logo={token?.logo || ''}
       symbol={token?.symbol}
       title={balanceLabel}
       content={

@@ -34,6 +34,7 @@ export const ApiPath = {
   nadNameRegister: `${ApiHost}/nadname/register`,
   nadNameCheckAvailable: `${ApiHost}/nadname/check_name_availability`,
   nadNamePrice: `${ApiHost}/nadname/registering_price`,
+  nadNameTransfer: `${ApiHost}/nadname/transfer_ownership`,
   
   magmaInfo: "https://magma-http-app-testnet-2.fly.dev/graphql",
   magmaBalance: `${ApiHost}/magma/balance`,

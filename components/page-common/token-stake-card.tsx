@@ -11,11 +11,11 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { WithLoading } from '@/components/with-loading';
 
-import { TokenData } from '@/lib/data/tokens';
+import { IToken } from '@/lib/data/tokens';
 import { formatBig, formatNumber } from '@/lib/utils/number';
 
 interface TokenStakeCardProps {
-  token: (typeof TokenData)[0];
+  token: IToken;
   tokenPrice: number;
   balance: string;
   isLoading: boolean;
@@ -45,7 +45,7 @@ export function TokenStakeCard({
           <div className="flex h-12 w-12 items-center justify-center dark:opacity-90">
             <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full">
               <Image
-                src={token.iconUrl}
+                src={token.logo}
                 className="flex-grow object-contain"
                 alt={token.name}
                 width={48}

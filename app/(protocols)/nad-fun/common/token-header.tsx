@@ -7,7 +7,7 @@ import Image from 'next/image';
 
 import { Card, CardContent } from '@/components/ui/card';
 
-import { useCopyToClipboard } from '@/lib/hooks/use-copy-to-clipboard';
+import { useCopyToClipboard } from '@/lib/utils/use-copy-to-clipboard';
 
 interface TokenHeaderProps {
   token: {

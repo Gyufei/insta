@@ -8,7 +8,7 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { TokenDisplayCard } from '@/components/token-display-card';
 
-import { TokenData } from '@/lib/data/tokens';
+import { MONAD } from '@/lib/data/tokens';
 import { useNadFunBuy } from '@/lib/data/use-nadfun-buy';
 import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
@@ -20,7 +20,7 @@ import { TokenInputSection } from '../common/token-input-section';
 import { useNadFunReceiveAmount } from '../common/use-nadfun-receive-amount';
 
 export function NadFunBuyToken() {
-  const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
+  const monToken = MONAD;
   const { currentComponent, setIsOpen } = useSideDrawerStore();
   const { token } = currentComponent?.props || { token: null };
 

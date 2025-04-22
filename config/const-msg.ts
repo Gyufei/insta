@@ -17,6 +17,7 @@ export const ERROR_MESSAGES = {
   CREATE_TOKEN_FAILED: 'Create token failed',
   REGISTER_FAILED: 'Register nad name failed',
   SET_PRIMARY_NAME_FAILED: 'Set primary name failed',
+  TRANSFER_NAME_FAILED: 'Transfer nad name failed',
 } as const;
 
 export const SUCCESS_MESSAGES = {
@@ -32,4 +33,5 @@ export const SUCCESS_MESSAGES = {
   CREATE_TOKEN_SUCCESS: 'Token created successfully',
   REGISTER_SUCCESS: 'Nad name registered successfully',
   SET_PRIMARY_NAME_SUCCESS: 'Primary name set successfully',
+  TRANSFER_NAME_SUCCESS: 'Nad name transferred successfully',
 } as const;

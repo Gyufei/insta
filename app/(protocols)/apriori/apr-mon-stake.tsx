@@ -1,14 +1,15 @@
 'use client';
 
-import { TokenData, TokenPriceMap } from '@/lib/data/tokens';
+import { TokenStakeCard } from '@/components/page-common/token-stake-card';
+
+import { APR_MONAD, TokenPriceMap } from '@/lib/data/tokens';
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { TokenStakeCard } from '@/components/page-common/token-stake-card';
 
 export function AprMonStake() {
   const { setCurrentComponent } = useSideDrawerStore();
 
-  const token = TokenData.find((token) => token.symbol === 'aprMON') || TokenData[1];
+  const token = APR_MONAD;
   const aprPrice = TokenPriceMap[token?.symbol];
   const { data: aprioriBalance, isLoading } = useAprioriBalance();
   const balance = aprioriBalance?.balance || '0';

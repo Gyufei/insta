@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+import { IToken } from '../data/tokens';
+
 export type SideDrawerComponent =
   | 'Balance'
   | 'AccountSetting'
@@ -12,22 +14,19 @@ export type SideDrawerComponent =
   | 'NadFunSellToken'
   | 'NadNameSetPrimary'
   | 'NadNameRegister'
+  | 'NadNameTransfer'
   | 'MagmaDeposit'
   | 'MagmaWithdraw'
-  | null;
+  | 'Swap';
 
 type CurrentComponent = {
-  name: SideDrawerComponent;
+  name: SideDrawerComponent | null;
   props?: CompProps;
 };
 
 type CompProps = {
-  token?: {
-    address: string;
-    symbol: string;
-    name: string;
-    logo: string;
-    balance: string;
+  token?: IToken & {
+    balance?: string;
   };
   registerName?: string;
   [key: string]: unknown;

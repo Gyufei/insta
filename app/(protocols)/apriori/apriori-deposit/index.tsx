@@ -8,15 +8,15 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { TokenDisplayCard } from '@/components/token-display-card';
 
-import { TokenData } from '@/lib/data/tokens';
+import { APR_MONAD, MONAD } from '@/lib/data/tokens';
 import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';
 import { useAccountBalance } from '@/lib/web3/use-account-balance';
 
 export function AprioriDeposit() {
-  const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
-  const aprMonToken = TokenData.find((token) => token.symbol === 'aprMON') || TokenData[1];
+  const monToken = MONAD;
+  const aprMonToken = APR_MONAD;
 
   const { setIsOpen } = useSideDrawerStore();
   const { mutate: deposit, isPending } = useAprioriDeposit();
@@ -51,7 +51,7 @@ export function AprioriDeposit() {
           />
           <SetMax checked={isMax} onChange={handleSetMax} />
           <TokenDisplayCard
-            logo={aprMonToken.iconUrl}
+            logo={aprMonToken.logo}
             symbol={aprMonToken.symbol}
             title="Estimated Receive"
             content={receiveAmount}

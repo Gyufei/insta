@@ -6,7 +6,7 @@ import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { Separator } from '@/components/ui/separator';
 
-import { TokenData } from '@/lib/data/tokens';
+import { APR_MONAD, MONAD } from '@/lib/data/tokens';
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useAprioriWithdraw } from '@/lib/data/use-apriori-withdraw';
 import { formatBig, parseBig } from '@/lib/utils/number';
@@ -14,8 +14,8 @@ import { formatBig, parseBig } from '@/lib/utils/number';
 import { WithdrawEstReceive } from './withdraw-est-receive';
 
 export function Withdraw() {
-  const monToken = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
-  const aprMonToken = TokenData.find((token) => token.symbol === 'aprMON') || TokenData[1];
+  const monToken = MONAD;
+  const aprMonToken = APR_MONAD;
 
   const { mutate: withdraw, isPending } = useAprioriWithdraw();
 

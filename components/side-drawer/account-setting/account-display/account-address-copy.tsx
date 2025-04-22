@@ -4,7 +4,7 @@ import { ClipboardCheck, ClipboardCopyIcon } from 'lucide-react';
 import { NetworkConfigs } from '@/config/network-config';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useSelectedAccount } from '@/lib/data/use-account';
-import { useCopyToClipboard } from '@/lib/hooks/use-copy-to-clipboard';
+import { useCopyToClipboard } from '@/lib/utils/use-copy-to-clipboard';
 import { cn } from '@/lib/utils';
 
 export function AccountAddressCopy({ className }: { className?: string }) {

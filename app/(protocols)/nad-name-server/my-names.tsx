@@ -26,6 +26,15 @@ export function MyNames() {
     });
   }
 
+  function handleTransfer(name: string) {
+    setCurrentComponent({
+      name: 'NadNameTransfer',
+      props: {
+        registerName: name,
+      },
+    });
+  }
+
   return (
     <div className="container px-4 2xl:px-12 mt-6 2xl:mt-4">
       <TitleH2>My names</TitleH2>
@@ -52,13 +61,23 @@ export function MyNames() {
                 </div>
                 <div className="flex items-center gap-2">
                   {name.isPrimary ? (
-                    <Badge
-                      variant="secondary"
-                      className="bg-green-100 text-green-700 hover:bg-green-100 py-2"
-                    >
-                      <Sparkle className="w-4 h-4" />
-                      Your primary name
-                    </Badge>
+                    <>
+                      <Badge
+                        variant="secondary"
+                        className="bg-green-100 text-green-700 hover:bg-green-100 h-8"
+                      >
+                        <Sparkle className="w-4 h-4" />
+                        Your primary name
+                      </Badge>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="bg-primary-foreground text-primary"
+                        onClick={() => handleTransfer(name.name)}
+                      >
+                        Transfer
+                      </Button>
+                    </>
                   ) : (
                     <Button
                       variant="outline"

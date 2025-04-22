@@ -19,8 +19,8 @@ export const NetworkConfigs = {
   },
 };
 
-export const MonadTestnetName = 'Monad';
+export const MONAD_TESTNET_NAME = 'Monad';
 
-export const ZeroAddress = '0x0000000000000000000000000000000000000000';
+export const DEFAULT_NATIVE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
-export const DefaultTokenDecimals = 18;
+export const DEFAULT_TOKEN_DECIMALS = 18;

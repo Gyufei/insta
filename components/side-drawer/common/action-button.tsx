@@ -50,8 +50,8 @@ export function ActionButton({
 
   const errorData = useMemo(() => {
     return {
-      ...error,
       ...internalErrorData,
+      ...error,
     };
   }, [error, internalErrorData]);
 

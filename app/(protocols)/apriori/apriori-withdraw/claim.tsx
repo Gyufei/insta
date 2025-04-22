@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { Separator } from '@/components/ui/separator';
 
-import { TokenData } from '@/lib/data/tokens';
+import { APR_MONAD } from '@/lib/data/tokens';
 import { useAprioriClaim } from '@/lib/data/use-apriori-claim';
 import { useGetAprioriClaim } from '@/lib/data/use-get-apriori-claim';
 import { formatBig, formatNumber } from '@/lib/utils/number';
@@ -11,7 +11,7 @@ import { formatBig, formatNumber } from '@/lib/utils/number';
 import { ClaimCard } from './claim-card';
 
 export function Claim() {
-  const aprMonToken = TokenData.find((token) => token.symbol === 'aprMON') || TokenData[1];
+  const aprMonToken = APR_MONAD;
   const { data: claimRecords, isLoading: isClaimRecordsPending } = useGetAprioriClaim();
   const { mutate: claim, isPending: isClaiming, error: claimError } = useAprioriClaim();
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);

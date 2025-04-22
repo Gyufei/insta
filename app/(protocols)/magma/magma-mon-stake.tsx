@@ -2,14 +2,14 @@
 
 import { TokenStakeCard } from '@/components/page-common/token-stake-card';
 
-import { TokenData, TokenPriceMap } from '@/lib/data/tokens';
+import { G_MONAD, TokenPriceMap } from '@/lib/data/tokens';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 export function MagmaMonStake() {
   const { setCurrentComponent } = useSideDrawerStore();
 
-  const token = TokenData.find((token) => token.symbol === 'gMON') || TokenData[2];
+  const token = G_MONAD;
   const gMonPrice = TokenPriceMap[token?.symbol];
   const { data: magmaBalance, isLoading } = useMagmaBalance();
   const balance = magmaBalance?.balance || '0';

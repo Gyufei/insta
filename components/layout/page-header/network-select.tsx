@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useState } from 'react';
-import { INetworkConfig, MonadTestnetName, NetworkConfigs } from '@/config/network-config';
+import { INetworkConfig, MONAD_TESTNET_NAME, NetworkConfigs } from '@/config/network-config';
 import {
   Select,
   SelectContent,
@@ -12,7 +12,7 @@ import {
 const NETWORKS = [
   {
     ...NetworkConfigs.monadTestnet,
-    name: MonadTestnetName,
+    name: MONAD_TESTNET_NAME,
   },
 ] as const;
 

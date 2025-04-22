@@ -1,6 +1,6 @@
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
-import { TokenData } from '@/lib/data/tokens';
+import { MONAD } from '@/lib/data/tokens';
 import { useWithdraw } from '@/lib/data/use-withdraw';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';
@@ -17,7 +17,7 @@ import { SideDrawerBackHeader } from '../side-drawer-back-header';
 export function WithdrawToken() {
   const { setIsOpen } = useSideDrawerStore();
 
-  const token = TokenData.find((token) => token.symbol === 'MON') || TokenData[0];
+  const token = MONAD;
 
   const { balance } = useAccountBalance();
 

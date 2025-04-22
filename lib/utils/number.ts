@@ -1,4 +1,4 @@
-import { DefaultTokenDecimals } from '@/config/network-config';
+import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
 import numbro from 'numbro';
 import { formatUnits, parseUnits } from 'viem';
 import { divide, multiply } from 'safebase';
@@ -22,7 +22,7 @@ export function formatPercentage(num: string | number) {
   });
 }
 
-export function formatBig(num: string | number, decimals = DefaultTokenDecimals) {
+export function formatBig(num: string | number, decimals = DEFAULT_TOKEN_DECIMALS) {
   try {
     const bigIntValue = BigInt(num);
     return formatUnits(bigIntValue, decimals);
@@ -31,7 +31,7 @@ export function formatBig(num: string | number, decimals = DefaultTokenDecimals)
   }
 }
 
-export function parseBig(num: string | number, decimals = DefaultTokenDecimals) {
+export function parseBig(num: string | number, decimals = DEFAULT_TOKEN_DECIMALS) {
   try {
     return parseUnits(num.toString(), decimals);
   } catch (error) {
