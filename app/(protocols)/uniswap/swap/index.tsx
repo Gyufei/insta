@@ -3,14 +3,16 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
+import TokenSwap from './token-swap';
+
 export function UniswapSwap() {
   const { setIsOpen } = useSideDrawerStore();
 
   return (
     <>
-      <SideDrawerBackHeader title={`Transfer name`} onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title="Trade" onClick={() => setIsOpen(false)} />
       <SideDrawerLayout>
-        <div></div>
+        <TokenSwap />
       </SideDrawerLayout>
     </>
   );
