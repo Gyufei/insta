@@ -1,4 +1,3 @@
-'use client';
 import { useAccount } from 'wagmi';
 import { ConnectWalletButton } from './connect-wallet-button';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';

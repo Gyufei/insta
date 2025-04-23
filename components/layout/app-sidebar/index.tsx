@@ -1,39 +1,24 @@
 'use client';
+
+import {
+  BookOpen,
+  ChevronDown,
+  Circle,
+  CircleUserRound,
+  Cog,
+  Mail,
+  MessageCircle,
+  Orbit,
+  Package,
+  ServerCog,
+  Waypoints,
+  X,
+} from 'lucide-react';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  CircleUserRound,
-  Circle,
-  Orbit,
-  ChevronDown,
-  Mail,
-  X,
-  MessageCircle,
-  BookOpen,
-  ServerCog,
-  Package,
-  Waypoints,
-  Cog,
-} from 'lucide-react';
-import { useSelectedAccount } from '@/lib/data/use-account';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
-  useSidebar,
-  SidebarSeparator,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from '@/components/ui/sidebar';
+
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   DropdownMenu,
@@ -41,6 +26,26 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarSeparator,
+  useSidebar,
+} from '@/components/ui/sidebar';
+
+import { useSelectedAccount } from '@/lib/data/use-account';
+
 import { ToggleTheme } from './toggle-theme';
 import { Version } from './version';
 
@@ -84,13 +89,7 @@ export default function AppSidebar() {
       href: '/apriori',
       label: 'Apriori',
       icon: (
-        <Image
-          src="/icons/apriori.svg"
-          alt="aprior"
-          width={20}
-          height={20}
-          className="h-4 w-4"
-        />
+        <Image src="/icons/apriori.svg" alt="aprior" width={20} height={20} className="h-4 w-4" />
       ),
     },
     {
@@ -110,13 +109,7 @@ export default function AppSidebar() {
       href: '/uniswap',
       label: 'Uniswap V3',
       icon: (
-        <Image
-          src="/icons/uniswap.svg"
-          alt="uniswap"
-          width={20}
-          height={20}
-          className="h-4 w-4"
-        />
+        <Image src="/icons/uniswap.svg" alt="uniswap" width={20} height={20} className="h-4 w-4" />
       ),
     },
     {
@@ -149,13 +142,7 @@ export default function AppSidebar() {
       href: '/ambient',
       label: 'Ambient',
       icon: (
-        <Image
-          src="/icons/ambient.svg"
-          alt="ambient"
-          width={20}
-          height={20}
-          className="h-4 w-4"
-        />
+        <Image src="/icons/ambient.svg" alt="ambient" width={20} height={20} className="h-4 w-4" />
       ),
     },
     {

@@ -1,5 +1,7 @@
 'use client';
+
 import { useSelectedAccount } from '@/lib/data/use-account';
+
 import { AuthorityCard } from './authority-card';
 
 export function AuthorityList() {

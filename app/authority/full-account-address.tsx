@@ -1,7 +1,9 @@
 'use client';
+
 import { AccountAddressCopy } from '@/components/side-drawer/account-setting/account-display/account-address-copy';
-import { useSelectedAccount } from '@/lib/data/use-account';
 import { Card, CardContent } from '@/components/ui/card';
+
+import { useSelectedAccount } from '@/lib/data/use-account';
 
 export function FullAccountAddress() {
   const { data: accountInfo } = useSelectedAccount();

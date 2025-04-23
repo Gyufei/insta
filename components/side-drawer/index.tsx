@@ -37,7 +37,7 @@ const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   NadNameTransfer: NadNameTransfer,
   MagmaDeposit: MagmaDeposit,
   MagmaWithdraw: MagmaWithdraw,
-  Swap: UniswapSwap,
+  UniswapSwap: UniswapSwap,
 } as const;
 
 const ANIMATION_CONFIG = {

@@ -40,4 +40,7 @@ export const ApiPath = {
   magmaBalance: `${ApiHost}/magma/balance`,
   magmaDeposit: `${ApiHost}/magma/deposit`,
   magmaWithdraw: `${ApiHost}/magma/withdraw`,
+
+  uniswapQuote: `${ApiHost}/uniswap_router02/quote`,
+  uniswapSwap: `${ApiHost}/uniswap_router02/buy`,
 };

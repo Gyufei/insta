@@ -133,7 +133,7 @@ export function NadFunCreateToken() {
                     Token Name <span className="text-green-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input className="bg-white" placeholder="Enter token name" {...field} />
+                    <Input className="bg-primary-foreground" placeholder="Enter token name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -149,7 +149,7 @@ export function NadFunCreateToken() {
                     Token Symbol <span className="text-green-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input className="bg-white" placeholder="Enter token symbol" {...field} />
+                    <Input className="bg-primary-foreground" placeholder="Enter token symbol" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -166,7 +166,7 @@ export function NadFunCreateToken() {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-white"
+                      className="bg-primary-foreground"
                       placeholder="how many you want to buy"
                       {...field}
                       onChange={(e) => {

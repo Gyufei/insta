@@ -17,12 +17,12 @@ interface BaseTokenCardProps {
 }
 
 export function BaseTokenCard({ token, balance, className }: BaseTokenCardProps) {
-  const priceValue = multiply(balance, String(TokenPriceMap[token.symbol] || 0));
-
   const { setCurrentComponent } = useSideDrawerStore();
 
+  const priceValue = multiply(balance, String(TokenPriceMap[token.symbol] || 0));
+
   function handleTrade() {
-    setCurrentComponent({ name: 'Swap', props: { token } });
+    setCurrentComponent({ name: 'UniswapSwap', props: { token } });
   }
 
   return (
@@ -40,7 +40,7 @@ export function BaseTokenCard({ token, balance, className }: BaseTokenCardProps)
                   alt={token.name}
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center truncate rounded-full bg-gradient-to-br from-gray-300 to-gray-900 text-xs leading-none text-primary-foreground uppercase">
+                <div className="flex h-full w-full items-center justify-center truncate rounded-full bg-gradient-to-br from-gray-300 to-gray-900 text-xs leading-none text-primary uppercase">
                   {token.symbol.toLowerCase()}
                 </div>
               )}
@@ -48,7 +48,7 @@ export function BaseTokenCard({ token, balance, className }: BaseTokenCardProps)
           </div>
 
           <div className="flex flex-col px-4">
-            <div className="text-primary dark:text-primary-foreground mb-1 flex items-center text-xs font-semibold whitespace-nowrap">
+            <div className="text-primary mb-1 flex items-center text-xs font-semibold whitespace-nowrap">
               {formatNumber(balance)} {token.symbol}
             </div>
             <div className="text-xs font-medium whitespace-nowrap text-gray-300">

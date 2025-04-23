@@ -74,7 +74,7 @@ export function SearchName() {
         <div className="relative bg-gradient-78 from-[#5A00C8] bg-linear-78 to-[#FB0899] p-[2px] rounded-sm">
           <Input
             type="text"
-            className="font-medium h-[60px] border-none bg-white ring-0 focus-visible:ring-0 focus-visible:shadow-none text-xl w-full px-6 py-4 rounded-sm placeholder-gray-300 focus:outline-none"
+            className="font-medium h-[60px] border-none bg-primary-foreground ring-0 focus-visible:ring-0 focus-visible:shadow-none text-xl w-full px-6 py-4 rounded-sm placeholder-gray-300 focus:outline-none"
             placeholder="Search a name"
             value={inputTerm}
             onChange={handleInputChange}
@@ -94,7 +94,7 @@ export function SearchName() {
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${showResults && inputTerm ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}
         >
-          <ul className="rounded-sm mt-2 border border-gray-300 bg-white shadow-sm z-10">
+          <ul className="rounded-sm mt-2 border border-gray-300 bg-primary-foreground shadow-sm z-10">
             <li
               onClick={handleResister}
               className="rounded-sm font-semibold hover:bg-gray-100 cursor-pointer"

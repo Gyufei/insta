@@ -50,7 +50,7 @@ export function ToggleTheme({ className, isCollapsed = false }: ThemeToggleProps
         <div
           className={cn(
             'flex h-7 w-14 cursor-pointer rounded-full p-1 transition-all duration-300',
-            isDark ? 'border border-zinc-800 bg-zinc-950' : 'border border-zinc-200 bg-white',
+            isDark ? 'border border-zinc-800 bg-zinc-950' : 'border border-zinc-200 bg-primary-foreground',
             className
           )}
           onClick={toggleTheme}

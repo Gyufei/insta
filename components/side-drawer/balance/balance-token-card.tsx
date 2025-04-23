@@ -1,15 +1,15 @@
-import { IToken } from '@/lib/data/tokens';
+import { MONAD } from '@/lib/data/tokens';
 import { useAccountBalance } from '@/lib/web3/use-account-balance';
 
 import { BaseTokenCard } from './base-token-card';
 
 interface TokenCardProps {
-  token: IToken;
   className?: string;
 }
 
-export default function BalanceTokenCard({ token, className }: TokenCardProps) {
+export function BalanceTokenCard({ className }: TokenCardProps) {
+  const monadToken = MONAD;
   const { balance } = useAccountBalance();
 
-  return <BaseTokenCard token={token} balance={balance} className={className} />;
+  return <BaseTokenCard token={monadToken} balance={balance} className={className} />;
 }

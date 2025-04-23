@@ -1,3 +1,5 @@
+'use client';
+
 import { ERROR_MESSAGES } from '@/config/const-msg';
 import { useAccount } from 'wagmi';
 

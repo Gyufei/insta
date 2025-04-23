@@ -17,7 +17,7 @@ export type SideDrawerComponent =
   | 'NadNameTransfer'
   | 'MagmaDeposit'
   | 'MagmaWithdraw'
-  | 'Swap';
+  | 'UniswapSwap';
 
 type CurrentComponent = {
   name: SideDrawerComponent | null;

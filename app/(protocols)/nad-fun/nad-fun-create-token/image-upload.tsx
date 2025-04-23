@@ -21,7 +21,7 @@ export function ImageUpload({ value, onChange }: ImageUploadProps) {
   };
 
   return (
-    <div className="group relative mt-[9px] size-[200px] overflow-hidden rounded-[8px] border border-dashed border-border bg-white">
+    <div className="group relative mt-[9px] size-[200px] overflow-hidden rounded-[8px] border border-dashed border-border bg-primary-foreground">
       <input
         type="file"
         accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/bmp,image/tiff,image/heic,image/heif,image/avif"

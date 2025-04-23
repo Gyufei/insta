@@ -39,7 +39,7 @@ export function TokenHeader({ token }: TokenHeaderProps) {
           </div>
           <div className="flex h-10 w-10 items-center justify-center">
             {token?.logo && (
-              <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full bg-white/80 p-1 shadow-sm dark:bg-white/10">
+              <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full bg-primary-foreground/80 p-1 shadow-sm dark:bg-primary-foreground/10">
                 <Image
                   src={token?.logo}
                   alt={token?.name}

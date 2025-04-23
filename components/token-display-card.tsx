@@ -48,7 +48,7 @@ export function TokenDisplayCard({
           </div>
         </div>
         <div className="flex h-10 w-10 items-center justify-center">
-          <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full bg-white/80 p-1 shadow-sm dark:bg-white/10">
+          <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full bg-primary-foreground/80 p-1 shadow-sm dark:bg-primary-foreground/10">
             <Image
               src={logo}
               className="h-8 w-8 flex-grow object-contain rounded-full"

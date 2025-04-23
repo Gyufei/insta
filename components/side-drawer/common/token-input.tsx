@@ -21,7 +21,7 @@ export function TokenInput({
           type="text"
           inputMode="decimal"
           placeholder={placeholder}
-          className="w-full pr-2 pl-4 bg-white"
+          className="w-full pr-2 pl-4 bg-primary-foreground"
           value={inputValue}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => onInputChange(e.target.value)}
         />

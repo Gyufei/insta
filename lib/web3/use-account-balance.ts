@@ -5,31 +5,31 @@ import { useMemo } from 'react';
 import { useSelectedAccount } from '../data/use-account';
 import { formatBig } from '../utils/number';
 
-export function useAccountBalance() {
+export function useAccountBalance(enableQuery = true) {
   const { data: accountInfo, isLoading: isAccountInfoPending } = useSelectedAccount();
 
-  const account = accountInfo?.sandbox_account;
+  const accountAddress = accountInfo?.sandbox_account;
 
   const { data: balanceData, isPending: isBalancePending } = useBalance({
-    address: account as `0x${string}`,
+    address: accountAddress as `0x${string}`,
     query: {
-      enabled: !!account,
+      enabled: !!accountAddress && enableQuery,
     },
   });
 
   const balanceBig = useMemo(() => {
-    if (!account) return '0';
+    if (!accountAddress) return '0';
     return balanceData?.value;
-  }, [balanceData, account]);
+  }, [balanceData, accountAddress]);
 
   const balance = useMemo(() => {
-    if (!account) return '0';
+    if (!accountAddress) return '0';
     return formatBig(String(balanceBig), balanceData?.decimals);
-  }, [balanceBig, balanceData?.decimals, account]);
+  }, [balanceBig, balanceData?.decimals, accountAddress]);
 
   return {
     balanceBig,
     balance,
-    isPending: !!account && (isAccountInfoPending || isBalancePending),
+    isPending: !!accountAddress && (isAccountInfoPending || isBalancePending),
   };
 }
