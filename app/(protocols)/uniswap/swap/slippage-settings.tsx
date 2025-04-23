@@ -36,7 +36,7 @@ export function SlippageSettings({ onSlippageChange }: SlippageSettingsProps) {
 
   return (
     <div className="flex items-center justify-between gap-2 mt-2 text-sm">
-      <div className="text-primary font-medium">Max slippage</div>
+      <div className="text-muted-foreground font-medium">Max slippage</div>
       <div className="flex items-center p-1 gap-2 border border-gray-200 rounded-xl">
         <Button
           variant="ghost"

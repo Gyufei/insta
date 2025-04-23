@@ -43,4 +43,5 @@ export const ApiPath = {
 
   uniswapQuote: `${ApiHost}/uniswap_router02/quote`,
   uniswapSwap: `${ApiHost}/uniswap_router02/buy`,
+  uniswapV3Position: `${ApiHost}/uniswap_v3_position/all_positions`,
 };
