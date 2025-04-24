@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 import { useGetBalance } from './use-get-balance';
 
 interface BalanceDisplayProps {

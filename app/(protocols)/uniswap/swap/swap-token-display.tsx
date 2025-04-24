@@ -1,5 +1,7 @@
 import { ChevronDown } from 'lucide-react';
-import Image from 'next/image';
+
+import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
+
 import { IToken } from '@/lib/data/tokens';
 
 interface TokenDisplayProps {
@@ -15,13 +17,12 @@ export const SwapTokenDisplay = ({ token, onClick }: TokenDisplayProps) => {
     >
       {token ? (
         <>
-          <Image
+          <LogoWithPlaceholder
             src={token.logo}
-            alt={token.symbol}
+            className="w-4 h-4"
             width={16}
             height={16}
-            loading="lazy"
-            priority={false}
+            name={token.symbol}
           />
           <div className="flex flex-col">
             <div className="text-sm font-medium">{token.symbol}</div>
@@ -35,4 +36,4 @@ export const SwapTokenDisplay = ({ token, onClick }: TokenDisplayProps) => {
       <ChevronDown className="h-4 w-4" />
     </div>
   );
-}; 
+};

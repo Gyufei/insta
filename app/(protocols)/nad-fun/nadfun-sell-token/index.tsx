@@ -6,7 +6,7 @@ import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { TokenDisplayCard } from '@/components/token-display-card';
+import { TokenDisplayCard } from '@/components/common/token-display-card';
 
 import { MONAD } from '@/lib/data/tokens';
 import { useNadFunSell } from '@/lib/data/use-nadfun-sell';

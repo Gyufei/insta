@@ -1,6 +1,6 @@
 'use client';
 import { AccountCard } from './account-card';
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 import { useAccountList } from '@/app/authority/use-account-list';
 
 export function AccountList() {

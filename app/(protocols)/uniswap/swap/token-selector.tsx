@@ -4,8 +4,7 @@ import { Search } from 'lucide-react';
 
 import { useState } from 'react';
 
-import Image from 'next/image';
-
+import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 import { NoSearchResult } from '@/components/side-drawer/balance/no-search-result';
 
 import { IToken } from '@/lib/data/tokens';
@@ -52,12 +51,12 @@ export default function TokenSelector({ onSelect, onClose }: TokenSelectorProps)
                 onClose();
               }}
             >
-              <Image
+              <LogoWithPlaceholder
                 src={token.logo}
-                alt={token.symbol}
+                className="w-6 h-6"
                 width={24}
                 height={24}
-                className="w-6 h-6"
+                name={token.symbol}
               />
               <div>
                 <div className="text-primary font-medium">{token.symbol}</div>

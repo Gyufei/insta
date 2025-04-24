@@ -4,13 +4,13 @@ import { Plus, Search } from 'lucide-react';
 
 import { useState } from 'react';
 
-import { TitleH2 } from '@/components/title-h2';
+import { TitleH2 } from '@/components/common/title-h2';
+import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { WithLoading } from '@/components/with-loading';
 
-import { useUniswapPosition } from '@/lib/data/use-uniswap-position';
+import { PositionStatus, useUniswapPosition } from '@/lib/data/use-uniswap-position';
 
 import { EmptyState } from './empty-state';
 import { PositionItem } from './position-item';
@@ -22,9 +22,10 @@ export function PositionsSection() {
   const [hideClosedPositions, setHideClosedPositions] = useState(true);
 
   const filteredPositions = positions?.filter((position) => {
-    if (hideClosedPositions && position.status !== 'POSITION_STATUS_IN_RANGE') {
+    if (hideClosedPositions && position.status === PositionStatus.POSITION_STATUS_CLOSED) {
       return false;
     }
+
     if (searchQuery) {
       const { token0, token1 } = position.v3Position;
       const searchLower = searchQuery.toLowerCase();
@@ -67,34 +68,32 @@ export function PositionsSection() {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-grow flex-col">
+      <div className="mt-4 flex flex-grow flex-col min-h-50">
         {isLoading ? (
-          <div className="flex flex-grow items-center justify-center">
+          <div className="py-20 rounded-sm bg-muted/80 flex items-center justify-center">
             <WithLoading isLoading={true} />
           </div>
         ) : positions?.length === 0 || filteredPositions?.length === 0 ? (
-          <div className="flex flex-grow items-center justify-center">
-            <EmptyState
-              message={
-                positions?.length === 0 ? (
-                  <>
-                    You have no active positions. <br />
-                    Create a position to get started!
-                  </>
-                ) : (
-                  <>
-                    No positions found. <br />
-                  </>
-                )
-              }
-            />
-          </div>
+          <EmptyState
+            message={
+              positions?.length === 0 ? (
+                <>
+                  You have no active positions. <br />
+                  Create a position to get started!
+                </>
+              ) : (
+                <>
+                  No positions found. <br />
+                </>
+              )
+            }
+          />
         ) : (
-          <div className="flex flex-col gap-4">
+          <>
             {filteredPositions?.map((position) => (
               <PositionItem key={position.v3Position.tokenId} position={position} />
             ))}
-          </div>
+          </>
         )}
       </div>
 

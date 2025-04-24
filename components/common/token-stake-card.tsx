@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 
 import { IToken } from '@/lib/data/tokens';
 import { formatBig, formatNumber } from '@/lib/utils/number';

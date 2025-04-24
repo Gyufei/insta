@@ -1,7 +1,7 @@
 import { Fuel } from 'lucide-react';
 import { useGasPrice } from 'wagmi';
 
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 
 import { formatBig } from '@/lib/utils/number';
 

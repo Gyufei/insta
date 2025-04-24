@@ -4,10 +4,10 @@ import { ChevronRight, X } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
 
-import { TitleH2 } from '@/components/title-h2';
+import { TitleH2 } from '@/components/common/title-h2';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 
 import { useNadNameCheckAvailability } from '@/lib/data/use-nadname-check-name-availability';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';

@@ -1,6 +1,6 @@
 'use client';
 
-import { TokenStakeCard } from '@/components/page-common/token-stake-card';
+import { TokenStakeCard } from '@/components/common/token-stake-card';
 
 import { APR_MONAD, TokenPriceMap } from '@/lib/data/tokens';
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';

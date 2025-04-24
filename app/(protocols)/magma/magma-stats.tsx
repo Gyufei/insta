@@ -2,8 +2,8 @@
 
 import { ShipWheel, SquareUserRound } from 'lucide-react';
 
-import { BetweenCard } from '@/components/page-common/between-card';
-import { DescCard } from '@/components/page-common/desc-card';
+import { BetweenCard } from '@/components/common/between-card';
+import { DescCard } from '@/components/common/desc-card';
 
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useMagmaInfo } from '@/lib/data/use-magma-info';

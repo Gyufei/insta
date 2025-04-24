@@ -2,12 +2,12 @@
 
 import { Sparkle } from 'lucide-react';
 
-import { Empty } from '@/components/empty';
-import { TitleH2 } from '@/components/title-h2';
+import { Empty } from '@/components/common/empty';
+import { TitleH2 } from '@/components/common/title-h2';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 

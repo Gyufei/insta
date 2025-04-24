@@ -18,6 +18,20 @@ const UNISWAP_TOKENS: Array<IToken> = [
   },
   APR_MONAD,
   G_MONAD,
+  {
+    address: '0x40EFECc1097fbfb1B5fbF529aE62B20504aDAccD',
+    name: 'BTC 8',
+    symbol: 'BTC8',
+    logo: '',
+    decimals: 8,
+  },
+  {
+    address: '0x4f9569b3B7c38fa6BAE983698bF7d7B13c9fECA6',
+    name: 'USDT 6',
+    symbol: 'USDT6',
+    logo: '',
+    decimals: 6,
+  },
 ];
 
 export function useUniswapToken() {

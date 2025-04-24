@@ -1,6 +1,6 @@
 'use client';
 
-import { TokenStakeCard } from '@/components/page-common/token-stake-card';
+import { TokenStakeCard } from '@/components/common/token-stake-card';
 
 import { G_MONAD, TokenPriceMap } from '@/lib/data/tokens';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';

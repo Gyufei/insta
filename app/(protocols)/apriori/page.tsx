@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
-import { TitleH2 } from '@/components/title-h2';
+import { TitleH2 } from '@/components/common/title-h2';
 
 import { AprMonStake } from './apr-mon-stake';
 import { AprioriStats } from './apriori-stats';

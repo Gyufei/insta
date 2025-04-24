@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { ErrorVO } from '@/lib/model/error-vo';

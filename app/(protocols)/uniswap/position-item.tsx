@@ -1,46 +1,256 @@
-import { IUniswapPosition } from '@/lib/data/use-uniswap-position';
+import BigNumber from 'bignumber.js';
+import { Ellipsis, Minus, Plus } from 'lucide-react';
+import { divide } from 'safebase';
+
+import { useMemo, useState } from 'react';
+
+import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+import { IToken } from '@/lib/data/tokens';
+import { IUniswapPosition, PositionStatus } from '@/lib/data/use-uniswap-position';
+import { cn } from '@/lib/utils';
+import { formatNumber } from '@/lib/utils/number';
+
+import { TokenPairLogo } from './token-pair-logo';
+import { useUniswapToken } from './use-uniswap-token';
 
 interface PositionItemProps {
   position: IUniswapPosition;
 }
 
+function getToken(token: Omit<IToken, 'logo'>, tokens: IToken[]): IToken {
+  const t = tokens.find((t) => t.address === token.address);
+  if (!t) {
+    return {
+      ...token,
+      logo: '',
+    };
+  }
+
+  return t;
+}
+
+const PositionStatusMap = {
+  [PositionStatus.POSITION_STATUS_IN_RANGE]: 'In range',
+  [PositionStatus.POSITION_STATUS_OUT_OF_RANGE]: 'Out of range',
+  [PositionStatus.POSITION_STATUS_CLOSED]: 'Closed',
+};
+
 export function PositionItem({ position }: PositionItemProps) {
-  const { v3Position } = position;
-  const { token0, token1, amount0, amount1, feeTier, currentPrice } = v3Position;
+  const { v3Position, protocolVersion } = position;
+  const {
+    token0,
+    token1,
+    totalLiquidityUsd,
+    amount0,
+    amount1,
+    feeTier,
+    tickLower,
+    tickUpper,
+    currentPrice,
+  } = v3Position;
+
+  const { tokens } = useUniswapToken();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const wrapToken0 = useMemo(() => getToken(token0, tokens), [tokens, token0]);
+  const wrapToken1 = useMemo(() => getToken(token1, tokens), [tokens, token1]);
+
+  function tickToPrice(tick: number) {
+    return tick;
+    // const sqrtPrice = new BigNumber(10001).pow(tick).div(new BigNumber(10000).pow(tick)).sqrt();
+
+    // const price = sqrtPrice.pow(2).div(new BigNumber(2).pow(192));
+
+    // const priceUsdtPerBtc = price
+    //   .div(new BigNumber(10).pow(wrapToken0.decimals))
+    //   .multipliedBy(new BigNumber(10).pow(wrapToken1.decimals));
+    // return priceUsdtPerBtc.toString();
+  }
+
+  const version = useMemo(() => {
+    return protocolVersion.split('_').reverse()[0];
+  }, [protocolVersion]);
+
+  const fee = useMemo(() => {
+    const feePercent = divide(feeTier, String(10000));
+    return `${feePercent}%`;
+  }, [feeTier]);
+
+  const status = useMemo(() => {
+    return PositionStatusMap[position.status];
+  }, [position.status]);
+
+  const price = useMemo(() => {
+    const cP = new BigNumber(currentPrice);
+    const price = cP.pow(2).div(new BigNumber(2).pow(192));
+    return price;
+  }, [currentPrice]);
+
+  const token0Amount = useMemo(() => {
+    const amount = divide(amount0, String(10 ** wrapToken0.decimals));
+    if (Number(amount) < 10e-5) {
+      return '<0.00001';
+    }
+
+    return amount;
+  }, [amount0, wrapToken0.decimals]);
+
+  const token1Amount = useMemo(() => {
+    const amount = divide(amount1, String(10 ** wrapToken1.decimals));
+    if (Number(amount) < 10e-5) {
+      return '<0.00001';
+    }
+
+    return amount;
+  }, [amount1, wrapToken1.decimals]);
+
+  const tickMin = useMemo(() => {
+    if (Number(tickLower) === 0) {
+      return 0;
+    }
+
+    const price = tickToPrice(Number(tickLower));
+
+    return Number(price);
+  }, [tickLower]);
+
+  const tickMax = useMemo(() => {
+    const price = tickToPrice(Number(tickUpper));
+
+    return Number(price);
+  }, [tickUpper]);
+
+  const isFullRange = useMemo(() => {
+    return tickMin === 0;
+  }, [tickMin]);
 
   return (
-    <div className="flex flex-col rounded-lg border p-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <div className="flex -space-x-2">
-            <div className="h-8 w-8 rounded-full border-2 border-background bg-muted" />
-            <div className="h-8 w-8 rounded-full border-2 border-background bg-muted" />
-          </div>
-          <div className="ml-2">
-            <div className="text-sm font-medium">
-              {token0.symbol} / {token1.symbol}
+    <Card className="py-0 relative border border-gray-200 hover:border-gray-300 gap-0 transition-colors">
+      <div className="p-4 flex items-start gap-4 w-full md:w-auto">
+        <TokenPairLogo token0={wrapToken0} token1={wrapToken1} />
+
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-semibold text-neutral-900">
+              {wrapToken0.symbol} / {wrapToken1.symbol}
+            </span>
+            <div className="flex bg-gray-200 text-xs rounded-md items-center justify-between text-gray-400">
+              <span className="px-2 border-r border-white">{version}</span>
+              <span className="px-2">{fee}</span>
             </div>
-            <div className="text-xs text-muted-foreground">{Number(feeTier) / 10000}%</div>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1">
+              <div
+                className={cn(
+                  'w-2 h-2 rounded-full opacity-60',
+                  status === 'In range' && 'bg-green-600',
+                  status === 'Out of range' && 'bg-red-600',
+                  status === 'Closed' && 'bg-gray-600'
+                )}
+              ></div>
+              <span
+                className={cn(
+                  'text-xs',
+                  status === 'In range' && 'text-green-600',
+                  status === 'Out of range' && 'text-red-600',
+                  status === 'Closed' && 'text-gray-600'
+                )}
+              >
+                {status}
+              </span>
+            </div>
           </div>
         </div>
-        <div className="text-sm text-muted-foreground">{position.status}</div>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-4">
-        <div>
-          <div className="text-xs text-muted-foreground">Token 0 Amount</div>
-          <div className="text-sm font-medium">{amount0}</div>
+      <div className="flex justify-between items-center p-4 bg-gray-100 rounded-b-lg">
+        <div className="flex flex-col sm:flex-row gap-4 flex-grow">
+          <div className="flex-1 basis-0">
+            <span className="text-base font-semibold">{formatNumber(price.toString())}</span>
+            <span className="block text-sm text-gray-500 truncate">Current price</span>
+          </div>
+          <div className="flex-1 basis-0 text-base font-semibold">
+            <div className="flex items-center gap-1">
+              <span>{formatNumber(token0Amount)}</span>
+              <LogoWithPlaceholder
+                src={wrapToken0.logo}
+                name={wrapToken0.symbol}
+                width={16}
+                className="rounded-full text-xs"
+                height={16}
+              />
+              <span>/</span>
+              <span>{formatNumber(token1Amount)}</span>
+              <LogoWithPlaceholder
+                src={wrapToken1.logo}
+                name={wrapToken1.symbol}
+                className="rounded-full text-xs"
+                width={16}
+                height={16}
+              />
+            </div>
+            <span className="block text-sm text-gray-500 truncate">Amount</span>
+          </div>
+          <div className="flex-1 basis-0">
+            <span className="text-base font-semibold">{formatNumber(totalLiquidityUsd)}</span>
+            <span className="block text-sm text-gray-500 truncate">Total liquidity</span>
+          </div>
         </div>
-        <div>
-          <div className="text-xs text-muted-foreground">Token 1 Amount</div>
-          <div className="text-sm font-medium">{amount1}</div>
-        </div>
-      </div>
 
-      <div className="mt-2">
-        <div className="text-xs text-muted-foreground">Current Price</div>
-        <div className="text-sm font-medium">{currentPrice}</div>
+        <div>
+          {isFullRange ? (
+            <span className="text-sm text-gray-500 truncate">Full range</span>
+          ) : (
+            <div className="flex flex-col gap-1">
+              <div>
+                <span className="text-gray-500">Min: </span>
+                <span>
+                  {formatNumber(tickMin)} {wrapToken1.symbol} / {wrapToken0.symbol}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">Max: </span>
+                <span>
+                  {formatNumber(tickMax)} {wrapToken1.symbol} / {wrapToken0.symbol}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Actions menu */}
+        <div className="absolute top-4 right-4">
+          <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Ellipsis className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem className="cursor-pointer">
+                <Plus className="mr-2 h-4 w-4" />
+                <span>Add liquidity</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <Minus className="mr-2 h-4 w-4" />
+                <span>Remove liquidity</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
-    </div>
+    </Card>
   );
-} 
+}

@@ -1,20 +1,14 @@
 import { ApiPath } from './api-path';
 import { createQueryHook } from './helpers';
-
-export interface IToken {
-  chainId: number;
-  address: string;
-  symbol: string;
-  name: string;
-}
+import { IToken } from './tokens';
 
 export interface IV3Position {
   tokenId: string;
   tickLower: string;
   tickUpper: string;
   liquidity: string;
-  token0: IToken;
-  token1: IToken;
+  token0: Omit<IToken, 'logo'>;
+  token1: Omit<IToken, 'logo'>;
   feeTier: string;
   currentTick: string;
   currentPrice: string;
@@ -28,11 +22,17 @@ export interface IV3Position {
   currentLiquidity: string;
 }
 
+export enum PositionStatus {
+  POSITION_STATUS_IN_RANGE = 'POSITION_STATUS_IN_RANGE',
+  POSITION_STATUS_OUT_OF_RANGE = 'POSITION_STATUS_OUT_OF_RANGE',
+  POSITION_STATUS_CLOSED = 'POSITION_STATUS_CLOSED',
+}
+
 export interface IUniswapPosition {
   chainId: number;
   protocolVersion: string;
   v3Position: IV3Position;
-  status: string;
+  status: PositionStatus;
 }
 
 export function useUniswapPosition() {

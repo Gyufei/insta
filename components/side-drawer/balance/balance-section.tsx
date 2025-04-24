@@ -2,7 +2,7 @@ import { HelpCircle } from 'lucide-react';
 import { multiply } from 'safebase';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 
 import { TokenPriceMap } from '@/lib/data/tokens';
 import { formatNumber } from '@/lib/utils/number';

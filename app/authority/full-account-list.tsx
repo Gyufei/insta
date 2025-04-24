@@ -3,9 +3,9 @@
 import { useAccountList } from '@/app/authority/use-account-list';
 
 import { AccountCard } from '@/components/side-drawer/account-setting/account-display/account-card';
-import { TitleH2 } from '@/components/title-h2';
+import { TitleH2 } from '@/components/common/title-h2';
 import { Button } from '@/components/ui/button';
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 
 export function FullAccountList() {
   const {

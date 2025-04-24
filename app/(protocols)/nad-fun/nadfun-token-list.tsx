@@ -1,8 +1,8 @@
 'use client';
 
-import { Empty } from '@/components/empty';
-import { TitleH2 } from '@/components/title-h2';
-import { WithLoading } from '@/components/with-loading';
+import { Empty } from '@/components/common/empty';
+import { TitleH2 } from '@/components/common/title-h2';
+import { WithLoading } from '@/components/common/with-loading';
 
 import { cn } from '@/lib/utils';
 

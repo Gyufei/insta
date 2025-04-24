@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 
 import { INadNamePrice } from '@/lib/data/use-nadname-price';
 import { formatBig } from '@/lib/utils/number';

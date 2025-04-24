@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useCreateAuthority } from '@/lib/data/use-create-authority';
 import { ERROR_MESSAGES } from '@/config/const-msg';
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 

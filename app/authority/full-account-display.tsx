@@ -2,7 +2,7 @@ import { Separator } from '@/components/ui/separator';
 import { FullAccountAddress } from './full-account-address';
 import { FullAuthorityManage } from './full-authority-manage';
 import { FullAccountList } from './full-account-list';
-import { TitleH2 } from '@/components/title-h2';
+import { TitleH2 } from '@/components/common/title-h2';
 
 export default function FullAccountDisplay() {
   return (

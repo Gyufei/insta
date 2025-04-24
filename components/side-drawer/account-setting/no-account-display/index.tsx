@@ -1,7 +1,7 @@
 import { useAccount } from 'wagmi';
 import { DSAInfo } from './dsa-info';
 import { useCreateAccount } from '@/lib/data/use-create-account';
-import { WithLoading } from '@/components/with-loading';
+import { WithLoading } from '@/components/common/with-loading';
 
 export function NoAccountDisplay() {
   const { address } = useAccount();
