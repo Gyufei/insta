@@ -16,7 +16,7 @@ import {
 import { IToken } from '@/lib/data/tokens';
 import { IUniswapPosition, PositionStatus } from '@/lib/data/use-uniswap-position';
 import { cn } from '@/lib/utils';
-import { formatNumber } from '@/lib/utils/number';
+import { formatBig, formatNumber } from '@/lib/utils/number';
 
 import { TokenPairLogo } from './token-pair-logo';
 import { useUniswapToken } from './use-uniswap-token';
@@ -24,6 +24,11 @@ import { useUniswapToken } from './use-uniswap-token';
 interface PositionItemProps {
   position: IUniswapPosition;
 }
+
+const TICK_BASE = 1.0001;
+const TICK_LOWER_MIN = -887272;
+const TICK_UPPER_MAX = 887272;
+const Q96 = BigInt('79228162514264337593543950336');
 
 function getToken(token: Omit<IToken, 'logo'>, tokens: IToken[]): IToken {
   const t = tokens.find((t) => t.address === token.address);
@@ -38,8 +43,6 @@ function getToken(token: Omit<IToken, 'logo'>, tokens: IToken[]): IToken {
 }
 
 function sqrtPriceX96ToPrice(sqrtPriceX96: string) {
-  // 2^96
-  const Q96 = BigInt('79228162514264337593543950336');
   const sqrtPrice = Number((BigInt(sqrtPriceX96) * BigInt(1_000_000)) / Q96) / 1_000_000;
   return sqrtPrice ** 2;
 }
@@ -55,13 +58,15 @@ export function PositionItem({ position }: PositionItemProps) {
   const {
     token0,
     token1,
-    totalLiquidityUsd,
     amount0,
     amount1,
     feeTier,
     tickLower,
     tickUpper,
     currentPrice,
+    currentLiquidity,
+    liquidity,
+    totalLiquidityUsd,
   } = v3Position;
 
   const { tokens } = useUniswapToken();
@@ -106,26 +111,46 @@ export function PositionItem({ position }: PositionItemProps) {
     return sqrtPriceX96ToPrice(currentPrice);
   }, [currentPrice]);
 
+  const isFullRange = useMemo(() => {
+    if (tickLower === TICK_LOWER_MIN.toString() && tickUpper === TICK_UPPER_MAX.toString()) {
+      return true;
+    }
+
+    return false;
+  }, [tickLower, tickUpper]);
+
   const minPrice = useMemo(() => {
-    return Math.pow(1.0001, Number(tickLower));
-  }, [tickLower]);
+    if (isFullRange) {
+      return '0';
+    }
+
+    return Math.pow(TICK_BASE, Number(tickLower));
+  }, [tickLower, isFullRange]);
 
   const maxPrice = useMemo(() => {
-    return Math.pow(1.0001, Number(tickUpper));
-  }, [tickUpper]);
+    if (isFullRange) {
+      return '∞';
+    }
 
-  const isFullRange = useMemo(() => {
-    return Number(tickLower) === 0;
-  }, [tickLower]);
+    return Math.pow(TICK_BASE, Number(tickUpper));
+  }, [tickUpper, isFullRange]);
+
+  const currentLiq = useMemo(() => {
+    return formatBig(currentLiquidity);
+  }, [currentLiquidity]);
+
+  const totalLiq = useMemo(() => {
+    return formatBig(liquidity);
+  }, [liquidity]);
 
   return (
-    <Card className="py-0 relative border border-gray-200 hover:border-gray-300 gap-0 transition-colors">
+    <Card className="py-0 relative border border-border hover:border-gray-200 gap-0 transition-colors">
       <div className="p-4 flex items-start gap-4 w-full md:w-auto">
         <TokenPairLogo token0={wrapToken0} token1={wrapToken1} />
 
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-semibold text-neutral-900">
+            <span className="text-lg font-semibold text-primary">
               {wrapToken0.symbol} / {wrapToken1.symbol}
             </span>
             <div className="flex bg-gray-200 text-xs rounded-md items-center justify-between text-gray-400">
@@ -159,14 +184,14 @@ export function PositionItem({ position }: PositionItemProps) {
         </div>
       </div>
 
-      <div className="flex justify-between items-center p-4 bg-gray-100 rounded-b-lg">
+      <div className="flex justify-between items-center p-4 bg-gray-100 dark:bg-black/80 rounded-b-xl">
         <div className="flex flex-col sm:flex-row gap-4 flex-grow">
           <div className="flex-1 basis-0">
-            <span className="text-base font-semibold">{formatNumber(price || '-')}</span>
-            <span className="block text-sm text-gray-500 truncate">Current price</span>
+            <span className="text-base font-semibold text-primary">{formatNumber(price || '-')}</span>
+            <span className="block text-sm text-gray-500 truncate">Current Price</span>
           </div>
           <div className="flex-1 basis-0 text-base font-semibold">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 text-primary">
               <span>{formatNumber(token0Amount)}</span>
               <LogoWithPlaceholder
                 src={wrapToken0.logo}
@@ -188,8 +213,11 @@ export function PositionItem({ position }: PositionItemProps) {
             <span className="block text-sm text-gray-500 truncate">Amount</span>
           </div>
           <div className="flex-1 basis-0">
-            <span className="text-base font-semibold">{formatNumber(totalLiquidityUsd)}</span>
-            <span className="block text-sm text-gray-500 truncate">Total liquidity</span>
+            <span className="text-base font-semibold text-primary">
+              {formatNumber(currentLiq)} / {formatNumber(totalLiq)}( $
+              {formatNumber(totalLiquidityUsd)})
+            </span>
+            <span className="block text-sm text-gray-500 truncate">Current/Total Liquidity</span>
           </div>
         </div>
 
@@ -218,7 +246,7 @@ export function PositionItem({ position }: PositionItemProps) {
         <div className="absolute top-4 right-4">
           <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="border-border border h-8 w-8">
                 <Ellipsis className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

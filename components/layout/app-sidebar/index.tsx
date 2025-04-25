@@ -89,7 +89,7 @@ export default function AppSidebar() {
       href: '/apriori',
       label: 'Apriori',
       icon: (
-        <Image src="/icons/apriori.svg" alt="aprior" width={20} height={20} className="h-4 w-4" />
+        <Image src="/icons/apriori.svg" alt="aprior" width={20} height={20} className="h-4 w-4 filter grayscale" />
       ),
     },
     {
@@ -101,7 +101,7 @@ export default function AppSidebar() {
           alt="nad-fun"
           width={20}
           height={20}
-          className="h-4 w-4 rounded-full"
+          className="h-4 w-4 rounded-full filter grayscale"
         />
       ),
     },
@@ -109,7 +109,7 @@ export default function AppSidebar() {
       href: '/uniswap',
       label: 'Uniswap V3',
       icon: (
-        <Image src="/icons/uniswap.svg" alt="uniswap" width={20} height={20} className="h-4 w-4" />
+        <Image src="/icons/uniswap.svg" alt="uniswap" width={20} height={20} className="h-4 w-4 filter grayscale" />
       ),
     },
     {
@@ -121,7 +121,7 @@ export default function AppSidebar() {
           alt="magma"
           width={20}
           height={20}
-          className="h-4 w-4 rounded-full"
+          className="h-4 w-4 rounded-full filter grayscale"
         />
       ),
     },
@@ -134,7 +134,7 @@ export default function AppSidebar() {
           alt="nad-name-server"
           width={20}
           height={20}
-          className="h-4 w-4"
+          className="h-4 w-4 filter grayscale"
         />
       ),
     },
@@ -142,7 +142,7 @@ export default function AppSidebar() {
       href: '/ambient',
       label: 'Ambient',
       icon: (
-        <Image src="/icons/ambient.svg" alt="ambient" width={20} height={20} className="h-4 w-4" />
+        <Image src="/icons/ambient.svg" alt="ambient" width={20} height={20} className="h-4 w-4 filter grayscale" />
       ),
     },
     {
@@ -154,7 +154,7 @@ export default function AppSidebar() {
           alt="meme"
           width={20}
           height={20}
-          className="h-4 w-4 rounded-full"
+          className="h-4 w-4 rounded-full filter grayscale"
         />
       ),
     },
@@ -167,7 +167,7 @@ export default function AppSidebar() {
           alt="curvance"
           width={20}
           height={20}
-          className="h-4 w-4"
+          className="h-4 w-4 filter grayscale"
         />
       ),
     },
@@ -265,9 +265,9 @@ export default function AppSidebar() {
       <SidebarHeader className="relative flex items-center justify-center py-4">
         <Link href="/" className="flex items-center justify-center">
           {open ? (
-            <Image src="/icons/logo.svg" alt="logo" width={140} height={40} />
+            <Image src="/icons/logo.svg" alt="logo" width={140} height={40} className="filter grayscale" />
           ) : (
-            <Image src="/icons/logo-small.svg" alt="logo" width={30} height={30} />
+            <Image src="/icons/logo-small.svg" alt="logo" width={30} height={30} className="filter grayscale" />
           )}
         </Link>
       </SidebarHeader>

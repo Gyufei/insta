@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/common/number-input';
 
 import { cn } from '@/lib/utils';
 
@@ -38,7 +38,7 @@ export const SwapBaseTokenInput = ({
   const inputSizeClass = useMemo(() => getInputSizeClass(value), [value]);
 
   return (
-    <Input
+    <NumberInput
       placeholder={placeholder}
       className={cn(
         inputSizeClass,
@@ -46,7 +46,7 @@ export const SwapBaseTokenInput = ({
         isExceedBalance && 'text-red-500'
       )}
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(v) => onChange(v)}
       disabled={disabled}
     />
   );

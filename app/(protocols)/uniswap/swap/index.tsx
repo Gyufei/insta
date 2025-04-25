@@ -12,12 +12,13 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { IToken } from '@/lib/data/tokens';
 import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
 import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
+import { PairTokenSelected, useTokenSelector } from '@/app/(protocols)/uniswap/common/use-token-selector';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
+import TokenSelector from '../common/token-selector';
 import { SlippageSettings } from './slippage-settings';
 import SwapTokenInput from './swap-token-input';
-import TokenSelector from './token-selector';
 
 const ANIMATION_CONFIG = {
   type: 'spring',
@@ -27,7 +28,7 @@ const ANIMATION_CONFIG = {
 } as const;
 
 export function UniswapSwap() {
-  const { setIsOpen, currentComponent } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
   const { token } = currentComponent?.props || { token: null };
 
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
@@ -36,11 +37,13 @@ export function UniswapSwap() {
   const [buyValue, setBuyValue] = useState('');
   const [slippage, setSlippage] = useState('1');
 
-  const [showTokenSelector, setShowTokenSelector] = useState<'token1' | 'token2' | null>(null);
   const [errorData, setErrorData] = useState<ErrorVO>({
     showError: false,
     errorMessage: '',
   });
+
+  const { showTokenSelector, setShowTokenSelector, handleTokenSelect, handleBack } =
+    useTokenSelector();
 
   const quoteParams =
     sellToken && buyToken && sellValue
@@ -127,27 +130,25 @@ export function UniswapSwap() {
     });
   };
 
-  const handleTokenSelect = (token: IToken) => {
-    if (showTokenSelector === 'token1') {
-      setSellToken(token);
-    } else if (showTokenSelector === 'token2') {
-      setBuyToken(token);
+  const handleTokenSelectWrapper = (token: IToken) => {
+    const result = handleTokenSelect(token);
+    if (result.token0) {
+      setSellToken(result.token0);
+      if (buyToken?.symbol === result.token0.symbol) {
+        setBuyToken(undefined);
+      }
+    } else if (result.token1) {
+      setBuyToken(result.token1);
+      if (sellToken?.symbol === result.token1.symbol) {
+        setSellToken(undefined);
+      }
     }
 
-    // 清除错误
     setErrorData({
       showError: false,
       errorMessage: '',
     });
   };
-
-  function handleBack() {
-    if (showTokenSelector) {
-      setShowTokenSelector(null);
-    } else {
-      setIsOpen(false);
-    }
-  }
 
   if (!token) return null;
 
@@ -165,7 +166,7 @@ export function UniswapSwap() {
           >
             {showTokenSelector ? (
               <TokenSelector
-                onSelect={handleTokenSelect}
+                onSelect={handleTokenSelectWrapper}
                 onClose={() => setShowTokenSelector(null)}
               />
             ) : (
@@ -176,7 +177,7 @@ export function UniswapSwap() {
                   value={sellValue}
                   onChange={setSellValue}
                   placeholder="0"
-                  onShowTokenSelector={() => setShowTokenSelector('token1')}
+                  onShowTokenSelector={() => setShowTokenSelector(PairTokenSelected.Token0)}
                   onSetError={setErrorData}
                 />
                 <div className="flex items-center relative h-3">
@@ -193,7 +194,7 @@ export function UniswapSwap() {
                   value={buyValue}
                   onChange={setBuyValue}
                   placeholder="0"
-                  onShowTokenSelector={() => setShowTokenSelector('token2')}
+                  onShowTokenSelector={() => setShowTokenSelector(PairTokenSelected.Token1)}
                   disabled={true}
                 />
 

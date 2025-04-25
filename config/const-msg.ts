@@ -19,6 +19,7 @@ export const ERROR_MESSAGES = {
   SET_PRIMARY_NAME_FAILED: 'Set primary name failed',
   TRANSFER_NAME_FAILED: 'Transfer nad name failed',
   SWAP_FAILED: 'Swap failed',
+  CREATE_POSITION_FAILED: 'Create position failed',
 } as const;
 
 export const SUCCESS_MESSAGES = {
@@ -36,4 +37,5 @@ export const SUCCESS_MESSAGES = {
   SET_PRIMARY_NAME_SUCCESS: 'Primary name set successfully',
   TRANSFER_NAME_SUCCESS: 'Nad name transferred successfully',
   SWAP_SUCCESS: 'Swap successfully',
+  CREATE_POSITION_SUCCESS: 'Create position successfully',
 } as const;

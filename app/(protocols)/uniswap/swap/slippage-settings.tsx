@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
+import { NumberInput } from '@/components/common/number-input';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 import { cn } from '@/lib/utils';
 
@@ -53,9 +53,9 @@ export function SlippageSettings({ onSlippageChange }: SlippageSettingsProps) {
         </Button>
         <div className="flex items-center flex-1">
           <div className="relative flex items-center">
-            <Input
+            <NumberInput
               value={inputValue}
-              onChange={(e) => handleCustomSlippageChange(e.target.value)}
+              onChange={(v) => handleCustomSlippageChange(v)}
               className="!w-[44px] h-6 pr-0 pl-0 text-primary text-right border-none shadow-none focus-visible:ring-0 !bg-transparent"
               min="0"
               step="0.1"

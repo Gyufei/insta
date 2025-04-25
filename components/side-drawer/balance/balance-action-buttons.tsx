@@ -23,9 +23,9 @@ function DepositButton() {
   return (
     <button
       onClick={handleDeposit}
-      className="mr-2 flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-cyan-300/40 px-4 py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none hover:bg-cyan-300/25 focus:bg-cyan-300/25 focus:outline-none disabled:opacity-50 dark:hover:bg-cyan-300/25 dark:focus:bg-cyan-300/25"
+      className="mr-2 flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-primary-foreground border border-border px-4 py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none hover:bg-primary-foreground/25 focus:bg-primary-foreground/25 focus:outline-none disabled:opacity-50 dark:hover:bg-primary-foreground/25 dark:focus:bg-primary-foreground/25"
     >
-      <div className="flex flex-col items-center text-cyan-500">
+      <div className="flex flex-col items-center text-primary">
         <DepositIcon />
         <div className="text-primary mt-2 font-medium sm:mt-4">Deposit</div>
       </div>
@@ -43,7 +43,7 @@ function WithdrawButton() {
   return (
     <button
       onClick={handleWithdraw}
-      className="text-purple-500 mr-2 flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-purple-300/10 px-4 py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none hover:bg-purple-300/25 focus:bg-purple-300/25 focus:outline-none disabled:opacity-50 dark:hover:bg-purple-300/25 dark:focus:bg-purple-300/25"
+      className="mr-2 flex flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-primary-foreground border border-border px-4 py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none hover:bg-primary-foreground/25 focus:bg-primary-foreground/25 focus:outline-none disabled:opacity-50 dark:hover:bg-primary-foreground/25 dark:focus:bg-primary-foreground/25"
     >
       <div className="flex flex-col items-center">
         <WithdrawIcon />

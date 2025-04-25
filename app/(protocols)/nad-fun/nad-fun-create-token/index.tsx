@@ -1,9 +1,11 @@
-import { ERROR_MESSAGES } from '@/config/const-msg';
 import { useAccount } from 'wagmi';
 
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { ERROR_MESSAGES } from '@/config/const-msg';
+
+import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
@@ -133,7 +135,11 @@ export function NadFunCreateToken() {
                     Token Name <span className="text-green-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input className="bg-primary-foreground" placeholder="Enter token name" {...field} />
+                    <Input
+                      className="bg-primary-foreground"
+                      placeholder="Enter token name"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -149,7 +155,11 @@ export function NadFunCreateToken() {
                     Token Symbol <span className="text-green-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input className="bg-primary-foreground" placeholder="Enter token symbol" {...field} />
+                    <Input
+                      className="bg-primary-foreground"
+                      placeholder="Enter token symbol"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -165,16 +175,10 @@ export function NadFunCreateToken() {
                     Buy Amount <span className="text-green-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input
+                    <NumberInput
                       className="bg-primary-foreground"
                       placeholder="how many you want to buy"
                       {...field}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value === '' || /^\d*\.?\d*$/.test(value)) {
-                          field.onChange(value);
-                        }
-                      }}
                     />
                   </FormControl>
                   <FormMessage />

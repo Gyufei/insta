@@ -12,6 +12,7 @@ import { useSelectedAccount } from '@/lib/data/use-account';
 import { ErrorVO } from '@/lib/model/error-vo';
 
 import { ErrorMessage } from './error-message';
+import { cn } from '@/lib/utils';
 
 interface ActionButtonProps {
   disabled: boolean;
@@ -19,6 +20,7 @@ interface ActionButtonProps {
   isPending: boolean;
   children: React.ReactNode;
   error?: ErrorVO | undefined;
+  className?: string;
   checkFlag?:
     | {
         address: boolean;
@@ -35,6 +37,7 @@ export function ActionButton({
   children,
   error,
   checkFlag = { address: true, accountInfo: true },
+  className,
   ...rest
 }: ActionButtonProps) {
   const { address } = useAccount();
@@ -90,7 +93,7 @@ export function ActionButton({
 
   return (
     <>
-      <div className="mt-6 flex flex-shrink-0">
+      <div className={cn('mt-6 flex flex-shrink-0', className)}>
         <Button
           disabled={isDisabled}
           onClick={handleClick}

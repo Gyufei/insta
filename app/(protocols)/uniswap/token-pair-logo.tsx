@@ -37,7 +37,7 @@ export function TokenPairLogo({ token0, token1 }: { token0: IToken; token1: ITok
       </div>
 
       <div className="flex items-stretch flex-basis-auto min-h-0 min-w-0 flex-shrink-0 flex-col absolute -bottom-1 -right-1 z-10">
-        <div className="flex bg-white rounded-full w-5 h-5 items-stretch flex-basis-auto relative min-h-0 min-w-0 flex-shrink-0 flex-col overflow-hidden z-10">
+        <div className="flex bg-white items-center justify-center rounded-full w-5 h-5 flex-basis-auto relative min-h-0 min-w-0 flex-shrink-0 flex-col overflow-hidden z-10">
           <LogoWithPlaceholder
             src={networkLogo}
             className="w-4 h-4"

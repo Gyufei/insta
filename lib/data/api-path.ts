@@ -27,7 +27,7 @@ export const ApiPath = {
   nadfunTokenInfo: `${ApiHost}/nadfun/token_market_info`,
   nadfunBuyToken: `${ApiHost}/nadfun/buy`,
   nadfunSellToken: `${ApiHost}/nadfun/sell`,
-  
+
   nadNameMyNames: `${ApiHost}/nadname/names`,
   nadNameMyPrimaryName: `${ApiHost}/nadname/primary_name`,
   nadNameSetPrimary: `${ApiHost}/nadname/set_primary_name`,
@@ -35,8 +35,8 @@ export const ApiPath = {
   nadNameCheckAvailable: `${ApiHost}/nadname/check_name_availability`,
   nadNamePrice: `${ApiHost}/nadname/registering_price`,
   nadNameTransfer: `${ApiHost}/nadname/transfer_ownership`,
-  
-  magmaInfo: "https://magma-http-app-testnet-2.fly.dev/graphql",
+
+  magmaInfo: 'https://magma-http-app-testnet-2.fly.dev/graphql',
   magmaBalance: `${ApiHost}/magma/balance`,
   magmaDeposit: `${ApiHost}/magma/deposit`,
   magmaWithdraw: `${ApiHost}/magma/withdraw`,
@@ -44,4 +44,6 @@ export const ApiPath = {
   uniswapQuote: `${ApiHost}/uniswap_router02/quote`,
   uniswapSwap: `${ApiHost}/uniswap_router02/buy`,
   uniswapV3Position: `${ApiHost}/uniswap_v3_position/all_positions`,
+  uniswapCreatePoolAndMintPosition: `${ApiHost}/uniswap_v3_position/create_and_mint_pool`,
+  uniswapMintPosition: `${ApiHost}/uniswap_v3_position/mint_pool`,
 };

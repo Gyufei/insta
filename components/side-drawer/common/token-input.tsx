@@ -1,4 +1,4 @@
-import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/common/number-input';
 
 interface TokenInputProps {
   inputValue: string;
@@ -16,14 +16,11 @@ export function TokenInput({
   return (
     <div className="mt-4 flex w-full flex-shrink-0 flex-col">
       <div className="relative flex">
-        <Input
-          autoComplete="off"
-          type="text"
-          inputMode="decimal"
+        <NumberInput
           placeholder={placeholder}
           className="w-full pr-2 pl-4 bg-primary-foreground"
           value={inputValue}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onInputChange(e.target.value)}
+          onChange={(v) => onInputChange(v)}
         />
         {suffix && (
           <span className="absolute top-1/2 right-2 -translate-y-1/2 text-sm text-muted-foreground">

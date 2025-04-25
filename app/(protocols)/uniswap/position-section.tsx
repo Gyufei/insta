@@ -11,11 +11,13 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 
 import { PositionStatus, useUniswapPosition } from '@/lib/data/use-uniswap-position';
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import { EmptyState } from './empty-state';
 import { PositionItem } from './position-item';
 
 export function PositionsSection() {
+  const { setCurrentComponent } = useSideDrawerStore();
   const { data: positions, isLoading } = useUniswapPosition();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -37,8 +39,12 @@ export function PositionsSection() {
     return true;
   });
 
+  function handleNewPosition() {
+    setCurrentComponent({ name: 'UniswapCreatePosition' });
+  }
+
   return (
-    <div className="flex w-full flex-grow flex-col">
+    <div className="flex w-full flex-grow flex-col px-4 2xl:px-12">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <TitleH2>Your Positions</TitleH2>
         <div className="mt-4 flex items-center sm:mt-0">
@@ -58,6 +64,7 @@ export function PositionsSection() {
             <Button
               size="sm"
               className="flex flex-shrink-0 select-none items-center justify-center"
+              onClick={handleNewPosition}
             >
               <div className="flex items-center justify-center">
                 <Plus className="mr-2 h-3 w-3" />

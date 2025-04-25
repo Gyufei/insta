@@ -12,6 +12,7 @@ import { NadFunSellToken } from '@/app/(protocols)/nad-fun/nadfun-sell-token';
 import { NadNameRegister } from '@/app/(protocols)/nad-name-server/nad-name-register';
 import { NadNameSetPrimary } from '@/app/(protocols)/nad-name-server/nad-name-set-primary';
 import { NadNameTransfer } from '@/app/(protocols)/nad-name-server/nad-name-transfer';
+import { UniswapCreatePosition } from '@/app/(protocols)/uniswap/create-position';
 import { UniswapSwap } from '@/app/(protocols)/uniswap/swap';
 
 import { SideDrawerComponent, useSideDrawerStore } from '@/lib/state/side-drawer';
@@ -38,6 +39,7 @@ const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   MagmaDeposit: MagmaDeposit,
   MagmaWithdraw: MagmaWithdraw,
   UniswapSwap: UniswapSwap,
+  UniswapCreatePosition: UniswapCreatePosition,
 } as const;
 
 const ANIMATION_CONFIG = {
