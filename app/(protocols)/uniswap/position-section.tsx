@@ -74,13 +74,15 @@ export function PositionsSection() {
           </div>
         </div>
       </div>
+      {positions?.length}
+      {filteredPositions?.length}
 
       <div className="mt-4 flex flex-grow flex-col min-h-50">
         {isLoading ? (
           <div className="py-20 rounded-sm bg-muted/80 flex items-center justify-center">
             <WithLoading isLoading={true} />
           </div>
-        ) : positions?.length === 0 || filteredPositions?.length === 0 ? (
+        ) : !positions?.length || !filteredPositions?.length ? (
           <EmptyState
             message={
               positions?.length === 0 ? (
