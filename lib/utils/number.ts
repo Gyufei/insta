@@ -1,9 +1,14 @@
-import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
 import numbro from 'numbro';
-import { formatUnits, parseUnits } from 'viem';
 import { divide, multiply } from 'safebase';
+import { formatUnits, parseUnits } from 'viem';
+
+import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
 
 export function formatNumber(num: string | number) {
+  if (isNaN(Number(num))) {
+    return num;
+  }
+
   return numbro(num).format({
     thousandSeparated: true,
     mantissa: 4,

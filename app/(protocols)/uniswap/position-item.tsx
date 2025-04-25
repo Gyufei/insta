@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js';
 import { Ellipsis, Minus, Plus } from 'lucide-react';
 import { divide } from 'safebase';
 
@@ -38,6 +37,13 @@ function getToken(token: Omit<IToken, 'logo'>, tokens: IToken[]): IToken {
   return t;
 }
 
+function sqrtPriceX96ToPrice(sqrtPriceX96: string) {
+  // 2^96
+  const Q96 = BigInt('79228162514264337593543950336');
+  const sqrtPrice = Number((BigInt(sqrtPriceX96) * BigInt(1_000_000)) / Q96) / 1_000_000;
+  return sqrtPrice ** 2;
+}
+
 const PositionStatusMap = {
   [PositionStatus.POSITION_STATUS_IN_RANGE]: 'In range',
   [PositionStatus.POSITION_STATUS_OUT_OF_RANGE]: 'Out of range',
@@ -65,18 +71,6 @@ export function PositionItem({ position }: PositionItemProps) {
   const wrapToken0 = useMemo(() => getToken(token0, tokens), [tokens, token0]);
   const wrapToken1 = useMemo(() => getToken(token1, tokens), [tokens, token1]);
 
-  function tickToPrice(tick: number) {
-    return tick;
-    // const sqrtPrice = new BigNumber(10001).pow(tick).div(new BigNumber(10000).pow(tick)).sqrt();
-
-    // const price = sqrtPrice.pow(2).div(new BigNumber(2).pow(192));
-
-    // const priceUsdtPerBtc = price
-    //   .div(new BigNumber(10).pow(wrapToken0.decimals))
-    //   .multipliedBy(new BigNumber(10).pow(wrapToken1.decimals));
-    // return priceUsdtPerBtc.toString();
-  }
-
   const version = useMemo(() => {
     return protocolVersion.split('_').reverse()[0];
   }, [protocolVersion]);
@@ -89,12 +83,6 @@ export function PositionItem({ position }: PositionItemProps) {
   const status = useMemo(() => {
     return PositionStatusMap[position.status];
   }, [position.status]);
-
-  const price = useMemo(() => {
-    const cP = new BigNumber(currentPrice);
-    const price = cP.pow(2).div(new BigNumber(2).pow(192));
-    return price;
-  }, [currentPrice]);
 
   const token0Amount = useMemo(() => {
     const amount = divide(amount0, String(10 ** wrapToken0.decimals));
@@ -114,25 +102,21 @@ export function PositionItem({ position }: PositionItemProps) {
     return amount;
   }, [amount1, wrapToken1.decimals]);
 
-  const tickMin = useMemo(() => {
-    if (Number(tickLower) === 0) {
-      return 0;
-    }
+  const price = useMemo(() => {
+    return sqrtPriceX96ToPrice(currentPrice);
+  }, [currentPrice]);
 
-    const price = tickToPrice(Number(tickLower));
-
-    return Number(price);
+  const minPrice = useMemo(() => {
+    return Math.pow(1.0001, Number(tickLower));
   }, [tickLower]);
 
-  const tickMax = useMemo(() => {
-    const price = tickToPrice(Number(tickUpper));
-
-    return Number(price);
+  const maxPrice = useMemo(() => {
+    return Math.pow(1.0001, Number(tickUpper));
   }, [tickUpper]);
 
   const isFullRange = useMemo(() => {
-    return tickMin === 0;
-  }, [tickMin]);
+    return Number(tickLower) === 0;
+  }, [tickLower]);
 
   return (
     <Card className="py-0 relative border border-gray-200 hover:border-gray-300 gap-0 transition-colors">
@@ -178,7 +162,7 @@ export function PositionItem({ position }: PositionItemProps) {
       <div className="flex justify-between items-center p-4 bg-gray-100 rounded-b-lg">
         <div className="flex flex-col sm:flex-row gap-4 flex-grow">
           <div className="flex-1 basis-0">
-            <span className="text-base font-semibold">{formatNumber(price.toString())}</span>
+            <span className="text-base font-semibold">{formatNumber(price || '-')}</span>
             <span className="block text-sm text-gray-500 truncate">Current price</span>
           </div>
           <div className="flex-1 basis-0 text-base font-semibold">
@@ -217,13 +201,13 @@ export function PositionItem({ position }: PositionItemProps) {
               <div>
                 <span className="text-gray-500">Min: </span>
                 <span>
-                  {formatNumber(tickMin)} {wrapToken1.symbol} / {wrapToken0.symbol}
+                  {formatNumber(minPrice || '-')} {wrapToken1.symbol} / {wrapToken0.symbol}
                 </span>
               </div>
               <div>
                 <span className="text-gray-500">Max: </span>
                 <span>
-                  {formatNumber(tickMax)} {wrapToken1.symbol} / {wrapToken0.symbol}
+                  {formatNumber(maxPrice || '-')} {wrapToken1.symbol} / {wrapToken0.symbol}
                 </span>
               </div>
             </div>
