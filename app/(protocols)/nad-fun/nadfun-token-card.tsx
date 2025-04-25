@@ -1,36 +1,28 @@
 import Image from 'next/image';
-import { Separator } from '@/components/ui/separator';
-import { formatBig, formatNumber } from '@/lib/utils/number';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 
-export function NadFunTokenCard({
-  logo,
-  symbol,
-  name,
-  address,
-  balance,
-}: {
-  logo: string;
-  symbol: string;
-  name: string;
-  address: string;
-  balance: string;
-}) {
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+
+import { IToken } from '@/lib/data/tokens';
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { formatBig, formatNumber } from '@/lib/utils/number';
+
+export function NadFunTokenCard({ token, balance }: { token: IToken; balance: string }) {
+  const { address, symbol, name, logo } = token;
   const { setCurrentComponent } = useSideDrawerStore();
 
   function handleBuy() {
     setCurrentComponent({
       name: 'NadFunBuyToken',
-      props: { token: { address, symbol, name, logo, balance } },
+      props: { token: { ...token, balance } },
     });
   }
 
   function handleSell() {
     setCurrentComponent({
       name: 'NadFunSellToken',
-      props: { token: { address, symbol, name, logo, balance } },
+      props: { token: { ...token, balance } },
     });
   }
 

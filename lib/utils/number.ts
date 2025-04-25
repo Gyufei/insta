@@ -6,7 +6,7 @@ import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
 
 export function formatNumber(num: string | number) {
   if (isNaN(Number(num))) {
-    return num;
+    return String(num);
   }
 
   return numbro(num).format({

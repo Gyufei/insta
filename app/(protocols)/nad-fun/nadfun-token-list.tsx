@@ -4,21 +4,13 @@ import { Empty } from '@/components/common/empty';
 import { TitleH2 } from '@/components/common/title-h2';
 import { WithLoading } from '@/components/common/with-loading';
 
+import { IToken } from '@/lib/data/tokens';
 import { cn } from '@/lib/utils';
 
 import { NadFunTokenCard } from './nadfun-token-card';
 
-interface Token {
-  token_address?: string;
-  address?: string;
-  balance?: string;
-  logo_url: string;
-  symbol: string;
-  name: string;
-}
-
 interface NadFunTokenListProps {
-  tokens: Token[] | undefined;
+  tokens: Array<IToken & { balance?: string }> | undefined;
   isLoading: boolean;
   title?: string;
   className?: string;
@@ -61,11 +53,8 @@ export function NadFunTokenList({
             <div className="grid w-full min-w-min grid-cols-1 gap-4 sm:grid-cols-2 2xl:gap-6">
               {tokens.map((token) => (
                 <NadFunTokenCard
-                  key={token.token_address || token.address}
-                  logo={token.logo_url}
-                  symbol={token.symbol}
-                  name={token.name}
-                  address={token.address || token.token_address || ''}
+                  key={token.address}
+                  token={token as unknown as IToken}
                   balance={token.balance || ''}
                 />
               ))}
