@@ -1,18 +1,19 @@
 'use client';
 
-import { ERROR_MESSAGES } from '@/config/const-msg';
 import { useAccount } from 'wagmi';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
+import { ERROR_MESSAGES } from '@/config/const-msg';
+
 import { WithLoading } from '@/components/common/with-loading';
+import { Button } from '@/components/ui/button';
 
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { ErrorVO } from '@/lib/model/error-vo';
+import { cn } from '@/lib/utils';
 
 import { ErrorMessage } from './error-message';
-import { cn } from '@/lib/utils';
 
 interface ActionButtonProps {
   disabled: boolean;
@@ -55,8 +56,8 @@ export function ActionButton({
 
   const errorData = useMemo(() => {
     return {
-      ...internalErrorData,
-      ...error,
+      showError: error?.showError || internalErrorData.showError,
+      errorMessage: error?.showError ? error?.errorMessage : internalErrorData.errorMessage,
     };
   }, [error, internalErrorData]);
 
