@@ -18,7 +18,7 @@ import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import TokenSelector from '../common/token-selector';
 import { SlippageSettings } from './slippage-settings';
-import SwapTokenInput from './swap-token-input';
+import UniswapTokenInput from '../common/uniswap-token-input';
 
 const ANIMATION_CONFIG = {
   type: 'spring',
@@ -171,7 +171,7 @@ export function UniswapSwap() {
               />
             ) : (
               <>
-                <SwapTokenInput
+                <UniswapTokenInput
                   label="Sell"
                   token={sellToken}
                   value={sellValue}
@@ -188,7 +188,7 @@ export function UniswapSwap() {
                     <ArrowDown className="h-4 w-4 text-muted-foreground" />
                   </div>
                 </div>
-                <SwapTokenInput
+                <UniswapTokenInput
                   label="Buy"
                   token={buyToken}
                   value={buyValue}

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { IToken } from '../data/tokens';
+import { IUniswapPosition } from '../data/use-uniswap-position';
 
 export type SideDrawerComponent =
   | 'Balance'
@@ -18,7 +19,9 @@ export type SideDrawerComponent =
   | 'MagmaDeposit'
   | 'MagmaWithdraw'
   | 'UniswapSwap'
-  | 'UniswapCreatePosition';
+  | 'UniswapCreatePosition'
+  | 'UniswapAddLiquidity'
+  | 'UniswapRemoveLiquidity';
 
 type CurrentComponent = {
   name: SideDrawerComponent | null;
@@ -30,6 +33,7 @@ type CompProps = {
     balance?: string;
   };
   registerName?: string;
+  uniswapPosition?: IUniswapPosition;
   [key: string]: unknown;
 } | null;
 

@@ -74,8 +74,6 @@ export function PositionsSection() {
           </div>
         </div>
       </div>
-      {positions?.length}
-      {filteredPositions?.length}
 
       <div className="mt-4 flex flex-grow flex-col min-h-50">
         {isLoading ? (

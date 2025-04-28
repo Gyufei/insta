@@ -14,6 +14,12 @@ export function useAccountBalance(enableQuery = true) {
     address: accountAddress as `0x${string}`,
     query: {
       enabled: !!accountAddress && enableQuery,
+      initialData: {
+        value: BigInt(0),
+        decimals: 18,
+        formatted: '0',
+        symbol: '',
+      },
     },
   });
 

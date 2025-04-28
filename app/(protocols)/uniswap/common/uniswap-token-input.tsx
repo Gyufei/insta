@@ -8,24 +8,24 @@ import { IToken } from '@/lib/data/tokens';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { cn } from '@/lib/utils';
 
-import { SwapTokenDisplay } from './swap-token-display';
-import { SwapBaseTokenInput } from './swap-base-token-input';
-import { SwapInputBalanceDisplay } from './swap-input-balance-display';
+import { SwapBaseTokenInput } from '../swap/swap-base-token-input';
+import { SwapInputBalanceDisplay } from '../swap/swap-input-balance-display';
+import { SwapTokenDisplay } from '../swap/swap-token-display';
 
 interface SwapTokenInputProps {
-  label: string;
+  label: string | null;
   token: IToken | undefined;
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
   showMaxButton?: boolean;
-  onShowTokenSelector: () => void;
+  onShowTokenSelector?: () => void;
   onSetError?: (error: ErrorVO) => void;
   disabled?: boolean;
   className?: string;
 }
 
-export default function SwapTokenInput({
+export default function UniswapTokenInput({
   label,
   token,
   value,
@@ -51,21 +51,19 @@ export default function SwapTokenInput({
     (val: string) => {
       if (val === value) return;
 
-      if (val === '' || /^\d*\.?\d*$/.test(val)) {
-        onChange(val);
+      onChange(val);
 
-        if (!onSetError) return;
-        if (token && currentBalance && parseFloat(val) > parseFloat(currentBalance)) {
-          onSetError({
-            showError: true,
-            errorMessage: ERROR_MESSAGES.EXCEED_MAX_BALANCE,
-          });
-        } else {
-          onSetError({
-            showError: false,
-            errorMessage: '',
-          });
-        }
+      if (!onSetError) return;
+      if (token && currentBalance && parseFloat(val) > parseFloat(currentBalance)) {
+        onSetError({
+          showError: true,
+          errorMessage: ERROR_MESSAGES.EXCEED_MAX_BALANCE,
+        });
+      } else {
+        onSetError({
+          showError: false,
+          errorMessage: '',
+        });
       }
     },
     [value, onChange, onSetError, token, currentBalance]
@@ -78,7 +76,7 @@ export default function SwapTokenInput({
   }, [currentBalance, handleInput]);
 
   const handleOutsideClick = useCallback(() => {
-    if (!token) {
+    if (!token && onShowTokenSelector) {
       onShowTokenSelector();
     }
   }, [token, onShowTokenSelector]);
@@ -90,7 +88,7 @@ export default function SwapTokenInput({
   return (
     <div onClick={handleOutsideClick} className={cn('flex flex-col gap-1', className)}>
       <div className="flex items-stretch flex-col pb-1 border rounded-2xl bg-muted p-4 focus-within:bg-primary-foreground">
-        <div className="text-xs text-gray-400">{label}</div>
+        {label && <div className="text-xs text-gray-400">{label}</div>}
         <div className="flex justify-between items-center">
           <div className="flex-1">
             <SwapBaseTokenInput

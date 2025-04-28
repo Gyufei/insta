@@ -20,6 +20,7 @@ export const ERROR_MESSAGES = {
   TRANSFER_NAME_FAILED: 'Transfer nad name failed',
   SWAP_FAILED: 'Swap failed',
   CREATE_POSITION_FAILED: 'Create position failed',
+  REMOVE_LIQUIDITY_FAILED: 'Remove liquidity failed',
 } as const;
 
 export const SUCCESS_MESSAGES = {
@@ -38,4 +39,5 @@ export const SUCCESS_MESSAGES = {
   TRANSFER_NAME_SUCCESS: 'Nad name transferred successfully',
   SWAP_SUCCESS: 'Swap successfully',
   CREATE_POSITION_SUCCESS: 'Create position successfully',
+  REMOVE_LIQUIDITY_SUCCESS: 'Remove liquidity successfully',
 } as const;

@@ -6,7 +6,7 @@ import { IToken } from '@/lib/data/tokens';
 
 interface TokenDisplayProps {
   token: IToken | undefined;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 export const SwapTokenDisplay = ({ token, onClick }: TokenDisplayProps) => {
@@ -19,7 +19,7 @@ export const SwapTokenDisplay = ({ token, onClick }: TokenDisplayProps) => {
         <>
           <LogoWithPlaceholder
             src={token.logo}
-            className="w-4 h-4"
+            className="w-4 h-4 rounded-full"
             width={16}
             height={16}
             name={token.symbol}
@@ -33,7 +33,7 @@ export const SwapTokenDisplay = ({ token, onClick }: TokenDisplayProps) => {
           <div className="text-sm font-medium">Select token</div>
         </div>
       )}
-      <ChevronDown className="h-4 w-4" />
+      {onClick && <ChevronDown className="h-4 w-4" />}
     </div>
   );
 };

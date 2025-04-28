@@ -3,27 +3,19 @@ import { multiply } from 'safebase';
 
 import { useEffect, useState } from 'react';
 
-import {
-  PairTokenSelected,
-  useTokenSelector,
-} from '@/app/(protocols)/uniswap/common/use-token-selector';
+import { useTokenSelector } from '@/app/(protocols)/uniswap/common/use-token-selector';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
 import { IToken } from '@/lib/data/tokens';
-import { useNewPosition } from './use-new-position';
 import { ErrorVO } from '@/lib/model/error-vo';
-import { cn } from '@/lib/utils';
 
 import TokenSelector from '../common/token-selector';
-import { CreatePoolTip } from './create-pool-tip';
-import FeeTierSelector from './fee-tier-selector';
-import InitPriceSetter from './init-price-setter';
-import { PairTokenDisplay } from './pair-token-display';
-import PositionDepositInput from './position-deposit-input';
-import PriceRangeSelector from './price-range-selector';
+import { SelectTokenAndFeeTier } from './select-token-and-fee-tier';
+import { SetPriceAndAmount } from './set-price-and-amount';
+import { useNewPosition } from './use-new-position';
 
 const ANIMATION_CONFIG = {
   type: 'spring',
@@ -31,6 +23,11 @@ const ANIMATION_CONFIG = {
   stiffness: 300,
   mass: 0.5,
 } as const;
+
+export enum CreatePositionStep {
+  SelectTokenAndFeeTier = 1,
+  SetPriceAndMount = 2,
+}
 
 export function UniswapCreatePosition() {
   const [isNewPool] = useState(true);
@@ -49,6 +46,7 @@ export function UniswapCreatePosition() {
     errorMessage: '',
   });
 
+  const [step, setStep] = useState<CreatePositionStep>(CreatePositionStep.SelectTokenAndFeeTier);
   const { showTokenSelector, setShowTokenSelector, handleTokenSelect, handleBack } =
     useTokenSelector();
 
@@ -106,6 +104,12 @@ export function UniswapCreatePosition() {
     });
   }
 
+  function handleNextStep() {
+    if (step === CreatePositionStep.SelectTokenAndFeeTier) {
+      setStep(CreatePositionStep.SetPriceAndMount);
+    }
+  }
+
   useEffect(() => {
     if (Number(priceRangeMin) > Number(priceRangeMax)) {
       setErrorData({
@@ -127,7 +131,13 @@ export function UniswapCreatePosition() {
       <SideDrawerLayout>
         <AnimatePresence mode="wait">
           <motion.div
-            key={showTokenSelector ? 'tokenSelector' : 'swapForm'}
+            key={
+              showTokenSelector
+                ? 'tokenSelector'
+                : step === CreatePositionStep.SelectTokenAndFeeTier
+                  ? 'selectTokenAndFeeTier'
+                  : 'setPriceAndMount'
+            }
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: 0 }}
@@ -138,67 +148,51 @@ export function UniswapCreatePosition() {
                 onSelect={handleTokenSelectWrapper}
                 onClose={() => setShowTokenSelector(null)}
               />
-            ) : (
-              <div className="flex flex-col gap-4 px-[1px]">
-                <div className="flex flex-col px-[1px]">
-                  <div className="text-lg font-medium text-primary">Select pair</div>
-                  <div className="text-xs text-gray-400">
-                    Choose the tokens you want to provide liquidity for.{' '}
-                  </div>
-                  <div className="flex justify-between gap-2 mt-4">
-                    <PairTokenDisplay
-                      token={token0}
-                      onClick={() => setShowTokenSelector(PairTokenSelected.Token0)}
-                    />
-                    <PairTokenDisplay
-                      token={token1}
-                      onClick={() => setShowTokenSelector(PairTokenSelected.Token1)}
-                    />
-                  </div>
-                </div>
-
-                <FeeTierSelector selectedTier={feeTier} onChange={(tier) => setFeeTier(tier)} />
-
-                {isNewPool && (
-                  <InitPriceSetter
-                    token0={token0}
-                    token1={token1}
-                    onPriceChange={setInitPrice}
-                    onSelectToken={(v) => setShowTokenSelector(v)}
-                  />
-                )}
-
-                <PriceRangeSelector
-                  token0Symbol={token0?.symbol ?? ''}
-                  token1Symbol={token1?.symbol ?? ''}
-                  priceRangeMin={priceRangeMin}
-                  priceRangeMax={priceRangeMax}
-                  onMinPriceChange={setPriceRangeMin}
-                  onMaxPriceChange={setPriceRangeMax}
-                />
-
-                <PositionDepositInput
+            ) : step === CreatePositionStep.SelectTokenAndFeeTier ? (
+              <>
+                <SelectTokenAndFeeTier
+                  isNewPool={isNewPool}
                   token0={token0}
                   token1={token1}
+                  setShowTokenSelector={setShowTokenSelector}
+                  setFeeTier={setFeeTier}
+                  feeTier={feeTier}
+                />
+                <ActionButton
+                  disabled={!token0 || !token1 || !feeTier}
+                  isPending={isPending}
+                  onClick={handleNextStep}
+                  error={errorData}
+                >
+                  Continue
+                </ActionButton>
+              </>
+            ) : (
+              <>
+                <SetPriceAndAmount
+                  isNewPool={isNewPool}
+                  token0={token0!}
+                  token1={token1!}
+                  feeTier={feeTier}
+                  setInitPrice={setInitPrice}
+                  setPriceRangeMin={setPriceRangeMin}
+                  setPriceRangeMax={setPriceRangeMax}
+                  setAmount0={setAmount0}
+                  setAmount1={setAmount1}
+                  priceRangeMin={priceRangeMin}
+                  priceRangeMax={priceRangeMax}
                   amount0={amount0}
                   amount1={amount1}
-                  onAmount0Change={setAmount0}
-                  onAmount1Change={setAmount1}
-                  onSelectToken={(v) => setShowTokenSelector(v)}
                 />
-
-                {isNewPool && <CreatePoolTip />}
-
                 <ActionButton
-                  className={cn(isNewPool && 'mt-0')}
-                  disabled={!token0 || !token1 || !amount0 || !amount1 || !initPriceRequired}
+                  disabled={!amount0 || !amount1 || !initPriceRequired}
                   isPending={isPending}
                   onClick={handleNewPosition}
                   error={errorData}
                 >
                   Confirm
                 </ActionButton>
-              </div>
+              </>
             )}
           </motion.div>
         </AnimatePresence>

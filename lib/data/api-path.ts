@@ -46,4 +46,6 @@ export const ApiPath = {
   uniswapV3Position: `${ApiHost}/uniswap_v3_position/all_positions`,
   uniswapCreatePoolAndMintPosition: `${ApiHost}/uniswap_v3_position/create_and_mint_pool`,
   uniswapMintPosition: `${ApiHost}/uniswap_v3_position/mint_pool`,
+  uniswapAddLiquidity: `${ApiHost}/uniswap_v3_position/deposit`,
+  uniswapRemoveLiquidity: `${ApiHost}/uniswap_v3_position/withdraw`,
 };

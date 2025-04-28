@@ -20,6 +20,7 @@ export function useAccountTokenBalance(tokenAddress: string, enableQuery = true)
     args: [accountAddress as `0x${string}`],
     query: {
       enabled: !!accountAddress && !!tokenAddress && enableQuery,
+      initialData: BigInt(0),
     },
   });
 

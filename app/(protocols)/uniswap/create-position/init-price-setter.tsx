@@ -19,14 +19,12 @@ interface InitialPriceSetterProps {
   token0: IToken | undefined;
   token1: IToken | undefined;
   onPriceChange: (price: string) => void;
-  onSelectToken: (v: PairTokenSelected) => void;
 }
 
 export default function InitialPriceSetter({
   token0,
   token1,
   onPriceChange,
-  onSelectToken,
 }: InitialPriceSetterProps) {
   const [price, setPrice] = useState('');
   const [price2, setPrice2] = useState('');
@@ -66,27 +64,14 @@ export default function InitialPriceSetter({
   const otherToken = currentCheckToken === String(PairTokenSelected.Token0) ? token1 : token0;
   const currentPrice = currentCheckToken === String(PairTokenSelected.Token0) ? price : price2;
 
-  function handleNoToken() {
-    if (!token0) {
-      onSelectToken(PairTokenSelected.Token0);
-    }
-
-    if (!token1) {
-      onSelectToken(PairTokenSelected.Token1);
-    }
-  }
-
   return (
     <div className="flex flex-col">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-start items-center gap-2">
         <span className="text-lg font-medium text-primary">Set initial price</span>
         <BadgeHelpTooltip content="When creating a new pool, you must set the starting exchange rate for both tokens. This rate will reflect the initial market price." />
       </div>
 
-      <div
-        className="bg-gray-100 p-2 rounded-xl flex flex-col gap-1 cursor-pointer"
-        onClick={handleNoToken}
-      >
+      <div className="bg-gray-100 p-2 rounded-xl flex flex-col gap-1 cursor-pointer">
         <div className="flex justify-between items-center">
           <span className="text-xs font-semibold text-gray-500">Initial price</span>
           <Tabs value="token0" onValueChange={handleTabChange}>
