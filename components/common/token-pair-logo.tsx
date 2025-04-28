@@ -13,11 +13,11 @@ export function TokenPairLogo({ token0, token1 }: { token0: IToken; token1: ITok
       <div className="flex items-stretch flex-basis-auto box-border min-h-0 min-w-0 flex-shrink-0 flex-col left-0 overflow-hidden absolute top-0 w-[21px]">
         <div className="flex flex-basis-auto box-border min-h-0 min-w-0 flex-shrink-0 flex-col items-center h-11 justify-center pointer-events-auto w-11 relative">
           <LogoWithPlaceholder
-            src={token0.logo}
+            src={token0?.logo}
             className="h-8 w-8 object-contain rounded-full z-10 pr-4"
             width={37.07}
             height={37.07}
-            name={token0.symbol}
+            name={token0?.symbol || ''}
           />
           <div className="flex items-stretch flex-basis-auto box-border min-h-0 min-w-0 flex-shrink-0 flex-col rounded-[22px] border-2 border-dashed border-neutral-300 h-11 w-11 absolute" />
         </div>
@@ -26,11 +26,11 @@ export function TokenPairLogo({ token0, token1 }: { token0: IToken; token1: ITok
       <div className="flex items-stretch flex-basis-auto box-border min-h-0 min-w-0 flex-shrink-0 flex-row-reverse overflow-hidden absolute right-0 top-0 w-[21px]">
         <div className="flex flex-basis-auto box-border min-h-0 min-w-0 flex-shrink-0 flex-col items-center h-11 justify-center pointer-events-auto w-11 relative">
           <LogoWithPlaceholder
-            src={token1.logo}
+            src={token1?.logo}
             className="h-8 w-8 object-contain rounded-full z-10 pl-4"
             width={37.07}
             height={37.07}
-            name={token1.symbol}
+            name={token1?.symbol || ''}
           />
           <div className="flex items-stretch flex-basis-auto box-border min-h-0 min-w-0 flex-shrink-0 flex-col rounded-[22px] border-2 border-dashed border-neutral-300 h-11 w-11 absolute" />
         </div>

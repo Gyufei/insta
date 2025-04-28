@@ -3,6 +3,7 @@ import { multiply } from 'safebase';
 
 import { useEffect, useState } from 'react';
 
+import TokenSelector from '@/app/(protocols)/uniswap/uni-common/token-selector';
 import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
@@ -10,12 +11,11 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
 import { IToken } from '@/lib/data/tokens';
+import { useAmbientCreatePosition } from '@/lib/data/use-ambient-create-position';
 import { ErrorVO } from '@/lib/model/error-vo';
 
-import TokenSelector from '../uni-common/token-selector';
-import { SelectTokenAndFeeTier } from './select-token-and-fee-tier';
+import { SelectToken } from './select-token';
 import { SetPriceAndAmount } from './set-price-and-amount';
-import { useNewPosition } from './use-new-position';
 
 const ANIMATION_CONFIG = {
   type: 'spring',
@@ -29,12 +29,9 @@ export enum CreatePositionStep {
   SetPriceAndMount = 2,
 }
 
-export function UniswapCreatePosition() {
-  const [isNewPool] = useState(true);
-
+export function AmbientCreatePosition() {
   const [token0, setToken0] = useState<IToken>();
   const [token1, setToken1] = useState<IToken>();
-  const [feeTier, setFeeTier] = useState<string>('0.3');
   const [priceRangeMin, setPriceRangeMin] = useState<string>('');
   const [priceRangeMax, setPriceRangeMax] = useState<string>('');
   const [amount0, setAmount0] = useState('');
@@ -50,9 +47,7 @@ export function UniswapCreatePosition() {
   const { showTokenSelector, setShowTokenSelector, handleTokenSelect, handleBack } =
     useTokenSelector();
 
-  const { mutate: createPosition, isPending } = useNewPosition(isNewPool);
-
-  const initPriceRequired = !isNewPool || (isNewPool && initPrice);
+  const { mutate: createPosition, isPending } = useAmbientCreatePosition();
 
   const handleTokenSelectWrapper = (token: IToken) => {
     const result = handleTokenSelect(token);
@@ -79,28 +74,19 @@ export function UniswapCreatePosition() {
     if (!token0 || !token1) return;
 
     const args = {
-      token_a_address: token0.address,
-      token_b_address: token1.address,
-      fee: multiply(feeTier, String(10_000)),
+      token_a: token0.address,
+      token_b: token1.address,
+      price_current: initPrice
+        ? multiply(initPrice, String(10 ** (token0.decimals - token1.decimals)))
+        : '0',
       price_lower: multiply(priceRangeMin, String(10 ** (token0.decimals - token1.decimals))),
       price_upper: multiply(priceRangeMax, String(10 ** (token0.decimals - token1.decimals))),
-      amount_a: amount0,
-      amount_b: amount1,
-      slippage: '10000000000000000', // 1%
-      decimals_a: token0.decimals.toString(),
-      decimals_b: token1.decimals.toString(),
+      token_a_amount: amount0,
+      token_a_decimals: token0.decimals.toString(),
+      token_b_decimals: token1.decimals.toString(),
     };
 
-    const extraArgs = initPrice
-      ? {
-          price_current: multiply(initPrice, String(10 ** (token0.decimals - token1.decimals))),
-        }
-      : {};
-
-    createPosition({
-      ...args,
-      ...extraArgs,
-    });
+    createPosition(args);
   }
 
   function handleNextStep() {
@@ -149,16 +135,14 @@ export function UniswapCreatePosition() {
               />
             ) : step === CreatePositionStep.SelectTokenAndFeeTier ? (
               <>
-                <SelectTokenAndFeeTier
-                  isNewPool={isNewPool}
+                <SelectToken
+                  isNewPool={true}
                   token0={token0}
                   token1={token1}
                   setShowTokenSelector={setShowTokenSelector}
-                  setFeeTier={setFeeTier}
-                  feeTier={feeTier}
                 />
                 <ActionButton
-                  disabled={!token0 || !token1 || !feeTier}
+                  disabled={!token0 || !token1}
                   isPending={isPending}
                   onClick={handleNextStep}
                   error={errorData}
@@ -169,10 +153,9 @@ export function UniswapCreatePosition() {
             ) : (
               <>
                 <SetPriceAndAmount
-                  isNewPool={isNewPool}
+                  isNewPool={true}
                   token0={token0!}
                   token1={token1!}
-                  feeTier={feeTier}
                   setInitPrice={setInitPrice}
                   setPriceRangeMin={setPriceRangeMin}
                   setPriceRangeMax={setPriceRangeMax}
@@ -184,7 +167,7 @@ export function UniswapCreatePosition() {
                   amount1={amount1}
                 />
                 <ActionButton
-                  disabled={!amount0 || !amount1 || !initPriceRequired}
+                  disabled={!amount0 || !amount1}
                   isPending={isPending}
                   onClick={handleNewPosition}
                   error={errorData}

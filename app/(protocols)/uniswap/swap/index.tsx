@@ -12,13 +12,13 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { IToken } from '@/lib/data/tokens';
 import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
 import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
-import { PairTokenSelected, useTokenSelector } from '@/app/(protocols)/uniswap/common/use-token-selector';
+import { PairTokenSelected, useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
-import TokenSelector from '../common/token-selector';
+import TokenSelector from '../uni-common/token-selector';
 import { SlippageSettings } from './slippage-settings';
-import UniswapTokenInput from '../common/uniswap-token-input';
+import UniswapTokenInput from '../uni-common/uniswap-token-input';
 
 const ANIMATION_CONFIG = {
   type: 'spring',

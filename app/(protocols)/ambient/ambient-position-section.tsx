@@ -4,43 +4,43 @@ import { Plus, Search } from 'lucide-react';
 
 import { useState } from 'react';
 
+import { EmptyState } from '@/components/common/empty-state';
 import { TitleH2 } from '@/components/common/title-h2';
 import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 
-import { PositionStatus, useUniswapPosition } from '@/lib/data/use-uniswap-position';
+import { useAmbientPosition } from '@/lib/data/use-ambient-position';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
-import { EmptyState } from './empty-state';
-import { PositionItem } from './position-item';
+import { useUniswapToken } from '../uniswap/use-uniswap-token';
+import { PositionItem } from './ambient-position-item';
 
-export function PositionsSection() {
+export function AmbientPositionsSection() {
   const { setCurrentComponent } = useSideDrawerStore();
-  const { data: positions, isLoading } = useUniswapPosition();
+  const { data: positionData, isLoading } = useAmbientPosition();
+  const positions = positionData?.positions;
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [hideClosedPositions, setHideClosedPositions] = useState(true);
+
+  const { tokens } = useUniswapToken();
 
   const filteredPositions = positions?.filter((position) => {
-    if (hideClosedPositions && position.status === PositionStatus.POSITION_STATUS_CLOSED) {
-      return false;
-    }
-
     if (searchQuery) {
-      const { token0, token1 } = position.v3Position;
+      const token0 = tokens.find((token) => token.address === position.base);
+      const token1 = tokens.find((token) => token.address === position.quote);
+
       const searchLower = searchQuery.toLowerCase();
       return (
-        token0.symbol.toLowerCase().includes(searchLower) ||
-        token1.symbol.toLowerCase().includes(searchLower)
+        token0?.symbol.toLowerCase().includes(searchLower) ||
+        token1?.symbol.toLowerCase().includes(searchLower)
       );
     }
     return true;
   });
 
   function handleNewPosition() {
-    setCurrentComponent({ name: 'UniswapCreatePosition' });
+    setCurrentComponent({ name: 'AmbientCreatePosition' });
   }
 
   return (
@@ -98,17 +98,10 @@ export function PositionsSection() {
         ) : (
           <>
             {filteredPositions?.map((position) => (
-              <PositionItem key={position.v3Position.tokenId} position={position} />
+              <PositionItem key={position.positionId} position={position} />
             ))}
           </>
         )}
-      </div>
-
-      <div className="mt-2 flex w-full items-center text-muted-foreground">
-        <div className="flex w-full items-center justify-end">
-          <div className="mr-4 cursor-pointer">Hide closed positions</div>
-          <Switch checked={hideClosedPositions} onCheckedChange={setHideClosedPositions} />
-        </div>
       </div>
     </div>
   );

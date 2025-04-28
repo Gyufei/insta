@@ -16,8 +16,8 @@ import { IUniswapPosition } from '@/lib/data/use-uniswap-position';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { formatNumber } from '@/lib/utils/number';
 
-import { TokenPairAndStatus } from './common/token-pair-and-status';
-import { usePositionDataFormat } from './common/use-position-data-format';
+import { TokenPairAndStatus } from './uni-common/token-pair-and-status';
+import { usePositionDataFormat } from './uni-common/use-position-data-format';
 
 interface PositionItemProps {
   position: IUniswapPosition;
@@ -38,8 +38,6 @@ export function PositionItem({ position }: PositionItemProps) {
     isFullRange,
     minPrice,
     maxPrice,
-    currentLiq,
-    totalLiq,
     totalLiquidityUsd,
   } = usePositionDataFormat(position);
 
@@ -102,10 +100,9 @@ export function PositionItem({ position }: PositionItemProps) {
           </div>
           <div className="flex-1 basis-0">
             <span className="text-base font-semibold text-primary">
-              {formatNumber(currentLiq)} / {formatNumber(totalLiq)}( $
-              {formatNumber(totalLiquidityUsd)})
+              ${formatNumber(totalLiquidityUsd)}
             </span>
-            <span className="block text-sm text-gray-500 truncate">Current/Total Liquidity</span>
+            <span className="block text-sm text-gray-500 truncate">Value</span>
           </div>
         </div>
 

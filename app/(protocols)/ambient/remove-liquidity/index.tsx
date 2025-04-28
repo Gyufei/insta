@@ -2,51 +2,49 @@ import { divide, multiply } from 'safebase';
 
 import { useState } from 'react';
 
+import { TwoTokenAmount } from '@/app/(protocols)/uniswap/uni-common/two-token-amount';
+
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { Button } from '@/components/ui/button';
 
-import { IUniswapPosition } from '@/lib/data/use-uniswap-position';
-import { useUniswapRemoveLiquidity } from '@/lib/data/use-uniswap-remove-liquidity';
+import { IAmbientPosition } from '@/lib/data/use-ambient-position';
+import { useAmbientRemoveLiquidity } from '@/lib/data/use-ambient-remove-liquidity';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
-import { TokenPairAndStatus } from '../uni-common/token-pair-and-status';
-import { TwoTokenAmount } from '../uni-common/two-token-amount';
-import { usePositionDataFormat } from '../uni-common/use-position-data-format';
+import { TokenPairAndStatus } from '../am-common/token-pair-and-status';
+import { useAmbientPositionFormat } from '../use-ambient-position-format';
 
-export function UniswapRemoveLiquidity() {
+export function AmbientRemoveLiquidity() {
   const { currentComponent, setIsOpen } = useSideDrawerStore();
-  const { mutate: removeLiquidity, isPending } = useUniswapRemoveLiquidity();
+  const { mutate: removeLiquidity, isPending } = useAmbientRemoveLiquidity();
 
-  const { uniswapPosition } =
+  const { ambientPosition } =
     (currentComponent?.props as {
-      uniswapPosition?: IUniswapPosition;
+      ambientPosition?: IAmbientPosition;
     }) || {};
 
-  const { version, fee, token0, token1, token0Amount, token1Amount } = usePositionDataFormat(
-    uniswapPosition!
-  );
+  const { token0, token1, token0Amount, token1Amount } = useAmbientPositionFormat(ambientPosition!);
 
   const [percent, setPercent] = useState('');
-  const [amount0, setAmount0] = useState('');
-  const [amount1, setAmount1] = useState('');
+  const [_amount0, setAmount0] = useState('');
+  const [_amount1, setAmount1] = useState('');
 
   function handleBack() {
     setIsOpen(false);
   }
 
   const handleConfirm = () => {
-    if (!uniswapPosition) return;
+    if (!ambientPosition) return;
 
     removeLiquidity({
-      token_id: uniswapPosition.v3Position.tokenId,
-      liquidity: uniswapPosition.v3Position.liquidity,
-      token0_amount_min: amount0,
-      token1_amount_min: amount1,
-      token0_decimals: token0.decimals,
-      token1_decimals: token1.decimals,
+      base_token: ambientPosition.base,
+      quote_token: ambientPosition.quote,
+      bid_tick: ambientPosition.bidTick.toString(),
+      ask_tick: ambientPosition.askTick.toString(),
+      liquidity: ambientPosition.ambientLiq.toString(),
     });
   };
 
@@ -61,19 +59,19 @@ export function UniswapRemoveLiquidity() {
 
     if (Number(val) === 100) {
       setPercent(val);
-      setAmount0(token0Amount);
-      setAmount1(token1Amount);
+      setAmount0(token0Amount || '0');
+      setAmount1(token1Amount || '0');
       return;
     }
 
     if (Number(val) > 100 || Number(val) < 1 || val.length > 2 || val.includes('.')) return;
 
     setPercent(val);
-    setAmount0(divide(multiply(token0Amount, val), String(100)));
-    setAmount1(divide(multiply(token1Amount, val), String(100)));
+    setAmount0(divide(multiply(token0Amount || '0', val), String(100)));
+    setAmount1(divide(multiply(token1Amount || '0', val), String(100)));
   }
 
-  if (!uniswapPosition) {
+  if (!ambientPosition) {
     return null;
   }
 
@@ -81,14 +79,7 @@ export function UniswapRemoveLiquidity() {
     <>
       <SideDrawerBackHeader title="Remove Liquidity" onClick={handleBack} />
       <SideDrawerLayout>
-        <TokenPairAndStatus
-          token0={token0}
-          token1={token1}
-          status={uniswapPosition.status}
-          version={version}
-          fee={fee}
-          className="p-0"
-        />
+        <TokenPairAndStatus token0={token0} token1={token1} className="p-0" />
 
         <div className="bg-white rounded-2xl shadow-sm px-6 py-5 flex flex-col gap-4 items-center mt-6">
           <span className="text-gray-500 text-base font-semibold mb-2">Withdrawal amount</span>
@@ -122,8 +113,8 @@ export function UniswapRemoveLiquidity() {
         <TwoTokenAmount
           token0={token0}
           token1={token1}
-          token0Amount={token0Amount}
-          token1Amount={token1Amount}
+          token0Amount={token0Amount || '0'}
+          token1Amount={token1Amount || '0'}
         />
 
         <ActionButton

@@ -13,7 +13,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IToken } from '@/lib/data/tokens';
 import { cn } from '@/lib/utils';
 
-import { PairTokenSelected } from '../common/use-token-selector';
+import { PairTokenSelected } from '../uni-common/use-token-selector';
 
 interface InitialPriceSetterProps {
   token0: IToken | undefined;

@@ -1,18 +1,16 @@
+import { CreatePoolTip } from '@/app/(protocols)/uniswap/create-position/create-pool-tip';
+import InitPriceSetter from '@/app/(protocols)/uniswap/create-position/init-price-setter';
+import PriceRangeSelector from '@/app/(protocols)/uniswap/create-position/price-range-selector';
+import UniswapTokenInput from '@/app/(protocols)/uniswap/uni-common/uniswap-token-input';
+
 import { BadgeHelpTooltip } from '@/components/common/badge-help';
 
 import { IToken } from '@/lib/data/tokens';
-
-import UniswapTokenInput from '../uni-common/uniswap-token-input';
-import { VersionAndFeeDisplay } from '../uni-common/version-and-fee-display';
-import { CreatePoolTip } from './create-pool-tip';
-import InitPriceSetter from './init-price-setter';
-import PriceRangeSelector from './price-range-selector';
 
 export function SetPriceAndAmount({
   isNewPool,
   token0,
   token1,
-  feeTier,
   setInitPrice,
   setPriceRangeMin,
   setPriceRangeMax,
@@ -26,7 +24,6 @@ export function SetPriceAndAmount({
   isNewPool: boolean;
   token0: IToken;
   token1: IToken;
-  feeTier: string;
   setInitPrice: (price: string) => void;
   priceRangeMin: string;
   priceRangeMax: string;
@@ -37,9 +34,6 @@ export function SetPriceAndAmount({
   setAmount0: (amount: string) => void;
   setAmount1: (amount: string) => void;
 }) {
-  const version = 'V3';
-  const fee = `${feeTier}%`;
-
   return (
     <div className="flex flex-col gap-4 px-[1px]">
       <div className="flex flex-col gap-2">
@@ -47,7 +41,6 @@ export function SetPriceAndAmount({
           <span className="text-2xl font-bold">{token0.symbol}</span>
           <span className="text-2xl font-bold">/</span>
           <span className="text-2xl font-bold">{token1.symbol}</span>
-          <VersionAndFeeDisplay version={version} fee={fee} />
         </div>
         {isNewPool && <CreatePoolTip />}
       </div>

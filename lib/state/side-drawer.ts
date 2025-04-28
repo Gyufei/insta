@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { IToken } from '../data/tokens';
+import { IAmbientPosition } from '../data/use-ambient-position';
 import { IUniswapPosition } from '../data/use-uniswap-position';
 
 export type SideDrawerComponent =
@@ -21,7 +22,10 @@ export type SideDrawerComponent =
   | 'UniswapSwap'
   | 'UniswapCreatePosition'
   | 'UniswapAddLiquidity'
-  | 'UniswapRemoveLiquidity';
+  | 'UniswapRemoveLiquidity'
+  | 'AmbientCreatePosition'
+  | 'AmbientAddLiquidity'
+  | 'AmbientRemoveLiquidity';
 
 type CurrentComponent = {
   name: SideDrawerComponent | null;
@@ -34,6 +38,7 @@ type CompProps = {
   };
   registerName?: string;
   uniswapPosition?: IUniswapPosition;
+  ambientPosition?: IAmbientPosition;
   [key: string]: unknown;
 } | null;
 

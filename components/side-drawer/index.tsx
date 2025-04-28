@@ -2,6 +2,9 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 
+import { AmbientAddLiquidity } from '@/app/(protocols)/ambient/add-liquidity';
+import { AmbientCreatePosition } from '@/app/(protocols)/ambient/create-position';
+import { AmbientRemoveLiquidity } from '@/app/(protocols)/ambient/remove-liquidity';
 import { AprioriDeposit } from '@/app/(protocols)/apriori/apriori-deposit';
 import { AprioriWithdraw } from '@/app/(protocols)/apriori/apriori-withdraw';
 import { MagmaDeposit } from '@/app/(protocols)/magma/magma-deposit';
@@ -44,6 +47,9 @@ const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   UniswapCreatePosition: UniswapCreatePosition,
   UniswapAddLiquidity: UniswapAddLiquidity,
   UniswapRemoveLiquidity: UniswapRemoveLiquidity,
+  AmbientCreatePosition: AmbientCreatePosition,
+  AmbientAddLiquidity: AmbientAddLiquidity,
+  AmbientRemoveLiquidity: AmbientRemoveLiquidity,
 } as const;
 
 const ANIMATION_CONFIG = {

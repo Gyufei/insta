@@ -1,23 +1,18 @@
+import { CreatePoolTip } from '@/app/(protocols)/uniswap/create-position/create-pool-tip';
+import { PairTokenDisplay } from '@/app/(protocols)/uniswap/create-position/pair-token-display';
+import { PairTokenSelected } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
+
 import { IToken } from '@/lib/data/tokens';
 
-import { PairTokenSelected } from '../uni-common/use-token-selector';
-import { CreatePoolTip } from './create-pool-tip';
-import FeeTierSelector from './fee-tier-selector';
-import { PairTokenDisplay } from './pair-token-display';
-
-export function SelectTokenAndFeeTier({
+export function SelectToken({
   token0,
   token1,
   setShowTokenSelector,
-  setFeeTier,
-  feeTier,
   isNewPool,
 }: {
   token0?: IToken;
   token1?: IToken;
   setShowTokenSelector: (token: PairTokenSelected) => void;
-  setFeeTier: (tier: string) => void;
-  feeTier: string;
   isNewPool: boolean;
 }) {
   return (
@@ -38,8 +33,6 @@ export function SelectTokenAndFeeTier({
           />
         </div>
       </div>
-
-      <FeeTierSelector selectedTier={feeTier} onChange={(tier) => setFeeTier(tier)} />
 
       {isNewPool && <CreatePoolTip />}
     </div>

@@ -4,7 +4,7 @@ import { IToken } from '@/lib/data/tokens';
 import { PositionStatus } from '@/lib/data/use-uniswap-position';
 import { cn } from '@/lib/utils';
 
-import { TokenPairLogo } from '../token-pair-logo';
+import { TokenPairLogo } from '../../../../components/common/token-pair-logo';
 import { VersionAndFeeDisplay } from './version-and-fee-display';
 
 const PositionStatusMap = {

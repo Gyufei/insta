@@ -48,4 +48,8 @@ export const ApiPath = {
   uniswapMintPosition: `${ApiHost}/uniswap_v3_position/mint_pool`,
   uniswapAddLiquidity: `${ApiHost}/uniswap_v3_position/deposit`,
   uniswapRemoveLiquidity: `${ApiHost}/uniswap_v3_position/withdraw`,
+  ambientPosition: `${ApiHost}/ambient_finance/positions`,
+  ambientCreatePosition: `${ApiHost}/ambient_finance/create_pool_and_add_liquidity`,
+  ambientAddLiquidity: `${ApiHost}/ambient_finance/add_liquidity`,
+  ambientRemoveLiquidity: `${ApiHost}/ambient_finance/remove_liquidity`,
 };
