@@ -3,6 +3,8 @@ export const ERROR_MESSAGES = {
   EXCEED_MAX_BALANCE: 'Your amount exceeds maximum balance.',
   FAIL_TO_SWITCH_NETWORK: 'Failed to switch network',
   WALLET_NOT_CONNECTED: 'Please connect wallet first',
+  WALLET_ADDRESS_REQUIRED: 'Please enter wallet address',
+  INVALID_WALLET_ADDRESS: 'Invalid wallet address',
   ACCOUNT_NOT_CREATED: 'Please create account first',
   INVALID_TX_DATA: 'Invalid transaction data',
   SEND_TX_FAILED: 'Send transaction failed',

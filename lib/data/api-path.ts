@@ -14,6 +14,8 @@ export const ApiPath = {
   deposit: `${ApiHost}/account/deposit`,
   withdraw: `${ApiHost}/account/withdraw`,
   sendTx: `${ApiHost}/transaction/send`,
+  faucetAirdrop: `${ApiHost}/airdrop/claim`,
+  saveXBind: `${ApiHost}/x/bind`,
 
   aprioriInfo: `https://stake-api.apr.io/info`,
   aprioriBalance: `${ApiHost}/aprior/balance`,

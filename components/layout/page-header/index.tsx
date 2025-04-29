@@ -31,7 +31,7 @@ export function PageHeader({ title, src }: { title: string; src: string | null }
           </>
         ) : (
           <Button size="sm" variant="outline" onClick={openWeb3Modal}>
-            <div className="leading-5">Connect</div>
+            <div className="leading-5 text-primary">Connect</div>
           </Button>
         )}
 

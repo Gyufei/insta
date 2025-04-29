@@ -1,11 +1,14 @@
 import { CircleX } from 'lucide-react';
 
+import { cn } from '@/lib/utils';
+
 interface ErrorMessageProps {
   show: boolean;
   message: string;
+  className?: string;
 }
 
-export function ErrorMessage({ show, message }: ErrorMessageProps) {
+export function ErrorMessage({ show, message, className }: ErrorMessageProps) {
   if (!show) return null;
 
   let displayMessage = message;
@@ -15,7 +18,7 @@ export function ErrorMessage({ show, message }: ErrorMessageProps) {
   }
 
   return (
-    <div className="mt-6 rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2">
+    <div className={cn('mt-6 rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2', className)}>
       <div className="flex">
         <div className="flex-shrink-0">
           <CircleX className="h-5 w-5 text-red-500 dark:text-red-400" />
