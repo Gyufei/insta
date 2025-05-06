@@ -25,7 +25,7 @@ const ANIMATION_CONFIG = {
 } as const;
 
 export enum CreatePositionStep {
-  SelectTokenAndFeeTier = 1,
+  SelectToken = 1,
   SetPriceAndMount = 2,
 }
 
@@ -43,7 +43,7 @@ export function AmbientCreatePosition() {
     errorMessage: '',
   });
 
-  const [step, setStep] = useState<CreatePositionStep>(CreatePositionStep.SelectTokenAndFeeTier);
+  const [step, setStep] = useState<CreatePositionStep>(CreatePositionStep.SelectToken);
   const { showTokenSelector, setShowTokenSelector, handleTokenSelect, handleBack } =
     useTokenSelector();
 
@@ -90,7 +90,7 @@ export function AmbientCreatePosition() {
   }
 
   function handleNextStep() {
-    if (step === CreatePositionStep.SelectTokenAndFeeTier) {
+    if (step === CreatePositionStep.SelectToken) {
       setStep(CreatePositionStep.SetPriceAndMount);
     }
   }
@@ -119,8 +119,8 @@ export function AmbientCreatePosition() {
             key={
               showTokenSelector
                 ? 'tokenSelector'
-                : step === CreatePositionStep.SelectTokenAndFeeTier
-                  ? 'selectTokenAndFeeTier'
+                : step === CreatePositionStep.SelectToken
+                  ? 'selectToken'
                   : 'setPriceAndMount'
             }
             initial={{ x: '100%' }}
@@ -133,7 +133,7 @@ export function AmbientCreatePosition() {
                 onSelect={handleTokenSelectWrapper}
                 onClose={() => setShowTokenSelector(null)}
               />
-            ) : step === CreatePositionStep.SelectTokenAndFeeTier ? (
+            ) : step === CreatePositionStep.SelectToken ? (
               <>
                 <SelectToken
                   isNewPool={true}
@@ -165,6 +165,7 @@ export function AmbientCreatePosition() {
                   priceRangeMax={priceRangeMax}
                   amount0={amount0}
                   amount1={amount1}
+                  onSetError={setErrorData}
                 />
                 <ActionButton
                   disabled={!amount0 || !amount1}

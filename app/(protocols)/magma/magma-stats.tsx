@@ -22,7 +22,7 @@ export function MagmaStats() {
     transactionNum: {
       label: 'Transactions',
       value: formatNumber(magmaInfo?.transactionNum || '0'),
-      icon: <ShipWheel className="h-12 w-12" />,
+      icon: <ShipWheel className="h-10 w-10" />,
     },
     tvl: {
       label: 'TVL',
@@ -32,7 +32,7 @@ export function MagmaStats() {
     holders: {
       label: 'Holders',
       value: formatNumber(magmaInfo?.holders || '0'),
-      icon: <SquareUserRound className="h-12 w-12" />,
+      icon: <SquareUserRound className="h-10 w-10" />,
     },
   };
 

@@ -6,6 +6,7 @@ import UniswapTokenInput from '@/app/(protocols)/uniswap/uni-common/uniswap-toke
 import { BadgeHelpTooltip } from '@/components/common/badge-help';
 
 import { IToken } from '@/lib/data/tokens';
+import { ErrorVO } from '@/lib/model/error-vo';
 
 export function SetPriceAndAmount({
   isNewPool,
@@ -20,6 +21,7 @@ export function SetPriceAndAmount({
   priceRangeMax,
   amount0,
   amount1,
+  onSetError,
 }: {
   isNewPool: boolean;
   token0: IToken;
@@ -33,6 +35,7 @@ export function SetPriceAndAmount({
   amount1: string;
   setAmount0: (amount: string) => void;
   setAmount1: (amount: string) => void;
+  onSetError: (error: ErrorVO) => void;
 }) {
   return (
     <div className="flex flex-col gap-4 px-[1px]">
@@ -68,6 +71,7 @@ export function SetPriceAndAmount({
           value={amount0}
           placeholder="0"
           onChange={setAmount0}
+          onSetError={onSetError}
           label={null}
         />
         <UniswapTokenInput
@@ -75,6 +79,7 @@ export function SetPriceAndAmount({
           value={amount1}
           placeholder="0"
           onChange={setAmount1}
+          onSetError={onSetError}
           label={null}
         />
       </div>

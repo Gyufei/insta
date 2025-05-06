@@ -1,4 +1,4 @@
-import { HardDrive } from 'lucide-react';
+import { CircleHelp } from 'lucide-react';
 
 import type { ReactNode } from 'react';
 
@@ -10,10 +10,12 @@ interface EmptyStateProps {
 export function EmptyState({ message, className = '' }: EmptyStateProps) {
   return (
     <div
-      className={`flex w-full flex-col items-center justify-center self-center rounded-sm bg-muted/80 py-20 text-center text-base leading-normal text-muted-foreground ${className}`}
+      className={`flex w-full flex-col border border-border items-center justify-center self-center rounded-sm bg-popover py-10 text-center text-base leading-normal text-muted-foreground ${className}`}
     >
-      <HardDrive className="mb-2 w-12" />
-      <div>{message}</div>
+      <div className="bg-primary-foreground rounded-xl flex items-center justify-center w-15 h-15 border border-border">
+        <CircleHelp className="mb-2 w-8 h-8 text-muted-foreground/60" />
+      </div>
+      <div className="mt-4 text-primary">{message}</div>
     </div>
   );
 }

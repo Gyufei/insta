@@ -1,13 +1,14 @@
-import { Sun, Moon } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
+
 import { useEffect, useState } from 'react';
+
 import { cn } from '@/lib/utils';
 
 interface ThemeToggleProps {
   className?: string;
-  isCollapsed?: boolean;
 }
 
-export function ToggleTheme({ className, isCollapsed = false }: ThemeToggleProps) {
+export function ToggleTheme({ className }: ThemeToggleProps) {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -18,9 +19,9 @@ export function ToggleTheme({ className, isCollapsed = false }: ThemeToggleProps
     }
   }, []);
 
-  const toggleTheme = () => {
-    setIsDark(!isDark);
-    if (!isDark) {
+  const setTheme = (dark: boolean) => {
+    setIsDark(dark);
+    if (dark) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
@@ -28,65 +29,42 @@ export function ToggleTheme({ className, isCollapsed = false }: ThemeToggleProps
   };
 
   return (
-    <div className={cn('flex w-full items-center justify-center', isCollapsed ? 'px-1' : 'px-8')}>
-      {isCollapsed ? (
-        <div
-          className={cn(
-            'flex h-6 w-6 cursor-pointer items-center justify-center rounded-full transition-all duration-300',
-            isDark ? 'bg-zinc-800 text-primary-foreground' : 'bg-gray-200 text-gray-700',
-            className
-          )}
-          onClick={toggleTheme}
-          role="button"
-          tabIndex={0}
-        >
-          {isDark ? (
-            <Moon className="h-4 w-4" strokeWidth={1.5} />
-          ) : (
-            <Sun className="h-4 w-4" strokeWidth={1.5} />
-          )}
-        </div>
-      ) : (
-        <div
-          className={cn(
-            'flex h-7 w-14 cursor-pointer rounded-full p-1 transition-all duration-300',
-            isDark ? 'border border-zinc-800 bg-zinc-950' : 'border border-zinc-200 bg-primary-foreground',
-            className
-          )}
-          onClick={toggleTheme}
-          role="button"
-          tabIndex={0}
-        >
-          <div className="flex w-full items-center justify-between">
-            <div
-              className={cn(
-                'flex h-5 w-5 items-center justify-center rounded-full transition-transform duration-300',
-                isDark
-                  ? 'translate-x-0 transform bg-zinc-800'
-                  : 'translate-x-7 transform bg-gray-200'
-              )}
-            >
-              {isDark ? (
-                <Moon className="h-3 w-3 text-primary-foreground" strokeWidth={1.5} />
-              ) : (
-                <Sun className="h-3 w-3 text-gray-700" strokeWidth={1.5} />
-              )}
-            </div>
-            <div
-              className={cn(
-                'flex h-5 w-5 items-center justify-center rounded-full transition-transform duration-300',
-                isDark ? 'bg-transparent' : '-translate-x-7 transform'
-              )}
-            >
-              {isDark ? (
-                <Sun className="h-3 w-3 text-gray-500" strokeWidth={1.5} />
-              ) : (
-                <Moon className="h-3 w-3 text-primary" strokeWidth={1.5} />
-              )}
-            </div>
-          </div>
-        </div>
+    <div
+      className={cn(
+        'flex w-[72px] h-9 rounded-[8px] border border-border bg-primary-foreground transition-all duration-300',
+        className
       )}
+    >
+      {/* 亮色模式按钮 */}
+      <button
+        className={cn(
+          'flex-1 flex items-center justify-center transition-all duration-300 h-full',
+          !isDark ? 'bg-primary-foreground border-r border-border rounded-[8px]' : 'bg-transparent'
+        )}
+        style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+        onClick={() => setTheme(false)}
+        aria-label="Light"
+      >
+        <Sun
+          className={cn('h-5 w-5', !isDark ? 'text-primary' : 'text-gray-400')}
+          strokeWidth={2}
+        />
+      </button>
+      {/* 暗色模式按钮 */}
+      <button
+        className={cn(
+          'flex-1 flex items-center justify-center transition-all duration-300 h-full',
+          isDark ? 'bg-primary-foreground border-l border-border rounded-[8px]' : 'bg-transparent'
+        )}
+        style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+        onClick={() => setTheme(true)}
+        aria-label="Dark"
+      >
+        <Moon
+          className={cn('h-5 w-5', isDark ? 'text-primary' : 'text-gray-400')}
+          strokeWidth={2}
+        />
+      </button>
     </div>
   );
 }

@@ -17,7 +17,7 @@ export function AprioriStats() {
     apr: {
       label: 'Mon Savings Rate',
       value: '1 MON = 1 aprMON',
-      icon: <Percent className="h-12 w-12" />,
+      icon: <Percent className="h-10 w-10" />,
     },
     tvl: {
       label: 'TVL',

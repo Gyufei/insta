@@ -17,7 +17,6 @@ export function AccountBtn() {
   return (
     <Button
       variant="outline"
-      size="sm"
       className="flex-shrink-0 min-w-[5.75rem] text-xs font-semibold whitespace-nowrap"
       onClick={handleCreate}
       disabled={isLoading}

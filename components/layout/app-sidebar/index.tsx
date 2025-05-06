@@ -2,16 +2,14 @@
 
 import {
   BookOpen,
-  ChevronDown,
   Circle,
   CircleUserRound,
-  Cog,
+  Codesandbox,
   Mail,
   MessageCircle,
+  Minus,
   Orbit,
-  Package,
-  ServerCog,
-  Waypoints,
+  Plus,
   X,
 } from 'lucide-react';
 
@@ -40,15 +38,30 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarSeparator,
+  SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
 
 import { useSelectedAccount } from '@/lib/data/use-account';
+import { cn } from '@/lib/utils';
 
-import { ToggleTheme } from './toggle-theme';
 import { Version } from './version';
 
+// 类型定义
+type MenuItem = {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+};
+
+type MenuGroup = {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  items: MenuItem[];
+};
+
+// 常量定义
 const SOCIAL_LINKS = [
   { href: '', icon: Mail },
   { href: 'https://twitter.com/instadapp', icon: X },
@@ -56,23 +69,89 @@ const SOCIAL_LINKS = [
   { href: 'https://docs.instadapp.io', icon: BookOpen },
 ];
 
-// 定义菜单组类型
-type MenuGroup = {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  items: Array<{
-    href: string;
-    label: string;
-    icon: React.ReactNode;
-  }>;
-};
+// 组件定义
+const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => (
+  <Link
+    href={item.href}
+    className={cn(
+      'flex p-[10px] relative items-center overflow-visible rounded-md',
+      isActive && 'bg-accent/20'
+    )}
+  >
+    <div
+      className={cn(
+        'absolute h-6 w-[2px] bg-primary transition-all duration-300 -left-[11px]',
+        isActive ? 'opacity-100' : 'opacity-0'
+      )}
+    />
+    {item.icon}
+    <span className="ml-2 text-xs font-medium">{item.label}</span>
+  </Link>
+);
+
+const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: string }) => (
+  <Collapsible defaultOpen className="group/collapsible">
+    <SidebarGroup>
+      <SidebarGroupLabel asChild>
+        <CollapsibleTrigger className="flex w-full items-center group-data-[state=open]/collapsible:text-primary text-muted-foreground/80 group-data-[state=open]/collapsible:bg-accent/20">
+          {group.icon}
+          <span className="ml-2 text-sm font-medium">{group.label}</span>
+          <Minus className="ml-auto h-5 w-5 transition-transform group-data-[state=open]/collapsible:hidden" />
+          <Plus className="ml-auto h-5 w-5 transition-transform hidden group-data-[state=open]/collapsible:inline-block" />
+        </CollapsibleTrigger>
+      </SidebarGroupLabel>
+      <CollapsibleContent>
+        <SidebarGroupContent>
+          <SidebarMenuSub className='pr-0 !mr-0 mt-2'>
+            {group.items.map((item) => (
+              <SidebarMenuSubItem key={item.href}>
+                <SidebarMenuSubButton
+                  className="relative"
+                  asChild
+                  isActive={pathname === item.href}
+                >
+                  <MenuItemLink item={item} isActive={pathname === item.href} />
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        </SidebarGroupContent>
+      </CollapsibleContent>
+    </SidebarGroup>
+  </Collapsible>
+);
+
+const CollapsedMenuGroup = ({ group, isMobile }: { group: MenuGroup; isMobile: boolean }) => (
+  <DropdownMenu>
+    <SidebarMenuItem>
+      <DropdownMenuTrigger asChild>
+        <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground ml-2">
+          {group.icon}
+        </SidebarMenuButton>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        side={isMobile ? 'bottom' : 'right'}
+        align={isMobile ? 'end' : 'start'}
+        className="min-w-56 rounded-lg"
+      >
+        {group.items.map((item) => (
+          <DropdownMenuItem asChild key={item.href}>
+            <Link href={item.href} className="flex items-center">
+              {item.icon}
+              <span className="ml-2">{item.label}</span>
+            </Link>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </SidebarMenuItem>
+  </DropdownMenu>
+);
 
 export default function AppSidebar() {
   const { data: accountInfo } = useSelectedAccount();
   const pathname = usePathname();
   const { open } = useSidebar();
-  const isMobile = false; // 可以根据需要设置移动设备检测
+  const isMobile = false;
 
   const testnetItems = [{ href: '/faucet', label: 'Faucet', icon: <Orbit className="h-4 w-4" /> }];
 
@@ -89,7 +168,7 @@ export default function AppSidebar() {
       href: '/apriori',
       label: 'Apriori',
       icon: (
-        <Image src="/icons/apriori.svg" alt="aprior" width={20} height={20} className="h-4 w-4 filter grayscale" />
+        <Image src="/icons/apriori.svg" alt="aprior" width={20} height={20} className="h-4 w-4" />
       ),
     },
     {
@@ -101,7 +180,7 @@ export default function AppSidebar() {
           alt="nad-fun"
           width={20}
           height={20}
-          className="h-4 w-4 rounded-full filter grayscale"
+          className="h-4 w-4 rounded-full"
         />
       ),
     },
@@ -109,7 +188,7 @@ export default function AppSidebar() {
       href: '/uniswap',
       label: 'Uniswap V3',
       icon: (
-        <Image src="/icons/uniswap.svg" alt="uniswap" width={20} height={20} className="h-4 w-4 filter grayscale" />
+        <Image src="/icons/uniswap.svg" alt="uniswap" width={20} height={20} className="h-4 w-4" />
       ),
     },
     {
@@ -121,7 +200,7 @@ export default function AppSidebar() {
           alt="magma"
           width={20}
           height={20}
-          className="h-4 w-4 rounded-full filter grayscale"
+          className="h-4 w-4 rounded-full"
         />
       ),
     },
@@ -134,7 +213,7 @@ export default function AppSidebar() {
           alt="nad-name-server"
           width={20}
           height={20}
-          className="h-4 w-4 filter grayscale"
+          className="h-4 w-4"
         />
       ),
     },
@@ -142,33 +221,7 @@ export default function AppSidebar() {
       href: '/ambient',
       label: 'Ambient',
       icon: (
-        <Image src="/icons/ambient.svg" alt="ambient" width={20} height={20} className="h-4 w-4 filter grayscale" />
-      ),
-    },
-    {
-      href: '/meme',
-      label: 'Meme',
-      icon: (
-        <Image
-          src="/icons/monad.svg"
-          alt="meme"
-          width={20}
-          height={20}
-          className="h-4 w-4 rounded-full filter grayscale"
-        />
-      ),
-    },
-    {
-      href: '/curvance',
-      label: 'Curvance',
-      icon: (
-        <Image
-          src="/icons/curvance.svg"
-          alt="curvance"
-          width={20}
-          height={20}
-          className="h-4 w-4 filter grayscale"
-        />
+        <Image src="/icons/ambient.svg" alt="ambient" width={20} height={20} className="h-4 w-4" />
       ),
     },
   ];
@@ -177,167 +230,70 @@ export default function AppSidebar() {
     { href: '/authority', label: 'Authority', icon: <CircleUserRound className="h-4 w-4" /> },
   ];
 
-  // 定义菜单组
   const menuGroups: MenuGroup[] = [
     {
       id: 'protocols',
       label: 'Protocols',
-      icon: <ServerCog className="h-4 w-4" />,
+      icon: <Codesandbox className="h-5 w-5" />,
       items: protocolItems,
     },
     {
       id: 'modules',
       label: 'Modules',
-      icon: <Package className="h-4 w-4" />,
+      icon: <Codesandbox className="h-5 w-5" />,
       items: modules,
     },
     {
       id: 'testnet',
       label: 'Testnet',
-      icon: <Waypoints className="h-4 w-4" />,
+      icon: <Codesandbox className="h-5 w-5" />,
       items: testnetItems,
     },
   ];
 
-  // 条件渲染菜单组
-  const renderMenuGroup = (group: MenuGroup) => {
-    if (open) {
-      return (
-        <Collapsible key={group.id} defaultOpen className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="flex w-full items-center">
-                {group.icon}
-                <span className="ml-2">{group.label}</span>
-                <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenuSub>
-                  {group.items.map((item) => (
-                    <SidebarMenuSubItem key={item.href}>
-                      <SidebarMenuSubButton asChild isActive={pathname === item.href}>
-                        <Link href={item.href} className="flex items-center">
-                          {item.icon}
-                          <span className="ml-2">{item.label}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-      );
-    } else {
-      return (
-        <DropdownMenu key={group.id}>
-          <SidebarMenuItem>
-            <DropdownMenuTrigger asChild>
-              <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground ml-2">
-                {group.icon}
-              </SidebarMenuButton>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              side={isMobile ? 'bottom' : 'right'}
-              align={isMobile ? 'end' : 'start'}
-              className="min-w-56 rounded-lg"
-            >
-              {group.items.map((item) => (
-                <DropdownMenuItem asChild key={item.href}>
-                  <Link href={item.href} className="flex items-center">
-                    {item.icon}
-                    <span className="ml-2">{item.label}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </SidebarMenuItem>
-        </DropdownMenu>
-      );
-    }
-  };
+  if (accountInfo?.sandbox_account) {
+    menuGroups.push({
+      id: 'utilities',
+      label: 'Utilities',
+      icon: <Codesandbox className="h-5 w-5" />,
+      items: utilitiesItems,
+    });
+  }
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="relative flex items-center justify-center py-4">
-        <Link href="/" className="flex items-center justify-center">
+      <SidebarHeader
+        className={cn(
+          'relative flex flex-row border-b border-border items-center justify-between py-2',
+          !open && 'flex-col'
+        )}
+        style={{
+          height: 'var(--height-navbar)',
+        }}
+      >
+        <Link href="/" className={cn('flex items-center justify-center')}>
           {open ? (
-            <Image src="/icons/logo.svg" alt="logo" width={140} height={40} className="filter grayscale" />
+            <Image src="/icons/logo.svg" alt="logo" width={100} height={26} className="" />
           ) : (
-            <Image src="/icons/logo-small.svg" alt="logo" width={30} height={30} className="filter grayscale" />
+            <Image src="/icons/logo-small.svg" alt="logo" width={30} height={30} className="" />
           )}
         </Link>
+        <SidebarTrigger className="text-muted-foreground/80" />
       </SidebarHeader>
 
-      <SidebarContent className="scrollbar-hover">
+      <SidebarContent className="scrollbar-hover mt-[10px]">
         <SidebarMenu>
-          {menuGroups.map(renderMenuGroup)}
-
-          {accountInfo?.sandbox_account && (
-            <>
-              {open ? (
-                <Collapsible defaultOpen className="group/collapsible">
-                  <SidebarGroup>
-                    <SidebarGroupLabel asChild>
-                      <CollapsibleTrigger className="flex w-full items-center">
-                        <Cog className="h-4 w-4" />
-                        <span className="ml-2">Utilities</span>
-                        <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                      </CollapsibleTrigger>
-                    </SidebarGroupLabel>
-                    <CollapsibleContent>
-                      <SidebarGroupContent>
-                        <SidebarMenuSub>
-                          {utilitiesItems.map((item) => (
-                            <SidebarMenuSubItem key={item.href}>
-                              <SidebarMenuSubButton asChild isActive={pathname === item.href}>
-                                <Link href={item.href} className="flex items-center">
-                                  {item.icon}
-                                  <span className="ml-2">{item.label}</span>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </SidebarGroupContent>
-                    </CollapsibleContent>
-                  </SidebarGroup>
-                </Collapsible>
-              ) : (
-                <DropdownMenu>
-                  <SidebarMenuItem>
-                    <DropdownMenuTrigger asChild>
-                      <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground ml-2">
-                        <Cog className="h-4 w-4" />
-                      </SidebarMenuButton>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      side={isMobile ? 'bottom' : 'right'}
-                      align={isMobile ? 'end' : 'start'}
-                      className="min-w-56 rounded-lg"
-                    >
-                      {utilitiesItems.map((item) => (
-                        <DropdownMenuItem asChild key={item.href}>
-                          <Link href={item.href} className="flex items-center">
-                            {item.icon}
-                            <span className="ml-2">{item.label}</span>
-                          </Link>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </SidebarMenuItem>
-                </DropdownMenu>
-              )}
-            </>
+          {menuGroups.map((group) =>
+            open ? (
+              <ExpandedMenuGroup key={group.id} group={group} pathname={pathname} />
+            ) : (
+              <CollapsedMenuGroup key={group.id} group={group} isMobile={isMobile} />
+            )
           )}
         </SidebarMenu>
       </SidebarContent>
 
       <SidebarFooter>
-        <SidebarSeparator />
         <div
           className={`flex w-full items-center justify-center ${!open ? 'flex-col space-y-3' : 'space-x-4'}`}
         >
@@ -353,7 +309,6 @@ export default function AppSidebar() {
             </a>
           ))}
         </div>
-        <ToggleTheme isCollapsed={!open} />
         {open && <Version version="v0.1.0" />}
       </SidebarFooter>
     </Sidebar>

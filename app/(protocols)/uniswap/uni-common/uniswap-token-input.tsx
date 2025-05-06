@@ -54,6 +54,7 @@ export default function UniswapTokenInput({
       onChange(val);
 
       if (!onSetError) return;
+
       if (token && currentBalance && parseFloat(val) > parseFloat(currentBalance)) {
         onSetError({
           showError: true,

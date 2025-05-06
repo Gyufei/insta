@@ -5,11 +5,11 @@ import { multiply } from 'safebase';
 
 import Image from 'next/image';
 
+import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { WithLoading } from '@/components/common/with-loading';
 
 import { IToken } from '@/lib/data/tokens';
 import { formatBig, formatNumber } from '@/lib/utils/number';
@@ -39,8 +39,8 @@ export function TokenStakeCard({
   const priceValue = balance ? multiply(formattedBalance, String(tokenPrice)) : '0';
 
   return (
-    <div className="mt-4 grid w-full min-w-max grid-cols-1 gap-4 px-4 2xl:mt-6 2xl:gap-6 2xl:px-12">
-      <Card className="relative flex flex-1 flex-shrink-0 flex-col shadow">
+    <div className="mt-4 grid w-full min-w-max grid-cols-2 gap-4 px-4 2xl:mt-6 2xl:gap-6 2xl:px-12">
+      <Card className="relative flex flex-1 flex-shrink-0 flex-col shadow-none">
         <CardContent className="flex items-center px-4">
           <div className="flex h-12 w-12 items-center justify-center dark:opacity-90">
             <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full">
@@ -85,14 +85,16 @@ export function TokenStakeCard({
           <Button
             onClick={onDeposit}
             size="default"
-            className="flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            variant="outline"
+            className="blue-hover-btn flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
           >
             {depositButtonText}
           </Button>
           <Button
             onClick={onWithdraw}
             size="default"
-            className="flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            variant="outline"
+            className="blue-hover-btn flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
           >
             {withdrawButtonText}
           </Button>
