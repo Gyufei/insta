@@ -157,7 +157,7 @@ export default function AppSidebar() {
 
   const modules = [
     {
-      href: 'https://odds.tadle.com/',
+      href: '/odds',
       label: 'Odds',
       icon: <Circle className="h-4 w-4" />,
     },

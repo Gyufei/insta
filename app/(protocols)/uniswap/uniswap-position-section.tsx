@@ -63,7 +63,7 @@ export function UniswapPositionsSection() {
           <div className="ml-2">
             <Button
               size="sm"
-              className="flex flex-shrink-0 select-none items-center justify-center"
+              className="flex bg-pro-blue text-white hover:bg-pro-blue/80 flex-shrink-0 select-none items-center justify-center"
               onClick={handleNewPosition}
             >
               <div className="flex items-center justify-center">

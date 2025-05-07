@@ -3,8 +3,11 @@ export const isProduction = process.env.NODE_ENV === 'production' && !isPreview;
 
 const ProdHost = '';
 const DevHost = 'https://preview-sandbox-api.tadle.com';
+const OddsProdHost = '';
+const OddsDevHost = 'https://preview-odds-api.tadle.com';
 
 export const ApiHost = isProduction ? ProdHost : DevHost;
+export const OddsApiHost = isProduction ? OddsProdHost : OddsDevHost;
 
 export const ApiPath = {
   account: `${ApiHost}/account/sandbox_account`,
@@ -54,4 +57,6 @@ export const ApiPath = {
   ambientCreatePosition: `${ApiHost}/ambient_finance/create_pool_and_add_liquidity`,
   ambientAddLiquidity: `${ApiHost}/ambient_finance/add_liquidity`,
   ambientRemoveLiquidity: `${ApiHost}/ambient_finance/remove_liquidity`,
+
+  oddsMarkets: `${OddsApiHost}/markets`,
 };

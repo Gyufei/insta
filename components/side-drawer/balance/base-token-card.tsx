@@ -57,7 +57,7 @@ export function BaseTokenCard({ token, balance, className }: BaseTokenCardProps)
           </div>
         </div>
 
-        <Button onClick={handleTrade} variant="outline" size="sm" className="blue-hover-btn text-xs px-2 h-6">
+        <Button onClick={handleTrade} variant="outline" size="sm" className="hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue text-xs px-2 h-6">
           Trade
         </Button>
       </CardContent>

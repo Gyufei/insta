@@ -86,7 +86,7 @@ export function TokenStakeCard({
             onClick={onDeposit}
             size="default"
             variant="outline"
-            className="blue-hover-btn flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            className="hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
           >
             {depositButtonText}
           </Button>
@@ -94,7 +94,7 @@ export function TokenStakeCard({
             onClick={onWithdraw}
             size="default"
             variant="outline"
-            className="blue-hover-btn flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            className="hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
           >
             {withdrawButtonText}
           </Button>

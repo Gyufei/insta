@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRight, X } from 'lucide-react';
+import { ChevronRight, Search, X } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
 
@@ -71,10 +71,11 @@ export function SearchName() {
     <div className="container px-4 2xl:px-12">
       <TitleH2>Search name</TitleH2>
       <div className="relative mt-4">
-        <div className="relative bg-gradient-78 from-[#5A00C8] bg-linear-78 to-[#FB0899] p-[2px] rounded-sm">
+        <div className="relative border rounded-sm pl-10">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300" />
           <Input
             type="text"
-            className="font-medium h-[60px] border-none bg-primary-foreground ring-0 focus-visible:ring-0 focus-visible:shadow-none text-xl w-full px-6 py-4 rounded-sm placeholder-gray-300 focus:outline-none"
+            className="font-medium h-12 border-none bg-primary-foreground ring-0 focus-visible:ring-0 focus-visible:shadow-none text-xl w-full pl-2 outline-none focus-visible:outline-none shadow-none pr-6 py-4 rounded-sm placeholder-gray-300 focus:outline-none"
             placeholder="Search a name"
             value={inputTerm}
             onChange={handleInputChange}

@@ -35,7 +35,7 @@ export function NadFunTokens() {
         title="Recently Active Tokens"
         emptyDesc="No recently active tokens found"
       >
-        <Button className="w-fit self-end" onClick={handleCreateToken}>
+        <Button className="w-fit self-end bg-pro-blue text-white hover:bg-pro-blue/80" onClick={handleCreateToken}>
           Create Token
         </Button>
       </NadFunTokenList>

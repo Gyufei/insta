@@ -116,7 +116,7 @@ export function FaucetContainer() {
   }
 
   return (
-    <div className={cn('border-border border rounded-3xl px-5 py-4 mt-5 max-w-lg mx-auto')}>
+    <div className={cn('border-border border rounded-3xl px-5 py-4 mt-5')}>
       <h1 className="text-xl text-primary font-medium">Enter wallet address</h1>
       <div className="relative w-full mt-3">
         <div className="absolute left-3 top-1/2 -translate-y-1/2">
@@ -136,8 +136,9 @@ export function FaucetContainer() {
 
       <Button
         disabled={errorData.showError || isPending}
-        className="w-full mt-4"
+        className="w-full mt-4 bg-pro-blue/20 text-pro-blue hover:bg-pro-blue/30 hover:text-pro-blue"
         size="lg"
+        variant="outline"
         onClick={handleAirdrop}
       >
         {isPending ? 'Processing...' : 'Get Testnet Mon'}
