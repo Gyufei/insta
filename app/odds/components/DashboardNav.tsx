@@ -30,7 +30,7 @@ export default function DashboardNav({
   const allViews = [
     { id: "trade", label: "Trade", icon: Layers },
     { id: "portfolio", label: "Portfolio", icon: SwatchBook },
-    { id: "watchlist", label: "Watchlist", icon: Star },
+    { id: "watchlist", label: "WatchList", icon: Star },
   ];
 
   // Filter views based on authentication status

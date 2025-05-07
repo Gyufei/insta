@@ -59,4 +59,8 @@ export const ApiPath = {
   ambientRemoveLiquidity: `${ApiHost}/ambient_finance/remove_liquidity`,
 
   oddsMarkets: `${OddsApiHost}/markets`,
+  oddsWatchList: `${OddsApiHost}/user/watchlist`,
+  oddsWatchListGet: `${OddsApiHost}/user/watchlist/get`,
+  oddsMarketActivities: `${OddsApiHost}/markets/activities`,
+  oddsVolumeLeader: `${OddsApiHost}/markets/rank/volume`,
 };

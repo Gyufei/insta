@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'ipfs.nad.fun',
       },
+      {
+        protocol: 'https',
+        hostname: 'img-bucket.tadle.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
+      },
     ],
   },
   /* config options here */

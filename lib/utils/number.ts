@@ -43,3 +43,14 @@ export function parseBig(num: string | number, decimals = DEFAULT_TOKEN_DECIMALS
     return multiply(num.toString(), Math.pow(10, decimals).toString());
   }
 }
+
+export function formatCurrency(value: string | number) {
+  const num = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]+/g, '')) : value;
+
+  if (isNaN(num)) return '$0';
+
+  return numbro(num).format({
+    average: true,
+    mantissa: 1,
+  });
+}

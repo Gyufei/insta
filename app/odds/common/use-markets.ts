@@ -5,6 +5,7 @@ interface IOutcome {
   name: string;
   probability: number;
   players: number;
+  status?: string;
 }
 
 export interface IMarket {
@@ -22,12 +23,17 @@ export interface IMarketsResponse {
   market_list: IMarket[];
 }
 
-export function useMarkets(type: string) {
+export function useMarkets(type?: string, status?: string) {
   return createQueryHook<IMarketsResponse>(
     ApiPath.oddsMarkets,
-    () => ['markets', type],
+    () => ['markets', `${type}+${status}`],
     (url) => {
-      url.searchParams.set('category', type);
+      if (type) {
+        url.searchParams.set('category', type);
+      }
+      if (status) {
+        url.searchParams.set('status', status);
+      }
       return url;
     },
     {
