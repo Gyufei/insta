@@ -34,7 +34,7 @@ export default function SearchSuggestions({
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   const handleMarketClick = (id: string) => {
-    router.push(`/market/${id}`);
+    router.push(`/odds/market/${id}`);
     onNavigate();
   };
 

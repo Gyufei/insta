@@ -53,7 +53,7 @@ export default function MarketTitle({ title, id }: MarketTitleProps) {
 
   return (
     <Link
-      href={`/market/${id}`}
+      href={`/odds/market/${id}`}
       target={process.env.NODE_ENV === 'production' ? '_blank' : undefined}
       className="block h-[30px] overflow-hidden cursor-pointer hover:text-[var(--color-odd-main)]"
       onMouseEnter={handleMouseEnter}

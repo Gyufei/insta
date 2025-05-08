@@ -63,4 +63,12 @@ export const ApiPath = {
   oddsWatchListGet: `${OddsApiHost}/user/watchlist/get`,
   oddsMarketActivities: `${OddsApiHost}/markets/activities`,
   oddsVolumeLeader: `${OddsApiHost}/markets/rank/volume`,
+  oddsMarketDetail: `${OddsApiHost}/market/{marketId}`,
+  oddsMarketHolder: `${OddsApiHost}/market/{marketId}/holders`,
+  oddsMarketItemActivity: `${OddsApiHost}/market/{marketId}/activities`,
+  oddsUserPositions: `${OddsApiHost}/user/positions`,
+  oddsMarketChart: `${OddsApiHost}/market/{marketId}/curve`,
+  oddsMarketOrderbook: `${OddsApiHost}/market/{marketId}/orderbook`,
+
+  oddsTrade: `${OddsApiHost}/market/{marketId}/trade`,
 };

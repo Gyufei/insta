@@ -1,17 +1,9 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
-import { createChart, ColorType, LineStyle } from 'lightweight-charts';
-import { http } from '../utils/http';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { LineStyle, createChart } from 'lightweight-charts';
 
-interface ChartDataPoint {
-  time: number;
-  values: number[];
-}
+import React, { useCallback, useEffect, useRef } from 'react';
 
-interface ChartData {
-  outcomes: string[];
-  series: string[];
-  data_points: ChartDataPoint[];
-}
+import { useMarketItemChart } from '../common/use-market-item-chart';
 
 interface MarketChartProps {
   marketId: string;
@@ -20,28 +12,20 @@ interface MarketChartProps {
   outcomeNames?: string[];
 }
 
-export default function MarketChart({ marketId, timeframe, outcomeCount = 2, outcomeNames }: MarketChartProps) {
+export default function MarketChart({
+  marketId,
+  timeframe,
+  outcomeCount = 2,
+  outcomeNames,
+}: MarketChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<any>(null);
-  const resizeObserverRef = useRef<ResizeObserver | null>(null);
-  const logoHiderRef = useRef<HTMLStyleElement | null>(null);
   const seriesRefs = useRef<any[]>([]);
-  const [chartData, setChartData] = useState<ChartData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  // Validate chart data structure
-  const validateChartData = (data: any): data is ChartData => {
-    return data && 
-           Array.isArray(data.outcomes) &&
-           Array.isArray(data.series) &&
-           Array.isArray(data.data_points) &&
-           data.data_points.every((point: any) => 
-             typeof point.time === 'number' && 
-             Array.isArray(point.values) &&
-             point.values.length === data.outcomes.length
-           );
-  };
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+
+  const logoHiderRef = useRef<HTMLStyleElement | null>(null);
+
+  const { data: chartData, isLoading, error } = useMarketItemChart(marketId, timeframe);
 
   const handleResize = useCallback(() => {
     if (chartRef.current && chartContainerRef.current) {
@@ -50,43 +34,6 @@ export default function MarketChart({ marketId, timeframe, outcomeCount = 2, out
       });
     }
   }, []);
-
-  // Fetch chart data
-  useEffect(() => {
-    const fetchChartData = async () => {
-      if (!marketId) return;
-      
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const response = await http.get(`/market/${marketId}/curve?timeframe=${timeframe}`, {
-          retries: 3,
-          retryDelay: 1000
-        });
-        
-        if (!response) {
-          throw new Error('Invalid response format');
-        }
-
-        // Validate data structure
-        if (!validateChartData(response)) {
-          throw new Error('Invalid chart data format');
-        }
-
-        setChartData(response);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching chart data:', err);
-        setError('Failed to load chart data');
-        setChartData(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchChartData();
-  }, [marketId, timeframe]);
 
   useEffect(() => {
     if (!chartContainerRef.current) return;
@@ -108,7 +55,7 @@ export default function MarketChart({ marketId, timeframe, outcomeCount = 2, out
       },
       grid: {
         vertLines: { visible: false },
-        horzLines: { color: '#f0f0f0' }
+        horzLines: { color: '#f0f0f0' },
       },
       rightPriceScale: {
         autoScale: false,
@@ -134,19 +81,19 @@ export default function MarketChart({ marketId, timeframe, outcomeCount = 2, out
         handleScroll: false,
         fixedRange: {
           minValue: 0,
-          maxValue: 100
+          maxValue: 100,
         },
         ticks: {
           visible: true,
           values: [0, 20, 40, 60, 80, 100],
-          formatter: (price: number) => `${price}%`
-        }
+          formatter: (price: number) => `${price}%`,
+        },
       },
       timeScale: {
         borderVisible: false,
         visible: false,
         handleScale: false,
-        handleScroll: false
+        handleScroll: false,
       },
       handleScale: false,
       handleScroll: false,
@@ -162,60 +109,53 @@ export default function MarketChart({ marketId, timeframe, outcomeCount = 2, out
           style: LineStyle.Solid,
         },
       },
-    });
+    } as any);
 
     // Color palette for multiple outcomes
     const colors = [
       '#10B981', // Green
       '#EF4444', // Red
-      '#3B82F6', // Blue 
+      '#3B82F6', // Blue
       '#8B5CF6', // Purple
       '#EC4899', // Pink
       '#F59E0B', // Yellow
-      '#6366F1'  // Indigo
+      '#6366F1', // Indigo
     ];
 
     // Add series for each outcome
-    seriesRefs.current = Array(outcomeCount).fill(null).map((_, index) => {
-      return chart.addLineSeries({
-        color: colors[index % colors.length],
-        lineWidth: 3,
-        autoscaleInfoProvider: () => ({
-          priceRange: {
-            minValue: 0,
-            maxValue: 100
-          }
-        }),
-        priceFormat: {
-          type: 'price',
-          precision: 2,
-          minMove: 0.01,
-        },
-        lastValueVisible: false,
-        priceLineVisible: false,
-        crosshairMarkerVisible: true,
-        crosshairMarkerRadius: 6
+    seriesRefs.current = Array(outcomeCount)
+      .fill(null)
+      .map((_, index) => {
+        return (chart as any).addLineSeries({
+          type: 'Line',
+          color: colors[index % colors.length],
+          lineWidth: 3,
+          autoscaleInfoProvider: () => ({
+            priceRange: {
+              minValue: 0,
+              maxValue: 100,
+            },
+          }),
+          priceFormat: {
+            type: 'price',
+            precision: 2,
+            minMove: 0.01,
+          },
+          lastValueVisible: false,
+          priceLineVisible: false,
+          crosshairMarkerVisible: true,
+          crosshairMarkerRadius: 6,
+        } as any);
       });
-    });
-
-    // Map timeframe to days for data display
-    const daysMap = {
-      '1H': 1/24,
-      '6H': 1/4,
-      '1D': 1,
-      '1W': 7,
-      '1M': 30,
-      'ALL': 90
-    };
 
     if (chartData && chartData.data_points.length > 0) {
       // Set data for each series
       seriesRefs.current.forEach((series, index) => {
         const seriesData = chartData.data_points
-          .filter(point => point.values[index] !== undefined)
-          .map(point => ({
+          .filter((point) => point.values[index] !== undefined)
+          .map((point) => ({
             time: Math.floor(point.time / 1000), // Convert to seconds and ensure integer
-            value: point.values[index]
+            value: point.values[index],
           }))
           .sort((a, b) => a.time - b.time); // Ensure chronological order
 
@@ -225,32 +165,34 @@ export default function MarketChart({ marketId, timeframe, outcomeCount = 2, out
       // Fit content after data is loaded
       chart.timeScale().fitContent();
     }
-    
+
     // Create labels for each outcome
-    const labels = Array(outcomeCount).fill(null).map((_, index) => {
-      const label = document.createElement('div');
-      label.style.position = 'absolute';
-      label.style.top = '0';
-      label.style.left = '0';
-      label.style.padding = '4px 8px';
-      label.style.backgroundColor = `${colors[index]}`;
-      label.style.color = 'white';
-      label.style.borderRadius = '4px';
-      label.style.fontSize = '12px';
-      label.style.fontWeight = '500';
-      label.style.whiteSpace = 'nowrap';
-      label.style.opacity = '0';
-      label.style.transition = 'all 0.2s ease-out';
-      label.style.zIndex = '10';
-      label.style.pointerEvents = 'none';
-      label.style.willChange = 'opacity';
-      
-      if (chartContainerRef.current) {
-        chartContainerRef.current.appendChild(label);
-      }
-      
-      return label;
-    });
+    const labels = Array(outcomeCount)
+      .fill(null)
+      .map((_, index) => {
+        const label = document.createElement('div');
+        label.style.position = 'absolute';
+        label.style.top = '0';
+        label.style.left = '0';
+        label.style.padding = '4px 8px';
+        label.style.backgroundColor = `${colors[index]}`;
+        label.style.color = 'white';
+        label.style.borderRadius = '4px';
+        label.style.fontSize = '12px';
+        label.style.fontWeight = '500';
+        label.style.whiteSpace = 'nowrap';
+        label.style.opacity = '0';
+        label.style.transition = 'all 0.2s ease-out';
+        label.style.zIndex = '10';
+        label.style.pointerEvents = 'none';
+        label.style.willChange = 'opacity';
+
+        if (chartContainerRef.current) {
+          chartContainerRef.current.appendChild(label);
+        }
+
+        return label;
+      });
 
     // Update label positions
     const LABEL_OFFSET = 10; // Define offset constant at the top level
@@ -258,14 +200,16 @@ export default function MarketChart({ marketId, timeframe, outcomeCount = 2, out
     const updateLabelPositions = (param: any) => {
       const currentTime = param?.time;
       if (!currentTime || !chartContainerRef.current) {
-        labels.forEach(label => {
+        labels.forEach((label) => {
           label.style.opacity = '0';
         });
         return;
       }
 
       // Find the closest data point
-      const point = chartData?.data_points.find(d => Math.floor(d.time / 1000) === Math.floor(currentTime));
+      const point = chartData?.data_points.find(
+        (d) => Math.floor(d.time / 1000) === Math.floor(currentTime)
+      );
       if (!point) return;
 
       const timeCoord = chart.timeScale().timeToCoordinate(currentTime);
@@ -279,7 +223,7 @@ export default function MarketChart({ marketId, timeframe, outcomeCount = 2, out
         label.style.opacity = '1';
         label.textContent = `${outcomeNames?.[index] || `Outcome ${index + 1}`}: ${point.values[index].toFixed(1)}%`;
 
-        let top = coord - (label.offsetHeight / 2);
+        let top = coord - label.offsetHeight / 2;
         let left = timeCoord + LABEL_OFFSET;
 
         // Position label
@@ -288,11 +232,13 @@ export default function MarketChart({ marketId, timeframe, outcomeCount = 2, out
       });
 
       // Handle label overlap
-      const sortedLabels = labels.map((label, index) => ({
-        label,
-        top: parseFloat(label.dataset.originalTop || '0') || 0,
-        index
-      })).sort((a, b) => a.top - b.top);
+      const sortedLabels = labels
+        .map((label, index) => ({
+          label,
+          top: parseFloat(label.dataset.originalTop || '0') || 0,
+          index,
+        }))
+        .sort((a, b) => a.top - b.top);
 
       // Adjust positions to prevent overlap
       let lastAdjustedTop = sortedLabels[0].top;
@@ -327,7 +273,7 @@ export default function MarketChart({ marketId, timeframe, outcomeCount = 2, out
       }
 
       // Clean up labels
-      labels.forEach(label => {
+      labels.forEach((label) => {
         if (chartContainerRef.current && label.parentNode === chartContainerRef.current) {
           chartContainerRef.current.removeChild(label);
         }
@@ -357,7 +303,5 @@ export default function MarketChart({ marketId, timeframe, outcomeCount = 2, out
     );
   }
 
-  return (
-    <div ref={chartContainerRef} className="w-full relative" style={{ height: '280px' }} />
-  );
+  return <div ref={chartContainerRef} className="w-full relative" style={{ height: '280px' }} />;
 }
