@@ -8,8 +8,8 @@ import useOnclickOutside from 'react-cool-onclickoutside';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import SearchSuggestions from '../components/SearchSuggestions';
-import { IMarket, useMarkets } from './use-markets';
+import { IMarket, useMarkets } from '../common/use-markets';
+import SearchSuggestions from './SearchSuggestions';
 
 interface NavLinkProps {
   href: string;
@@ -151,19 +151,19 @@ export default function OddsHeader() {
 
               <nav className="flex-none flex items-center gap-6">
                 <NavLink
-                  href="/markets"
+                  href="/odds/markets"
                   icon={<Grid className="h-4 w-4" />}
                   label="Markets"
                   isActive={pathname === '/odds/markets' || pathname === '/odds'}
                 />
                 <NavLink
-                  href="/dashboard"
+                  href="/odds/dashboard"
                   icon={<LayoutDashboard className="h-4 w-4" />}
                   label="Dashboard"
                   isActive={pathname.startsWith('/odds/dashboard')}
                 />
                 <NavLink
-                  href="/ranks"
+                  href="/odds/ranks"
                   icon={<Medal className="h-4 w-4" />}
                   label="Ranks"
                   isActive={pathname === '/odds/ranks'}

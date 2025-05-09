@@ -223,8 +223,8 @@ export default function MarketChart({
         label.style.opacity = '1';
         label.textContent = `${outcomeNames?.[index] || `Outcome ${index + 1}`}: ${point.values[index].toFixed(1)}%`;
 
-        let top = coord - label.offsetHeight / 2;
-        let left = timeCoord + LABEL_OFFSET;
+        const top = coord - label.offsetHeight / 2;
+        const left = timeCoord + LABEL_OFFSET;
 
         // Position label
         label.style.transform = `translate(${left}px, ${top}px)`;
@@ -265,17 +265,19 @@ export default function MarketChart({
 
     chartRef.current = chart;
 
+    const chartConRefCurrent = chartContainerRef.current;
+
     return () => {
       // Clean up ResizeObserver
-      if (resizeObserverRef.current && chartContainerRef.current) {
-        resizeObserverRef.current.unobserve(chartContainerRef.current);
+      if (resizeObserverRef.current && chartConRefCurrent) {
+        resizeObserverRef.current.unobserve(chartConRefCurrent);
         resizeObserverRef.current.disconnect();
       }
 
       // Clean up labels
       labels.forEach((label) => {
-        if (chartContainerRef.current && label.parentNode === chartContainerRef.current) {
-          chartContainerRef.current.removeChild(label);
+        if (chartConRefCurrent && label.parentNode === chartConRefCurrent) {
+          chartConRefCurrent.removeChild(label);
         }
       });
 
@@ -298,7 +300,7 @@ export default function MarketChart({
   if (error) {
     return (
       <div className="w-full h-[280px] flex items-center justify-center bg-gray-50 text-red-600">
-        {error}
+        {error.message}
       </div>
     );
   }

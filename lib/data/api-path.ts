@@ -69,6 +69,8 @@ export const ApiPath = {
   oddsUserPositions: `${OddsApiHost}/user/positions`,
   oddsMarketChart: `${OddsApiHost}/market/{marketId}/curve`,
   oddsMarketOrderbook: `${OddsApiHost}/market/{marketId}/orderbook`,
+  oddsMarketRankProfit: `${OddsApiHost}/markets/rank/profit`,
+  oddsMarketRankVolume: `${OddsApiHost}/markets/rank/volume`,
 
   oddsTrade: `${OddsApiHost}/market/{marketId}/trade`,
 };
