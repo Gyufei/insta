@@ -5,7 +5,7 @@ import { ReactNode, createContext, useContext, useEffect, useState } from 'react
 import { useSelectedAccount } from '@/lib/data/use-account';
 
 import { useWatchList } from './use-watchlist';
-import { useWatchListMutation } from './use-watchlist-mutation';
+import { useWatchListAction } from './use-watchlist-mutation';
 
 const WATCH_LIST_STORAGE_KEY = 'tadle_watchlist';
 
@@ -23,7 +23,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   const account = accountInfo?.sandbox_account;
 
   const { data: watchList } = useWatchList();
-  const { addToWatchList } = useWatchListMutation();
+  const { addToWatchList } = useWatchListAction();
 
   // 初始化时从 localStorage 加载数据
   useEffect(() => {

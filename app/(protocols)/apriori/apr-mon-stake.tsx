@@ -2,7 +2,7 @@
 
 import { TokenStakeCard } from '@/components/common/token-stake-card';
 
-import { APR_MONAD, TokenPriceMap } from '@/lib/data/tokens';
+import { APR_MONAD, TokenPriceMap } from '@/config/tokens';
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 

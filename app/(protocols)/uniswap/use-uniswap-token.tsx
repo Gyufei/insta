@@ -1,4 +1,4 @@
-import { APR_MONAD, G_MONAD, IToken, MONAD } from '@/lib/data/tokens';
+import { APR_MONAD, G_MONAD, IToken, MONAD } from '@/config/tokens';
 
 const UNISWAP_TOKENS: Array<IToken> = [
   MONAD,

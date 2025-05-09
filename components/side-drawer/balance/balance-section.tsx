@@ -4,7 +4,7 @@ import { multiply } from 'safebase';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { WithLoading } from '@/components/common/with-loading';
 
-import { TokenPriceMap } from '@/lib/data/tokens';
+import { TokenPriceMap } from '@/config/tokens';
 import { formatNumber } from '@/lib/utils/number';
 import { useAccountBalance } from '@/lib/web3/use-account-balance';
 

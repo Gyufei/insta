@@ -2,7 +2,7 @@ import { divide } from 'safebase';
 
 import { useMemo } from 'react';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { IUniswapPosition, PositionStatus } from '@/lib/data/use-uniswap-position';
 import { formatBig } from '@/lib/utils/number';
 

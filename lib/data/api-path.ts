@@ -58,19 +58,28 @@ export const ApiPath = {
   ambientAddLiquidity: `${ApiHost}/ambient_finance/add_liquidity`,
   ambientRemoveLiquidity: `${ApiHost}/ambient_finance/remove_liquidity`,
 
-  oddsMarkets: `${OddsApiHost}/markets`,
   oddsWatchList: `${OddsApiHost}/user/watchlist`,
   oddsWatchListGet: `${OddsApiHost}/user/watchlist/get`,
+  oddsOrders: `${OddsApiHost}/user/orders`,
+  oddsUserPositions: `${OddsApiHost}/user/positions`,
+  oddsTradingBalance: `${OddsApiHost}/user/trading_balance`,
+  oddsUserMarkets: `${OddsApiHost}/user/markets`,
+  oddsCloseOrder: `${OddsApiHost}/user/orders/close`,
+
+  oddsMarkets: `${OddsApiHost}/markets`,
   oddsMarketActivities: `${OddsApiHost}/markets/activities`,
   oddsVolumeLeader: `${OddsApiHost}/markets/rank/volume`,
   oddsMarketDetail: `${OddsApiHost}/market/{marketId}`,
   oddsMarketHolder: `${OddsApiHost}/market/{marketId}/holders`,
   oddsMarketItemActivity: `${OddsApiHost}/market/{marketId}/activities`,
-  oddsUserPositions: `${OddsApiHost}/user/positions`,
   oddsMarketChart: `${OddsApiHost}/market/{marketId}/curve`,
   oddsMarketOrderbook: `${OddsApiHost}/market/{marketId}/orderbook`,
   oddsMarketRankProfit: `${OddsApiHost}/markets/rank/profit`,
   oddsMarketRankVolume: `${OddsApiHost}/markets/rank/volume`,
-
   oddsTrade: `${OddsApiHost}/market/{marketId}/trade`,
+  oddsCancelOrder: `${OddsApiHost}/market/orders/cancel`,
+
+  oddsDeposit: `${OddsApiHost}/calldata/deposit`,
+  oddsWithdraw: `${OddsApiHost}/calldata/withdraw`,
+  oddsClaim: `${OddsApiHost}/calldata/claim`,
 };

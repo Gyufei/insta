@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
-import { IToken, TokenPriceMap } from '@/lib/data/tokens';
+import { IToken, TokenPriceMap } from '@/config/tokens';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/utils/number';

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { PositionStatus } from '@/lib/data/use-uniswap-position';
 import { cn } from '@/lib/utils';
 

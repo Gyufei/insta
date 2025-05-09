@@ -6,6 +6,7 @@ interface IOutcome {
   probability: number;
   players: number;
   status?: string;
+  logo?: string;
 }
 
 export interface IMarket {
@@ -17,6 +18,8 @@ export interface IMarket {
   volume: string;
   outcomes: IOutcome[];
   image_url: string;
+  endDate?: string;
+  players?: string;
 }
 
 export interface IMarketsResponse {

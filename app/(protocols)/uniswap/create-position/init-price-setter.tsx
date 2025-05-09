@@ -10,7 +10,7 @@ import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 import { NumberInput } from '@/components/common/number-input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { cn } from '@/lib/utils';
 
 import { PairTokenSelected } from '../uni-common/use-token-selector';

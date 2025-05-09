@@ -8,7 +8,7 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { TokenDisplayCard } from '@/components/common/token-display-card';
 
-import { APR_MONAD, MONAD } from '@/lib/data/tokens';
+import { APR_MONAD, MONAD } from '@/config/tokens';
 import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';

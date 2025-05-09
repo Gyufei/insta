@@ -1,6 +1,6 @@
 'use client';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { useNadFunMyTokens } from '@/lib/data/use-nadfun-my-tokens';
 
 import { NadFunTokenList } from './nadfun-token-list';

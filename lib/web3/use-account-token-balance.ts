@@ -13,7 +13,7 @@ export function useAccountTokenBalance(tokenAddress: string, enableQuery = true)
 
   const accountAddress = account?.sandbox_account;
 
-  const { data: balanceData, isPending: isBalancePending } = useReadContract({
+  const res = useReadContract({
     address: tokenAddress as `0x${string}`,
     abi: erc20Abi,
     functionName: 'balanceOf',
@@ -23,6 +23,8 @@ export function useAccountTokenBalance(tokenAddress: string, enableQuery = true)
       initialData: BigInt(0),
     },
   });
+
+  const { data: balanceData, isPending: isBalancePending } = res;
 
   const balanceBig = useMemo(() => {
     if (!accountAddress || !tokenAddress) return '0';
@@ -35,6 +37,7 @@ export function useAccountTokenBalance(tokenAddress: string, enableQuery = true)
   }, [balanceBig, accountAddress, tokenAddress]);
 
   return {
+    ...res,
     balanceBig,
     balance,
     isPending: !!accountAddress && !!tokenAddress && (isAccountInfoPending || isBalancePending),

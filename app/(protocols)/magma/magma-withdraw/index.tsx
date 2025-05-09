@@ -9,7 +9,7 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { TokenDisplayCard } from '@/components/common/token-display-card';
 import { Separator } from '@/components/ui/separator';
 
-import { G_MONAD, MONAD } from '@/lib/data/tokens';
+import { G_MONAD, MONAD } from '@/config/tokens';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useMagmaWithdraw } from '@/lib/data/use-magma-withdraw';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { APR_MONAD, G_MONAD, IToken, MONAD } from '@/lib/data/tokens';
+import { APR_MONAD, G_MONAD, IToken, MONAD } from '@/config/tokens';
 
 import { AprMONTokenCard } from './apr-mon-token-card';
 import { BalanceTokenCard } from './balance-token-card';

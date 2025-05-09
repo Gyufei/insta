@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 import { NoSearchResult } from '@/components/side-drawer/balance/no-search-result';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 
 import { useUniswapToken } from '../use-uniswap-token';
 

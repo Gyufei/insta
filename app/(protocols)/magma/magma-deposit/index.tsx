@@ -8,7 +8,7 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { TokenDisplayCard } from '@/components/common/token-display-card';
 
-import { G_MONAD, MONAD } from '@/lib/data/tokens';
+import { G_MONAD, MONAD } from '@/config/tokens';
 import { useMagmaDeposit } from '@/lib/data/use-magma-deposit';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';

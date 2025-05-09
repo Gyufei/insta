@@ -1,6 +1,6 @@
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { formatNumber } from '@/lib/utils/number';
 
 function TokenAmount({ token, amount }: { token: IToken; amount: string }) {

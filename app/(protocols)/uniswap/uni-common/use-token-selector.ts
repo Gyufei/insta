@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 
 import { useSideDrawerStore } from '../../../../lib/state/side-drawer';
 

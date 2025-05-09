@@ -5,7 +5,7 @@ import UniswapTokenInput from '@/app/(protocols)/uniswap/uni-common/uniswap-toke
 
 import { BadgeHelpTooltip } from '@/components/common/badge-help';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { ErrorVO } from '@/lib/model/error-vo';
 
 export function SetPriceAndAmount({

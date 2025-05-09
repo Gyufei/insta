@@ -1,4 +1,4 @@
-import { MONAD } from '@/lib/data/tokens';
+import { MONAD } from '@/config/tokens';
 import { useAccountBalance } from '@/lib/web3/use-account-balance';
 
 import { BaseTokenCard } from './base-token-card';

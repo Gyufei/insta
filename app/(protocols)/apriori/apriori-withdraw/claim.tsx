@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { Separator } from '@/components/ui/separator';
 
-import { APR_MONAD } from '@/lib/data/tokens';
+import { APR_MONAD } from '@/config/tokens';
 import { useAprioriClaim } from '@/lib/data/use-apriori-claim';
 import { useGetAprioriClaim } from '@/lib/data/use-get-apriori-claim';
 import { formatBig, formatNumber } from '@/lib/utils/number';

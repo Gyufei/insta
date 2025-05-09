@@ -9,7 +9,7 @@ import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { ErrorVO } from '@/lib/model/error-vo';
 
 import TokenSelector from '../uni-common/token-selector';

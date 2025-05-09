@@ -1,4 +1,4 @@
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { Card } from '@/components/ui/card';
 
 export function WithdrawEstReceive({

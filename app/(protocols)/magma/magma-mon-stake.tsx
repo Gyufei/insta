@@ -2,7 +2,7 @@
 
 import { TokenStakeCard } from '@/components/common/token-stake-card';
 
-import { G_MONAD, TokenPriceMap } from '@/lib/data/tokens';
+import { G_MONAD, TokenPriceMap } from '@/config/tokens';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 

@@ -2,7 +2,7 @@ import { NetworkConfigs } from '@/config/network-config';
 
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 
 export function TokenPairLogo({ token0, token1 }: { token0: IToken; token1: IToken }) {
   const network = NetworkConfigs.monadTestnet;

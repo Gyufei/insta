@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ERROR_MESSAGES } from '@/config/const-msg';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { cn } from '@/lib/utils';
 

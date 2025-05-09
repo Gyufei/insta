@@ -10,11 +10,7 @@ export const NetworkConfigs = {
     ...monadTestnet,
     icon: '/icons/monad.svg',
     contracts: {
-      ...monadTestnet.contracts,
-      dsa: {
-        address: '0x0000000000000000000000000000000000000000',
-        abi: [],
-      },
+      ...monadTestnet.contracts
     },
   },
 };

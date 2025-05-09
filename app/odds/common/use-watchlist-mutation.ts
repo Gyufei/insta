@@ -4,15 +4,15 @@ import { toast } from 'sonner';
 import { ApiPath } from '@/lib/data/api-path';
 import { Fetcher } from '@/lib/fetcher';
 
-interface WatchListMutationParams {
+interface WatchListActionParams {
   marketId: string;
   action: 'add' | 'remove';
   userId: string;
 }
 
-export function useWatchListMutation() {
+export function useWatchListAction() {
   const addToWatchList = useMutation({
-    mutationFn: async ({ marketId, action, userId }: WatchListMutationParams) => {
+    mutationFn: async ({ marketId, action, userId }: WatchListActionParams) => {
       const res = await Fetcher(ApiPath.oddsWatchList, {
         method: 'POST',
         body: JSON.stringify({

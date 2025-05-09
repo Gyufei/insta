@@ -8,7 +8,7 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { TokenDisplayCard } from '@/components/common/token-display-card';
 
-import { MONAD } from '@/lib/data/tokens';
+import { MONAD } from '@/config/tokens';
 import { useNadFunSell } from '@/lib/data/use-nadfun-sell';
 import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';

@@ -2,7 +2,7 @@ import { CreatePoolTip } from '@/app/(protocols)/uniswap/create-position/create-
 import { PairTokenDisplay } from '@/app/(protocols)/uniswap/create-position/pair-token-display';
 import { PairTokenSelected } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 
 export function SelectToken({
   token0,

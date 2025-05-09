@@ -1,4 +1,4 @@
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 
 import { PairTokenSelected } from '../uni-common/use-token-selector';
 import { CreatePoolTip } from './create-pool-tip';

@@ -1,4 +1,4 @@
-import { G_MONAD } from '@/lib/data/tokens';
+import { G_MONAD } from '@/config/tokens';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { formatBig } from '@/lib/utils/number';
 

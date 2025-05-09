@@ -4,7 +4,7 @@ import { Empty } from '@/components/common/empty';
 import { TitleH2 } from '@/components/common/title-h2';
 import { WithLoading } from '@/components/common/with-loading';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { cn } from '@/lib/utils';
 
 import { NadFunTokenCard } from './nadfun-token-card';

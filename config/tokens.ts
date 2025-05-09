@@ -32,6 +32,14 @@ export const G_MONAD = {
   decimals: 18,
 };
 
+export const MonUSD = {
+  address: '0x57c914e3240C837EBE87F096e0B4d9A06E3F489B',
+  name: 'monUSD',
+  symbol: 'monUSD',
+  logo: '/icons/usdt.svg',
+  decimals: 18,
+};
+
 export const TokenPriceMap: Record<string, number> = {
   MON: 0.00038,
   aprMON: 0.00038,

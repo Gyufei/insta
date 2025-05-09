@@ -1,6 +1,6 @@
 import { BadgeHelpTooltip } from '@/components/common/badge-help';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 
 import UniswapTokenInput from '../uni-common/uniswap-token-input';
 import { VersionAndFeeDisplay } from '../uni-common/version-and-fee-display';

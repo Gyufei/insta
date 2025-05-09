@@ -1,6 +1,6 @@
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
-import { MONAD } from '@/lib/data/tokens';
+import { MONAD } from '@/config/tokens';
 import { useWithdraw } from '@/lib/data/use-withdraw';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';

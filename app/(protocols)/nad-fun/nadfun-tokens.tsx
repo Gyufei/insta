@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { useNadFunTokens } from '@/lib/data/use-nadfun-tokens';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 

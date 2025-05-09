@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 import { Card, CardContent } from '@/components/ui/card';
 
-import { MONAD } from '@/lib/data/tokens';
+import { MONAD } from '@/config/tokens';
 import { IAprioriClaim } from '@/lib/data/use-get-apriori-claim';
 import { cn } from '@/lib/utils';
 import { formatBig, formatNumber } from '@/lib/utils/number';

@@ -10,6 +10,7 @@ export const ERROR_MESSAGES = {
   SEND_TX_FAILED: 'Send transaction failed',
   WITHDRAW_FAILED: 'Withdraw failed',
   DEPOSIT_FAILED: 'Deposit failed',
+  CLAIM_FAILED: 'Claim failed',
   CREATE_ACCOUNT_FAILED: 'Create account failed',
   CREATE_AUTHORITY_FAILED: 'Create authority failed',
   DELETE_AUTHORITY_FAILED: 'Delete authority failed',
@@ -24,7 +25,10 @@ export const ERROR_MESSAGES = {
   CREATE_POSITION_FAILED: 'Create position failed',
   REMOVE_LIQUIDITY_FAILED: 'Remove liquidity failed',
   TRADE_FAILED: 'Trade failed',
-
+  ORDER_CLOSED_FAILED: 'Order close failed',
+  ORDER_CANCELLED_FAILED: 'Order cancel failed',
+  TRANSFER_TO_TRADING_FAILED: 'Transfer to trading failed',
+  TRANSFER_TO_FUNDING_FAILED: 'Transfer to funding failed',
 } as const;
 
 export const SUCCESS_MESSAGES = {
@@ -45,4 +49,8 @@ export const SUCCESS_MESSAGES = {
   CREATE_POSITION_SUCCESS: 'Create position successfully',
   REMOVE_LIQUIDITY_SUCCESS: 'Remove liquidity successfully',
   TRADE_SUCCESS: 'Trade successfully',
+  ORDER_CLOSED_SUCCESS: 'Order closed successfully',
+  ORDER_CANCELLED_SUCCESS: 'Order cancelled successfully',
+  TRANSFER_TO_TRADING_SUCCESS: 'Transfer to trading successfully',
+  TRANSFER_TO_FUNDING_SUCCESS: 'Transfer to funding successfully',
 } as const;

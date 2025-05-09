@@ -1,6 +1,6 @@
 import { ApiPath } from './api-path';
 import { createQueryHook } from './helpers';
-import { IToken } from './tokens';
+import { IToken } from '../../config/tokens';
 
 export interface IV3Position {
   tokenId: string;

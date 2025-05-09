@@ -1,4 +1,4 @@
-import { APR_MONAD } from '@/lib/data/tokens';
+import { APR_MONAD } from '@/config/tokens';
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { formatBig } from '@/lib/utils/number';
 

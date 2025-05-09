@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { IToken } from '../data/tokens';
+import { IToken } from '../../config/tokens';
 import { IAmbientPosition } from '../data/use-ambient-position';
 import { IUniswapPosition } from '../data/use-uniswap-position';
 

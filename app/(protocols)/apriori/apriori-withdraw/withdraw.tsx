@@ -6,7 +6,7 @@ import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { Separator } from '@/components/ui/separator';
 
-import { APR_MONAD, MONAD } from '@/lib/data/tokens';
+import { APR_MONAD, MONAD } from '@/config/tokens';
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useAprioriWithdraw } from '@/lib/data/use-apriori-withdraw';
 import { formatBig, parseBig } from '@/lib/utils/number';

@@ -1,4 +1,4 @@
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { formatNumber } from '@/lib/utils/number';
 import { WithLoading } from '@/components/common/with-loading';
 import { TokenDisplayCard } from '@/components/common/token-display-card';

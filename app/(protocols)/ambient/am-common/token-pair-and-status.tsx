@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 import { cn } from '@/lib/utils';
 
 import { TokenPairLogo } from '../../../../components/common/token-pair-logo';

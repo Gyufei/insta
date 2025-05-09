@@ -2,7 +2,7 @@ import { ChevronDown } from 'lucide-react';
 
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 
-import { IToken } from '@/lib/data/tokens';
+import { IToken } from '@/config/tokens';
 
 interface TokenDisplayProps {
   token: IToken | undefined;
