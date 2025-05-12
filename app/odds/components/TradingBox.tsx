@@ -50,8 +50,6 @@ interface TradingBoxProps {
   tradeState: ITradeState;
   onTradeStateChange: (state: ITradeState | ((prev: ITradeState) => ITradeState)) => void;
   market: IMarketData;
-  outcomeCount?: number;
-  outcomeNames?: string[];
 }
 
 export default function TradingBox({

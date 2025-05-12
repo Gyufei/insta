@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+
+import { useEffect, useState } from 'react';
 
 interface Outcome {
   id: number;
@@ -36,7 +37,11 @@ export function useMarketForm() {
   const generateStaticLink = (text: string): string => {
     const words = text.trim().split(/\s+/);
     const processedWords = words.map((word) => {
-      if (/[\u4e00-\u9fff\u3400-\u4dbf\u20000-\u2a6df\u2a700-\u2b73f\u2b740-\u2b81f\u2b820-\u2ceaf]/.test(word)) {
+      if (
+        /[\u4e00-\u9fff\u3400-\u4dbf\u20000-\u2a6df\u2a700-\u2b73f\u2b740-\u2b81f\u2b820-\u2ceaf]/.test(
+          word
+        )
+      ) {
         return encodeURIComponent(word)
           .toLowerCase()
           .replace(/%/g, '')
@@ -70,7 +75,10 @@ export function useMarketForm() {
       errors.push('Title cannot contain special characters or HTML tags');
     }
 
-    const hasCJK = /[\u4e00-\u9fff\u3400-\u4dbf\u20000-\u2a6df\u2a700-\u2b73f\u2b740-\u2b81f\u2b820-\u2ceaf]/.test(value);
+    const hasCJK =
+      /[\u4e00-\u9fff\u3400-\u4dbf\u20000-\u2a6df\u2a700-\u2b73f\u2b740-\u2b81f\u2b820-\u2ceaf]/.test(
+        value
+      );
 
     if (!hasCJK) {
       const wordCount = value.trim().split(/\s+/).length;
@@ -346,4 +354,4 @@ export function useMarketForm() {
     handleDragLeave,
     handleDrop,
   };
-} 
+}

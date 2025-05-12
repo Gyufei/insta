@@ -9,11 +9,19 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 import { ERROR_MESSAGES } from '@/config/const-msg';
+import { MONAD, MonUSD } from '@/config/tokens';
 
 import { WithLoading } from '@/components/common/with-loading';
 import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { useFaucetAirdrop } from '@/lib/data/use-faucet-airdrop';
@@ -34,6 +42,8 @@ export function FaucetContainer() {
     isSuccess: isSaveXBindSuccess,
     isPending: isSavingXBind,
   } = useSaveXBind();
+
+  const [selectedToken, setSelectedToken] = useState(MONAD.address);
 
   useQuery({
     queryKey: code ? ['save-twitter', code] : [],
@@ -107,7 +117,10 @@ export function FaucetContainer() {
   }, [address, accountInfo, addressValue]);
 
   const handleAirdrop = () => {
-    faucetAirdrop({ wallet: addressValue });
+    faucetAirdrop({ 
+      wallet: addressValue,
+      token_address: selectedToken 
+    });
   };
 
   function handleGoTwitter() {
@@ -117,7 +130,28 @@ export function FaucetContainer() {
 
   return (
     <div className={cn('border-border border rounded-3xl px-5 py-4 mt-5')}>
-      <h1 className="text-xl text-primary font-medium">Enter wallet address</h1>
+      <h1 className="text-xl text-primary font-medium">Select Token</h1>
+      <Select value={selectedToken} onValueChange={setSelectedToken}>
+        <SelectTrigger className="w-full mt-3">
+          <SelectValue placeholder="Select a token" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={MONAD.address}>
+            <div className="flex items-center gap-2">
+              <Image src={MONAD.logo} alt={MONAD.name} width={20} height={20} />
+              <span>{MONAD.symbol}</span>
+            </div>
+          </SelectItem>
+          <SelectItem value={MonUSD.address}>
+            <div className="flex items-center gap-2">
+              <Image src={MonUSD.logo} alt={MonUSD.name} width={20} height={20} />
+              <span>{MonUSD.symbol}</span>
+            </div>
+          </SelectItem>
+        </SelectContent>
+      </Select>
+
+      <h1 className="text-xl text-primary font-medium mt-4">Enter wallet address</h1>
       <div className="relative w-full mt-3">
         <div className="absolute left-3 top-1/2 -translate-y-1/2">
           <Wallet className="h-5 w-5 text-primary" />

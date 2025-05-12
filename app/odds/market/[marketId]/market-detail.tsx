@@ -264,8 +264,6 @@ export default function MarketDetail({ mId }: { mId: string }) {
                 tradeState={tradeState}
                 onTradeStateChange={setTradeState}
                 market={{ ...market, market_id: mId }}
-                outcomeCount={market?.outcomes?.length || 0}
-                outcomeNames={market?.outcomes?.map((outcome) => outcome.name) || []}
               />
             </div>
 

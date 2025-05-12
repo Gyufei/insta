@@ -171,7 +171,7 @@ export default function Portfolio() {
                       Processing...
                     </>
                   ) : (
-                    'Top Up (Free)'
+                    <span className='whitespace-nowrap'>Top Up (Free)</span>
                   )}
                 </>
               )}
