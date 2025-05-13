@@ -58,6 +58,7 @@ export const ApiPath = {
   ambientAddLiquidity: `${ApiHost}/ambient_finance/add_liquidity`,
   ambientRemoveLiquidity: `${ApiHost}/ambient_finance/remove_liquidity`,
 
+  oddsUserInfo: `${OddsApiHost}/user/info`,
   oddsWatchList: `${OddsApiHost}/user/watchlist`,
   oddsWatchListGet: `${OddsApiHost}/user/watchlist/get`,
   oddsOrders: `${OddsApiHost}/user/orders`,
@@ -79,7 +80,7 @@ export const ApiPath = {
   oddsTrade: `${OddsApiHost}/market/{marketId}/trade`,
   oddsCancelOrder: `${OddsApiHost}/market/orders/cancel`,
 
-  oddsDeposit: `${OddsApiHost}/calldata/deposit`,
-  oddsWithdraw: `${OddsApiHost}/calldata/withdraw`,
-  oddsClaim: `${OddsApiHost}/calldata/claim`,
+  oddsDeposit: `${ApiHost}/odds/deposit`,
+  oddsWithdraw: `${ApiHost}/odds/withdraw`,
+  oddsClaim: `${ApiHost}/odds/claim`,
 };

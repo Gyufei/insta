@@ -3,9 +3,12 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { ApiPath } from '@/lib/data/api-path';
 import { createMutationHook } from '@/lib/data/helpers';
 
+import { useUserInfo } from './use-user-info';
+
 export interface IOddsWithdrawParams {
-  user_id: string;
-  from: string;
+  wallet: string;
+  sandbox_account: string;
+  odds_user_id: string;
   amount: string;
   [key: string]: string | undefined;
 }
@@ -15,13 +18,17 @@ export interface IOddsWithdrawArgs {
 }
 
 export function useOddsWithdraw() {
+  const { data: userInfo } = useUserInfo();
+  const userId = userInfo?.user_id;
+
   return createMutationHook<IOddsWithdrawParams>(
     ApiPath.oddsWithdraw,
     (args: unknown, address: string, account: string) => {
       const params = args as IOddsWithdrawArgs;
       return {
-        user_id: account,
-        from: address,
+        wallet: address,
+        sandbox_account: account,
+        odds_user_id: userId || '',
         amount: params.amount,
       };
     },

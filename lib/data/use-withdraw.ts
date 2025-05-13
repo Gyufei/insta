@@ -1,12 +1,15 @@
-import { ApiPath } from './api-path';
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
-import { createMutationHook } from './helpers';
 import { useBalance } from 'wagmi';
+
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+
+import { ApiPath } from './api-path';
+import { createMutationHook } from './helpers';
 
 interface WithdrawParams {
   wallet: string;
   sandbox_account: string;
   amount: string;
+  token_address: string;
   [key: string]: string;
 }
 
@@ -15,10 +18,11 @@ export function useWithdraw() {
   return createMutationHook<WithdrawParams>(
     ApiPath.withdraw,
     (args: unknown, address: string, account: string) => {
-      const amount = args as string;
+      const { amount, tokenAddress } = args as WithdrawParams;
       return {
         wallet: address,
         sandbox_account: account,
+        token_address: tokenAddress,
         amount,
       };
     },

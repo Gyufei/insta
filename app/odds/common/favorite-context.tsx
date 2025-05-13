@@ -2,8 +2,7 @@
 
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
-
+import { useUserInfo } from './use-user-info';
 import { useWatchList } from './use-watchlist';
 import { useWatchListAction } from './use-watchlist-mutation';
 
@@ -19,8 +18,8 @@ const FavoritesContext = createContext<FavoritesContextType | undefined>(undefin
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
 
-  const { data: accountInfo } = useSelectedAccount();
-  const account = accountInfo?.sandbox_account;
+  const { data: userInfo } = useUserInfo();
+  const userId = userInfo?.user_id;
 
   const { data: watchList } = useWatchList();
   const { addToWatchList } = useWatchListAction();
@@ -45,7 +44,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(WATCH_LIST_STORAGE_KEY, JSON.stringify(newFavorites));
     }
 
-    if (!account || !accountInfo) {
+    if (!userId) {
       return;
     }
 
@@ -54,7 +53,6 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       await addToWatchList.mutateAsync({
         marketId,
         action,
-        userId: accountInfo.id,
       });
     } catch (err) {
       // Revert optimistic update on error
@@ -70,7 +68,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (!account || !watchList?.markets) {
+    if (!userId || !watchList?.markets) {
       return;
     }
 
@@ -87,7 +85,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         localStorage.setItem(WATCH_LIST_STORAGE_KEY, JSON.stringify(serverFavorites));
       }
     }
-  }, [account, accountInfo, watchList]);
+  }, [userId, watchList]);
 
   return (
     <FavoritesContext.Provider value={{ favorites, toggleFavorite }}>

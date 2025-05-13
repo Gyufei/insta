@@ -5,16 +5,15 @@ import { toast } from 'sonner';
 
 import Link from 'next/link';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
-
+import { useUserInfo } from '../../common/use-user-info';
 import { BasicInformation } from './BasicInformation';
 import { MarketDetails } from './MarketDetails';
 import { ResolutionRules } from './ResolutionRules';
 import { useMarketForm } from './useMarketForm';
 
 export default function CreateMarketPage() {
-  const { data: accountInfo } = useSelectedAccount();
-  const account = accountInfo?.sandbox_account;
+  const { data: userInfo } = useUserInfo();
+  const userId = userInfo?.user_id;
 
   const {
     // State
@@ -65,7 +64,7 @@ export default function CreateMarketPage() {
   } = useMarketForm();
 
   const handleCreateMarket = async () => {
-    if (!account) {
+    if (!userId) {
       toast.error('Please create an account first');
       return;
     }
@@ -157,7 +156,7 @@ export default function CreateMarketPage() {
 
       // Prepare market data
       const marketData = {
-        user_id: account,
+        user_id: userId || '',
         market_question: title,
         description_type: descriptionFormat,
         description: description,

@@ -9,11 +9,11 @@ import Image from 'next/image';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import { IMarketData } from '../common/use-market-detail';
-import { useTrade } from '../common/use-trade';
+import { ITradeArgs, useTrade } from '../common/use-trade';
+import { useUserInfo } from '../common/use-user-info';
 import { useUserPositions } from '../common/use-user-positions';
 
 export interface ITradeState {
@@ -34,16 +34,6 @@ export interface IOutcome {
   price?: number;
 }
 
-export interface ITradeData {
-  user_id: string;
-  outcome_index: string;
-  trading_direction: string;
-  trading_mode: string;
-  shares: string;
-  price?: string;
-  signature?: string;
-}
-
 interface TradingBoxProps {
   selectedOutcome: IOutcome | null;
   onOutcomeSelect: (outcome: IOutcome | null) => void;
@@ -60,7 +50,9 @@ export default function TradingBox({
   market,
 }: TradingBoxProps) {
   const { address } = useAccount();
-  const { data: accountInfo } = useSelectedAccount();
+  const { data: userInfo } = useUserInfo();
+  const userId = userInfo?.user_id;
+
   const { open } = useAppKit();
   const { setCurrentComponent } = useSideDrawerStore();
 
@@ -146,7 +138,7 @@ export default function TradingBox({
       return false;
     }
 
-    if (!accountInfo?.sandbox_account) {
+    if (!userId) {
       toast.error('Please create account to trade');
       setCurrentComponent({ name: 'AccountSetting' });
       return false;
@@ -184,8 +176,7 @@ export default function TradingBox({
 
     const sharesNum = tradeState[tradeState.direction === 'buy' ? 'sharesToBuy' : 'sharesToSell'];
 
-    const tradeData: ITradeData = {
-      user_id: accountInfo?.sandbox_account || '',
+    const tradeData: ITradeArgs = {
       outcome_index: selectedOutcome?.index?.toString() || '',
       trading_direction: tradeState.direction,
       trading_mode: tradingMode,

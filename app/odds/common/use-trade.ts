@@ -3,6 +3,8 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { ApiPath } from '@/lib/data/api-path';
 import { createMutationHook } from '@/lib/data/helpers';
 
+import { useUserInfo } from './use-user-info';
+
 export interface ITradeArgs {
   outcome_index: string;
   trading_direction: string;
@@ -24,12 +26,15 @@ export interface ITradeParams {
 }
 
 export function useTrade(mId: string) {
+  const { data: userInfo } = useUserInfo();
+  const userId = userInfo?.user_id;
+
   return createMutationHook<ITradeParams>(
     ApiPath.oddsTrade.replace('{marketId}', mId),
-    (args: unknown, address: string, account: string) => {
+    (args: unknown, _address: string, _account: string) => {
       const params = args as ITradeParams;
       return {
-        user_id: account,
+        user_id: userId || '',
         outcome_index: params.outcome_index,
         trading_direction: params.trading_direction,
         trading_mode: params.trading_mode,

@@ -1,57 +1,36 @@
-"use client";
-import React, { useEffect, useRef, useState } from 'react';
+'use client';
+
+import React, { useState } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
-
 import { useCancelOrder } from '../../common/use-order';
 import { useUserOrders } from '../../common/use-user-orders';
 import { useUserPositions } from '../../common/use-user-positions';
+import { useUserInfo } from '../../common/use-user-info';
 
 export default function Trade() {
   const [activeTab, setActiveTab] = useState<'position' | 'open-orders'>('position');
 
-  const { data: accountInfo } = useSelectedAccount();
-  const mounted = useRef(true);
+  const { data: userInfo } = useUserInfo();
+  const userId = userInfo?.user_id;
 
-  // const { mutateAsync: closeOrder } = useCloseOrder();
   const { mutateAsync: cancelOrder, isPending: isCancellingOrder } = useCancelOrder();
-
-  // Cleanup on unmount
-  useEffect(() => {
-    mounted.current = true;
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
 
   const {
     data: positionsData,
     isLoading: isLoadingPositions,
     error: positionsError,
   } = useUserPositions();
+
   const positions = positionsData?.positions;
 
   const { data: ordersData, isLoading: isLoadingOrders, error: ordersError } = useUserOrders();
   const orders = ordersData?.orders;
 
-  // const handleCloseOrder = async (orderId: string) => {
-  //   if (!accountInfo?.sandbox_account) return;
-
-  //   try {
-  //     await closeOrder({
-  //       user_id: accountInfo.sandbox_account,
-  //       order_id: orderId,
-  //     });
-  //   } catch (err) {
-  //     console.error('Close order error:', err);
-  //   }
-  // };
-
   function handleCancelOrder(orderId: string) {
-    if (!accountInfo?.sandbox_account) return;
+    if (!userId) return;
 
     try {
       cancelOrder({
