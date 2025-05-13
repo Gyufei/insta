@@ -1,9 +1,7 @@
 import { Metadata } from 'next';
 
-import { OddsApiHost } from '@/lib/data/api-path';
-import { Fetcher } from '@/lib/fetcher';
+import { ApiPath } from '@/lib/data/api-path';
 
-import { IMarketData } from '../../common/use-market-detail';
 import MarketMain from './market-detail';
 
 // 生成动态元数据
@@ -15,7 +13,8 @@ export async function generateMetadata({
   try {
     // 获取市场数据
     const { marketId } = await params;
-    const market = await Fetcher<IMarketData>(`${OddsApiHost}/market/${marketId}`);
+    const marketData = await fetch(ApiPath.oddsMarketDetail.replace('{marketId}', marketId));
+    const market = await marketData.json();
 
     if (!market) {
       return {};

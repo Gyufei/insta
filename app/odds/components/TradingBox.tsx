@@ -9,6 +9,7 @@ import Image from 'next/image';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+import { eventBus } from '@/lib/state/eventBus';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import { IMarketData } from '../common/use-market-detail';
@@ -35,20 +36,10 @@ export interface IOutcome {
 }
 
 interface TradingBoxProps {
-  selectedOutcome: IOutcome | null;
-  onOutcomeSelect: (outcome: IOutcome | null) => void;
-  tradeState: ITradeState;
-  onTradeStateChange: (state: ITradeState | ((prev: ITradeState) => ITradeState)) => void;
   market: IMarketData;
 }
 
-export default function TradingBox({
-  selectedOutcome,
-  onOutcomeSelect,
-  tradeState,
-  onTradeStateChange,
-  market,
-}: TradingBoxProps) {
+export default function TradingBox({ market }: TradingBoxProps) {
   const { address } = useAccount();
   const { data: userInfo } = useUserInfo();
   const userId = userInfo?.user_id;
@@ -56,13 +47,21 @@ export default function TradingBox({
   const { open } = useAppKit();
   const { setCurrentComponent } = useSideDrawerStore();
 
+  const [selectedOutcome, setSelectedOutcome] = useState<IOutcome | null>(null);
+  const [tradeState, setTradeState] = useState<ITradeState>({
+    direction: 'buy',
+    outcome: null,
+    sharesToBuy: 0,
+    sharesToSell: 0,
+    price: null,
+  });
+
   const [tradingMode, setTradingMode] = useState<'fast' | 'limit'>('fast');
 
   const { data: positionsData } = useUserPositions();
   const positions = useMemo(() => positionsData?.positions || [], [positionsData]);
 
-  const [showOutcomes, setShowOutcomes] = useState(false);
-  const [isTradeStateInitialized, setIsTradeStateInitialized] = useState(false);
+  const [showOutcomesDropdown, setShowOutcomesDropdown] = useState(false);
 
   // Get user's shares for selected outcome
   const userShares = useMemo(() => {
@@ -76,9 +75,29 @@ export default function TradingBox({
   }, [selectedOutcome, market?.market_id, positions]);
 
   useEffect(() => {
+    if (market && market.outcomes && market.outcomes.length > 0) {
+      setSelectedOutcome({
+        ...market.outcomes[0],
+        index: 0,
+      });
+    }
+  }, [market]);
+
+  useEffect(() => {
+    const unsubscribe = eventBus.subscribe('odd-market-selected-outcome', (outcome: IOutcome) => {
+      setSelectedOutcome(outcome);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  function handleUpdateDirection(dir: 'buy' | 'sell') {
+    eventBus.publish('odd-market-trade-direction', dir);
+  }
+
+  useEffect(() => {
     if (selectedOutcome) {
-      setIsTradeStateInitialized(true);
-      onTradeStateChange((prev: ITradeState) => ({
+      setTradeState((prev: ITradeState) => ({
         ...prev,
         outcome: selectedOutcome.name,
         price: selectedOutcome?.price || null,
@@ -101,7 +120,7 @@ export default function TradingBox({
     const amount = parseFloat(processedValue || '0');
     const shares = isNaN(amount) ? 0 : amount;
 
-    onTradeStateChange({
+    setTradeState({
       ...tradeState,
       [tradeState.direction === 'buy' ? 'sharesToBuy' : 'sharesToSell']: shares,
     });
@@ -125,7 +144,7 @@ export default function TradingBox({
       ? parseFloat((currentAmount + step).toFixed(4))
       : Math.max(0, parseFloat((currentAmount - step).toFixed(4)));
 
-    onTradeStateChange({
+    setTradeState({
       ...tradeState,
       [sharesKey]: newAmount,
     });
@@ -144,7 +163,7 @@ export default function TradingBox({
       return false;
     }
 
-    if (!isTradeStateInitialized || !selectedOutcome || !market?.market_id) {
+    if (!selectedOutcome || !market?.market_id) {
       toast.error('Please select an outcome to trade');
       return false;
     }
@@ -194,7 +213,7 @@ export default function TradingBox({
 
     await triggerTrade(tradeData);
 
-    onTradeStateChange({
+    setTradeState({
       ...tradeState,
       sharesToBuy: 0,
       sharesToSell: 0,
@@ -206,7 +225,7 @@ export default function TradingBox({
     <div className="relative">
       <button
         className="w-full flex items-center justify-between gap-3 p-3 border rounded-lg hover:bg-gray-50"
-        onClick={() => setShowOutcomes(!showOutcomes)}
+        onClick={() => setShowOutcomesDropdown(!showOutcomesDropdown)}
       >
         {selectedOutcome ? (
           <div className="flex items-center gap-3">
@@ -223,27 +242,27 @@ export default function TradingBox({
           <span className="text-gray-500">Select an outcome</span>
         )}
         <ChevronDown
-          className={`h-5 w-5 transition-transform ${showOutcomes ? 'rotate-180' : ''}`}
+          className={`h-5 w-5 transition-transform ${showOutcomesDropdown ? 'rotate-180' : ''}`}
         />
       </button>
 
-      {showOutcomes && (
+      {showOutcomesDropdown && (
         <div className="absolute left-0 right-0 top-full mt-1 bg-white border rounded-lg shadow-lg z-10">
           {market.outcomes.map((outcome, index) => (
             <button
               key={index}
               className="w-full flex items-center gap-3 p-3 hover:bg-gray-50"
               onClick={() => {
-                onOutcomeSelect({
+                setSelectedOutcome({
                   ...market.outcomes[index],
                   index,
                 });
-                onTradeStateChange((prev) => ({
+                setTradeState((prev) => ({
                   ...prev,
                   outcome: outcome.name,
                   price: outcome.price,
                 }));
-                setShowOutcomes(false);
+                setShowOutcomesDropdown(false);
               }}
             >
               <Image
@@ -283,7 +302,7 @@ export default function TradingBox({
               className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
               onClick={() => {
                 if (tradeState.price) {
-                  onTradeStateChange({
+                  setTradeState({
                     ...tradeState,
                     price: Math.max(0, tradeState.price - 1),
                   });
@@ -297,7 +316,7 @@ export default function TradingBox({
               value={`$${tradeState.price || 0}`}
               onChange={(e) => {
                 const value = e.target.value.replace(/[^0-9]/g, '');
-                onTradeStateChange({
+                setTradeState({
                   ...tradeState,
                   price: parseInt(value || '0'),
                 });
@@ -308,7 +327,7 @@ export default function TradingBox({
               className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
               onClick={() => {
                 if (tradeState.price !== null) {
-                  onTradeStateChange({
+                  setTradeState({
                     ...tradeState,
                     price: tradeState.price + 1,
                   });
@@ -382,7 +401,7 @@ export default function TradingBox({
               className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
               onClick={() => {
                 if (tradeState.price) {
-                  onTradeStateChange({
+                  setTradeState({
                     ...tradeState,
                     price: Math.max(0, tradeState.price - 1),
                   });
@@ -396,7 +415,7 @@ export default function TradingBox({
               value={`$${tradeState.price || 0}`}
               onChange={(e) => {
                 const value = e.target.value.replace(/[^0-9]/g, '');
-                onTradeStateChange({
+                setTradeState({
                   ...tradeState,
                   price: parseInt(value || '0'),
                 });
@@ -407,7 +426,7 @@ export default function TradingBox({
               className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
               onClick={() => {
                 if (tradeState.price !== null) {
-                  onTradeStateChange({
+                  setTradeState({
                     ...tradeState,
                     price: tradeState.price + 1,
                   });
@@ -457,8 +476,8 @@ export default function TradingBox({
   );
 
   return (
-    <div className="bg-white border rounded-lg w-full">
-      <div className="py-2 px-4">
+    <div className="w-full">
+      <div className="py-2">
         <div className="flex items-center border-b mb-6">
           <button
             className={`px-2 py-2 font-medium transition-colors ${
@@ -466,7 +485,10 @@ export default function TradingBox({
                 ? 'text-[var(--color-tab-text-active)] border-b-2 border-[var(--color-tab-border-active)]'
                 : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
             }`}
-            onClick={() => onTradeStateChange({ ...tradeState, direction: 'buy' })}
+            onClick={() => {
+              setTradeState({ ...tradeState, direction: 'buy' });
+              handleUpdateDirection('buy');
+            }}
           >
             Buy
           </button>
@@ -476,7 +498,10 @@ export default function TradingBox({
                 ? 'text-[var(--color-tab-text-active)] border-b-2 border-[var(--color-tab-border-active)]'
                 : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
             }`}
-            onClick={() => onTradeStateChange({ ...tradeState, direction: 'sell' })}
+            onClick={() => {
+              setTradeState({ ...tradeState, direction: 'sell' });
+              handleUpdateDirection('sell');
+            }}
           >
             Sell
           </button>

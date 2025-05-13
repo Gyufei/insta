@@ -2,16 +2,17 @@ import { toast } from 'sonner';
 
 import React, { useEffect, useRef } from 'react';
 
+import { formatNumber } from '@/lib/utils/number';
+
 import { useMarketOrderbook } from '../common/use-market-orderbook';
 
 interface OrderbookProps {
   marketId: string;
   outcomeIndex: number;
-  isVisible: boolean;
 }
 
-export default function Orderbook({ marketId, outcomeIndex, isVisible }: OrderbookProps) {
-  const { data, error } = useMarketOrderbook(marketId, outcomeIndex, isVisible);
+export default function Orderbook({ marketId, outcomeIndex }: OrderbookProps) {
+  const { data, error } = useMarketOrderbook(marketId, outcomeIndex);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const spreadBoxRef = useRef<HTMLDivElement>(null);
   const asksRef = useRef<HTMLDivElement>(null);
@@ -98,18 +99,11 @@ export default function Orderbook({ marketId, outcomeIndex, isVisible }: Orderbo
                   />
                 </div>
                 <div className="font-medium relative z-10 text-red-600">
-                  ${ask.price.toFixed(2)}
+                  ${formatNumber(ask.price)}
                 </div>
+                <div className="text-right relative z-10">{formatNumber(ask.shares)}</div>
                 <div className="text-right relative z-10">
-                  {ask.shares.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                  })}
-                </div>
-                <div className="text-right relative z-10">
-                  $
-                  {(ask.price * ask.shares).toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                  })}
+                  ${formatNumber(ask.price * ask.shares)}
                 </div>
               </div>
             ))}
@@ -118,8 +112,8 @@ export default function Orderbook({ marketId, outcomeIndex, isVisible }: Orderbo
         {/* Spread and Last Price */}
         <div ref={spreadBoxRef} className="sticky z-10 px-2 py-4 bg-gray-50 border-y">
           <div className="flex items-center justify-between text-sm">
-            <div className="font-medium">Last: ${lastPrice.toFixed(2)}</div>
-            <div className="text-gray-500">Spread: ${spread.toFixed(2)}</div>
+            <div className="font-medium">Last: ${formatNumber(lastPrice)}</div>
+            <div className="text-gray-500">Spread: ${formatNumber(spread)}</div>
           </div>
         </div>
 
@@ -139,18 +133,11 @@ export default function Orderbook({ marketId, outcomeIndex, isVisible }: Orderbo
                   />
                 </div>
                 <div className="font-medium relative z-10 text-green-600">
-                  ${bid.price.toFixed(2)}
+                  ${formatNumber(bid.price)}
                 </div>
+                <div className="text-right relative z-10">{formatNumber(bid.shares)}</div>
                 <div className="text-right relative z-10">
-                  {bid.shares.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                  })}
-                </div>
-                <div className="text-right relative z-10">
-                  $
-                  {(bid.price * bid.shares).toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                  })}
+                  ${formatNumber(bid.price * bid.shares)}
                 </div>
               </div>
             ))}

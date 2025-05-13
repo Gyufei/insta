@@ -14,15 +14,11 @@ export interface OrderbookResponse {
   spread: number;
 }
 
-export function useMarketOrderbook(marketId: string, outcomeIndex: number, isVisible: boolean) {
+export function useMarketOrderbook(marketId: string, outcomeIndex: number) {
   return createQueryHook<OrderbookResponse>(
     ApiPath.oddsMarketOrderbook.replace('{marketId}', marketId),
     () => ['market-orderbook', `${marketId}-${outcomeIndex}`],
     (url) => {
-      if (!isVisible) {
-        return null;
-      }
-
       url.searchParams.set('outcome_index', outcomeIndex.toString());
       return url;
     },

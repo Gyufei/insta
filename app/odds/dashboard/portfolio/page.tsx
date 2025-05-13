@@ -154,7 +154,7 @@ export default function Portfolio() {
             <button
               onClick={handleClaim}
               disabled={isProcessingClaim || isLoadingFundingBalance}
-              className={`flex items-center justify-center gap-2 py-4 text-xs rounded-lg ${
+              className={`flex items-center justify-center gap-1 py-2 text-xs rounded-lg ${
                 isLoadingFundingBalance
                   ? 'bg-gray-200 animate-pulse cursor-not-allowed'
                   : 'bg-[var(--color-odd-main)] text-white hover:bg-[var(--color-odd-main-hover)]'
@@ -183,7 +183,7 @@ export default function Portfolio() {
                 setShowTransferModal(true);
               }}
               disabled={isTransferringToTrading || isLoadingFundingBalance}
-              className={`flex items-center justify-center gap-2 py-4 text-xs rounded-lg ${
+              className={`flex items-center justify-center gap-1 py-2 text-xs rounded-lg ${
                 isLoadingFundingBalance
                   ? 'bg-gray-200 animate-pulse cursor-not-allowed'
                   : 'bg-gray-100 text-gray-900 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed'
@@ -229,12 +229,12 @@ export default function Portfolio() {
                 setShowTransferModal(true);
               }}
               disabled={isTransferringToFunding}
-              className="flex items-center justify-center gap-2 py-4 text-xs bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-1 py-2 text-xs bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <ArrowLeftFromLine className="h-5 w-5" />
+              <ArrowLeftFromLine className="h-4 w-4" />
               {isTransferringToFunding ? (
                 <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 </>
               ) : (
                 'Transfer'

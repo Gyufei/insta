@@ -8,6 +8,8 @@ import Image from 'next/image';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+import { eventBus } from '@/lib/state/eventBus';
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { formatDate } from '@/lib/utils';
 import { formatCurrency } from '@/lib/utils/number';
 
@@ -19,20 +21,14 @@ import ColorAvatar from '../../components/ColorAvatar';
 import MarketChart from '../../components/MarketChart';
 import MarketHolders from '../../components/MarketHolders';
 import Orderbook from '../../components/Orderbook';
-import TradingBox, { IOutcome, ITradeState } from '../../components/TradingBox';
+import { IOutcome } from '../../components/TradingBox';
 
 export default function MarketDetail({ mId }: { mId: string }) {
-  const [selectedOutcome, setSelectedOutcome] = useState<IOutcome | null>(null);
-
+  const { currentComponent, setCurrentComponent, setIsOpen } = useSideDrawerStore();
   const [expandedOutcome, setExpandedOutcome] = useState<string | null>(null);
+
   const { favorites, toggleFavorite } = useFavorites();
-  const [tradeState, setTradeState] = useState<ITradeState>({
-    direction: 'buy',
-    outcome: null,
-    sharesToBuy: 0,
-    sharesToSell: 0,
-    price: null,
-  });
+  const [tradeDirection, setTradeDirection] = useState<'buy' | 'sell'>('buy');
 
   const [selectedTimeframe, setSelectedTimeframe] = useState<
     '1H' | '6H' | '1D' | '1W' | '1M' | 'ALL'
@@ -93,14 +89,44 @@ export default function MarketDetail({ mId }: { mId: string }) {
     return holdersData;
   }, [holdersData]);
 
-  useEffect(() => {
-    if (market && market.outcomes && market.outcomes.length > 0) {
-      setSelectedOutcome({
-        ...market.outcomes[0],
-        index: 0,
+  function handleUpdateSelectedOutcome(outcome: IOutcome) {
+    eventBus.publish('odd-market-selected-outcome', outcome);
+
+    if (market && currentComponent?.name !== 'OddsMarketSellAndBuy') {
+      setCurrentComponent({
+        name: 'OddsMarketSellAndBuy',
+        props: {
+          oddsMarket: market,
+        },
       });
     }
+  }
+
+  useEffect(() => {
+    if (market) {
+      setCurrentComponent({
+        name: 'OddsMarketSellAndBuy',
+        props: {
+          oddsMarket: market,
+        },
+      });
+    }
+
+    return () => {
+      setIsOpen(false);
+    };
   }, [market]);
+
+  useEffect(() => {
+    const unsubscribe = eventBus.subscribe<string>(
+      'odd-market-trade-direction',
+      (direction: string) => {
+        setTradeDirection(direction as 'buy' | 'sell');
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
 
   const filteredActivities = useMemo(() => {
     let filtered = [...activities];
@@ -224,7 +250,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white">
               <div className="flex items-center justify-between border-b">
@@ -257,16 +283,6 @@ export default function MarketDetail({ mId }: { mId: string }) {
               />
             </div>
 
-            <div className="lg:hidden">
-              <TradingBox
-                selectedOutcome={selectedOutcome}
-                onOutcomeSelect={setSelectedOutcome}
-                tradeState={tradeState}
-                onTradeStateChange={setTradeState}
-                market={{ ...market, market_id: mId }}
-              />
-            </div>
-
             <div className="bg-white">
               <div className="flex items-center py-3 text-sm font-medium text-gray-500 border-b">
                 <div className="flex-1">OUTCOME</div>
@@ -285,15 +301,10 @@ export default function MarketDetail({ mId }: { mId: string }) {
                         } else {
                           setExpandedOutcome(outcome.name);
                         }
-                        setSelectedOutcome({
+                        handleUpdateSelectedOutcome({
                           ...outcome,
                           index,
                         });
-                        setTradeState((prev) => ({
-                          ...prev,
-                          outcome: outcome.name,
-                          price: outcome.price,
-                        }));
                       }}
                     >
                       <div className="flex items-center gap-4 flex-1">
@@ -318,42 +329,32 @@ export default function MarketDetail({ mId }: { mId: string }) {
                         <div className="flex gap-2 w-48 justify-end">
                           <button
                             className={`w-24 px-4 py-2 rounded-lg font-medium transition-colors ${
-                              tradeState.direction === 'sell'
+                              tradeDirection === 'sell'
                                 ? 'hidden'
                                 : 'bg-[var(--color-yes-bg)] text-[var(--color-yes-text)] hover:bg-[var(--color-yes-hover)]'
                             }`}
                             onClick={(e) => {
                               e.stopPropagation();
-                              setSelectedOutcome({
+                              handleUpdateSelectedOutcome({
                                 ...outcome,
                                 index,
                               });
-                              setTradeState((prev) => ({
-                                ...prev,
-                                outcome: outcome.name,
-                                price: outcome.price,
-                              }));
                             }}
                           >
                             ${outcome.price}
                           </button>
                           <button
                             className={`w-24 px-4 py-2 rounded-lg font-medium transition-colors ${
-                              tradeState.direction === 'buy'
+                              tradeDirection === 'buy'
                                 ? 'hidden'
                                 : 'bg-[var(--color-no-bg)] text-[var(--color-no-text)] hover:bg-[var(--color-no-hover)]'
                             }`}
                             onClick={(e) => {
                               e.stopPropagation();
-                              setSelectedOutcome({
+                              handleUpdateSelectedOutcome({
                                 ...outcome,
                                 index,
                               });
-                              setTradeState((prev) => ({
-                                ...prev,
-                                outcome: outcome.name,
-                                price: outcome.price,
-                              }));
                             }}
                           >
                             ${outcome.price}
@@ -362,11 +363,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                       </div>
                     </div>
                     <div className={`border-t ${expandedOutcome === outcome.name ? '' : 'hidden'}`}>
-                      <Orderbook
-                        marketId={mId || ''}
-                        outcomeIndex={index}
-                        isVisible={expandedOutcome === outcome.name}
-                      />
+                      <Orderbook marketId={mId || ''} outcomeIndex={index} />
                     </div>
                   </div>
                 ))}
@@ -576,18 +573,6 @@ export default function MarketDetail({ mId }: { mId: string }) {
                   )}
                 </div>
               )}
-            </div>
-          </div>
-
-          <div className="hidden lg:block">
-            <div className="sticky top-24">
-              <TradingBox
-                selectedOutcome={selectedOutcome}
-                onOutcomeSelect={setSelectedOutcome}
-                tradeState={tradeState}
-                onTradeStateChange={setTradeState}
-                market={market}
-              />
             </div>
           </div>
         </div>

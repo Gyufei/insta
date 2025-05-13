@@ -27,6 +27,7 @@ import { AccountSetting } from './account-setting';
 import { Balance } from './balance';
 import { DepositToken } from './deposit-token';
 import { WithdrawToken } from './withdraw-token';
+import { OddsMarketSellAndBuy } from '@/app/odds/market/market-sell-and-buy';
 
 const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   Balance: Balance,
@@ -50,6 +51,7 @@ const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   AmbientCreatePosition: AmbientCreatePosition,
   AmbientAddLiquidity: AmbientAddLiquidity,
   AmbientRemoveLiquidity: AmbientRemoveLiquidity,
+  OddsMarketSellAndBuy: OddsMarketSellAndBuy,
 } as const;
 
 const ANIMATION_CONFIG = {

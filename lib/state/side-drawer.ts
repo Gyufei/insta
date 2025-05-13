@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+import { IMarketData } from '@/app/odds/common/use-market-detail';
+
 import { IToken } from '../../config/tokens';
 import { IAmbientPosition } from '../data/use-ambient-position';
 import { IUniswapPosition } from '../data/use-uniswap-position';
@@ -25,7 +27,8 @@ export type SideDrawerComponent =
   | 'UniswapRemoveLiquidity'
   | 'AmbientCreatePosition'
   | 'AmbientAddLiquidity'
-  | 'AmbientRemoveLiquidity';
+  | 'AmbientRemoveLiquidity'
+  | 'OddsMarketSellAndBuy';
 
 type CurrentComponent = {
   name: SideDrawerComponent | null;
@@ -39,6 +42,7 @@ type CompProps = {
   registerName?: string;
   uniswapPosition?: IUniswapPosition;
   ambientPosition?: IAmbientPosition;
+  oddsMarket?: IMarketData;
   [key: string]: unknown;
 } | null;
 
