@@ -13,7 +13,7 @@ export function useTradingBalance() {
 
   return createQueryHook<ITradingBalance>(
     ApiPath.oddsTradingBalance,
-    (account) => ['odds', 'trading_balance', account ?? ''],
+    () => ['odds', 'trading_balance', userId ?? ''],
     (url) => {
       if (!userId) {
         return null;
