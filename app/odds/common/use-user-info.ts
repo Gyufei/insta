@@ -13,7 +13,7 @@ interface IUserInfoResponse {
   bio: string;
 }
 
-export function useUserInfo() {
+export function useOddsUserInfo() {
   const { address } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
 

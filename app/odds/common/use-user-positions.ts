@@ -1,7 +1,7 @@
 import { ApiPath } from '@/lib/data/api-path';
 import { createQueryHook } from '@/lib/data/helpers';
 
-import { useUserInfo } from './use-user-info';
+import { useOddsUserInfo } from './use-user-info';
 
 interface IMarket {
   id: string;
@@ -28,7 +28,7 @@ interface IUserPositionsResponse {
 }
 
 export function useUserPositions() {
-  const { data: userInfo } = useUserInfo();
+  const { data: userInfo } = useOddsUserInfo();
   const userId = userInfo?.user_id;
 
   return createQueryHook<IUserPositionsResponse>(

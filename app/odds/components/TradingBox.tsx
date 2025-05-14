@@ -14,7 +14,7 @@ import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import { IMarketData } from '../common/use-market-detail';
 import { ITradeArgs, useTrade } from '../common/use-trade';
-import { useUserInfo } from '../common/use-user-info';
+import { useOddsUserInfo } from '../common/use-user-info';
 import { useUserPositions } from '../common/use-user-positions';
 
 export interface ITradeState {
@@ -41,7 +41,7 @@ interface TradingBoxProps {
 
 export default function TradingBox({ market }: TradingBoxProps) {
   const { address } = useAccount();
-  const { data: userInfo } = useUserInfo();
+  const { data: userInfo } = useOddsUserInfo();
   const userId = userInfo?.user_id;
 
   const { open } = useAppKit();

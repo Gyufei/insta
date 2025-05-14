@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 
 import { ApiPath } from '@/lib/data/api-path';
 import { Fetcher } from '@/lib/fetcher';
-import { useUserInfo } from './use-user-info';
+import { useOddsUserInfo } from './use-user-info';
 
 interface WatchListActionParams {
   marketId: string;
@@ -11,7 +11,7 @@ interface WatchListActionParams {
 }
 
 export function useWatchListAction() {
-  const { data: userInfo } = useUserInfo();
+  const { data: userInfo } = useOddsUserInfo();
   const userId = userInfo?.user_id;
 
   const addToWatchList = useMutation({

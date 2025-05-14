@@ -39,7 +39,7 @@ async function parsedRes(res: Response) {
     const json = await res.json();
 
     if (json.code === 500) {
-      throw new Error('Internal server error');
+      throw new Error(json.message || 'Internal server error');
     }
 
     return json?.data || json;

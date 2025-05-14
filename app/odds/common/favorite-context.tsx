@@ -2,7 +2,7 @@
 
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
-import { useUserInfo } from './use-user-info';
+import { useOddsUserInfo } from './use-user-info';
 import { useWatchList } from './use-watchlist';
 import { useWatchListAction } from './use-watchlist-mutation';
 
@@ -18,7 +18,7 @@ const FavoritesContext = createContext<FavoritesContextType | undefined>(undefin
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
 
-  const { data: userInfo } = useUserInfo();
+  const { data: userInfo } = useOddsUserInfo();
   const userId = userInfo?.user_id;
 
   const { data: watchList } = useWatchList();

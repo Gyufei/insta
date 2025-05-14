@@ -85,6 +85,8 @@ export default function Portfolio() {
     deposit({
       amount,
     });
+
+    setShowTransferModal(false);
   };
 
   const handleTransferToFunding = async (amount: string) => {
@@ -154,7 +156,7 @@ export default function Portfolio() {
             <button
               onClick={handleClaim}
               disabled={isProcessingClaim || isLoadingFundingBalance}
-              className={`flex items-center justify-center gap-1 py-2 text-xs rounded-lg ${
+              className={`flex items-center justify-center gap-1 py-2 px-1 text-xs rounded-lg ${
                 isLoadingFundingBalance
                   ? 'bg-gray-200 animate-pulse cursor-not-allowed'
                   : 'bg-[var(--color-odd-main)] text-white hover:bg-[var(--color-odd-main-hover)]'
@@ -171,7 +173,7 @@ export default function Portfolio() {
                       Processing...
                     </>
                   ) : (
-                    <span className='whitespace-nowrap'>Top Up (Free)</span>
+                    <span className="whitespace-nowrap">Top Up (Free)</span>
                   )}
                 </>
               )}

@@ -1,9 +1,12 @@
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
+
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 
 import { ApiPath } from '@/lib/data/api-path';
-import { createMutationHook } from '@/lib/data/helpers';
+import { sendApiRequest } from '@/lib/data/helpers';
 
-import { useUserInfo } from './use-user-info';
+import { useOddsUserInfo } from './use-user-info';
 
 export interface ITradeArgs {
   outcome_index: string;
@@ -26,14 +29,13 @@ export interface ITradeParams {
 }
 
 export function useTrade(mId: string) {
-  const { data: userInfo } = useUserInfo();
+  const { data: userInfo } = useOddsUserInfo();
   const userId = userInfo?.user_id;
 
-  return createMutationHook<ITradeParams>(
-    ApiPath.oddsTrade.replace('{marketId}', mId),
-    (args: unknown, _address: string, _account: string) => {
+  async function executeMutation(args: unknown) {
+    try {
       const params = args as ITradeParams;
-      return {
+      const reqBody = {
         user_id: userId || '',
         outcome_index: params.outcome_index,
         trading_direction: params.trading_direction,
@@ -42,9 +44,24 @@ export function useTrade(mId: string) {
         price: params.price,
         signature: params.signature,
       };
-    },
-    SUCCESS_MESSAGES.TRADE_SUCCESS,
-    ERROR_MESSAGES.TRADE_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['user', 'positions'] }
-  )();
+
+      const res = await sendApiRequest(ApiPath.oddsTrade.replace('{marketId}', mId), reqBody);
+
+      toast.success(SUCCESS_MESSAGES.TRADE_SUCCESS);
+
+      return res;
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        toast.error(e.message);
+      } else {
+        toast.error(ERROR_MESSAGES.TRADE_FAILED);
+      }
+    }
+  }
+
+  const res = useMutation({
+    mutationFn: executeMutation,
+  });
+
+  return res;
 }

@@ -8,12 +8,12 @@ import Link from 'next/link';
 import { useCancelOrder } from '../../common/use-order';
 import { useUserOrders } from '../../common/use-user-orders';
 import { useUserPositions } from '../../common/use-user-positions';
-import { useUserInfo } from '../../common/use-user-info';
+import { useOddsUserInfo } from '../../common/use-user-info';
 
 export default function Trade() {
   const [activeTab, setActiveTab] = useState<'position' | 'open-orders'>('position');
 
-  const { data: userInfo } = useUserInfo();
+  const { data: userInfo } = useOddsUserInfo();
   const userId = userInfo?.user_id;
 
   const { mutateAsync: cancelOrder, isPending: isCancellingOrder } = useCancelOrder();

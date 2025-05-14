@@ -3,7 +3,7 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { ApiPath } from '@/lib/data/api-path';
 import { createMutationHook } from '@/lib/data/helpers';
 
-import { useUserInfo } from './use-user-info';
+import { useOddsUserInfo } from './use-user-info';
 
 export interface IOddsDepositParams {
   wallet: string;
@@ -18,7 +18,7 @@ export interface IOddsDepositArgs {
 }
 
 export function useOddsDeposit() {
-  const { data: userInfo } = useUserInfo();
+  const { data: userInfo } = useOddsUserInfo();
   const userId = userInfo?.user_id;
 
   return createMutationHook<IOddsDepositParams>(
