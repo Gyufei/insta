@@ -5,13 +5,14 @@ import { multiply } from 'safebase';
 
 import Image from 'next/image';
 
+import { IToken } from '@/config/tokens';
+
 import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-import { IToken } from '@/config/tokens';
 import { formatBig, formatNumber } from '@/lib/utils/number';
 
 interface TokenStakeCardProps {
@@ -40,8 +41,8 @@ export function TokenStakeCard({
 
   return (
     <div className="mt-4 grid w-full min-w-max grid-cols-2 gap-4 px-4 2xl:mt-6 2xl:gap-6 2xl:px-12">
-      <Card className="relative flex flex-1 flex-shrink-0 flex-col shadow-none">
-        <CardContent className="flex items-center px-4">
+      <Card className="relative flex flex-1 px-5 flex-shrink-0 flex-col shadow-none">
+        <CardContent className="px-0 flex items-center">
           <div className="flex h-12 w-12 items-center justify-center dark:opacity-90">
             <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full">
               <Image
@@ -81,12 +82,12 @@ export function TokenStakeCard({
           </div>
         </CardContent>
         <Separator />
-        <CardFooter className="flex items-center justify-around gap-2 px-4">
+        <CardFooter className="flex items-center px-0 justify-around gap-2">
           <Button
             onClick={onDeposit}
             size="default"
             variant="outline"
-            className="hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            className="hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 shadow-none ease-out select-none focus:outline-none disabled:opacity-50"
           >
             {depositButtonText}
           </Button>
@@ -94,7 +95,7 @@ export function TokenStakeCard({
             onClick={onWithdraw}
             size="default"
             variant="outline"
-            className="hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            className="hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 shadow-none ease-out select-none focus:outline-none disabled:opacity-50"
           >
             {withdrawButtonText}
           </Button>

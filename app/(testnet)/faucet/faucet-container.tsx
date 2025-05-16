@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Wallet } from 'lucide-react';
+import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
 import { useEffect, useState } from 'react';
@@ -22,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { useFaucetAirdrop } from '@/lib/data/use-faucet-airdrop';
@@ -29,7 +31,6 @@ import { useSaveXBind } from '@/lib/data/use-save-x-bind';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { cn } from '@/lib/utils';
 import { useTwitterSign } from '@/lib/utils/use-twitter-sign';
-import { isAddress } from 'viem';
 
 export function FaucetContainer() {
   const { address } = useAccount();
@@ -56,6 +57,7 @@ export function FaucetContainer() {
   });
 
   const [addressValue, setAddressValue] = useState('');
+  const [isDirty, setIsDirty] = useState(false);
 
   const [errorData, setErrorData] = useState<ErrorVO>({
     showError: false,
@@ -94,6 +96,14 @@ export function FaucetContainer() {
       return;
     }
 
+    if (!isDirty) {
+      setErrorData({
+        showError: false,
+        errorMessage: '',
+      });
+      return;
+    }
+
     if (!addressValue) {
       setErrorData({
         showError: true,
@@ -114,12 +124,12 @@ export function FaucetContainer() {
       showError: false,
       errorMessage: '',
     });
-  }, [address, accountInfo, addressValue]);
+  }, [address, accountInfo, addressValue, isDirty]);
 
   const handleAirdrop = () => {
-    faucetAirdrop({ 
+    faucetAirdrop({
       wallet: addressValue,
-      token_address: selectedToken 
+      token_address: selectedToken,
     });
   };
 
@@ -158,7 +168,10 @@ export function FaucetContainer() {
         </div>
         <Input
           value={addressValue}
-          onChange={(e) => setAddressValue(e.target.value)}
+          onChange={(e) => {
+            setAddressValue(e.target.value);
+            setIsDirty(true);
+          }}
           className={cn(
             'w-full pl-10 pr-3 text-primary outline-none shadow-none focus-visible:ring-0'
           )}
@@ -177,6 +190,7 @@ export function FaucetContainer() {
       >
         {isPending ? 'Processing...' : 'Get Testnet Mon'}
       </Button>
+
       <ErrorMessage show={errorData.showError} message={errorData.errorMessage} className="mt-2" />
 
       <p className="text-sm text-left text-primary/60 mt-3">
@@ -185,16 +199,23 @@ export function FaucetContainer() {
         they do not have real value.
       </p>
 
-      <div className="mt-10 text-primary">Connect your X account to get more testnet tokens!</div>
+      <Separator className="my-4" />
+
+      <div className="text-primary">Connect your X account to get more testnet tokens!</div>
       <Button
         disabled={isSavingXBind}
         variant="outline"
         className="w-full flex items-center gap-2 mt-2 text-primary"
         onClick={handleGoTwitter}
       >
-        <WithLoading isLoading={isSavingXBind} />
-        <span>Connect</span>
-        <Image src="/icons/x.svg" alt="Twitter" width={16} height={16} />
+        {isSavingXBind ? (
+          <WithLoading isLoading={isSavingXBind} />
+        ) : (
+          <>
+            <Image src="/icons/x.svg" alt="Twitter" width={16} height={16} />
+          </>
+        )}
+        <span>Connect X</span>
       </Button>
     </div>
   );

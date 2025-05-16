@@ -30,8 +30,8 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
   const displayBalance = realBalance ? formatNumber(realBalance) : '';
 
   return (
-    <Card className="flex flex-1 flex-shrink-0 flex-col">
-      <CardHeader className="flex h-14 items-center justify-between px-4">
+    <Card className="flex flex-1 px-5 flex-shrink-0 flex-col gap-3">
+      <CardHeader className="flex h-14 items-center justify-between px-0">
         <div className="flex items-center gap-3">
           <div className="mr-4 flex -space-x-3 overflow-hidden">
             <div className="flex h-12 w-12 items-center justify-center dark:opacity-90">
@@ -56,19 +56,19 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
         {balance && <div className="text-xl font-medium whitespace-nowrap">{displayBalance}</div>}
       </CardHeader>
 
-      <CardContent className="px-4">
-        <div className="flex w-fit flex-shrink-0 items-center justify-start rounded-sm bg-gray-100/20 px-2 py-1 text-[10px] leading-none whitespace-nowrap text-gray-400 transition-colors duration-75 ease-out 2xl:font-semibold">
+      <CardContent className="px-0 mb-2">
+        <div className="flex w-fit flex-shrink-0 items-center justify-start rounded-sm px-2 py-1 text-[10px] leading-none whitespace-nowrap text-primary transition-colors duration-75 ease-out 2xl:font-semibold">
           Address: {address}
         </div>
       </CardContent>
 
       <Separator />
 
-      <CardFooter className="flex items-center justify-between px-4">
+      <CardFooter className="flex items-center justify-between px-0">
         <Button
           onClick={handleBuy}
           variant="outline"
-          className="mr-4 flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+          className="mt-2 mr-4 flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
         >
           Buy
         </Button>

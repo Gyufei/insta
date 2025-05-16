@@ -1,27 +1,37 @@
 import localFont from 'next/font/local';
 
-export const montserrat = localFont({
+export const aeonik = localFont({
   src: [
     {
-      path: '../public/font/montserrat-latin-400.woff2',
+      path: '../public/font/Aeonik-Thin.ttf',
+      weight: '100',
+      style: 'normal',
+    },
+    {
+      path: '../public/font/Aeonik-Light.ttf',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: '../public/font/Aeonik-Regular.ttf',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../public/font/montserrat-latin-500.woff2',
+      path: '../public/font/Aeonik-Medium.ttf',
       weight: '500',
       style: 'normal',
     },
     {
-      path: '../public/font/montserrat-latin-600.woff2',
+      path: '../public/font/Aeonik-Bold.ttf',
       weight: '600',
       style: 'normal',
     },
     {
-      path: '../public/font/montserrat-latin-700.woff2',
-      weight: '700',
+      path: '../public/font/Aeonik-Black.ttf',
+      weight: '900',
       style: 'normal',
     },
   ],
-  variable: '--font-montserrat',
+  variable: '--font-aeonik',
 });

@@ -2,7 +2,6 @@
 
 import { Sparkle } from 'lucide-react';
 
-import { Empty } from '@/components/common/empty';
 import { TitleH2 } from '@/components/common/title-h2';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import { WithLoading } from '@/components/common/with-loading';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import { useNadNameCombinedNames } from './use-my-names';
+import { EmptyState } from '@/components/common/empty-state';
 
 export function MyNames() {
   const { setCurrentComponent } = useSideDrawerStore();
@@ -36,7 +36,7 @@ export function MyNames() {
   }
 
   return (
-    <div className="container px-4 2xl:px-12 mt-6 2xl:mt-4">
+    <div className="container px-4 2xl:px-12 mt-6 sm:mt-12">
       <TitleH2>My names</TitleH2>
 
       {isLoading ? (
@@ -44,7 +44,7 @@ export function MyNames() {
           <WithLoading isLoading={isLoading} />
         </div>
       ) : names.length === 0 ? (
-        <Empty title="No Nad names" description="You don't have any Nad names yet." />
+        <EmptyState className='mt-5' message="No Nad names" description="You don't have any Nad names yet." />
       ) : (
         <div className="space-y-4 mt-4">
           {names.map((name) => (

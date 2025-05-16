@@ -21,7 +21,7 @@ export function CommonPageLayout({
       <PageHeader title={title} src={src} />
       <div
         className={cn(
-          'scrollbar-hover 2xl:py-12 flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6',
+          'scrollbar-hover sm:py-8 flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6',
           pageConClx
         )}
       >

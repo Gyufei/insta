@@ -1,16 +1,13 @@
-import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google';
-import './globals.css';
-import BaseLayout from '@/components/layout/base-layout';
-import Web3AppKitContextProvider from '@/components/context/appkit';
-import { headers } from 'next/headers';
 import { Toaster } from 'sonner';
 
-const montserrat = Montserrat({
-  variable: '--font-montserrat',
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-});
+import type { Metadata } from 'next';
+import { headers } from 'next/headers';
+
+import Web3AppKitContextProvider from '@/components/context/appkit';
+import BaseLayout from '@/components/layout/base-layout';
+
+import { aeonik } from './font';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Tadle',
@@ -27,7 +24,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} antialiased`}>
+      <body className={`${aeonik.variable} antialiased`}>
         <Web3AppKitContextProvider cookies={cookies}>
           <BaseLayout>{children}</BaseLayout>
           <Toaster richColors />

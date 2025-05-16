@@ -1,10 +1,11 @@
 'use client';
 
-import { Empty } from '@/components/common/empty';
+import { IToken } from '@/config/tokens';
+
+import { EmptyState } from '@/components/common/empty-state';
 import { TitleH2 } from '@/components/common/title-h2';
 import { WithLoading } from '@/components/common/with-loading';
 
-import { IToken } from '@/config/tokens';
 import { cn } from '@/lib/utils';
 
 import { NadFunTokenCard } from './nadfun-token-card';
@@ -45,9 +46,11 @@ export function NadFunTokenList({
             </div>
           )}
           {!isLoading && (!tokens || tokens.length === 0) && (
-            <div className="mt-4">
-              <Empty title="No Token" description={emptyDesc || 'No tokens found'} />
-            </div>
+            <EmptyState
+              className="mt-5"
+              message="No Token"
+              description={emptyDesc || 'No tokens found'}
+            />
           )}
           {tokens && tokens.length > 0 && (
             <div className="grid w-full min-w-min grid-cols-1 gap-4 sm:grid-cols-2 2xl:gap-6">
