@@ -1,10 +1,11 @@
 import Image from 'next/image';
 
+import { IToken } from '@/config/tokens';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
-import { IToken } from '@/config/tokens';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { formatBig, formatNumber } from '@/lib/utils/number';
 
@@ -57,7 +58,7 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
       </CardHeader>
 
       <CardContent className="px-0 mb-2">
-        <div className="flex w-fit flex-shrink-0 items-center justify-start rounded-sm px-2 py-1 text-[10px] leading-none whitespace-nowrap text-primary transition-colors duration-75 ease-out 2xl:font-semibold">
+        <div className="flex w-fit whitespace-normal break-all flex-shrink-0 items-center justify-start rounded-sm px-2 py-1 text-[10px] leading-none text-primary transition-colors duration-75 ease-out 2xl:font-semibold">
           Address: {address}
         </div>
       </CardContent>

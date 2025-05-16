@@ -17,7 +17,7 @@ export function EmptyState({ message, description, className = '' }: EmptyStateP
         <CircleHelp className="mb-2 w-8 h-8 text-muted-foreground/60" />
       </div>
       <div className="mt-4 text-primary">{message}</div>
-      {description && <div className="mt-[6px] text-sm text-[#a5adc6]">{description}</div>}
+      {description && <div className="mt-[6px] text-sm text-pro-gray">{description}</div>}
     </div>
   );
 }

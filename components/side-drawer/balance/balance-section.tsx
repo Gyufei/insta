@@ -13,7 +13,7 @@ export default function BalanceSection() {
   const priceValue = multiply(balance, String(TokenPriceMap['MON'] || 0));
 
   return (
-    <div className="mt-6 mb-2 flex w-full flex-shrink-0 flex-col items-center px-8 text-center sm:mb-10">
+    <div className="mt-6 mb-4 flex w-full flex-shrink-0 flex-col items-start sm:mb-10">
       <h3 className="flex items-center leading-none">
         <span className="text-primary">Balance</span>
         <TooltipProvider>

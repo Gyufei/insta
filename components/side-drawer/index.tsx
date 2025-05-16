@@ -2,6 +2,8 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 
+import useOnclickOutside from 'react-cool-onclickoutside';
+
 import { AmbientAddLiquidity } from '@/app/(protocols)/ambient/add-liquidity';
 import { AmbientCreatePosition } from '@/app/(protocols)/ambient/create-position';
 import { AmbientRemoveLiquidity } from '@/app/(protocols)/ambient/remove-liquidity';
@@ -19,15 +21,16 @@ import { UniswapAddLiquidity } from '@/app/(protocols)/uniswap/add-liquidity';
 import { UniswapCreatePosition } from '@/app/(protocols)/uniswap/create-position';
 import { UniswapRemoveLiquidity } from '@/app/(protocols)/uniswap/remove-liquidity';
 import { UniswapSwap } from '@/app/(protocols)/uniswap/swap';
+import { OddsMarketSellAndBuy } from '@/app/odds/market/market-sell-and-buy';
 
 import { SideDrawerComponent, useSideDrawerStore } from '@/lib/state/side-drawer';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/lib/utils/use-mobile';
 
 import { AccountSetting } from './account-setting';
 import { Balance } from './balance';
 import { DepositToken } from './deposit-token';
 import { WithdrawToken } from './withdraw-token';
-import { OddsMarketSellAndBuy } from '@/app/odds/market/market-sell-and-buy';
 
 const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   Balance: Balance,
@@ -62,7 +65,14 @@ const ANIMATION_CONFIG = {
 } as const;
 
 const SideDrawer = () => {
-  const { isOpen, currentComponent } = useSideDrawerStore();
+  const isMobile = useIsMobile();
+  const { isOpen, currentComponent, setIsOpen } = useSideDrawerStore();
+
+  const ref = useOnclickOutside(() => {
+    if (isMobile && isOpen) {
+      setIsOpen(false);
+    }
+  });
 
   const renderContent = () => {
     if (!currentComponent?.name) return null;
@@ -81,11 +91,11 @@ const SideDrawer = () => {
   return (
     <div
       className={cn(
-        'grid-sidebar-context absolute inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden ring-1 ring-black/5 duration-200 2xl:relative 2xl:transform-none',
-        isOpen ? 'translate-x-0' : 'translate-x-full 2xl:translate-x-0'
+        'grid-sidebar-context absolute bg-bg-gray inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden duration-200 2xl:relative 2xl:transform-none',
+        !isMobile ? 'translate-x-0' : isOpen ? 'translate-x-0' : 'translate-x-full'
       )}
       style={containerStyle}
-      data-v-ead27774=""
+      ref={ref}
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -96,7 +106,7 @@ const SideDrawer = () => {
           exit={{ x: 0 }}
           transition={ANIMATION_CONFIG}
         >
-          <div className="bg-background flex h-full flex-col" style={containerStyle}>
+          <div className="flex h-full flex-col" style={containerStyle}>
             {renderContent()}
           </div>
         </motion.div>

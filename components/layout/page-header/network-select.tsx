@@ -29,7 +29,7 @@ export default function NetworkSelect() {
         }
       }}
     >
-      <SelectTrigger>
+      <SelectTrigger className="shadow-none bg-transparent border-black/10">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

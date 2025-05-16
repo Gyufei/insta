@@ -1,17 +1,6 @@
 'use client';
 
-import {
-  BookOpen,
-  Circle,
-  CircleUserRound,
-  Codesandbox,
-  Mail,
-  MessageCircle,
-  Minus,
-  Orbit,
-  Plus,
-  X,
-} from 'lucide-react';
+import { Circle, CircleUserRound, Codesandbox, Minus, Orbit, Plus } from 'lucide-react';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -45,8 +34,6 @@ import {
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { cn } from '@/lib/utils';
 
-import { Version } from './version';
-
 // 类型定义
 type MenuItem = {
   href: string;
@@ -61,21 +48,13 @@ type MenuGroup = {
   items: MenuItem[];
 };
 
-// 常量定义
-const SOCIAL_LINKS = [
-  { href: '', icon: Mail },
-  { href: 'https://twitter.com/instadapp', icon: X },
-  { href: 'https://discord.gg/instadapp', icon: MessageCircle },
-  { href: 'https://docs.instadapp.io', icon: BookOpen },
-];
-
 // 组件定义
 const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => (
   <Link
     href={item.href}
     className={cn(
-      'flex p-[10px] relative items-center overflow-visible rounded-md',
-      isActive && 'bg-accent/20'
+      'flex p-[10px] relative items-center text-pro-gray overflow-visible rounded-md',
+      isActive && 'bg-white text-primary'
     )}
   >
     <div
@@ -89,63 +68,88 @@ const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean })
   </Link>
 );
 
-const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: string }) => (
-  <Collapsible defaultOpen className="group/collapsible">
-    <SidebarGroup>
-      <SidebarGroupLabel asChild>
-        <CollapsibleTrigger className="flex w-full items-center group-data-[state=open]/collapsible:text-primary text-muted-foreground/80 group-data-[state=open]/collapsible:bg-accent/20">
-          {group.icon}
-          <span className="ml-2 text-sm font-medium">{group.label}</span>
-          <Minus className="ml-auto h-5 w-5 transition-transform group-data-[state=open]/collapsible:hidden" />
-          <Plus className="ml-auto h-5 w-5 transition-transform hidden group-data-[state=open]/collapsible:inline-block" />
-        </CollapsibleTrigger>
-      </SidebarGroupLabel>
-      <CollapsibleContent>
-        <SidebarGroupContent>
-          <SidebarMenuSub className='pr-0 !mr-0 mt-2'>
-            {group.items.map((item) => (
-              <SidebarMenuSubItem key={item.href}>
-                <SidebarMenuSubButton
-                  className="relative"
-                  asChild
-                  isActive={pathname === item.href}
-                >
-                  <MenuItemLink item={item} isActive={pathname === item.href} />
-                </SidebarMenuSubButton>
-              </SidebarMenuSubItem>
-            ))}
-          </SidebarMenuSub>
-        </SidebarGroupContent>
-      </CollapsibleContent>
-    </SidebarGroup>
-  </Collapsible>
-);
+function checkIsGroupActive(group: MenuGroup, pathname: string) {
+  return group.items.some((item) => pathname.includes(item.href));
+}
 
-const CollapsedMenuGroup = ({ group, isMobile }: { group: MenuGroup; isMobile: boolean }) => (
-  <DropdownMenu>
-    <SidebarMenuItem>
-      <DropdownMenuTrigger asChild>
-        <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground ml-2">
-          {group.icon}
-        </SidebarMenuButton>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        side={isMobile ? 'bottom' : 'right'}
-        align={isMobile ? 'end' : 'start'}
-        className="min-w-56 rounded-lg"
-      >
-        {group.items.map((item) => (
-          <DropdownMenuItem asChild key={item.href}>
-            <Link href={item.href} className="flex items-center">
-              {item.icon}
-              <span className="ml-2">{item.label}</span>
-            </Link>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </SidebarMenuItem>
-  </DropdownMenu>
-);
+const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: string }) => {
+  const isGroupActive = checkIsGroupActive(group, pathname);
+
+  return (
+    <Collapsible defaultOpen className="group/collapsible">
+      <SidebarGroup>
+        <SidebarGroupLabel
+          asChild
+          className={cn('h-10', isGroupActive ? 'text-primary bg-white' : 'text-pro-gray')}
+        >
+          <CollapsibleTrigger className={cn('flex w-full items-center')}>
+            {group.icon}
+            <span className="ml-2 text-sm font-medium">{group.label}</span>
+            <Minus className="ml-auto h-5 w-5 transition-transform hidden group-data-[state=open]/collapsible:inline-block" />
+            <Plus className="ml-auto h-5 w-5 transition-transform inline-block group-data-[state=open]/collapsible:hidden" />
+          </CollapsibleTrigger>
+        </SidebarGroupLabel>
+        <CollapsibleContent>
+          <SidebarGroupContent>
+            <SidebarMenuSub className="pr-0 !mr-0 mt-2">
+              {group.items.map((item) => (
+                <SidebarMenuSubItem key={item.href}>
+                  <SidebarMenuSubButton
+                    className="relative"
+                    asChild
+                    isActive={pathname === item.href}
+                  >
+                    <MenuItemLink item={item} isActive={pathname === item.href} />
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              ))}
+            </SidebarMenuSub>
+          </SidebarGroupContent>
+        </CollapsibleContent>
+      </SidebarGroup>
+    </Collapsible>
+  );
+};
+
+const CollapsedMenuGroup = ({
+  group,
+  isMobile,
+  pathname,
+}: {
+  group: MenuGroup;
+  isMobile: boolean;
+  pathname: string;
+}) => {
+  const isGroupActive = checkIsGroupActive(group, pathname);
+
+  return (
+    <DropdownMenu>
+      <SidebarMenuItem>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton
+            className={cn('ml-2', isGroupActive ? 'text-primary bg-white' : 'text-pro-gray')}
+          >
+            {group.icon}
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          side={isMobile ? 'bottom' : 'right'}
+          align={isMobile ? 'end' : 'start'}
+          className="min-w-56 rounded-lg"
+        >
+          {group.items.map((item) => (
+            <DropdownMenuItem asChild key={item.href}>
+              <Link href={item.href} className="flex items-center">
+                {item.icon}
+                <span className="ml-2">{item.label}</span>
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </SidebarMenuItem>
+    </DropdownMenu>
+  );
+};
 
 export default function AppSidebar() {
   const { data: accountInfo } = useSelectedAccount();
@@ -153,13 +157,13 @@ export default function AppSidebar() {
   const { open } = useSidebar();
   const isMobile = false;
 
-  const testnetItems = [{ href: '/faucet', label: 'Faucet', icon: <Orbit className="h-4 w-4" /> }];
+  const testnetItems = [{ href: '/faucet', label: 'Faucet', icon: <Orbit className="h-3 w-3" /> }];
 
-  const modules = [
+  const modulesItems = [
     {
       href: '/odds',
       label: 'Odds',
-      icon: <Circle className="h-4 w-4" />,
+      icon: <Circle className="h-3 w-3" />,
     },
   ];
 
@@ -168,7 +172,7 @@ export default function AppSidebar() {
       href: '/apriori',
       label: 'Apriori',
       icon: (
-        <Image src="/icons/apriori.svg" alt="aprior" width={20} height={20} className="h-4 w-4" />
+        <Image src="/icons/apriori.svg" alt="aprior" width={12} height={12} className="h-3 w-3" />
       ),
     },
     {
@@ -178,9 +182,9 @@ export default function AppSidebar() {
         <Image
           src="/icons/nad-fun.svg"
           alt="nad-fun"
-          width={20}
-          height={20}
-          className="h-4 w-4 rounded-full"
+          width={12}
+          height={12}
+          className="h-3 w-3 rounded-full"
         />
       ),
     },
@@ -188,7 +192,7 @@ export default function AppSidebar() {
       href: '/uniswap',
       label: 'Uniswap V3',
       icon: (
-        <Image src="/icons/uniswap.svg" alt="uniswap" width={20} height={20} className="h-4 w-4" />
+        <Image src="/icons/uniswap.svg" alt="uniswap" width={12} height={12} className="h-3 w-3" />
       ),
     },
     {
@@ -198,9 +202,9 @@ export default function AppSidebar() {
         <Image
           src="/icons/magma.jpg"
           alt="magma"
-          width={20}
-          height={20}
-          className="h-4 w-4 rounded-full"
+          width={12}
+          height={12}
+          className="h-3 w-3 rounded-full"
         />
       ),
     },
@@ -211,9 +215,9 @@ export default function AppSidebar() {
         <Image
           src="/icons/nad-name-server.svg"
           alt="nad-name-server"
-          width={20}
-          height={20}
-          className="h-4 w-4"
+          width={12}
+          height={12}
+          className="h-3 w-3"
         />
       ),
     },
@@ -221,13 +225,13 @@ export default function AppSidebar() {
       href: '/ambient',
       label: 'Ambient',
       icon: (
-        <Image src="/icons/ambient.svg" alt="ambient" width={20} height={20} className="h-4 w-4" />
+        <Image src="/icons/ambient.svg" alt="ambient" width={12} height={12} className="h-3 w-3" />
       ),
     },
   ];
 
   const utilitiesItems = [
-    { href: '/authority', label: 'Authority', icon: <CircleUserRound className="h-4 w-4" /> },
+    { href: '/authority', label: 'Authority', icon: <CircleUserRound className="h-3 w-3" /> },
   ];
 
   const menuGroups: MenuGroup[] = [
@@ -241,7 +245,7 @@ export default function AppSidebar() {
       id: 'modules',
       label: 'Modules',
       icon: <Codesandbox className="h-5 w-5" />,
-      items: modules,
+      items: modulesItems,
     },
     {
       id: 'testnet',
@@ -261,10 +265,10 @@ export default function AppSidebar() {
   }
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar className="grid-sidebar-nav border-none" collapsible="icon">
       <SidebarHeader
         className={cn(
-          'relative flex flex-row border-b border-border items-center justify-between py-2',
+          'relative flex flex-row items-center justify-between py-2',
           !open && 'flex-col'
         )}
         style={{
@@ -287,30 +291,18 @@ export default function AppSidebar() {
             open ? (
               <ExpandedMenuGroup key={group.id} group={group} pathname={pathname} />
             ) : (
-              <CollapsedMenuGroup key={group.id} group={group} isMobile={isMobile} />
+              <CollapsedMenuGroup
+                key={group.id}
+                group={group}
+                isMobile={isMobile}
+                pathname={pathname}
+              />
             )
           )}
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter>
-        <div
-          className={`flex w-full items-center justify-center ${!open ? 'flex-col space-y-3' : 'space-x-4'}`}
-        >
-          {SOCIAL_LINKS.map((link, index) => (
-            <a
-              key={index}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-primary dark:hover:text-primary-foreground flex h-4 w-4 items-center justify-center"
-            >
-              <link.icon className="h-full" />
-            </a>
-          ))}
-        </div>
-        {open && <Version version="v0.1.0" />}
-      </SidebarFooter>
+      <SidebarFooter></SidebarFooter>
     </Sidebar>
   );
 }

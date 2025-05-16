@@ -7,10 +7,7 @@ interface HeaderProps {
 
 export function SideDrawerBackHeader({ title, onClick }: HeaderProps) {
   return (
-    <div
-      className="items h-navbar border-border relative flex w-full flex-shrink-0 border-b"
-      style={{ minHeight: 'var(--height-navbar)' }}
-    >
+    <div className="items h-10 border-border relative flex w-full flex-shrink-0">
       <div className="mx-auto flex w-full items-center">
         <button
           onClick={onClick}
@@ -18,12 +15,10 @@ export function SideDrawerBackHeader({ title, onClick }: HeaderProps) {
         >
           <ArrowLeft className="h-4 w-4 transition-transform duration-75 ease-out group-hover:-translate-x-1" />
         </button>
-        <div className="text-sm text-primary w-full leading-none font-semibold whitespace-nowrap truncate">{title}</div>
+        <div className="text-sm text-primary w-full leading-none font-semibold whitespace-nowrap truncate">
+          {title}
+        </div>
       </div>
-      <div
-        className="to-background dark:to-black-600 pointer-events-none absolute inset-x-0 h-8 w-full bg-gradient-to-t from-transparent"
-        style={{ bottom: '-33px' }}
-      ></div>
     </div>
   );
 }

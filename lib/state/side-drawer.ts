@@ -62,6 +62,10 @@ export const useSideDrawerStore = create<SideDrawerState>((set) => ({
     }
   },
   currentComponent: { name: 'Balance' },
-  setCurrentComponent: ({ name, props }: CurrentComponent) =>
-    set({ currentComponent: { name, props } }),
+  setCurrentComponent: ({ name, props }: CurrentComponent) => {
+    set({ currentComponent: { name, props } });
+    if (name !== 'Balance') {
+      set({ isOpen: true });
+    }
+  },
 }));
