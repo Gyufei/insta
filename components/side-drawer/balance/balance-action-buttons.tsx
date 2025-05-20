@@ -27,7 +27,7 @@ function DepositButton() {
     >
       <div className="flex flex-col items-center text-[#6E75F9]">
         <DepositIcon />
-        <div className="text-primary font-medium mt-3">Deposit</div>
+        <div className="text-primary font-medium mt-2">Deposit</div>
       </div>
     </button>
   );
@@ -47,7 +47,7 @@ function WithdrawButton() {
     >
       <div className="flex flex-col items-center text-[#44B6BB]">
         <WithdrawIcon />
-        <div className="text-primary font-medium mt-3">Withdraw</div>
+        <div className="text-primary font-medium mt-2">Withdraw</div>
       </div>
     </button>
   );

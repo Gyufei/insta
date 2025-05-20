@@ -53,14 +53,14 @@ export function AmbientPositionsSection() {
               <Input
                 type="text"
                 placeholder="Search position"
-                className="form-input w-full pr-2 leading-none pl-9 py-1 h-8"
+                className="form-input w-full pr-2 leading-none pl-9 py-1 h-8 shadow-none outline-none focus-visible:ring-0"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <Search className="search-icon absolute h-4 w-4" style={{ left: '12px' }} />
             </div>
           </div>
-          <div className="ml-2">
+          <div className="ml-3">
             <Button
               size="sm"
               className="flex bg-pro-blue text-white hover:bg-pro-blue/80 flex-shrink-0 select-none items-center justify-center"

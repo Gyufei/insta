@@ -13,7 +13,7 @@ const SOCIAL_LINKS = [
 
 export default function BalanceFooterSocial({ className }: { className?: string }) {
   return (
-    <div className={cn(`flex w-full items-center justify-center space-x-4 -z-10`, className)}>
+    <div className={cn(`flex w-full items-center justify-center space-x-4 z-0`, className)}>
       {SOCIAL_LINKS.map((link, index) => (
         <a
           key={index}

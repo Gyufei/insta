@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator';
 
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { cn } from '@/lib/utils';
 import { formatBig, formatNumber } from '@/lib/utils/number';
 
 export function NadFunTokenCard({ token, balance }: { token: IToken; balance: string }) {
@@ -31,10 +32,10 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
   const displayBalance = realBalance ? formatNumber(realBalance) : '';
 
   return (
-    <Card className="flex flex-1 px-5 flex-shrink-0 flex-col gap-3">
+    <Card className="flex flex-1 px-5 flex-shrink-0 flex-col gap-3 shadow-none outline-none">
       <CardHeader className="flex h-14 items-center justify-between px-0">
         <div className="flex items-center gap-3">
-          <div className="mr-4 flex -space-x-3 overflow-hidden">
+          <div className="flex -space-x-3 overflow-hidden">
             <div className="flex h-12 w-12 items-center justify-center dark:opacity-90">
               <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full">
                 <Image
@@ -50,7 +51,9 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
 
           <div className="flex flex-grow flex-col">
             <div className="mb-1 text-xl leading-none font-medium whitespace-nowrap">{symbol}</div>
-            <div className="flex text-sm leading-none whitespace-nowrap text-gray-300">{name}</div>
+            <div className="flex text-sm leading-none whitespace-nowrap font-light text-gray-400">
+              {name}
+            </div>
           </div>
         </div>
 
@@ -58,7 +61,7 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
       </CardHeader>
 
       <CardContent className="px-0 mb-2">
-        <div className="flex w-fit whitespace-normal break-all flex-shrink-0 items-center justify-start rounded-sm px-2 py-1 text-[10px] leading-none text-primary transition-colors duration-75 ease-out 2xl:font-semibold">
+        <div className="flex w-fit text-sm font-light whitespace-normal break-all flex-shrink-0 items-center justify-start rounded-sm px-2 py-1 leading-none text-primary transition-colors duration-75 ease-out">
           Address: {address}
         </div>
       </CardContent>
@@ -69,7 +72,10 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
         <Button
           onClick={handleBuy}
           variant="outline"
-          className="mt-2 mr-4 flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+          className={cn(
+            'mt-2 flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50',
+            balance && 'mr-4'
+          )}
         >
           Buy
         </Button>
@@ -77,7 +83,7 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
           <Button
             onClick={handleSell}
             variant="outline"
-            className="mr-4 flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            className="mt-2 flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
           >
             Sell
           </Button>

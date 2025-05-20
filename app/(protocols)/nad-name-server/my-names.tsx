@@ -2,16 +2,16 @@
 
 import { Sparkle } from 'lucide-react';
 
+import { EmptyState } from '@/components/common/empty-state';
 import { TitleH2 } from '@/components/common/title-h2';
+import { WithLoading } from '@/components/common/with-loading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { WithLoading } from '@/components/common/with-loading';
 
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import { useNadNameCombinedNames } from './use-my-names';
-import { EmptyState } from '@/components/common/empty-state';
 
 export function MyNames() {
   const { setCurrentComponent } = useSideDrawerStore();
@@ -44,13 +44,17 @@ export function MyNames() {
           <WithLoading isLoading={isLoading} />
         </div>
       ) : names.length === 0 ? (
-        <EmptyState className='mt-5' message="No Nad names" description="You don't have any Nad names yet." />
+        <EmptyState
+          className="mt-5"
+          message="No Nad names"
+          description="You don't have any Nad names yet."
+        />
       ) : (
         <div className="space-y-4 mt-4">
           {names.map((name) => (
             <Card
               key={name.id}
-              className="py-0 hover:bg-accent/50 transition-colors cursor-pointer"
+              className="py-0 hover:bg-accent/50 transition-colors cursor-pointer shadow-none outline-none"
             >
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-4">

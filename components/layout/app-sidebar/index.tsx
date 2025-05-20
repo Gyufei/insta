@@ -2,6 +2,8 @@
 
 import { Circle, CircleUserRound, Codesandbox, Minus, Orbit, Plus } from 'lucide-react';
 
+import { useState } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -34,6 +36,8 @@ import {
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { cn } from '@/lib/utils';
 
+import { Version } from './version';
+
 // 类型定义
 type MenuItem = {
   href: string;
@@ -49,24 +53,31 @@ type MenuGroup = {
 };
 
 // 组件定义
-const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => (
-  <Link
-    href={item.href}
-    className={cn(
-      'flex p-[10px] relative items-center text-pro-gray overflow-visible rounded-md',
-      isActive && 'bg-white text-primary'
-    )}
-  >
-    <div
+function MenuItemLink({ item, isActive }: { item: MenuItem; isActive: boolean }) {
+  const [isHover, setIsHover] = useState(false);
+
+  return (
+    <Link
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+      href={item.href}
       className={cn(
-        'absolute h-6 w-[2px] bg-primary transition-all duration-300 -left-[11px]',
-        isActive ? 'opacity-100' : 'opacity-0'
+        'flex p-[10px] relative items-center text-pro-gray overflow-visible rounded-md',
+        isActive && 'bg-white text-primary',
+        isHover && 'bg-white text-primary'
       )}
-    />
-    {item.icon}
-    <span className="ml-2 text-xs font-medium">{item.label}</span>
-  </Link>
-);
+    >
+      <div
+        className={cn(
+          'absolute h-6 w-[2px] bg-primary transition-all duration-300 -left-[11px]',
+          isActive || isHover ? 'opacity-100' : 'opacity-0'
+        )}
+      />
+      {item.icon}
+      <span className="ml-2 text-xs font-medium">{item.label}</span>
+    </Link>
+  );
+}
 
 function checkIsGroupActive(group: MenuGroup, pathname: string) {
   return group.items.some((item) => pathname.includes(item.href));
@@ -77,7 +88,7 @@ const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: st
 
   return (
     <Collapsible defaultOpen className="group/collapsible">
-      <SidebarGroup>
+      <SidebarGroup className="py-0 px-[10px]">
         <SidebarGroupLabel
           asChild
           className={cn('h-10', isGroupActive ? 'text-primary bg-white' : 'text-pro-gray')}
@@ -94,11 +105,7 @@ const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: st
             <SidebarMenuSub className="pr-0 !mr-0 mt-2">
               {group.items.map((item) => (
                 <SidebarMenuSubItem key={item.href}>
-                  <SidebarMenuSubButton
-                    className="relative"
-                    asChild
-                    isActive={pathname === item.href}
-                  >
+                  <SidebarMenuSubButton className="relative" asChild>
                     <MenuItemLink item={item} isActive={pathname === item.href} />
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
@@ -302,7 +309,7 @@ export default function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter></SidebarFooter>
+      <SidebarFooter>{open && <Version version="v0.1.0" />}</SidebarFooter>
     </Sidebar>
   );
 }

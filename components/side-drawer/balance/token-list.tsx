@@ -26,7 +26,7 @@ export default function TokenList() {
   }, [searchQuery]);
 
   return (
-    <div className="mt-2 flex flex-grow flex-col sm:mt-4">
+    <div className="mt-2 flex flex-grow flex-col sm:mt-4 relative z-1">
       <div className="flex flex-shrink-0">
         <SearchBar
           placeholder="Search Currency"

@@ -53,14 +53,14 @@ export function UniswapPositionsSection() {
               <Input
                 type="text"
                 placeholder="Search position"
-                className="form-input w-full pr-2 leading-none pl-9 py-1 h-8"
+                className="form-input w-full pr-2 leading-none pl-9 py-1 h-8 shadow-none outline-none focus-visible:ring-0"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <Search className="search-icon absolute h-4 w-4" style={{ left: '12px' }} />
             </div>
           </div>
-          <div className="ml-2">
+          <div className="ml-3">
             <Button
               size="sm"
               className="flex bg-pro-blue text-white hover:bg-pro-blue/80 flex-shrink-0 select-none items-center justify-center"
@@ -80,7 +80,7 @@ export function UniswapPositionsSection() {
           <div className="py-20 rounded-sm bg-muted/80 flex items-center justify-center">
             <WithLoading isLoading={true} />
           </div>
-        ) : !positions?.length || !filteredPositions?.length ? (
+        ) : positions?.length || filteredPositions?.length ? (
           <EmptyState
             message={
               positions?.length === 0 ? (

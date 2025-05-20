@@ -140,9 +140,9 @@ export function FaucetContainer() {
 
   return (
     <div className={cn('border-border border rounded-3xl px-5 py-4 mt-5')}>
-      <h1 className="text-xl text-primary font-medium">Select Token</h1>
+      <h1 className="text-xl text-primary font-normal">Select Token</h1>
       <Select value={selectedToken} onValueChange={setSelectedToken}>
-        <SelectTrigger className="w-full mt-3">
+        <SelectTrigger className="w-full mt-3 shadow-none focus-visible:ring-0">
           <SelectValue placeholder="Select a token" />
         </SelectTrigger>
         <SelectContent>
@@ -161,7 +161,7 @@ export function FaucetContainer() {
         </SelectContent>
       </Select>
 
-      <h1 className="text-xl text-primary font-medium mt-4">Enter wallet address</h1>
+      <h1 className="text-xl text-primary font-normal mt-4">Enter wallet address</h1>
       <div className="relative w-full mt-3">
         <div className="absolute left-3 top-1/2 -translate-y-1/2">
           <Wallet className="h-5 w-5 text-primary" />
@@ -179,7 +179,7 @@ export function FaucetContainer() {
         />
       </div>
 
-      <p className="text-sm mt-2 text-primary/60">(Maximum 1 request every 12 hours)</p>
+      <p className="text-sm mt-2 text-primary/60 font-normal">(Maximum 1 request every 12 hours)</p>
 
       <Button
         disabled={errorData.showError || isPending}
@@ -193,7 +193,7 @@ export function FaucetContainer() {
 
       <ErrorMessage show={errorData.showError} message={errorData.errorMessage} className="mt-2" />
 
-      <p className="text-sm text-left text-primary/60 mt-3">
+      <p className="text-sm text-left text-primary/60 mt-3 font-normal">
         Testnet tokens are for development purposes only,
         <br />
         they do not have real value.
@@ -201,7 +201,7 @@ export function FaucetContainer() {
 
       <Separator className="my-4" />
 
-      <div className="text-primary">Connect your X account to get more testnet tokens!</div>
+      <div className="text-primary font-light">Connect your X account to get more testnet tokens!</div>
       <Button
         disabled={isSavingXBind}
         variant="outline"
