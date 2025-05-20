@@ -72,8 +72,9 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
         <Button
           onClick={handleBuy}
           variant="outline"
+          size="sm"
           className={cn(
-            'mt-2 flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50',
+            'mt-2 flex h-8 flex-1 flex-shrink-0 hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50',
             balance && 'mr-4'
           )}
         >
@@ -82,8 +83,9 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
         {balance && (
           <Button
             onClick={handleSell}
+            size="sm"
             variant="outline"
-            className="mt-2 flex h-8 flex-1 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            className="mt-2 flex h-8 flex-1 flex-shrink-0 hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
           >
             Sell
           </Button>

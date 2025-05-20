@@ -76,7 +76,7 @@ export function MyNames() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="bg-primary-foreground text-primary"
+                        className="bg-primary-foreground text-primary hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue cursor-pointer"
                         onClick={() => handleTransfer(name.name)}
                       >
                         Transfer
@@ -86,7 +86,7 @@ export function MyNames() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="bg-primary-foreground text-primary"
+                      className="bg-primary-foreground text-primary hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue cursor-pointer"
                       onClick={() => handleSetPrimary(name.name)}
                     >
                       Set as primary
