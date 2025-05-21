@@ -1,4 +1,4 @@
-import { monadTestnet } from '@reown/appkit/networks';
+import { base, monadTestnet } from '@reown/appkit/networks';
 import { Chain } from '@reown/appkit/networks';
 
 export interface INetworkConfig extends Chain {
@@ -10,8 +10,12 @@ export const NetworkConfigs = {
     ...monadTestnet,
     icon: '/icons/monad.svg',
     contracts: {
-      ...monadTestnet.contracts
+      ...monadTestnet.contracts,
     },
+  },
+  base: {
+    ...base,
+    icon: '/icons/base.svg',
   },
 };
 

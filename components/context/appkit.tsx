@@ -1,11 +1,13 @@
 'use client';
 
-import { wagmiAdapter, projectId } from '../../config/wagmi-config';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { base, monadTestnet } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit/react';
-import { monadTestnet } from '@reown/appkit/networks';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { type Config, WagmiProvider, cookieToInitialState } from 'wagmi';
+
 import React, { type ReactNode } from 'react';
-import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi';
+
+import { projectId, wagmiAdapter } from '../../config/wagmi-config';
 
 const queryClient = new QueryClient();
 
@@ -25,7 +27,7 @@ const metadata = {
 createAppKit({
   adapters: [wagmiAdapter],
   projectId,
-  networks: [monadTestnet],
+  networks: [monadTestnet, base],
   defaultNetwork: monadTestnet,
   metadata: metadata,
   features: {

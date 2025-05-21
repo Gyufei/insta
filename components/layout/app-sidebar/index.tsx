@@ -1,12 +1,15 @@
 'use client';
 
+import { useAppKitNetwork } from '@reown/appkit/react';
 import { Circle, CircleUserRound, Codesandbox, Minus, Orbit, Plus } from 'lucide-react';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
+import { NetworkConfigs } from '@/config/network-config';
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
@@ -160,16 +163,26 @@ const CollapsedMenuGroup = ({
 
 export default function AppSidebar() {
   const { data: accountInfo } = useSelectedAccount();
+  const { chainId } = useAppKitNetwork();
+
   const pathname = usePathname();
   const { open } = useSidebar();
   const isMobile = false;
 
   const testnetItems = [{ href: '/faucet', label: 'Faucet', icon: <Orbit className="h-3 w-3" /> }];
 
-  const modulesItems = [
+  const monadModulesItems = [
     {
       href: '/odds',
       label: 'Odds',
+      icon: <Circle className="h-3 w-3" />,
+    },
+  ];
+
+  const baseModulesItems = [
+    {
+      href: '/token-station',
+      label: 'Token Station',
       icon: <Circle className="h-3 w-3" />,
     },
   ];
@@ -241,7 +254,7 @@ export default function AppSidebar() {
     { href: '/authority', label: 'Authority', icon: <CircleUserRound className="h-3 w-3" /> },
   ];
 
-  const menuGroups: MenuGroup[] = [
+  const initGroup = [
     {
       id: 'protocols',
       label: 'Protocols',
@@ -252,7 +265,7 @@ export default function AppSidebar() {
       id: 'modules',
       label: 'Modules',
       icon: <Codesandbox className="h-5 w-5" />,
-      items: modulesItems,
+      items: monadModulesItems,
     },
     {
       id: 'testnet',
@@ -262,14 +275,34 @@ export default function AppSidebar() {
     },
   ];
 
-  if (accountInfo?.sandbox_account) {
-    menuGroups.push({
-      id: 'utilities',
-      label: 'Utilities',
-      icon: <Codesandbox className="h-5 w-5" />,
-      items: utilitiesItems,
-    });
-  }
+  const [menuGroups, setMenuGroup] = useState<MenuGroup[]>(initGroup);
+
+  useEffect(() => {
+    let groups: MenuGroup[] = [];
+    if (String(chainId) === String(NetworkConfigs.base.id)) {
+      groups = [
+        {
+          id: 'modules',
+          label: 'Modules',
+          icon: <Codesandbox className="h-5 w-5" />,
+          items: baseModulesItems,
+        },
+      ];
+    } else {
+      groups = groups.concat(...initGroup);
+
+      if (accountInfo?.sandbox_account) {
+        groups.push({
+          id: 'utilities',
+          label: 'Utilities',
+          icon: <Codesandbox className="h-5 w-5" />,
+          items: utilitiesItems,
+        });
+      }
+    }
+
+    setMenuGroup(groups);
+  }, [chainId, accountInfo?.sandbox_account]);
 
   return (
     <Sidebar className="grid-sidebar-nav border-none" collapsible="icon">
