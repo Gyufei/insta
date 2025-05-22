@@ -7,7 +7,6 @@ import Image from 'next/image';
 import { NetworkConfigs } from '@/config/network-config';
 
 import { NumberInput } from '@/components/common/number-input';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
