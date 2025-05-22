@@ -27,7 +27,7 @@ export function BaseTokenCard({ token, balance, className }: BaseTokenCardProps)
   }
 
   return (
-    <Card className={cn('p-4 shadow-none', className)}>
+    <Card className={cn('p-4 shadow-none bg-white rounded-md border-none', className)}>
       <CardContent className="flex justify-between items-center px-0">
         <div className="flex items-center">
           <div className="flex h-10 w-10 items-center justify-center dark:opacity-90">
