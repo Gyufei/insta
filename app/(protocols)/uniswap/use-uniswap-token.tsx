@@ -1,5 +1,13 @@
 import { APR_MONAD, G_MONAD, IToken, MONAD } from '@/config/tokens';
 
+export const USDT_TOKEN: IToken = {
+  address: '0xfBC2D240A5eD44231AcA3A9e9066bc4b33f01149',
+  name: 'Tether USD',
+  symbol: 'USDT',
+  logo: '/icons/usdt.svg',
+  decimals: 6,
+};
+
 const UNISWAP_TOKENS: Array<IToken> = [
   MONAD,
   {
@@ -9,13 +17,7 @@ const UNISWAP_TOKENS: Array<IToken> = [
     logo: '/icons/wmon.svg',
     decimals: 18,
   },
-  {
-    address: '0xfBC2D240A5eD44231AcA3A9e9066bc4b33f01149',
-    name: 'Tether USD',
-    symbol: 'USDT',
-    logo: '/icons/usdt.svg',
-    decimals: 6,
-  },
+  USDT_TOKEN,
   APR_MONAD,
   G_MONAD,
   {
