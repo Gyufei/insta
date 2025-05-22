@@ -140,7 +140,7 @@ export function FaucetContainer() {
 
   return (
     <div className={cn('border-border border rounded-3xl px-5 py-4 mt-5')}>
-      <h1 className="text-xl text-primary font-normal">Select Token</h1>
+      <h1 className="text-lg text-primary font-normal">Select Token</h1>
       <Select value={selectedToken} onValueChange={setSelectedToken}>
         <SelectTrigger className="w-full mt-3 shadow-none focus-visible:ring-0">
           <SelectValue placeholder="Select a token" />
@@ -161,7 +161,7 @@ export function FaucetContainer() {
         </SelectContent>
       </Select>
 
-      <h1 className="text-xl text-primary font-normal mt-4">Enter wallet address</h1>
+      <h1 className="text-lg text-primary font-normal mt-4">Enter Wallet Address</h1>
       <div className="relative w-full mt-3">
         <div className="absolute left-3 top-1/2 -translate-y-1/2">
           <Wallet className="h-5 w-5 text-primary" />
@@ -201,7 +201,7 @@ export function FaucetContainer() {
 
       <Separator className="my-4" />
 
-      <div className="text-primary font-light">Connect your X account to get more testnet tokens!</div>
+      <div className="text-primary font-normal">Connect your X account to get more testnet tokens!</div>
       <Button
         disabled={isSavingXBind}
         variant="outline"

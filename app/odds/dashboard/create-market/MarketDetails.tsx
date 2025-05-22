@@ -160,7 +160,7 @@ export function MarketDetails({
                           onClick={() =>
                             onOutcomeChange(outcome.id, outcome.name)
                           }
-                          className="absolute -top-1 -right-1 p-0.5 bg-white rounded-full border shadow-sm hover:bg-gray-100"
+                          className="absolute -top-1 -right-1 p-0.5 bg-white rounded-full border shadow-none hover:bg-gray-100"
                         >
                           <X className="w-3 h-3 text-gray-500" />
                         </button>

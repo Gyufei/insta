@@ -9,7 +9,7 @@ export function AccountAddressContainer() {
       >
         Account address
       </label>
-      <AccountAddressCopy className="rounded-sm shadow-sm" />
+      <AccountAddressCopy className="rounded-sm shadow-none" />
     </div>
   );
 }

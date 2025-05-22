@@ -65,7 +65,7 @@ export default function NetworkSelect() {
         }
       }}
     >
-      <SelectTrigger className="shadow-none bg-transparent border-black/10">
+      <SelectTrigger className="shadow-none focus-visible:ring-0 bg-transparent border-black/10">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

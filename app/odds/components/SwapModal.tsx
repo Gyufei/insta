@@ -57,7 +57,7 @@ export default function SwapModal({ isOpen, onClose }: SwapModalProps) {
 
           {/* Swap Icon */}
           <div className="flex justify-center relative">
-            <div className="absolute top-1/2 -translate-y-1/2 w-8 h-8 bg-white border rounded-full flex items-center justify-center shadow-sm">
+            <div className="absolute top-1/2 -translate-y-1/2 w-8 h-8 bg-white border rounded-full flex items-center justify-center shadow-none">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M7 10l5-5 5 5M7 14l5 5 5-5" />
               </svg>

@@ -430,7 +430,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                     </button>
 
                     {isOutcomeFilterOpen && (
-                      <div className="absolute right-0 top-full mt-1 bg-white border rounded-lg shadow-lg overflow-hidden z-10">
+                      <div className="absolute right-0 top-full mt-1 bg-white border rounded-lg shadow-none overflow-hidden z-10">
                         {['All', ...(market?.outcomes?.map((o) => o.name) || [])].map((outcome) => (
                           <button
                             key={outcome}

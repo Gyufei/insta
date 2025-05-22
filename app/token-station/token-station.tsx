@@ -68,7 +68,7 @@ export function TokenStation() {
           </Card>
           {/* 中间分割箭头 */}
           <div className="flex justify-center items-center px-2 -mx-[32px] z-10">
-            <div className="rounded-full bg-card shadow-lg p-2 border border-border">
+            <div className="rounded-full bg-card shadow-none p-2 border border-border">
               <DepositIcon />
             </div>
           </div>

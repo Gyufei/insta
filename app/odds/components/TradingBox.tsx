@@ -247,7 +247,7 @@ export default function TradingBox({ market }: TradingBoxProps) {
       </button>
 
       {showOutcomesDropdown && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-white border rounded-lg shadow-lg z-10">
+        <div className="absolute left-0 right-0 top-full mt-1 bg-white border rounded-lg shadow-none z-10">
           {market.outcomes.map((outcome, index) => (
             <button
               key={index}

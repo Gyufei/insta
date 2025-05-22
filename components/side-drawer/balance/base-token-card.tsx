@@ -27,7 +27,7 @@ export function BaseTokenCard({ token, balance, className }: BaseTokenCardProps)
   }
 
   return (
-    <Card className={cn('p-4', className)}>
+    <Card className={cn('p-4 shadow-none', className)}>
       <CardContent className="flex justify-between items-center px-0">
         <div className="flex items-center">
           <div className="flex h-10 w-10 items-center justify-center dark:opacity-90">
@@ -48,8 +48,8 @@ export function BaseTokenCard({ token, balance, className }: BaseTokenCardProps)
             </div>
           </div>
 
-          <div className="flex flex-col px-4">
-            <div className="text-primary mb-1 flex items-center text-xs font-semibold whitespace-nowrap">
+          <div className="flex flex-col px-3">
+            <div className="text-primary mb-1 flex items-center text-sm font-semibold whitespace-nowrap">
               {formatNumber(balance)} {token.symbol}
             </div>
             <div className="text-xs font-medium whitespace-nowrap text-gray-300">

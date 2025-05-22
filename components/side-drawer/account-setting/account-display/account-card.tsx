@@ -23,7 +23,7 @@ export function AccountCard({
   return (
     <button
       className={cn(
-        'flex h-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm border text-xs font-semibold whitespace-nowrap shadow-sm transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50',
+        'flex h-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm border text-xs font-semibold whitespace-nowrap shadow-none transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50',
         isCurrent
           ? 'border-primary bg-primary text-primary-foreground'
           : 'border-border bg-muted text-card-foreground hover:bg-muted/80',

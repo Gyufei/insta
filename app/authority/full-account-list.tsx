@@ -28,7 +28,7 @@ export function FullAccountList() {
         <Button
           size="sm"
           disabled={isCreatePending}
-          className="scale-xs flex w-24 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-2 text-sm leading-none font-semibold whitespace-nowrap shadow-sm duration-75 ease-out select-none focus:outline-none 2xl:w-36"
+          className="scale-xs flex w-24 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm py-2 text-sm leading-none font-semibold whitespace-nowrap shadow-none duration-75 ease-out select-none focus:outline-none 2xl:w-36"
           style={{ minHeight: '24px' }}
           onClick={handleCreateAccountClick}
         >

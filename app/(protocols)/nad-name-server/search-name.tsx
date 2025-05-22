@@ -95,7 +95,7 @@ export function SearchName() {
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${showResults && inputTerm ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}
         >
-          <ul className="rounded-sm mt-2 border border-gray-300 bg-primary-foreground shadow-sm z-10">
+          <ul className="rounded-sm mt-2 border border-gray-300 bg-primary-foreground shadow-none z-10">
             <li
               onClick={handleResister}
               className="rounded-sm font-semibold hover:bg-gray-100 cursor-pointer"

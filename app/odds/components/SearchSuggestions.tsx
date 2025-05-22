@@ -44,7 +44,7 @@ export default function SearchSuggestions({
     <div
       ref={suggestionsRef}
       id="search-suggestions"
-      className="absolute top-full left-0 right-0 bg-white rounded-lg shadow-lg border mt-2 z-50"
+      className="absolute top-full left-0 right-0 bg-white rounded-lg shadow-none border mt-2 z-50"
     >
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-2">

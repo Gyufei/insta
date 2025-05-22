@@ -51,7 +51,7 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
 
           <div className="flex flex-grow flex-col">
             <div className="mb-1 text-xl leading-none font-medium whitespace-nowrap">{symbol}</div>
-            <div className="flex text-sm leading-none whitespace-nowrap font-light text-gray-400">
+            <div className="flex text-sm leading-none whitespace-nowrap font-normal text-gray-400">
               {name}
             </div>
           </div>
@@ -61,7 +61,7 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
       </CardHeader>
 
       <CardContent className="px-0 mb-2">
-        <div className="flex w-fit text-sm font-light whitespace-normal break-all flex-shrink-0 items-center justify-start rounded-sm px-2 py-1 leading-none text-primary transition-colors duration-75 ease-out">
+        <div className="flex w-fit text-sm font-normal whitespace-normal break-all flex-shrink-0 items-center justify-start rounded-sm pr-2 py-1 leading-none text-primary transition-colors duration-75 ease-out">
           Address: {address}
         </div>
       </CardContent>
@@ -74,7 +74,7 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
           variant="outline"
           size="sm"
           className={cn(
-            'mt-2 flex h-8 flex-1 flex-shrink-0 hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50',
+            'mt-2 flex h-8 flex-1 flex-shrink-0 hover:border-pro-blue/20 hover:bg-pro-blue/20 hover:text-pro-blue cursor-pointer items-center justify-center rounded-sm py-1 text-xs font-semibold shadow-none whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50',
             balance && 'mr-4'
           )}
         >

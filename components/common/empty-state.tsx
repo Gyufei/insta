@@ -16,8 +16,10 @@ export function EmptyState({ message, description, className = '' }: EmptyStateP
       <div className="bg-primary-foreground rounded-xl flex items-center justify-center w-15 h-15 border border-border">
         <CircleHelp className="w-8 h-8 text-muted-foreground/60" />
       </div>
-      <div className="mt-4 text-primary font-light">{message}</div>
-      {description && <div className="mt-[6px] text-sm text-pro-gray font-light">{description}</div>}
+      <div className="mt-4 text-primary font-medium">{message}</div>
+      {description && (
+        <div className="mt-[6px] text-sm text-pro-gray font-normal">{description}</div>
+      )}
     </div>
   );
 }

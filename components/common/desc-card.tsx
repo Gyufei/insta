@@ -21,7 +21,7 @@ export function DescCard({
           <div className="text-xl mb-1 font-medium whitespace-nowrap">
             <WithLoading className='h-7 w-7' isLoading={isLoading}>{value}</WithLoading>
           </div>
-          <div className="text-gray-400 font-light flex whitespace-nowrap">{title}</div>
+          <div className="text-gray-400 font-normal flex whitespace-nowrap">{title}</div>
         </div>
         <div className="text-blue">
           {typeof icon === 'string' ? <Image src={icon} alt={title} width={40} height={40} /> : icon}

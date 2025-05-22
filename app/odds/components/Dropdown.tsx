@@ -34,7 +34,7 @@ export default function Dropdown({ options, value, onChange, className = '' }: D
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 top-full mt-1 bg-white border rounded-lg shadow-lg overflow-hidden z-10 w-max">
+        <div className="absolute left-0 top-full mt-1 bg-white border rounded-lg shadow-none overflow-hidden z-10 w-max">
           {options.map((option) => (
             <button
               key={option}

@@ -74,7 +74,7 @@ export function BasicInformation({
                       onClick={() => onDescriptionFormatChange('plaintext')}
                       className={`p-1.5 rounded transition-colors ${
                         descriptionFormat === 'plaintext'
-                          ? 'bg-white text-gray-900 shadow-sm'
+                          ? 'bg-white text-gray-900 shadow-none'
                           : 'text-gray-600 hover:text-gray-900'
                       }`}
                     >
@@ -144,7 +144,7 @@ export function BasicInformation({
                       onClick={() => onThumbnailFormatChange('link')}
                       className={`p-1.5 rounded transition-colors ${
                         thumbnailFormat === 'link'
-                          ? 'bg-white text-gray-900 shadow-sm'
+                          ? 'bg-white text-gray-900 shadow-none'
                           : 'text-gray-600 hover:text-gray-900'
                       }`}
                     >
@@ -164,7 +164,7 @@ export function BasicInformation({
                       onClick={() => onThumbnailFormatChange('file')}
                       className={`p-1.5 rounded transition-colors ${
                         thumbnailFormat === 'file'
-                          ? 'bg-white text-gray-900 shadow-sm'
+                          ? 'bg-white text-gray-900 shadow-none'
                           : 'text-gray-600 hover:text-gray-900'
                       }`}
                     >
@@ -201,7 +201,7 @@ export function BasicInformation({
                 <button
                   type="button"
                   onClick={() => onThumbnailChange('')}
-                  className="absolute -top-2 -right-2 p-1 bg-white rounded-full border shadow-sm hover:bg-gray-100"
+                  className="absolute -top-2 -right-2 p-1 bg-white rounded-full border shadow-none hover:bg-gray-100"
                 >
                   <X className="w-4 h-4 text-gray-500" />
                 </button>

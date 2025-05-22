@@ -68,7 +68,7 @@ export function Claim() {
           <div className="text-gray-300-400 py-4 text-center">No request found</div>
         )}
       </div>
-      <Separator />
+      <Separator className='mt-4' />
       <ActionButton
         disabled={isClaimRecordsPending || canClaimAmount === '0' || !selectedRequestId}
         onClick={handleClaim}
