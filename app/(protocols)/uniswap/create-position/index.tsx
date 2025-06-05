@@ -5,11 +5,12 @@ import { useEffect, useState } from 'react';
 
 import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 
+import { IToken } from '@/config/tokens';
+
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
-import { IToken } from '@/config/tokens';
 import { ErrorVO } from '@/lib/model/error-vo';
 
 import TokenSelector from '../uni-common/token-selector';
@@ -82,8 +83,8 @@ export function UniswapCreatePosition() {
       token_a_address: token0.address,
       token_b_address: token1.address,
       fee: multiply(feeTier, String(10_000)),
-      price_lower: multiply(priceRangeMin, String(10 ** (token0.decimals - token1.decimals))),
-      price_upper: multiply(priceRangeMax, String(10 ** (token0.decimals - token1.decimals))),
+      price_lower: priceRangeMin,
+      price_upper: priceRangeMax,
       amount_a: amount0,
       amount_b: amount1,
       slippage: '10000000000000000', // 1%
@@ -93,7 +94,7 @@ export function UniswapCreatePosition() {
 
     const extraArgs = initPrice
       ? {
-          price_current: multiply(initPrice, String(10 ** (token0.decimals - token1.decimals))),
+          price_current: initPrice,
         }
       : {};
 

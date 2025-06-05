@@ -1,16 +1,16 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { multiply } from 'safebase';
 
 import { useEffect, useState } from 'react';
 
 import TokenSelector from '@/app/(protocols)/uniswap/uni-common/token-selector';
 import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 
+import { IToken } from '@/config/tokens';
+
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
-import { IToken } from '@/config/tokens';
 import { useAmbientCreatePosition } from '@/lib/data/use-ambient-create-position';
 import { ErrorVO } from '@/lib/model/error-vo';
 
@@ -76,11 +76,9 @@ export function AmbientCreatePosition() {
     const args = {
       token_a: token0.address,
       token_b: token1.address,
-      price_current: initPrice
-        ? multiply(initPrice, String(10 ** (token0.decimals - token1.decimals)))
-        : '0',
-      price_lower: multiply(priceRangeMin, String(10 ** (token0.decimals - token1.decimals))),
-      price_upper: multiply(priceRangeMax, String(10 ** (token0.decimals - token1.decimals))),
+      price_current: initPrice || '0',
+      price_lower: priceRangeMin,
+      price_upper: priceRangeMax,
       token_a_amount: amount0,
       token_a_decimals: token0.decimals.toString(),
       token_b_decimals: token1.decimals.toString(),
