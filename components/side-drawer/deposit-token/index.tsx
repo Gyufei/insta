@@ -24,7 +24,7 @@ export function DepositToken() {
   const handleDeposit = () => {
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, token?.decimals);
-    deposit(amount);
+    deposit(amount.toString());
   };
 
   return (

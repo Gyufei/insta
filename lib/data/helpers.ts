@@ -1,11 +1,13 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { useAccount } from 'wagmi';
+
+import { ERROR_MESSAGES } from '@/config/const-msg';
+
 import { Fetcher } from '../fetcher';
 import { ITxResponse } from '../model';
-import { toast } from 'sonner';
-import { ERROR_MESSAGES } from '@/config/const-msg';
 import { useSendTx } from '../web3/use-send-tx';
-import { useAccount } from 'wagmi';
 import { useSelectedAccount } from './use-account';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // Common parameter interface
 export interface BaseParams {
@@ -31,16 +33,15 @@ export async function fetchApiRequest<T>(url: string): Promise<T> {
 }
 
 // Common transaction handling function
-export async function handleTransaction(
+async function handleTransaction(
   txRes: ITxResponse | null | undefined,
   send: (txRes: ITxResponse) => Promise<unknown>,
   _errorMessage: string
 ): Promise<void> {
   if (!txRes || !txRes.tx_data) {
-    toast.error(
+    throw new Error(
       txRes ? (txRes as unknown as { message: string }).message : ERROR_MESSAGES.INVALID_TX_DATA
     );
-    return;
   }
 
   await send(txRes);
@@ -102,7 +103,9 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
         const txRes = await sendApiRequest<ITxResponse>(url.toString(), params);
         await handleTransaction(txRes, send, errorMessage);
       } catch (err) {
-        toast.error(errorMessage);
+        const errMsg = (err as Error).message || errorMessage;
+        const errDisplay = errMsg.length > 40 ? errMsg.slice(0, 40) + '...' : errMsg;
+        toast.error(errDisplay);
         throw err;
       }
     }

@@ -1,16 +1,19 @@
+import { useAccount } from 'wagmi';
+
 import { Button } from '@/components/ui/button';
 
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 export function AccountBtn() {
+  const { address } = useAccount();
   const { data: accountInfo, isLoading } = useSelectedAccount();
   const account = accountInfo?.sandbox_account;
 
   const { setCurrentComponent } = useSideDrawerStore();
 
   function handleCreate() {
-    if (!accountInfo) return;
+    if (!address) return;
     setCurrentComponent({ name: 'AccountSetting' });
   }
 

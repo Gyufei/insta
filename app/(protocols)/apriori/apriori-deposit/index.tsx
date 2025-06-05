@@ -30,7 +30,7 @@ export function AprioriDeposit() {
   const handleDeposit = () => {
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, monToken?.decimals);
-    deposit(amount);
+    deposit(amount.toString());
   };
 
   return (

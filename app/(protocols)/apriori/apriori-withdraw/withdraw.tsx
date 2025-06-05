@@ -1,3 +1,5 @@
+import { APR_MONAD, MONAD } from '@/config/tokens';
+
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SetMax } from '@/components/side-drawer/common/set-max';
 import { TokenDisplay } from '@/components/side-drawer/common/token-display';
@@ -6,7 +8,6 @@ import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { Separator } from '@/components/ui/separator';
 
-import { APR_MONAD, MONAD } from '@/config/tokens';
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useAprioriWithdraw } from '@/lib/data/use-apriori-withdraw';
 import { formatBig, parseBig } from '@/lib/utils/number';
@@ -29,7 +30,7 @@ export function Withdraw() {
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, aprMonToken?.decimals);
-    withdraw(amount);
+    withdraw(amount.toString());
   };
 
   return (

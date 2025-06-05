@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { keccak256, toHex } from 'viem';
 import { useAccount, useSendTransaction, useSignTypedData } from 'wagmi';
-import { ITxData, ITxResponse } from '../model';
+
+import { useState } from 'react';
+
+import { ERROR_MESSAGES } from '@/config/const-msg';
+
 import { ApiPath } from '../data/api-path';
 import { Fetcher } from '../fetcher';
-import { keccak256, toHex } from 'viem';
-import { ERROR_MESSAGES } from '@/config/const-msg';
+import { ITxData, ITxResponse } from '../model';
 import { getTxTypeData } from './tx-type-data';
 
 export function useSendTx() {
@@ -63,7 +66,7 @@ export function useSendTx() {
         ...(value ? { value: BigInt(value) } : {}),
       };
 
-      if (data.startsWith(PaymentProxyHash)) {
+      if (data && data.startsWith(PaymentProxyHash)) {
         const txTypeData = getTxTypeData(txRes.tx_data);
         const signature = await signTypedDataAsync(txTypeData);
         const res = await sendTxApi(txRes.tx_data, signature);

@@ -16,7 +16,13 @@ export async function Fetcher<T = unknown>(
 async function parsedRes(res: Response) {
   try {
     if (!res.ok) {
-      const error = new Error('An error occurred while fetching the data.') as Error & {
+      let resMsg = 'An error occurred while fetching the data.';
+      try {
+        const resBody = await res.json();
+        resMsg = resBody.message;
+      } catch (e) {}
+
+      const error = new Error(resMsg) as Error & {
         status?: number;
       };
 
