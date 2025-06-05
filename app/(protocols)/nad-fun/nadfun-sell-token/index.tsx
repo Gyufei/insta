@@ -2,13 +2,14 @@ import { multiply, utils } from 'safebase';
 
 import { useEffect, useMemo, useState } from 'react';
 
+import { MONAD } from '@/config/tokens';
+
+import { TokenDisplayCard } from '@/components/common/token-display-card';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { TokenDisplayCard } from '@/components/common/token-display-card';
 
-import { MONAD } from '@/config/tokens';
 import { useNadFunSell } from '@/lib/data/use-nadfun-sell';
 import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
@@ -94,7 +95,8 @@ export function NadFunSellToken() {
   useEffect(() => {
     if (!isMarketInfoLoading && Number(inputValue) > 0) {
       const tokenOut = calcTokenIn(inputValue);
-      setTokenOut(tokenOut);
+      const withSlippage = (tokenOut * BigInt(90)) / BigInt(100);
+      setTokenOut(withSlippage);
     }
   }, [isMarketInfoLoading, inputValue]);
 
