@@ -4,6 +4,7 @@ export const ERROR_MESSAGES = {
   FAIL_TO_SWITCH_NETWORK: 'Failed to switch network',
   WALLET_NOT_CONNECTED: 'Please connect wallet first',
   WALLET_ADDRESS_REQUIRED: 'Please enter wallet address',
+  ACCOUNT_ADDRESS_REQUIRED: 'Please select account address',
   INVALID_WALLET_ADDRESS: 'Invalid wallet address',
   ACCOUNT_NOT_CREATED: 'Please create account first',
   INVALID_TX_DATA: 'Invalid transaction data',

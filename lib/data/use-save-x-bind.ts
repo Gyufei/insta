@@ -17,6 +17,7 @@ interface SaveXBindResponse {
 
 export function useSaveXBind() {
   const { address, account, checkWalletAndAccount } = useWalletAndAccountCheck();
+
   async function saveXBind(data: SaveXBindRequest) {
     if (!checkWalletAndAccount(true, true)) {
       return undefined;

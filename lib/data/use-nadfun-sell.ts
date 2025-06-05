@@ -1,5 +1,6 @@
-import { ApiPath } from './api-path';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+
+import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
 
 interface NadFunSellParams {
@@ -32,4 +33,4 @@ export function useNadFunSell() {
     ERROR_MESSAGES.SELL_TOKEN_FAILED,
     { checkAddress: true, checkAccount: true, refreshQueryKey: ['nadfun', 'my-tokens'] }
   )();
-} 
+}

@@ -13,12 +13,15 @@ export function useFaucetAirdrop() {
   return createMutationHook<FaucetAirdropParams>(
     ApiPath.faucetAirdrop,
 
-    (args: unknown, address: string, account: string) => {
-      const { wallet, token_address } = args as { wallet: string; token_address: string };
+    (args: unknown, address: string) => {
+      const { token_address, sandbox_account } = args as {
+        token_address: string;
+        sandbox_account: string;
+      };
       return {
-        wallet,
+        wallet: address,
         token_address,
-        sandbox_account: account,
+        sandbox_account,
       };
     },
     SUCCESS_MESSAGES.DEPOSIT_SUCCESS,

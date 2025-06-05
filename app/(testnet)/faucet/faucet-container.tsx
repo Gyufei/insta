@@ -2,7 +2,6 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Wallet } from 'lucide-react';
-import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
 import { useEffect, useState } from 'react';
@@ -15,7 +14,6 @@ import { MONAD, MonUSD } from '@/config/tokens';
 import { WithLoading } from '@/components/common/with-loading';
 import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -25,17 +23,23 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { useAccounts, useSelectedAccount } from '@/lib/data/use-account';
 import { useFaucetAirdrop } from '@/lib/data/use-faucet-airdrop';
 import { useSaveXBind } from '@/lib/data/use-save-x-bind';
 import { ErrorVO } from '@/lib/model/error-vo';
-import { cn } from '@/lib/utils';
+import { cn, formatAddress } from '@/lib/utils';
 import { useTwitterSign } from '@/lib/utils/use-twitter-sign';
 
 export function FaucetContainer() {
   const { address } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
   const { mutate: faucetAirdrop, isPending } = useFaucetAirdrop();
+
+  const { data: accounts } = useAccounts();
+  const { data: currentAccount } = useSelectedAccount();
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(
+    currentAccount?.sandbox_account || null
+  );
 
   const { code, error, goTwitter, removeXVerifyCode } = useTwitterSign();
   const {
@@ -55,9 +59,6 @@ export function FaucetContainer() {
       }),
     enabled: !!code,
   });
-
-  const [addressValue, setAddressValue] = useState('');
-  const [isDirty, setIsDirty] = useState(false);
 
   const [errorData, setErrorData] = useState<ErrorVO>({
     showError: false,
@@ -96,26 +97,10 @@ export function FaucetContainer() {
       return;
     }
 
-    if (!isDirty) {
-      setErrorData({
-        showError: false,
-        errorMessage: '',
-      });
-      return;
-    }
-
-    if (!addressValue) {
+    if (!selectedAccount) {
       setErrorData({
         showError: true,
-        errorMessage: ERROR_MESSAGES.WALLET_ADDRESS_REQUIRED,
-      });
-      return;
-    }
-
-    if (!isAddress(addressValue)) {
-      setErrorData({
-        showError: true,
-        errorMessage: ERROR_MESSAGES.INVALID_WALLET_ADDRESS,
+        errorMessage: ERROR_MESSAGES.ACCOUNT_ADDRESS_REQUIRED,
       });
       return;
     }
@@ -124,12 +109,12 @@ export function FaucetContainer() {
       showError: false,
       errorMessage: '',
     });
-  }, [address, accountInfo, addressValue, isDirty]);
+  }, [address, accountInfo, selectedAccount]);
 
   const handleAirdrop = () => {
     faucetAirdrop({
-      wallet: addressValue,
       token_address: selectedToken,
+      sandbox_account: selectedAccount || '',
     });
   };
 
@@ -161,22 +146,35 @@ export function FaucetContainer() {
         </SelectContent>
       </Select>
 
-      <h1 className="text-lg text-primary font-normal mt-4">Enter Wallet Address</h1>
+      <h1 className="text-lg text-primary font-normal mt-4">Select Account Address</h1>
       <div className="relative w-full mt-3">
         <div className="absolute left-3 top-1/2 -translate-y-1/2">
           <Wallet className="h-5 w-5 text-primary" />
         </div>
-        <Input
-          value={addressValue}
-          onChange={(e) => {
-            setAddressValue(e.target.value);
-            setIsDirty(true);
+        <Select
+          value={selectedAccount || ''}
+          onValueChange={(value) => {
+            setSelectedAccount(value);
           }}
-          className={cn(
-            'w-full pl-10 pr-3 text-primary outline-none shadow-none focus-visible:ring-0'
-          )}
-          placeholder="0x8ce78...2816"
-        />
+        >
+          <SelectTrigger className="w-full pl-10 mt-3 shadow-none focus-visible:ring-0">
+            <SelectValue placeholder="Select a account">
+              {formatAddress(selectedAccount || '')}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {accounts?.map((account) => (
+              <SelectItem key={account.sandbox_account} value={account.sandbox_account}>
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
+                    {account.id}
+                  </div>
+                  <span>{formatAddress(account.sandbox_account)}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <p className="text-sm mt-2 text-primary/60 font-normal">(Maximum 1 request every 12 hours)</p>
@@ -199,26 +197,27 @@ export function FaucetContainer() {
         they do not have real value.
       </p>
 
-      <Separator className="my-4" />
-
-      <div className="text-primary font-normal">
-        Connect your X account to get more testnet tokens!
+      <div className="hidden">
+        <Separator className="my-4" />
+        <div className="text-primary font-normal">
+          Connect your X account to get more testnet tokens!
+        </div>
+        <Button
+          disabled={isSavingXBind}
+          variant="outline"
+          className="w-full flex items-center gap-2 mt-2 text-primary"
+          onClick={handleGoTwitter}
+        >
+          {isSavingXBind ? (
+            <WithLoading isLoading={isSavingXBind} />
+          ) : (
+            <>
+              <Image src="/icons/x.svg" alt="Twitter" width={16} height={16} />
+            </>
+          )}
+          <span>Connect X</span>
+        </Button>
       </div>
-      <Button
-        disabled={isSavingXBind}
-        variant="outline"
-        className="w-full flex items-center gap-2 mt-2 text-primary"
-        onClick={handleGoTwitter}
-      >
-        {isSavingXBind ? (
-          <WithLoading isLoading={isSavingXBind} />
-        ) : (
-          <>
-            <Image src="/icons/x.svg" alt="Twitter" width={16} height={16} />
-          </>
-        )}
-        <span>Connect X</span>
-      </Button>
     </div>
   );
 }
