@@ -12,10 +12,10 @@ export function useAmbientPositionFormat(position: IAmbientPosition) {
   const { bidTick, askTick } = position || {};
 
   const token0 = tokens.find(
-    (token) => token.address.toLowerCase() === position.base.toLowerCase()
+    (token) => token.address.toLowerCase() === position?.base?.toLowerCase()
   );
   const token1 = tokens.find(
-    (token) => token.address.toLowerCase() === position.quote.toLowerCase()
+    (token) => token.address.toLowerCase() === position?.quote?.toLowerCase()
   );
 
   const minPrice = useMemo(() => {
