@@ -1,24 +1,29 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
+import { divide } from 'safebase';
 
 import { useEffect, useState } from 'react';
 
+import {
+  PairTokenSelected,
+  useTokenSelector,
+} from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
+
 import { DEFAULT_NATIVE_ADDRESS, DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
+import { IToken } from '@/config/tokens';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
-import { IToken } from '@/config/tokens';
 import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
 import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
-import { PairTokenSelected, useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import TokenSelector from '../uni-common/token-selector';
-import { SlippageSettings } from './slippage-settings';
 import UniswapTokenInput from '../uni-common/uniswap-token-input';
+import { SlippageSettings } from './slippage-settings';
 
 const ANIMATION_CONFIG = {
   type: 'spring',
@@ -60,6 +65,7 @@ export function UniswapSwap() {
     isLoading: isQuoteLoading,
     error: quoteError,
   } = useUniswapQuote(quoteParams);
+
   const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
 
   useEffect(() => {
@@ -70,7 +76,9 @@ export function UniswapSwap() {
 
   useEffect(() => {
     if (quoteData?.output) {
-      setBuyValue(quoteData.output);
+      setBuyValue(
+        divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
+      );
     }
   }, [quoteData]);
 

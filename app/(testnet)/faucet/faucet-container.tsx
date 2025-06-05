@@ -201,7 +201,9 @@ export function FaucetContainer() {
 
       <Separator className="my-4" />
 
-      <div className="text-primary font-normal">Connect your X account to get more testnet tokens!</div>
+      <div className="text-primary font-normal">
+        Connect your X account to get more testnet tokens!
+      </div>
       <Button
         disabled={isSavingXBind}
         variant="outline"

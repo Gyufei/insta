@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
+
 import { WithLoading } from '@/components/common/with-loading';
+import { Button } from '@/components/ui/button';
+
 import { useGetBalance } from './use-get-balance';
 
 interface BalanceDisplayProps {
@@ -43,4 +45,4 @@ export function SwapInputBalanceDisplay({
       )}
     </div>
   );
-} 
+}

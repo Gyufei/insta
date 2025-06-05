@@ -9,7 +9,7 @@ const TICK_BASE = 1.0001;
 export function useAmbientPositionFormat(position: IAmbientPosition) {
   const { tokens } = useUniswapToken();
 
-  const { bidTick, askTick } = position;
+  const { bidTick, askTick } = position || {};
 
   const token0 = tokens.find(
     (token) => token.address.toLowerCase() === position.base.toLowerCase()
@@ -19,11 +19,11 @@ export function useAmbientPositionFormat(position: IAmbientPosition) {
   );
 
   const minPrice = useMemo(() => {
-    return Math.pow(TICK_BASE, Number(bidTick));
+    return Math.pow(TICK_BASE, Number(bidTick || 0));
   }, [bidTick]);
 
   const maxPrice = useMemo(() => {
-    return Math.pow(TICK_BASE, Number(askTick));
+    return Math.pow(TICK_BASE, Number(askTick || 0));
   }, [askTick]);
 
   return {

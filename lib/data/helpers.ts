@@ -24,6 +24,7 @@ export async function sendApiRequest<T>(url: string, params: Record<string, unkn
     },
     body: JSON.stringify(params),
   });
+
   return res;
 }
 
@@ -101,6 +102,7 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
 
       try {
         const txRes = await sendApiRequest<ITxResponse>(url.toString(), params);
+        console.log('txRes', txRes);
         await handleTransaction(txRes, send, errorMessage);
       } catch (err) {
         const errMsg = (err as Error).message || errorMessage;

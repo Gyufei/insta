@@ -26,7 +26,9 @@ export function useGetBalance(tokenAddress: string, enableQuery = true): Balance
     balanceBig: tokenBalanceBig,
     isPending: isTokenBalancePending,
   } = useAccountTokenBalance(tokenAddress, !isNative && enableQuery);
-  
+
+  console.log('tokenAddress', tokenAddress, tokenBalance);
+
   const balance = isNative
     ? utils.roundResult(nativeBalance, 4)
     : utils.roundResult(tokenBalance, 4);

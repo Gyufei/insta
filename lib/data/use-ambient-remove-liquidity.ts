@@ -41,4 +41,4 @@ export function useAmbientRemoveLiquidity() {
     ERROR_MESSAGES.REMOVE_LIQUIDITY_FAILED,
     { checkAddress: true, checkAccount: true, refreshQueryKey: [] }
   )();
-} 
+}
