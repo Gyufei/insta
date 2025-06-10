@@ -3,6 +3,7 @@ import { divide } from 'safebase';
 import { useMemo } from 'react';
 
 import { IToken } from '@/config/tokens';
+
 import { IUniswapPosition, PositionStatus } from '@/lib/data/use-uniswap-position';
 import { formatBig } from '@/lib/utils/number';
 
@@ -118,9 +119,13 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
     return amount;
   }, [amount1, wrapToken1.decimals]);
 
+  const decimalsRate = useMemo(() => {
+    return 10 ** (wrapToken0.decimals - wrapToken1.decimals);
+  }, [wrapToken0.decimals, wrapToken1.decimals]);
+
   const price = useMemo(() => {
-    return sqrtPriceX96ToPrice(currentPrice);
-  }, [currentPrice]);
+    return sqrtPriceX96ToPrice(currentPrice) * decimalsRate;
+  }, [currentPrice, decimalsRate]);
 
   const isFullRange = useMemo(() => {
     if (tickLower === TICK_LOWER_MIN.toString() && tickUpper === TICK_UPPER_MAX.toString()) {
@@ -135,16 +140,16 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
       return '0';
     }
 
-    return Math.pow(TICK_BASE, Number(tickLower));
-  }, [tickLower, isFullRange]);
+    return Math.pow(TICK_BASE, Number(tickLower)) * decimalsRate;
+  }, [tickLower, isFullRange, decimalsRate]);
 
   const maxPrice = useMemo(() => {
     if (isFullRange) {
       return '∞';
     }
 
-    return Math.pow(TICK_BASE, Number(tickUpper));
-  }, [tickUpper, isFullRange]);
+    return Math.pow(TICK_BASE, Number(tickUpper)) * decimalsRate;
+  }, [tickUpper, isFullRange, decimalsRate]);
 
   const currentLiq = useMemo(() => {
     return formatBig(currentLiquidity);

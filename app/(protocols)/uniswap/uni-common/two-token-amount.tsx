@@ -1,6 +1,7 @@
+import { IToken } from '@/config/tokens';
+
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 
-import { IToken } from '@/config/tokens';
 import { formatNumber } from '@/lib/utils/number';
 
 function TokenAmount({ token, amount }: { token: IToken; amount: string }) {
@@ -16,7 +17,7 @@ function TokenAmount({ token, amount }: { token: IToken; amount: string }) {
           className="w-4 h-4 rounded-full"
         />
         <div className="text-sm text-neutral2">
-          {formatNumber(amount)} {token.symbol}
+          {amount ? formatNumber(amount) : '-'} {token.symbol}
         </div>
       </div>
     </div>

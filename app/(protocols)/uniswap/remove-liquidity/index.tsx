@@ -122,8 +122,8 @@ export function UniswapRemoveLiquidity() {
         <TwoTokenAmount
           token0={token0}
           token1={token1}
-          token0Amount={token0Amount}
-          token1Amount={token1Amount}
+          token0Amount={amount0 || '0'}
+          token1Amount={amount1 || '0'}
         />
 
         <ActionButton

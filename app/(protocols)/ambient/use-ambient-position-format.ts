@@ -18,13 +18,17 @@ export function useAmbientPositionFormat(position: IAmbientPosition) {
     (token) => token.address.toLowerCase() === position?.quote?.toLowerCase()
   );
 
+  const decimalsRate = useMemo(() => {
+    return 10 ** (token0?.decimals || 18 - (token1?.decimals || 18));
+  }, [token0?.decimals, token1?.decimals]);
+
   const minPrice = useMemo(() => {
-    return Math.pow(TICK_BASE, Number(bidTick || 0));
-  }, [bidTick]);
+    return Math.pow(TICK_BASE, Number(bidTick || 0)) * decimalsRate;
+  }, [bidTick, decimalsRate]);
 
   const maxPrice = useMemo(() => {
-    return Math.pow(TICK_BASE, Number(askTick || 0));
-  }, [askTick]);
+    return Math.pow(TICK_BASE, Number(askTick || 0)) * decimalsRate;
+  }, [askTick, decimalsRate]);
 
   return {
     token0: token0!,

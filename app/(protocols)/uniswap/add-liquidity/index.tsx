@@ -1,3 +1,5 @@
+import { divide, multiply, utils } from 'safebase';
+
 import { useState } from 'react';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
@@ -5,6 +7,7 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
 import { useUniswapAddLiquidity } from '@/lib/data/use-uniswap-add-liquidity';
+import { useUniswapLiquidityRatio } from '@/lib/data/use-uniswap-liquidity-ratio';
 import { IUniswapPosition } from '@/lib/data/use-uniswap-position';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
@@ -23,9 +26,8 @@ export function UniswapAddLiquidity() {
       uniswapPosition?: IUniswapPosition;
     }) || {};
 
-  const { version, fee, token0, token1, token0Amount, token1Amount } = usePositionDataFormat(
-    uniswapPosition!
-  );
+  const { version, fee, token0, token1, token0Amount, token1Amount, price, minPrice, maxPrice } =
+    usePositionDataFormat(uniswapPosition!);
 
   const [amount0, setAmount0] = useState('');
   const [amount1, setAmount1] = useState('');
@@ -38,6 +40,40 @@ export function UniswapAddLiquidity() {
   function handleBack() {
     setIsOpen(false);
   }
+
+  const { data: liquidityRatio } = useUniswapLiquidityRatio({
+    tokenA: token0?.address || '',
+    tokenB: token1?.address || '',
+    fee: 3000,
+    price_current: price || 0,
+    price_lower: Number(minPrice) || 0,
+    price_upper: Number(maxPrice) || 0,
+    decimals_a: token0?.decimals || 18,
+    decimals_b: token1?.decimals || 18,
+  });
+
+  const handleAmount0Change = (value: string) => {
+    setAmount0(value);
+    if (liquidityRatio?.ratio && value) {
+      const ratio = liquidityRatio.ratio;
+      if (ratio) {
+        const newAmount1 = utils.roundResult(multiply(value, ratio), token1?.decimals);
+        setAmount1(newAmount1);
+      }
+    }
+  };
+
+  const handleAmount1Change = (value: string) => {
+    setAmount1(value);
+    if (liquidityRatio?.ratio && value) {
+      const ratio = liquidityRatio.ratio;
+
+      if (ratio) {
+        const newAmount0 = utils.roundResult(divide(value, ratio), token0?.decimals);
+        setAmount0(newAmount0);
+      }
+    }
+  };
 
   const handleConfirm = () => {
     if (!uniswapPosition) return;
@@ -74,7 +110,7 @@ export function UniswapAddLiquidity() {
             token={token0}
             value={amount0}
             placeholder="0"
-            onChange={setAmount0}
+            onChange={handleAmount0Change}
             label={null}
             onSetError={setErrorData}
           />
@@ -82,7 +118,7 @@ export function UniswapAddLiquidity() {
             token={token1}
             value={amount1}
             placeholder="0"
-            onChange={setAmount1}
+            onChange={handleAmount1Change}
             label={null}
             onSetError={setErrorData}
           />
