@@ -27,7 +27,7 @@ export function AmbientAddLiquidity() {
       ambientPosition?: IAmbientPosition;
     }) || {};
 
-  const { token0, token1, token0Amount, token1Amount, price_current, price_lower, price_upper } =
+  const { token0, token1, token0Amount, token1Amount, price, price_lower, price_upper } =
     useAmbientPositionFormat(ambientPosition!);
 
   const [amount0, setAmount0] = useState('');
@@ -42,7 +42,7 @@ export function AmbientAddLiquidity() {
     tokenA: token0?.address || '',
     tokenB: token1?.address || '',
     fee: 3000,
-    price_current: price_current || 0,
+    price_current: price || 0,
     price_lower: price_lower || 0,
     price_upper: price_upper || 0,
     decimals_a: token0?.decimals || 18,
@@ -81,7 +81,7 @@ export function AmbientAddLiquidity() {
     addLiquidity({
       token_a: token0?.address,
       token_b: token1?.address,
-      price_current: price_current,
+      price_current: price,
       price_lower: price_lower,
       price_upper: price_upper,
       token_a_amount: amount0,

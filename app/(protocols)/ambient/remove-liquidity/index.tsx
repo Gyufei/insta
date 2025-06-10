@@ -113,8 +113,8 @@ export function AmbientRemoveLiquidity() {
         <TwoTokenAmount
           token0={token0}
           token1={token1}
-          token0Amount={token0Amount || '0'}
-          token1Amount={token1Amount || '0'}
+          token0Amount={_amount0 || '0'}
+          token1Amount={_amount1 || '0'}
         />
 
         <ActionButton

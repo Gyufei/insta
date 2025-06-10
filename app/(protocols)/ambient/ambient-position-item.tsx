@@ -19,7 +19,6 @@ import { formatNumber } from '@/lib/utils/number';
 import { TokenPairAndStatus } from './am-common/token-pair-and-status';
 import { useAmbientPositionFormat } from './use-ambient-position-format';
 
-
 interface PositionItemProps {
   position: IAmbientPosition;
 }
@@ -28,15 +27,18 @@ export function PositionItem({ position }: PositionItemProps) {
   const { setCurrentComponent } = useSideDrawerStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const { token0, token1, price_lower, price_upper } = useAmbientPositionFormat(position);
-  const { price, token0Amount, token1Amount, totalLiquidityUsd, isFullRange } =
-    {
-      price: '-',
-      token0Amount: '-',
-      token1Amount: '-',
-      totalLiquidityUsd: '-',
-      isFullRange: false,
-    };
+  const {
+    token0,
+    token1,
+    price,
+    price_lower,
+    price_upper,
+    token0Amount,
+    token1Amount,
+    totalLiquidityUsd,
+  } = useAmbientPositionFormat(position);
+
+  const isFullRange = false;
 
   const handleAddLiquidity = () => {
     setCurrentComponent({

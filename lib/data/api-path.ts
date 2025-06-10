@@ -60,6 +60,7 @@ export const ApiPath = {
   ambientAddLiquidity: `${ApiHost}/ambient_finance/add_liquidity`,
   ambientRemoveLiquidity: `${ApiHost}/ambient_finance/remove_liquidity`,
   ambientLiquidityRatio: `${ApiHost}/ambient_finance/liquidity_ratio`,
+  ambientCalcImpact: `${ApiHost}/ambient_finance/calc_impact`,
 
   oddsUserInfo: `${ApiHost}/odds/user/info`,
   oddsWatchList: `${OddsApiHost}/user/watchlist`,

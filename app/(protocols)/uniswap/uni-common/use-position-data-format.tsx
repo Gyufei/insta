@@ -14,7 +14,7 @@ const TICK_LOWER_MIN = -887272;
 const TICK_UPPER_MAX = 887272;
 const Q96 = BigInt('79228162514264337593543950336');
 
-function sqrtPriceX96ToPrice(sqrtPriceX96: string) {
+export function sqrtPriceX96ToPrice(sqrtPriceX96: string) {
   const sqrtPrice = Number((BigInt(sqrtPriceX96) * BigInt(1_000_000)) / Q96) / 1_000_000;
   return sqrtPrice ** 2;
 }
