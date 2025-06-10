@@ -60,7 +60,7 @@ export function PositionItem({ position }: PositionItemProps) {
   };
 
   return (
-    <Card className="py-0 relative border border-border hover:border-gray-200 gap-0 transition-colors">
+    <Card className="py-0 mt-2 relative border border-border hover:border-gray-200 gap-0 transition-colors">
       <TokenPairAndStatus
         token0={wrapToken0}
         token1={wrapToken1}

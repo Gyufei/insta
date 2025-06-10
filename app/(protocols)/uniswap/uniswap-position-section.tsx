@@ -23,6 +23,8 @@ export function UniswapPositionsSection() {
   const [searchQuery, setSearchQuery] = useState('');
   const [hideClosedPositions, setHideClosedPositions] = useState(true);
 
+  const withFilter = hideClosedPositions || searchQuery;
+
   const filteredPositions = positions?.filter((position) => {
     if (hideClosedPositions && position.status === PositionStatus.POSITION_STATUS_CLOSED) {
       return false;
@@ -36,6 +38,7 @@ export function UniswapPositionsSection() {
         token1.symbol.toLowerCase().includes(searchLower)
       );
     }
+
     return true;
   });
 
@@ -80,7 +83,7 @@ export function UniswapPositionsSection() {
           <div className="py-20 rounded-sm bg-muted/80 flex items-center justify-center">
             <WithLoading isLoading={true} />
           </div>
-        ) : positions?.length || filteredPositions?.length ? (
+        ) : !positions?.length || (withFilter && !filteredPositions?.length) ? (
           <EmptyState
             message={
               positions?.length === 0 ? (
