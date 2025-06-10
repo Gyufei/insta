@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function AmbientPage() {
   return (
-    <CommonPageLayout title="Ambient" src="/icons/ambient.svg">
+    <CommonPageLayout title="Ambient" iconSrc="/icons/ambient.svg">
       <AmbientPositionsSection />
     </CommonPageLayout>
   );

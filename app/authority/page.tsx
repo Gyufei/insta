@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function Authority() {
   return (
-    <CommonPageLayout title="Account Setting" src={null}>
+    <CommonPageLayout title="Account Setting" iconSrc={null}>
       <FullAccountDisplay />
     </CommonPageLayout>
   );

@@ -181,6 +181,11 @@ export default function AppSidebar() {
 
   const baseModulesItems = [
     {
+      href: '/badge-gallery',
+      label: 'Badge Gallery',
+      icon: <Circle className="h-3 w-3" />,
+    },
+    {
       href: '/token-station',
       label: 'Token Station',
       icon: <Circle className="h-3 w-3" />,

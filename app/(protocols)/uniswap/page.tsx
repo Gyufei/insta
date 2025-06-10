@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function UniswapPage() {
   return (
-    <CommonPageLayout title="Uniswap" src="/icons/uniswap.svg">
+    <CommonPageLayout title="Uniswap" iconSrc="/icons/uniswap.svg">
       <UniswapPositionsSection />
     </CommonPageLayout>
   );

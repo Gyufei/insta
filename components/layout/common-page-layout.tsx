@@ -4,18 +4,18 @@ import { PageHeader } from './page-header';
 
 export function CommonPageLayout({
   title,
-  src,
+  iconSrc,
   children,
   pageConClx,
 }: {
   title: string;
-  src: string | null;
+  iconSrc: string | null;
   children: React.ReactNode;
   pageConClx?: string;
 }) {
   return (
     <>
-      <PageHeader title={title} src={src} />
+      <PageHeader title={title} src={iconSrc} />
       <div className="grid-main dark:bg-primary-foreground bg-bg-gray relative flex flex-grow flex-col overflow-x-hidden">
         <div
           className={cn(

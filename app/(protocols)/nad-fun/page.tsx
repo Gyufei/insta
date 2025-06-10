@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function NadFun() {
   return (
-    <CommonPageLayout title="Nad.Fun" src="/icons/nad-fun.svg">
+    <CommonPageLayout title="Nad.Fun" iconSrc="/icons/nad-fun.svg">
       <NadFunTokens />
       <NadFunMyTokens />
     </CommonPageLayout>

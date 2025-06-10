@@ -6,7 +6,7 @@ import OddsHeader from './components/odds-header';
 export default function OddsLayout({ children }: { children: React.ReactNode }) {
   return (
     <FavoritesProvider>
-      <CommonPageLayout title="Odds" src={null} pageConClx="p-0 2xl:p-0">
+      <CommonPageLayout title="Odds" iconSrc={null} pageConClx="p-0 2xl:p-0">
         <OddsHeader />
         {children}
       </CommonPageLayout>
