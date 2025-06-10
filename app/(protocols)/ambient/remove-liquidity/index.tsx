@@ -59,16 +59,16 @@ export function AmbientRemoveLiquidity() {
 
     if (Number(val) === 100) {
       setPercent(val);
-      setAmount0(token0Amount || '0');
-      setAmount1(token1Amount || '0');
+      setAmount0(String(token0Amount) || '0');
+      setAmount1(String(token1Amount) || '0');
       return;
     }
 
     if (Number(val) > 100 || Number(val) < 1 || val.length > 2 || val.includes('.')) return;
 
     setPercent(val);
-    setAmount0(divide(multiply(token0Amount || '0', val), String(100)));
-    setAmount1(divide(multiply(token1Amount || '0', val), String(100)));
+    setAmount0(divide(multiply(String(token0Amount) || '0', val), String(100)));
+    setAmount1(divide(multiply(String(token1Amount) || '0', val), String(100)));
   }
 
   if (!ambientPosition) {
@@ -113,8 +113,8 @@ export function AmbientRemoveLiquidity() {
         <TwoTokenAmount
           token0={token0}
           token1={token1}
-          token0Amount={_amount0 || '0'}
-          token1Amount={_amount1 || '0'}
+          token0Amount={String(_amount0) || '0'}
+          token1Amount={String(_amount1) || '0'}
         />
 
         <ActionButton

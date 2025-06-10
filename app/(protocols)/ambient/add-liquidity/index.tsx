@@ -122,8 +122,8 @@ export function AmbientAddLiquidity() {
         <TwoTokenAmount
           token0={token0}
           token1={token1}
-          token0Amount={token0Amount || '-'}
-          token1Amount={token1Amount || '-'}
+          token0Amount={String(token0Amount) || '-'}
+          token1Amount={String(token1Amount) || '-'}
         />
 
         <ActionButton
