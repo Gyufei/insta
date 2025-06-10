@@ -83,4 +83,10 @@ export const ApiPath = {
   oddsDeposit: `${ApiHost}/odds/deposit`,
   oddsWithdraw: `${ApiHost}/odds/withdraw`,
   oddsClaim: `${ApiHost}/odds/claim`,
+
+  badgeNfts: `${ApiHost}/badge/market/nfts`,
+  badgeWalletNfts: `${ApiHost}/badge/{wallet}/nfts`,
+  badgeAllowance: `${ApiHost}/badge/allowance`,
+  badgePurchase: `${ApiHost}/badge/purchase`,
+  badgeClaim: `${ApiHost}/badge/claim`,
 };

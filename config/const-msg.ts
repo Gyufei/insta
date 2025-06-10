@@ -30,6 +30,7 @@ export const ERROR_MESSAGES = {
   ORDER_CANCELLED_FAILED: 'Order cancel failed',
   TRANSFER_TO_TRADING_FAILED: 'Transfer to trading failed',
   TRANSFER_TO_FUNDING_FAILED: 'Transfer to funding failed',
+  BADGE_PURCHASE_FAILED: 'Badge purchase failed',
 } as const;
 
 export const SUCCESS_MESSAGES = {
@@ -54,4 +55,5 @@ export const SUCCESS_MESSAGES = {
   ORDER_CANCELLED_SUCCESS: 'Order cancelled successfully',
   TRANSFER_TO_TRADING_SUCCESS: 'Transfer to trading successfully',
   TRANSFER_TO_FUNDING_SUCCESS: 'Transfer to funding successfully',
+  BADGE_PURCHASE_SUCCESS: 'Badge purchased successfully',
 } as const;
