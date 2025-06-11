@@ -79,25 +79,50 @@ function calculateTokenAmounts(
 }
 
 export function useAmbientPositionFormat(position: IAmbientPosition) {
+  let pos = position;
+
+  if (!position) {
+    pos = {
+      chainId: '',
+      base: '',
+      quote: '',
+      poolIdx: 0,
+      bidTick: 0,
+      askTick: 0,
+      isBid: false,
+      user: '',
+      timeFirstMint: 0,
+      latestUpdateTime: 0,
+      lastMintTx: '',
+      firstMintTx: '',
+      positionType: '',
+      ambientLiq: 0,
+      concLiq: 0,
+      rewardLiq: 0,
+      liqRefreshTime: 0,
+      aprDuration: 0,
+      aprPostLiq: 0,
+      aprContributedLiq: 0,
+      aprEst: 0,
+      positionId: '',
+    };
+  }
+
   const { tokens } = useUniswapToken();
 
   const { data: impactPrice, isLoading: isLoadingImpactPrice } = useAmbientCalcImpact({
-    base_token: position.base,
-    quote_token: position.quote,
-    pool_idx: position.poolIdx,
+    base_token: pos.base,
+    quote_token: pos.quote,
+    pool_idx: pos.poolIdx,
     sell_base: true,
     token_amount: 1000000,
     pool_tip: 0,
   });
 
-  const { bidTick, askTick } = position || {};
+  const { bidTick, askTick } = pos || {};
 
-  const token0 = tokens.find(
-    (token) => token.address.toLowerCase() === position?.base?.toLowerCase()
-  );
-  const token1 = tokens.find(
-    (token) => token.address.toLowerCase() === position?.quote?.toLowerCase()
-  );
+  const token0 = tokens.find((token) => token.address.toLowerCase() === pos?.base?.toLowerCase());
+  const token1 = tokens.find((token) => token.address.toLowerCase() === pos?.quote?.toLowerCase());
 
   const decimalsRate = useMemo(() => {
     if (!token0?.decimals || !token1?.decimals) return 0;
@@ -136,16 +161,16 @@ export function useAmbientPositionFormat(position: IAmbientPosition) {
       String(price),
       token0?.decimals || 18,
       token1?.decimals || 18,
-      String(position.concLiq)
+      String(pos.concLiq)
     );
 
     return obj;
-  }, [minPrice, maxPrice, price, token0?.decimals, token1?.decimals, position.concLiq]);
+  }, [minPrice, maxPrice, price, token0?.decimals, token1?.decimals, pos.concLiq]);
 
   const totalLiquidityUsd = useMemo(() => {
     if (!token0?.decimals) return 0;
-    return divide(String(position.concLiq), String(10 ** (token0?.decimals || 18)));
-  }, [position.concLiq, token0?.decimals]);
+    return divide(String(pos.concLiq), String(10 ** (token0?.decimals || 18)));
+  }, [pos.concLiq, token0?.decimals]);
 
   return {
     token0: token0!,

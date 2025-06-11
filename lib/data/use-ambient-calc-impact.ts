@@ -21,6 +21,10 @@ export function useAmbientCalcImpact(params: ICalcImpactParams) {
     ApiPath.ambientCalcImpact,
     () => ['ambient', 'calc-impact', JSON.stringify(params)],
     (url) => {
+      if (!params.base_token || !params.quote_token || !params.pool_idx) {
+        return null;
+      }
+
       url.searchParams.set('base_token', params.base_token);
       url.searchParams.set('quote_token', params.quote_token);
       url.searchParams.set('pool_idx', params.pool_idx.toString());
@@ -33,4 +37,4 @@ export function useAmbientCalcImpact(params: ICalcImpactParams) {
       withAccount: false,
     }
   )();
-} 
+}

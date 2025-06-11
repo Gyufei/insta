@@ -1,5 +1,7 @@
 'use client';
 
+import { useAccount } from 'wagmi';
+
 import { useState } from 'react';
 
 import Image from 'next/image';
@@ -23,6 +25,7 @@ import { formatAddress } from '@/lib/utils';
 import { STATION_FROM_TOKENS, STATION_TO_TOKENS } from './station-config';
 
 export function TokenStation() {
+  const { address } = useAccount();
   const [tokenFrom, setTokenFrom] = useState(STATION_FROM_TOKENS[0]);
   const [tokenTo, setTokenTo] = useState(STATION_TO_TOKENS[0]);
 
@@ -38,7 +41,7 @@ export function TokenStation() {
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
             <div className="flex items-center justify-between">
               <span className="text-base text-[#131e40] font-normal">From:</span>
-              <AddressBlock address="2er6d...8dfg2" />
+              <AddressBlock address={address || ''} />
             </div>
 
             <div className="flex justify-between items-center gap-[10px]">
@@ -117,7 +120,7 @@ export function TokenStation() {
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
             <div className="flex items-center justify-between">
               <span className="text-base text-[#131e40] font-normal">To:</span>
-              <AddressBlock withEdit onClick={() => {}} address="2er6d...8dfg2" />
+              <AddressBlock withEdit onClick={() => {}} address={address || ''} />
             </div>
 
             <div className="flex justify-between items-center gap-[10px]">
@@ -203,7 +206,7 @@ function AddressBlock({
   onClick?: () => void;
   withEdit?: boolean;
 }) {
-  const addressShort = formatAddress(address, { prefix: 5, suffix: 5 });
+  const addressShort = address ? formatAddress(address, { prefix: 5, suffix: 5 }) : '-';
 
   return (
     <div className="text-xs h-8 flex items-center font-normal text-[#131e40] rounded-md px-[10px] border border-[#00000010] py-1 gap-1">

@@ -33,6 +33,7 @@ function getToken(token: Omit<IToken, 'logo'>, tokens: IToken[]): IToken {
 
 export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
   let pos = uniswapPosition;
+
   if (!pos) {
     pos = {
       protocolVersion: '',
