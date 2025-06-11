@@ -3,7 +3,7 @@ import { useReadContract } from 'wagmi';
 
 import { useMemo } from 'react';
 
-import { useUniswapToken } from '@/app/(protocols)/uniswap/use-uniswap-token';
+import { UNISWAP_TOKENS } from '@/app/(protocols)/uniswap/use-uniswap-token';
 
 import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
 
@@ -12,7 +12,7 @@ import { formatBig } from '@/lib/utils/number';
 
 export function useAccountTokenBalance(tokenAddress: string, enableQuery = true) {
   const { data: account, isLoading: isAccountInfoPending } = useSelectedAccount();
-  const { tokens } = useUniswapToken();
+  const tokens = UNISWAP_TOKENS;
   const currentToken = tokens.find((token) => token.address === tokenAddress);
 
   const accountAddress = account?.sandbox_account;

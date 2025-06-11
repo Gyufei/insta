@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 
-import { useGetBalance } from './use-get-balance';
+import { useGetAccountBalance } from '../../../../lib/web3/use-get-account-balance';
 
 interface BalanceDisplayProps {
   tokenAddress: string;
@@ -19,7 +19,7 @@ export function SwapInputBalanceDisplay({
   onBalanceChange,
 }: BalanceDisplayProps) {
   const [enableQuery, setEnableQuery] = useState(false);
-  const { balance, isBalancePending } = useGetBalance(tokenAddress, enableQuery);
+  const { balance, isBalancePending } = useGetAccountBalance(tokenAddress, enableQuery);
 
   useEffect(() => {
     if (tokenAddress) {

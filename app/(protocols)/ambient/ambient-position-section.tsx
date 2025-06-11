@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { useAmbientPosition } from '@/lib/data/use-ambient-position';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
-import { useUniswapToken } from '../uniswap/use-uniswap-token';
+import { UNISWAP_TOKENS } from '../uniswap/use-uniswap-token';
 import { PositionItem } from './ambient-position-item';
 
 export function AmbientPositionsSection() {
@@ -23,7 +23,7 @@ export function AmbientPositionsSection() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { tokens } = useUniswapToken();
+  const tokens = UNISWAP_TOKENS;
 
   const filteredPositions = positions?.filter((position) => {
     if (searchQuery) {

@@ -12,7 +12,7 @@ interface BalanceResult {
   isNative: boolean;
 }
 
-export function useGetBalance(tokenAddress: string, enableQuery = true): BalanceResult {
+export function useGetAccountBalance(tokenAddress: string, enableQuery = true): BalanceResult {
   const isNative = tokenAddress === DEFAULT_NATIVE_ADDRESS;
 
   const {

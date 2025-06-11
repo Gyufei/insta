@@ -1,8 +1,10 @@
 'use client';
 
+import { multiply } from 'safebase';
+import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -19,17 +21,43 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 
-import { formatAddress } from '@/lib/utils';
+import { cn, formatAddress } from '@/lib/utils';
+import { useWalletTokenBalance } from '@/lib/web3/use-wallet-token-balance';
 
 import { STATION_FROM_TOKENS, STATION_TO_TOKENS } from './station-config';
 
 export function TokenStation() {
   const { address } = useAccount();
+
   const [tokenFrom, setTokenFrom] = useState(STATION_FROM_TOKENS[0]);
   const [tokenTo, setTokenTo] = useState(STATION_TO_TOKENS[0]);
 
+  const [fromAmount, setFromAmount] = useState('0');
+  const [toAmount, setToAmount] = useState('0');
+
+  const [toAddress, setToAddress] = useState('');
+
+  const { balance: fromBalance, isPending: isFromBalancePending } = useWalletTokenBalance(
+    tokenFrom.address
+  );
+  const { balance: toBalance, isPending: isToBalancePending } = useWalletTokenBalance(
+    tokenTo.address
+  );
+
+  const fromValue = useMemo(() => {
+    if (!fromAmount) return '0';
+    return multiply(fromAmount, String(1000));
+  }, [fromAmount]);
+
+  const toValue = useMemo(() => {
+    if (!toAmount) return '0';
+    return multiply(toAmount, String(1000));
+  }, [toAmount]);
+
   function handleFromMax() {
+    setFromAmount(fromBalance);
     return;
   }
 
@@ -92,7 +120,12 @@ export function TokenStation() {
               <div className="flex justify-between items-center font-normal">
                 <span className="text-base text-[#131e40] ">You pay:</span>
                 <span className="text-xs text-[#A5ADC6]">
-                  {tokenFrom.symbol}: 222.332
+                  {tokenFrom.symbol}:{' '}
+                  {isFromBalancePending ? (
+                    <Skeleton className="w-10 h-4" />
+                  ) : (
+                    <span>{fromBalance}</span>
+                  )}
                   <span
                     className="text-[#6E75F9] cursor-pointer ml-1 font-medium"
                     onClick={handleFromMax}
@@ -104,9 +137,12 @@ export function TokenStation() {
               <div className="flex flex-col items-start gap-2">
                 <NumberInput
                   className="!text-[32px] !font-medium !text-[#131E40] bg-transparent border-none h-10 p-0 shadow-none focus-visible:ring-0 w-full"
-                  value="7695.89"
+                  value={fromAmount}
+                  onChange={(value) => {
+                    setFromAmount(value);
+                  }}
                 />
-                <span className="text-[#A5ADC6] text-sm font-normal">~$24.345</span>
+                <span className="text-[#A5ADC6] text-sm font-normal">~${fromValue}</span>
               </div>
             </div>
           </Card>
@@ -118,9 +154,9 @@ export function TokenStation() {
           </div>
 
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <span className="text-base text-[#131e40] font-normal">To:</span>
-              <AddressBlock withEdit onClick={() => {}} address={address || ''} />
+              <AddressEditBlock address={toAddress} onChange={setToAddress} />
             </div>
 
             <div className="flex justify-between items-center gap-[10px]">
@@ -174,14 +210,24 @@ export function TokenStation() {
             <div className="flex flex-col justify-center gap-[10px]">
               <div className="flex justify-between items-center font-normal">
                 <span className="text-base text-[#131e40]">You receive:</span>
-                <span className="text-xs text-[#A5ADC6]">{tokenTo.symbol}: 7,575.93</span>
+                <span className="text-xs text-[#A5ADC6]">
+                  {tokenTo.symbol}:{' '}
+                  {isToBalancePending ? (
+                    <Skeleton className="w-10 h-4" />
+                  ) : (
+                    <span>{toBalance}</span>
+                  )}
+                </span>
               </div>
               <div className="flex flex-col items-start gap-2">
                 <NumberInput
                   className="!text-[32px] !font-medium !text-[#131E40] bg-transparent border-none h-10 p-0 shadow-none focus-visible:ring-0 w-full"
-                  value="83924.43"
+                  value={toAmount}
+                  onChange={(value) => {
+                    setToAmount(value);
+                  }}
                 />
-                <span className="text-[#A5ADC6] text-sm font-normal">~$24.345</span>
+                <span className="text-[#A5ADC6] text-sm font-normal">~${toValue}</span>
               </div>
             </div>
           </Card>
@@ -194,6 +240,66 @@ export function TokenStation() {
         </div>
       </div>
     </>
+  );
+}
+
+function AddressEditBlock({
+  address,
+  onChange,
+}: {
+  address: string;
+  onChange: (value: string) => void;
+}) {
+  const [isEdit, setIsEdit] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const [inputValue, setInputValue] = useState(address);
+  const [isError, setIsError] = useState(false);
+
+  function handleEdit() {
+    setIsEdit(true);
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  }
+
+  function handleInput(val: string) {
+    const isAddr = isAddress(val);
+    if (isAddr) {
+      setIsError(false);
+    }
+
+    setInputValue(val);
+  }
+
+  function handleBlur() {
+    const isAddr = isAddress(inputValue);
+    if (isAddr) {
+      onChange(inputValue);
+      setIsEdit(false);
+    } else {
+      setIsError(true);
+    }
+  }
+
+  return (
+    <div className="flex flex-1 justify-end items-center gap-1">
+      {isEdit ? (
+        <input
+          ref={inputRef}
+          type="text"
+          className={cn(
+            'w-full h-8 text-xs font-normal text-[#131e40] rounded-md px-[10px] border border-[#00000010] py-1 gap-1',
+            isError && 'border-red-500'
+          )}
+          value={inputValue}
+          onChange={(e) => handleInput(e.target.value)}
+          onBlur={handleBlur}
+        />
+      ) : (
+        <AddressBlock withEdit onClick={handleEdit} address={address} />
+      )}
+    </div>
   );
 }
 

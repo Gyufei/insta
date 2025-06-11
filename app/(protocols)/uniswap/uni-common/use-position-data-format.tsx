@@ -7,7 +7,7 @@ import { IToken } from '@/config/tokens';
 import { IUniswapPosition, PositionStatus } from '@/lib/data/use-uniswap-position';
 import { formatBig } from '@/lib/utils/number';
 
-import { useUniswapToken } from '../use-uniswap-token';
+import { UNISWAP_TOKENS } from '../use-uniswap-token';
 
 const TICK_BASE = 1.0001;
 const TICK_LOWER_MIN = -887272;
@@ -70,7 +70,7 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
       },
     };
   }
-  const { tokens } = useUniswapToken();
+  const tokens = UNISWAP_TOKENS;
   const { protocolVersion, v3Position } = pos || {};
   const {
     token0,

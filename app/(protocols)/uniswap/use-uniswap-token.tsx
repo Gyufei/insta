@@ -8,7 +8,7 @@ export const USDT_TOKEN: IToken = {
   decimals: 6,
 };
 
-const UNISWAP_TOKENS: Array<IToken> = [
+export const UNISWAP_TOKENS: Array<IToken> = [
   MONAD,
   {
     address: '0x760AfE86e5de5fa0Ee542fc7B7B713e1c5425701',
@@ -35,9 +35,3 @@ const UNISWAP_TOKENS: Array<IToken> = [
     decimals: 6,
   },
 ];
-
-export function useUniswapToken() {
-  return {
-    tokens: UNISWAP_TOKENS,
-  };
-}

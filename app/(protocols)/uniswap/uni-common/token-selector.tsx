@@ -4,12 +4,12 @@ import { Search } from 'lucide-react';
 
 import { useState } from 'react';
 
+import { IToken } from '@/config/tokens';
+
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 import { NoSearchResult } from '@/components/side-drawer/balance/no-search-result';
 
-import { IToken } from '@/config/tokens';
-
-import { useUniswapToken } from '../use-uniswap-token';
+import { UNISWAP_TOKENS } from '../use-uniswap-token';
 
 interface TokenSelectorProps {
   onSelect: (token: IToken) => void;
@@ -17,7 +17,7 @@ interface TokenSelectorProps {
 }
 
 export default function TokenSelector({ onSelect, onClose }: TokenSelectorProps) {
-  const { tokens } = useUniswapToken();
+  const tokens = UNISWAP_TOKENS;
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredTokens = tokens.filter(

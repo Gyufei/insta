@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useAmbientCalcImpact } from '@/lib/data/use-ambient-calc-impact';
 import { IAmbientPosition } from '@/lib/data/use-ambient-position';
 
-import { useUniswapToken } from '../uniswap/use-uniswap-token';
+import { UNISWAP_TOKENS } from '../uniswap/use-uniswap-token';
 
 const TICK_BASE = 1.0001;
 
@@ -108,7 +108,7 @@ export function useAmbientPositionFormat(position: IAmbientPosition) {
     };
   }
 
-  const { tokens } = useUniswapToken();
+  const tokens = UNISWAP_TOKENS;
 
   const { data: impactPrice, isLoading: isLoadingImpactPrice } = useAmbientCalcImpact({
     base_token: pos.base,
