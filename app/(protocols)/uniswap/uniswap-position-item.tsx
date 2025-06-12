@@ -35,7 +35,6 @@ export function PositionItem({ position }: PositionItemProps) {
     token0Amount,
     token1Amount,
     price,
-    mockPrice,
     isFullRange,
     minPrice,
     maxPrice,
@@ -73,7 +72,6 @@ export function PositionItem({ position }: PositionItemProps) {
         <div className="flex flex-col sm:flex-row gap-3 flex-grow mr-2">
           <div className="flex-1 basis-0">
             <span className="text-base font-semibold text-primary">
-              {formatNumber(mockPrice || '-')}
               {formatNumber(price || '-')}
             </span>
             <span className="block text-sm text-gray-500 truncate">Current Price</span>

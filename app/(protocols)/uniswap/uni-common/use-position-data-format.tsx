@@ -124,10 +124,6 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
     return 10 ** (wrapToken0.decimals - wrapToken1.decimals);
   }, [wrapToken0.decimals, wrapToken1.decimals]);
 
-  const mockPrice = useMemo(() => {
-    return sqrtPriceX96ToPrice(currentPrice);
-  }, [currentPrice]);
-
   const price = useMemo(() => {
     return sqrtPriceX96ToPrice(currentPrice) * decimalsRate;
   }, [currentPrice, decimalsRate]);
@@ -172,7 +168,6 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
     token0Amount,
     token1Amount,
     price,
-    mockPrice,
     isFullRange,
     minPrice,
     maxPrice,
