@@ -165,7 +165,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
   }
 
   return (
-    <div className="px-4 mt-4">
+    <div className="px-4 mt-8">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <h1 className="text-2xl font-bold">{market.title}</h1>
@@ -286,7 +286,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
             <div className="bg-white">
               <div className="flex items-center py-3 text-sm font-medium text-gray-500 border-b">
                 <div className="flex-1">OUTCOME</div>
-                <div className="w-32 text-right pr-[2px]">CHANCE</div>
+                <div className="w-32 text-right pr-[20px]">CHANCE</div>
                 <div className="w-48"></div>
               </div>
 
@@ -415,7 +415,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                   <div className="relative">
                     <button
                       onClick={() => setIsOutcomeFilterOpen(!isOutcomeFilterOpen)}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full text-sm hover:bg-gray-200"
+                      className="flex h-8 items-center gap-2 px-[10px] bg-gray-100 rounded-[8px] text-sm hover:bg-gray-200"
                     >
                       <span>{selectedOutcomeFilter}</span>
                       <svg
@@ -430,7 +430,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                     </button>
 
                     {isOutcomeFilterOpen && (
-                      <div className="absolute right-0 top-full mt-1 bg-white border rounded-lg shadow-none overflow-hidden z-10">
+                      <div className="absolute right-0 top-full w-[160px] mt-1 bg-white border rounded-lg shadow-none overflow-hidden z-10">
                         {['All', ...(market?.outcomes?.map((o) => o.name) || [])].map((outcome) => (
                           <button
                             key={outcome}

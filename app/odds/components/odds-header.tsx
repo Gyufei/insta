@@ -141,8 +141,8 @@ export default function OddsHeader() {
   return (
     <>
       {/* Desktop Header */}
-      <header className="hidden lg:block border-b">
-        <div className="max-w-[1920px] mx-auto w-full px-4">
+      <header className="hidden lg:block px-12">
+        <div className="max-w-[1920px] mx-auto w-full px-4 border-b ">
           <div className="flex items-center h-16 gap-8">
             <div className="flex-1 flex items-center gap-8 min-w-0">
               <div className="flex-1 min-w-[200px]">

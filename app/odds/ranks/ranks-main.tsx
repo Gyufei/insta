@@ -105,7 +105,7 @@ export default function Ranks() {
       </div>
 
       {/* Leaderboards Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Volume Leaders */}
         <div className="bg-white rounded-lg border p-6">
           <div className="flex items-center gap-2 mb-6">

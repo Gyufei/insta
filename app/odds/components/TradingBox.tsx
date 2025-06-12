@@ -224,7 +224,7 @@ export default function TradingBox({ market }: TradingBoxProps) {
   const renderOutcomePickup = () => (
     <div className="relative">
       <button
-        className="w-full flex items-center justify-between gap-3 p-3 border rounded-lg hover:bg-gray-50"
+        className="w-full flex items-center justify-between gap-3 p-[6px] border rounded-lg hover:bg-gray-50"
         onClick={() => setShowOutcomesDropdown(!showOutcomesDropdown)}
       >
         {selectedOutcome ? (
@@ -232,11 +232,11 @@ export default function TradingBox({ market }: TradingBoxProps) {
             <Image
               src={selectedOutcome.logo}
               alt={selectedOutcome.name}
-              className="w-8 h-8 rounded-full"
-              width={32}
-              height={32}
+              className="w-6 h-6 rounded-full"
+              width={24}
+              height={24}
             />
-            <span className="text-xl font-medium">{selectedOutcome.name}</span>
+            <span className="text-sm font-medium">{selectedOutcome.name}</span>
           </div>
         ) : (
           <span className="text-gray-500">Select an outcome</span>
@@ -284,7 +284,7 @@ export default function TradingBox({ market }: TradingBoxProps) {
     <>
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-lg font-medium">Outcome</span>
+          <span className="text-sm font-medium">Outcome</span>
           <div className="flex items-center gap-2">
             <button className="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg">
               <RefreshCw className="h-4 w-4" />
@@ -296,10 +296,10 @@ export default function TradingBox({ market }: TradingBoxProps) {
 
       {tradingMode === 'limit' && (
         <div className="mb-6">
-          <label className="block text-lg font-medium mb-2">Limit Price</label>
+          <label className="block text-sm font-medium mb-2">Limit Price</label>
           <div className="relative rounded-lg border overflow-hidden">
             <button
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
+              className="absolute text-2xl left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
               onClick={() => {
                 if (tradeState.price) {
                   setTradeState({
@@ -321,10 +321,10 @@ export default function TradingBox({ market }: TradingBoxProps) {
                   price: parseInt(value || '0'),
                 });
               }}
-              className="w-full py-3 px-12 text-center text-xl focus:outline-none"
+              className="w-full py-[6px] px-12 text-center text-lg focus:outline-none"
             />
             <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
+              className="absolute text-2xl right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
               onClick={() => {
                 if (tradeState.price !== null) {
                   setTradeState({
@@ -340,13 +340,13 @@ export default function TradingBox({ market }: TradingBoxProps) {
         </div>
       )}
 
-      <div className="mb-6">
+      <div className="mb-3">
         <div className="flex items-center justify-between mb-2">
-          <label className="text-lg font-medium">Shares</label>
+          <label className="text-sm font-medium">Shares</label>
         </div>
         <div className="relative rounded-lg border overflow-hidden">
           <button
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
+            className="absolute text-2xl left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
             onClick={() => adjustAmount(false)}
           >
             −
@@ -355,10 +355,10 @@ export default function TradingBox({ market }: TradingBoxProps) {
             type="text"
             value={formatSharesDisplay(tradeState.sharesToBuy)}
             onChange={(e) => handleAmountChange(e.target.value)}
-            className="w-full py-3 px-12 text-center text-xl focus:outline-none"
+            className="w-full py-[6px] px-12 text-center text-lg focus:outline-none"
           />
           <button
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
+            className="absolute text-2xl right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
             onClick={() => adjustAmount(true)}
           >
             +
@@ -383,7 +383,7 @@ export default function TradingBox({ market }: TradingBoxProps) {
     <>
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-lg font-medium">Outcome</span>
+          <span className="text-sm font-medium">Outcome</span>
           <div className="flex items-center gap-2">
             <button className="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg">
               <RefreshCw className="h-4 w-4" />
@@ -398,7 +398,7 @@ export default function TradingBox({ market }: TradingBoxProps) {
           <label className="block text-lg font-medium mb-2">Limit Price</label>
           <div className="relative rounded-lg border overflow-hidden">
             <button
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
+              className="absolute text-2xl left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
               onClick={() => {
                 if (tradeState.price) {
                   setTradeState({
@@ -420,10 +420,10 @@ export default function TradingBox({ market }: TradingBoxProps) {
                   price: parseInt(value || '0'),
                 });
               }}
-              className="w-full py-3 px-12 text-center text-xl focus:outline-none"
+              className="w-full py-[6px] px-12 text-center text-lg focus:outline-none"
             />
             <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
+              className="absolute text-2xl right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
               onClick={() => {
                 if (tradeState.price !== null) {
                   setTradeState({
@@ -439,14 +439,14 @@ export default function TradingBox({ market }: TradingBoxProps) {
         </div>
       )}
 
-      <div className="mb-6">
+      <div className="mb-3">
         <div className="flex items-center justify-between mb-2">
-          <label className="text-lg font-medium">Shares</label>
+          <label className="text-sm font-medium">Shares</label>
           <div className="text-sm text-gray-500">(Max: {userShares})</div>
         </div>
         <div className="relative rounded-lg border overflow-hidden">
           <button
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
+            className="absolute text-2xl left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
             onClick={() => adjustAmount(false)}
           >
             −
@@ -455,10 +455,10 @@ export default function TradingBox({ market }: TradingBoxProps) {
             type="text"
             value={formatSharesDisplay(tradeState.sharesToSell)}
             onChange={(e) => handleAmountChange(e.target.value)}
-            className="w-full py-3 px-12 text-center text-xl focus:outline-none"
+            className="w-full py-[6px] px-12 text-center text-lg focus:outline-none"
           />
           <button
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
+            className="absolute text-2xl right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-100 rounded"
             onClick={() => adjustAmount(true)}
           >
             +
@@ -587,7 +587,7 @@ export default function TradingBox({ market }: TradingBoxProps) {
                 isSubmitting ||
                 (tradeState.direction === 'sell' && tradeState.sharesToSell > userShares)
               }
-              className={`w-full py-4 text-white text-lg font-medium rounded-lg mb-4 ${
+              className={`w-full py-[6px] text-white text-sm font-medium rounded-lg mb-4 ${
                 tradeState.direction === 'buy'
                   ? 'bg-[var(--color-buy-button)] hover:bg-[var(--color-buy-button-hover)]'
                   : `bg-[var(--color-sell-button)] hover:bg-[var(--color-sell-button-hover)] ${

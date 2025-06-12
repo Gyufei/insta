@@ -126,7 +126,7 @@ export default function Portfolio() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Funding Balance Card */}
         <div className="bg-white rounded-xl border p-6">
           <div className="text-sm text-gray-500 uppercase mb-2">Funding Balance</div>

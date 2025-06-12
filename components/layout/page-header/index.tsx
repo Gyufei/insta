@@ -18,8 +18,8 @@ export function PageHeader() {
   }
 
   return (
-    <header className="grid-header-nav bg-bg-gray border-border flex items-center justify-end flex-nowrap pt-6">
-      <div className="flex justify-end items-center gap-2 flex-nowrap pr-8 w-[360px]">
+    <header className="grid-header-nav bg-bg-gray border-border flex items-center flex-nowrap pt-4">
+      <div className="flex justify-between items-center gap-2 flex-nowrap px-8 w-[360px]">
         {isConnected ? (
           <>
             <AccountBtn />
