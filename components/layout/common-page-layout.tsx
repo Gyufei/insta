@@ -25,7 +25,7 @@ export function CommonPageLayout({
           )}
         >
           <PageTitle title={title} src={iconSrc} />
-          <div className="max-w-container-main flex w-full flex-col rounded-t-md bg-white flex-1 pb-4">
+          <div className="flex w-full flex-col rounded-t-md bg-white flex-1 pb-4">
             {children}
           </div>
         </div>
