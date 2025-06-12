@@ -124,9 +124,13 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
     return 10 ** (wrapToken0.decimals - wrapToken1.decimals);
   }, [wrapToken0.decimals, wrapToken1.decimals]);
 
+  const mockPrice = useMemo(() => {
+    return sqrtPriceX96ToPrice(currentPrice);
+  }, [currentPrice]);
+
   const price = useMemo(() => {
-    return sqrtPriceX96ToPrice(currentPrice) * decimalsRate;
-  }, [currentPrice, decimalsRate]);
+    return mockPrice * decimalsRate;
+  }, [mockPrice, decimalsRate]);
 
   const isFullRange = useMemo(() => {
     if (tickLower === TICK_LOWER_MIN.toString() && tickUpper === TICK_UPPER_MAX.toString()) {
@@ -168,6 +172,7 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
     token0Amount,
     token1Amount,
     price,
+    mockPrice,
     isFullRange,
     minPrice,
     maxPrice,

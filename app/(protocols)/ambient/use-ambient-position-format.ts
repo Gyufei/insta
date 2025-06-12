@@ -36,13 +36,6 @@ function calculateTokenAmounts(
     };
   }
 
-  console.log('lowerPrice', lowerPrice);
-  console.log('upperPrice', upperPrice);
-  console.log('currentPrice', currentPrice);
-  console.log('token0Decimals', token0Decimals);
-  console.log('token1Decimals', token1Decimals);
-  console.log('liq', liq);
-
   // 将输入转换为数字（确保处理字符串输入）
   const P = Number(currentPrice);
   const Pa = Number(lowerPrice);
