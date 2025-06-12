@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
-import { CommonPageLayout } from '@/components/layout/common-page-layout';
 import { TitleH2 } from '@/components/common/title-h2';
+import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
 import { AprMonStake } from './apr-mon-stake';
 import { AprioriStats } from './apriori-stats';
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function Apriori() {
   return (
     <CommonPageLayout title="Apriori" iconSrc="/icons/apriori.svg">
-      <div className="mt-4 flex w-full flex-shrink-0 justify-between px-4 2xl:mt-0 2xl:px-12">
+      <div className="mb-6 flex w-full flex-shrink-0 justify-between px-4 mt-0 2xl:px-12">
         <TitleH2>Overview</TitleH2>
       </div>
       <AprioriStats />

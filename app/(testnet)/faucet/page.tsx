@@ -13,7 +13,6 @@ export default function Faucet() {
   return (
     <CommonPageLayout title="Faucet" iconSrc={null}>
       <div className="flex flex-col items-start px-4 2xl:px-12">
-        <TitleH2>Faucet</TitleH2>
         <FaucetContainer />
       </div>
     </CommonPageLayout>

@@ -40,7 +40,7 @@ export function TokenStakeCard({
   const priceValue = balance ? multiply(formattedBalance, String(tokenPrice)) : '0';
 
   return (
-    <div className="mt-4 grid w-full min-w-max grid-cols-2 gap-4 px-4 2xl:mt-6 2xl:gap-6 2xl:px-12">
+    <div className="mt-4 grid w-full min-w-max grid-cols-2 gap-4 px-4 2xl:mt-6 2xl:px-12">
       <Card className="relative flex flex-1 px-5 flex-shrink-0 gap-5 flex-col shadow-none outline-none">
         <CardContent className="px-0 flex items-center">
           <div className="flex h-12 w-12 items-center justify-center dark:opacity-90">

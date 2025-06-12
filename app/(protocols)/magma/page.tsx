@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function Apriori() {
   return (
     <CommonPageLayout title="Magma" iconSrc="/icons/magma.svg">
-      <div className="mt-4 flex w-full flex-shrink-0 justify-between px-4 2xl:mt-0 2xl:px-12">
+      <div className="mt-0 mb-6 flex w-full flex-shrink-0 justify-between px-4 2xl:px-12">
         <TitleH2>Overview</TitleH2>
       </div>
       <MagmaStats />
