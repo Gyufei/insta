@@ -8,16 +8,21 @@ import { ITxResponse } from '../model';
 import { useSendTx } from '../web3/use-send-tx';
 import { ApiPath } from './api-path';
 
-export function useCheckAllowance(tokenName: string) {
+const CheckUrlMap = {
+  badge: `${ApiPath.badgeAllowance}`,
+  tokenStation: `${ApiPath.tokenStationAllowance}`,
+};
+
+export function useCheckAllowance(checkName: 'badge' | 'tokenStation', tokenName: string) {
   const { address } = useAccount();
   const { send } = useSendTx();
 
   async function checkAllowance() {
     if (!address) return null;
 
-    const checkAllowanceRes = await Fetcher(
-      `${ApiPath.badgeAllowance}?wallet=${address}&token_name=${tokenName}`
-    );
+    const path = CheckUrlMap[checkName];
+
+    const checkAllowanceRes = await Fetcher(`${path}?wallet=${address}&token_name=${tokenName}`);
 
     return checkAllowanceRes as { allowance: string; txParams: ITxResponse };
   }

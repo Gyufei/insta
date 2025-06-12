@@ -18,13 +18,13 @@ export const STATION_FROM_TOKENS = [
     decimals: 18,
     address: '0x0000000000000000000000000000000000000000',
   },
-  {
-    name: 'LINK',
-    symbol: 'LINK',
-    logo: '/icons/link-token.svg',
-    decimals: 18,
-    address: '0x0000000000000000000000000000000000000000',
-  },
+  // {
+  //   name: 'LINK',
+  //   symbol: 'LINK',
+  //   logo: '/icons/link-token.svg',
+  //   decimals: 18,
+  //   address: '0x0000000000000000000000000000000000000000',
+  // },
 ];
 
 export const STATION_TO_TOKENS = [MONAD, MonUSD];

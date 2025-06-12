@@ -1,6 +1,8 @@
 'use client';
 
-import { multiply } from 'safebase';
+import { Loader } from 'lucide-react';
+import { divide, multiply, utils } from 'safebase';
+import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
@@ -23,6 +25,9 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { useCheckAllowance } from '@/lib/data/use-check-allowance';
+import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
+import { useTokenStationSwap } from '@/lib/data/use-token-station-swap';
 import { cn, formatAddress } from '@/lib/utils';
 import { useWalletTokenBalance } from '@/lib/web3/use-wallet-token-balance';
 
@@ -37,7 +42,7 @@ export function TokenStation() {
   const [fromAmount, setFromAmount] = useState('0');
   const [toAmount, setToAmount] = useState('0');
 
-  const [toAddress, setToAddress] = useState('');
+  const [toAddress, setToAddress] = useState(address || '');
 
   const { balance: fromBalance, isPending: isFromBalancePending } = useWalletTokenBalance(
     tokenFrom.address
@@ -46,19 +51,111 @@ export function TokenStation() {
     tokenTo.address
   );
 
+  const {
+    allowance: fromAllowance,
+    isLoading: isFromAllowanceLoading,
+    handleApprove: handleFromApprove,
+    isApproving: isFromApproving,
+  } = useCheckAllowance('tokenStation', tokenFrom.symbol);
+
+  const { data: priceData } = useTokenStationPrice();
+
+  const { mutate: swap, isPending: isSwapPending } = useTokenStationSwap();
+
+  const ETHPrice = useMemo(() => {
+    if (!priceData) return '0';
+    return priceData.eth_price;
+  }, [priceData]);
+
+  const monPrice = useMemo(() => {
+    if (!priceData) return '0';
+    return priceData.mon_price;
+  }, [priceData]);
+
+  const isFromIsETH = useMemo(() => {
+    return tokenFrom.symbol === 'ETH';
+  }, [tokenFrom.symbol]);
+
+  const fromPrice = useMemo(() => {
+    if (isFromIsETH) {
+      return ETHPrice;
+    }
+    return 1;
+  }, [isFromIsETH, ETHPrice]);
+
+  const toPrice = useMemo(() => {
+    if (tokenTo.symbol === 'MONAD') {
+      return monPrice;
+    }
+    return 1;
+  }, [tokenTo.symbol, monPrice]);
+
   const fromValue = useMemo(() => {
     if (!fromAmount) return '0';
-    return multiply(fromAmount, String(1000));
-  }, [fromAmount]);
+    return multiply(fromAmount, String(fromPrice));
+  }, [fromAmount, fromPrice]);
 
   const toValue = useMemo(() => {
     if (!toAmount) return '0';
-    return multiply(toAmount, String(1000));
-  }, [toAmount]);
+    return multiply(toAmount, String(toPrice));
+  }, [toAmount, toPrice]);
+
+  const shouldApprove = useMemo(() => {
+    if (!fromAllowance) return true;
+    return Number(fromAllowance) < Number(fromValue);
+  }, [fromAllowance, fromValue]);
 
   function handleFromMax() {
     setFromAmount(fromBalance);
     return;
+  }
+
+  function handleFromChange(value: string) {
+    setFromAmount(value);
+
+    if (value === '0') {
+      setToAmount('0');
+      return;
+    }
+
+    const amount = divide(multiply(value, String(fromPrice)), String(toPrice));
+    const withSlippage = utils.roundResult(multiply(amount, String(0.99)), 8);
+    setToAmount(withSlippage);
+  }
+
+  function handleToChange(value: string) {
+    setToAmount(value);
+
+    if (value === '0') {
+      setFromAmount('0');
+      return;
+    }
+
+    const amount = divide(multiply(value, String(toPrice)), String(fromPrice));
+    const withSlippage = utils.roundResult(multiply(amount, String(1.01)), 8);
+    setFromAmount(withSlippage.toString());
+  }
+
+  function handleConfirm() {
+    if (shouldApprove) {
+      handleFromApprove();
+    } else {
+      handleSwap();
+    }
+  }
+
+  function handleSwap() {
+    console.log('handleSwap');
+    if (Number(fromAmount) > Number(fromBalance)) {
+      toast.error('Insufficient balance');
+      return;
+    }
+
+    swap({
+      token_name: tokenFrom.symbol,
+      amount_in: fromAmount,
+      min_amount_out: toAmount,
+    });
   }
 
   return (
@@ -136,11 +233,12 @@ export function TokenStation() {
               </div>
               <div className="flex flex-col items-start gap-2">
                 <NumberInput
-                  className="!text-[32px] !font-medium !text-[#131E40] bg-transparent border-none h-10 p-0 shadow-none focus-visible:ring-0 w-full"
+                  className={cn(
+                    '!text-[32px] !font-medium bg-transparent border-none h-10 p-0 shadow-none focus-visible:ring-0 w-full',
+                    Number(fromAmount) < Number(fromBalance) ? '!text-red' : '!text-[#131E40]'
+                  )}
                   value={fromAmount}
-                  onChange={(value) => {
-                    setFromAmount(value);
-                  }}
+                  onChange={handleFromChange}
                 />
                 <span className="text-[#A5ADC6] text-sm font-normal">~${fromValue}</span>
               </div>
@@ -223,9 +321,7 @@ export function TokenStation() {
                 <NumberInput
                   className="!text-[32px] !font-medium !text-[#131E40] bg-transparent border-none h-10 p-0 shadow-none focus-visible:ring-0 w-full"
                   value={toAmount}
-                  onChange={(value) => {
-                    setToAmount(value);
-                  }}
+                  onChange={handleToChange}
                 />
                 <span className="text-[#A5ADC6] text-sm font-normal">~${toValue}</span>
               </div>
@@ -234,8 +330,36 @@ export function TokenStation() {
         </div>
 
         <div className="flex justify-end items-center mt-5">
-          <Button className="h-8 text-sm font-medium flex items-center justify-center rounded-md bg-[#6E75F9] text-white hover:bg-[#6E75F990]">
-            Create swap &gt;&gt;
+          <Button
+            className="min-w-40 h-8 text-sm font-medium flex items-center justify-center rounded-md bg-[#6E75F9] text-white hover:bg-[#6E75F990]"
+            onClick={handleConfirm}
+          >
+            {isFromAllowanceLoading ? (
+              <Loader className="w-4 h-4 animate-spin" />
+            ) : shouldApprove ? (
+              <span>
+                {isFromApproving ? (
+                  <span className="flex items-center">
+                    <Loader className="w-4 h-4 mr-1 animate-spin" />
+                    <span>Approving...</span>
+                  </span>
+                ) : (
+                  'Approve'
+                )}
+              </span>
+            ) : (
+              <span>
+                {isSwapPending ? (
+                  <span className="flex items-center">
+                    <Loader className="w-4 h-4 mr-1 animate-spin" />
+                    <span>Creating...</span>
+                  </span>
+                ) : (
+                  'Create swap'
+                )}{' '}
+                &gt;&gt;
+              </span>
+            )}
           </Button>
         </div>
       </div>
