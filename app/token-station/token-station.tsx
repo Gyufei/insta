@@ -108,7 +108,7 @@ export function TokenStation() {
   }, [fromAllowance, fromValue]);
 
   useEffect(() => {
-    if (chainId !== NetworkConfigs.eth.id) {
+    if (chainId !== NetworkConfigs.eth.id && chainId === NetworkConfigs.base.id) {
       switchNetwork(NetworkConfigs.eth);
     }
   }, [chainId, switchNetwork]);

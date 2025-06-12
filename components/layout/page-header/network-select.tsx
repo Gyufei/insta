@@ -1,6 +1,6 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -23,7 +23,12 @@ const NETWORKS = [
   {
     ...NetworkConfigs.base,
   },
+  {
+    ...NetworkConfigs.eth,
+  },
 ] as const;
+
+const BaseNetIds = [String(NetworkConfigs.base.id), String(NetworkConfigs.eth.id)] as string[];
 
 export default function NetworkSelect() {
   const { chainId, switchNetwork } = useAppKitNetwork();
@@ -33,8 +38,10 @@ export default function NetworkSelect() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const isBaseNet = useMemo(() => BaseNetIds.includes(String(chainId)), [chainId]);
+
   function handleSelectNetwork(net: INetworkConfig) {
-    if (net.id === NetworkConfigs.base.id || net.id === NetworkConfigs.eth.id) {
+    if (BaseNetIds.includes(String(net.id) as unknown as (typeof BaseNetIds)[number])) {
       localStorage.setItem('monad-before-page-url', pathname);
     }
 
@@ -44,15 +51,12 @@ export default function NetworkSelect() {
     }
   }
 
-  const isBaseNet =
-    String(chainId) === String(NetworkConfigs.base.id) ||
-    String(chainId) === String(NetworkConfigs.eth.id);
-
   useEffect(() => {
     if (isBaseNet) {
       router.replace('/token-station');
     } else {
       const beforePageUrl = localStorage.getItem('monad-before-page-url');
+      console.log('beforePageUrl', beforePageUrl, pathname);
       if (pathname === '/token-station') {
         router.replace(beforePageUrl || '/');
       }

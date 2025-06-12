@@ -287,7 +287,10 @@ export default function AppSidebar() {
 
   useEffect(() => {
     let groups: MenuGroup[] = [];
-    if (String(chainId) === String(NetworkConfigs.base.id)) {
+    if (
+      String(chainId) === String(NetworkConfigs.base.id) ||
+      String(chainId) === String(NetworkConfigs.eth.id)
+    ) {
       groups = [
         {
           id: 'modules',
