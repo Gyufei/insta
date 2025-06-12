@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 
-import { TitleH2 } from '@/components/common/title-h2';
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
 import { FaucetContainer } from './faucet-container';

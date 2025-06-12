@@ -1,6 +1,6 @@
 import { divide, multiply } from 'safebase';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { TwoTokenAmount } from '@/app/(protocols)/uniswap/uni-common/two-token-amount';
 
@@ -28,9 +28,84 @@ export function AmbientRemoveLiquidity() {
 
   const { token0, token1, token0Amount, token1Amount } = useAmbientPositionFormat(ambientPosition!);
 
+  const totalAskTick = ambientPosition?.askTick.toString();
+  const totalBidTick = ambientPosition?.bidTick.toString();
+
   const [percent, setPercent] = useState('');
-  const [_amount0, setAmount0] = useState('');
-  const [_amount1, setAmount1] = useState('');
+
+  const amount0 = useMemo(() => {
+    if (percent === '') {
+      return '0';
+    }
+
+    if (Number(percent) === 100) {
+      return token0Amount;
+    }
+
+    if (Number(percent) > 100 || Number(percent) < 1 || percent.length > 2 || percent.includes('.'))
+      return '0';
+
+    const a0 = divide(
+      multiply(String(token0Amount) || '0', String(percent)),
+      String(100)
+    ).toString();
+
+    return a0;
+  }, [percent, token0Amount]);
+
+  const amount1 = useMemo(() => {
+    if (percent === '') {
+      return '0';
+    }
+
+    if (Number(percent) === 100) {
+      return token1Amount;
+    }
+
+    if (Number(percent) > 100 || Number(percent) < 1 || percent.length > 2 || percent.includes('.'))
+      return '0';
+
+    const a1 = divide(
+      multiply(String(token1Amount) || '0', String(percent)),
+      String(100)
+    ).toString();
+    return a1;
+  }, [percent, token1Amount]);
+
+  const askTick = useMemo(() => {
+    if (percent === '') {
+      return '0';
+    }
+
+    if (Number(percent) === 100) {
+      return totalAskTick;
+    }
+
+    const a0 = Math.round(
+      divide(multiply(String(totalAskTick) || '0', String(percent)), String(100))
+    ).toString();
+
+    return a0;
+  }, [percent, totalAskTick]);
+
+  const bidTick = useMemo(() => {
+    if (percent === '') {
+      return '0';
+    }
+
+    if (Number(percent) === 100) {
+      return totalBidTick;
+    }
+
+    const a1 = Math.round(
+      divide(multiply(String(totalBidTick) || '0', String(percent)), String(100))
+    ).toString();
+
+    return a1;
+  }, [percent, totalBidTick]);
+
+  console.log(token0Amount, amount0, token1Amount, amount1);
+  console.log(totalAskTick, askTick, totalBidTick, bidTick);
 
   function handleBack() {
     setIsOpen(false);
@@ -39,36 +114,22 @@ export function AmbientRemoveLiquidity() {
   const handleConfirm = () => {
     if (!ambientPosition) return;
 
+    const liquidity = divide(
+      multiply(String(ambientPosition.concLiq), String(percent)),
+      String(100)
+    ).toString();
+
     removeLiquidity({
       base_token: ambientPosition.base,
       quote_token: ambientPosition.quote,
-      bid_tick: ambientPosition.bidTick.toString(),
-      ask_tick: ambientPosition.askTick.toString(),
-      liquidity: ambientPosition.ambientLiq.toString(),
+      bid_tick: bidTick,
+      ask_tick: askTick,
+      liquidity,
     });
   };
 
-  // 百分比变化时自动计算 token0 和 token1 的移除数量
   function handlePercentChange(val: string) {
-    if (val === '') {
-      setPercent('');
-      setAmount0('');
-      setAmount1('');
-      return;
-    }
-
-    if (Number(val) === 100) {
-      setPercent(val);
-      setAmount0(String(token0Amount) || '0');
-      setAmount1(String(token1Amount) || '0');
-      return;
-    }
-
-    if (Number(val) > 100 || Number(val) < 1 || val.length > 2 || val.includes('.')) return;
-
     setPercent(val);
-    setAmount0(divide(multiply(String(token0Amount) || '0', val), String(100)));
-    setAmount1(divide(multiply(String(token1Amount) || '0', val), String(100)));
   }
 
   if (!ambientPosition) {
@@ -113,8 +174,8 @@ export function AmbientRemoveLiquidity() {
         <TwoTokenAmount
           token0={token0}
           token1={token1}
-          token0Amount={String(_amount0) || '0'}
-          token1Amount={String(_amount1) || '0'}
+          token0Amount={String(amount0) || '0'}
+          token1Amount={String(amount1) || '0'}
         />
 
         <ActionButton

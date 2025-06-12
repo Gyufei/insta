@@ -39,7 +39,7 @@ export function UniswapRemoveLiquidity() {
 
   const handleConfirm = () => {
     if (!uniswapPosition) return;
-
+    
     removeLiquidity({
       token_id: uniswapPosition.v3Position.tokenId,
       liquidity: uniswapPosition.v3Position.liquidity,
