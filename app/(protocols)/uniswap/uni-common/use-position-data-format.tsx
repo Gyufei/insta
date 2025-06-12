@@ -129,8 +129,8 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
   }, [currentPrice]);
 
   const price = useMemo(() => {
-    return mockPrice * decimalsRate;
-  }, [mockPrice, decimalsRate]);
+    return sqrtPriceX96ToPrice(currentPrice) * decimalsRate;
+  }, [currentPrice, decimalsRate]);
 
   const isFullRange = useMemo(() => {
     if (tickLower === TICK_LOWER_MIN.toString() && tickUpper === TICK_UPPER_MAX.toString()) {
