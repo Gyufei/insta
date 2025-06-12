@@ -29,7 +29,7 @@ export default function BalanceSection() {
           </Tooltip>
         </TooltipProvider>
       </h3>
-      <div className="mt-4 text-[32px] h-10 font-semibold text-primary">
+      <div className="mt-4 text-[32px] h-10 font-medium text-primary">
         <WithLoading isLoading={isPending} className="h-8 w-8 mt-[5px]">
           <span>${Number(priceValue) > 0 ? formatNumber(priceValue) : '0.00'}</span>
         </WithLoading>
