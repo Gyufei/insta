@@ -1,5 +1,5 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
-import { base, monadTestnet } from '@reown/appkit/networks';
+import { base, mainnet, monadTestnet } from '@reown/appkit/networks';
 import { cookieStorage, createStorage, http } from 'wagmi';
 
 // Get projectId from https://cloud.reown.com
@@ -9,7 +9,7 @@ if (!projectId) {
   throw new Error('Project ID is not defined');
 }
 
-export const wagmiNetworks = [monadTestnet, base];
+export const wagmiNetworks = [monadTestnet, mainnet, base];
 
 //Set up the Wagmi Adapter (Config)
 export const wagmiAdapter = new WagmiAdapter({
@@ -20,6 +20,7 @@ export const wagmiAdapter = new WagmiAdapter({
   projectId,
   transports: {
     [monadTestnet.id]: http(),
+    [mainnet.id]: http(),
     [base.id]: http(),
   },
   networks: wagmiNetworks,

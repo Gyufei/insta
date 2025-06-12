@@ -28,9 +28,6 @@ export function AmbientRemoveLiquidity() {
 
   const { token0, token1, token0Amount, token1Amount } = useAmbientPositionFormat(ambientPosition!);
 
-  const totalAskTick = ambientPosition?.askTick.toString();
-  const totalBidTick = ambientPosition?.bidTick.toString();
-
   const [percent, setPercent] = useState('');
 
   const amount0 = useMemo(() => {
@@ -72,48 +69,24 @@ export function AmbientRemoveLiquidity() {
     return a1;
   }, [percent, token1Amount]);
 
-  const askTick = useMemo(() => {
-    if (percent === '') {
-      return '0';
-    }
-
-    if (Number(percent) === 100) {
-      return totalAskTick;
-    }
-
-    const a0 = Math.round(
-      divide(multiply(String(totalAskTick) || '0', String(percent)), String(100))
-    ).toString();
-
-    return a0;
-  }, [percent, totalAskTick]);
-
-  const bidTick = useMemo(() => {
-    if (percent === '') {
-      return '0';
-    }
-
-    if (Number(percent) === 100) {
-      return totalBidTick;
-    }
-
-    const a1 = Math.round(
-      divide(multiply(String(totalBidTick) || '0', String(percent)), String(100))
-    ).toString();
-
-    return a1;
-  }, [percent, totalBidTick]);
-
   function handleBack() {
     setIsOpen(false);
   }
 
   const handleConfirm = () => {
-    if (!ambientPosition) return;
+    if (!ambientPosition || !percent || parseFloat(percent) <= 0 || parseFloat(percent) > 100)
+      return;
 
-    const liquidity = divide(
-      multiply(String(ambientPosition.concLiq), String(percent)),
-      String(100)
+    const askTick = Math.floor(
+      divide(multiply(String(ambientPosition.askTick), String(percent)), String(100))
+    ).toString();
+
+    const bidTick = Math.floor(
+      divide(multiply(String(ambientPosition.bidTick), String(percent)), String(100))
+    ).toString();
+
+    const liquidity = Math.floor(
+      divide(multiply(String(ambientPosition.concLiq), String(percent)), String(100))
     ).toString();
 
     removeLiquidity({

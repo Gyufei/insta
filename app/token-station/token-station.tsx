@@ -1,12 +1,13 @@
 'use client';
 
+import { useAppKitNetwork } from '@reown/appkit/react';
 import { Loader } from 'lucide-react';
 import { divide, multiply, utils } from 'safebase';
 import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -34,6 +35,7 @@ import { useWalletTokenBalance } from '@/lib/web3/use-wallet-token-balance';
 import { STATION_FROM_TOKENS, STATION_TO_TOKENS } from './station-config';
 
 export function TokenStation() {
+  const { chainId, switchNetwork } = useAppKitNetwork();
   const { address } = useAccount();
 
   const [tokenFrom, setTokenFrom] = useState(STATION_FROM_TOKENS[0]);
@@ -104,6 +106,12 @@ export function TokenStation() {
     if (!fromAllowance) return true;
     return Number(fromAllowance) < Number(fromValue);
   }, [fromAllowance, fromValue]);
+
+  useEffect(() => {
+    if (chainId !== NetworkConfigs.eth.id) {
+      switchNetwork(NetworkConfigs.eth);
+    }
+  }, [chainId, switchNetwork]);
 
   function handleFromMax() {
     setFromAmount(fromBalance);
@@ -207,8 +215,8 @@ export function TokenStation() {
               <div className="flex-1 flex flex-col gap-[10px]">
                 <div className="text-sm text-[#A5ADC6] font-normal">Network</div>
                 <div className="w-full h-9 flex justify-start items-center border-[#00000010] border gap-2 rounded-md px-2 py-1">
-                  <Image src={NetworkConfigs.base.icon} alt="base" width={20} height={20} />
-                  <span>{NetworkConfigs.base.name}</span>
+                  <Image src={NetworkConfigs.eth.icon} alt="eth" width={20} height={20} />
+                  <span className="truncate text-nowrap">{NetworkConfigs.eth.name}</span>
                 </div>
               </div>
             </div>

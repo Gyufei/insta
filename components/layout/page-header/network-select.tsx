@@ -34,7 +34,7 @@ export default function NetworkSelect() {
   const router = useRouter();
 
   function handleSelectNetwork(net: INetworkConfig) {
-    if (net.id === NetworkConfigs.base.id) {
+    if (net.id === NetworkConfigs.base.id || net.id === NetworkConfigs.eth.id) {
       localStorage.setItem('monad-before-page-url', pathname);
     }
 
@@ -44,8 +44,12 @@ export default function NetworkSelect() {
     }
   }
 
+  const isBaseNet =
+    String(chainId) === String(NetworkConfigs.base.id) ||
+    String(chainId) === String(NetworkConfigs.eth.id);
+
   useEffect(() => {
-    if (String(chainId) === String(NetworkConfigs.base.id)) {
+    if (isBaseNet) {
       router.replace('/token-station');
     } else {
       const beforePageUrl = localStorage.getItem('monad-before-page-url');
@@ -53,7 +57,7 @@ export default function NetworkSelect() {
         router.replace(beforePageUrl || '/');
       }
     }
-  }, [chainId, router, pathname]);
+  }, [router, pathname, isBaseNet]);
 
   return (
     <Select
