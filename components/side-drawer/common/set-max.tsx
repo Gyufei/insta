@@ -32,7 +32,7 @@ export function SetMax({
       <Tooltip open={showTooltip}>
         <TooltipTrigger asChild>
           <div
-            className="px-1 py-2 rounded-sm flex cursor-pointer items-center justify-between"
+            className="px-1 py-4 rounded-sm flex cursor-pointer items-center justify-between"
             onClick={handleClick}
           >
             <div className="font-semibold text-xs">Set Max</div>

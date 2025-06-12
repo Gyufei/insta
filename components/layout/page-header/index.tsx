@@ -7,9 +7,8 @@ import { Button } from '@/components/ui/button';
 
 import { AccountBtn } from './account-btn';
 import NetworkSelect from './network-select';
-import PageTitle from './page-title';
 
-export function PageHeader({ title, src }: { title: string; src: string | null }) {
+export function PageHeader() {
   const { open } = useAppKit();
   const { disconnect } = useDisconnect();
   const { isConnected } = useAppKitAccount();
@@ -19,10 +18,8 @@ export function PageHeader({ title, src }: { title: string; src: string | null }
   }
 
   return (
-    <header className="grid-header-nav bg-bg-gray border-border flex items-center justify-between gap-4 px-4 py-4 flex-nowrap 2xl:px-12">
-      <PageTitle title={title} src={src} />
-
-      <div className="flex items-center gap-2 flex-nowrap">
+    <header className="grid-header-nav bg-bg-gray border-border flex items-center justify-end flex-nowrap pt-6">
+      <div className="flex justify-end items-center gap-2 flex-nowrap pr-8 w-[360px]">
         {isConnected ? (
           <>
             <AccountBtn />

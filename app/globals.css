@@ -313,7 +313,7 @@ body {
 @media (width >= 1244px) {
   .grid.grid-home {
     grid-template-rows: 82px calc(100vh - 82px);
-    grid-template-areas: 'sidebar-nav header-nav header-nav' 'sidebar-nav main sidebar-context';
+    grid-template-areas: 'sidebar-nav main header-nav' 'sidebar-nav main sidebar-context';
     grid-template-columns: min-content auto 360px;
   }
 

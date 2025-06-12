@@ -216,7 +216,7 @@ export function TokenStation() {
             <div className="flex flex-col justify-center gap-[10px]">
               <div className="flex justify-between items-center font-normal">
                 <span className="text-base text-[#131e40] ">You pay:</span>
-                <span className="text-xs text-[#A5ADC6]">
+                <span className="text-sm text-[#A5ADC6]">
                   {tokenFrom.symbol}:{' '}
                   {isFromBalancePending ? (
                     <Skeleton className="w-10 h-4" />
@@ -299,7 +299,7 @@ export function TokenStation() {
                     width={20}
                     height={20}
                   />
-                  <span>{NetworkConfigs.monadTestnet.name}</span>
+                  <span className="truncate text-nowrap">{NetworkConfigs.monadTestnet.name}</span>
                 </div>
               </div>
             </div>
@@ -308,7 +308,7 @@ export function TokenStation() {
             <div className="flex flex-col justify-center gap-[10px]">
               <div className="flex justify-between items-center font-normal">
                 <span className="text-base text-[#131e40]">You receive:</span>
-                <span className="text-xs text-[#A5ADC6]">
+                <span className="text-sm text-[#A5ADC6]">
                   {tokenTo.symbol}:{' '}
                   {isToBalancePending ? (
                     <Skeleton className="w-10 h-4" />
@@ -329,18 +329,27 @@ export function TokenStation() {
           </Card>
         </div>
 
-        <div className="flex justify-end items-center mt-5">
+        <div className="flex justify-between items-center mt-5">
+          <div className="flex items-center gap-3">
+            <Button className="h-12 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8">
+              CCIP
+            </Button>
+            <Button className="h-12 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8">
+              Bridge Router
+            </Button>
+          </div>
+
           <Button
-            className="min-w-40 h-8 text-sm font-medium flex items-center justify-center rounded-md bg-[#6E75F9] text-white hover:bg-[#6E75F990]"
+            className="min-w-40 h-12 text-xl font-medium flex leading-[24px] items-center justify-center rounded-md bg-[#6E75F9] text-white hover:bg-[#6E75F990]"
             onClick={handleConfirm}
           >
             {isFromAllowanceLoading ? (
-              <Loader className="w-4 h-4 animate-spin" />
+              <Loader className="w-6 h-6 animate-spin" />
             ) : shouldApprove ? (
-              <span>
+              <span className="flex items-center">
                 {isFromApproving ? (
                   <span className="flex items-center">
-                    <Loader className="w-4 h-4 mr-1 animate-spin" />
+                    <Loader className="w-6 h-6 mr-1 animate-spin" />
                     <span>Approving...</span>
                   </span>
                 ) : (
@@ -351,7 +360,7 @@ export function TokenStation() {
               <span>
                 {isSwapPending ? (
                   <span className="flex items-center">
-                    <Loader className="w-4 h-4 mr-1 animate-spin" />
+                    <Loader className="w-6 h-6 mr-1 animate-spin" />
                     <span>Creating...</span>
                   </span>
                 ) : (
@@ -439,7 +448,7 @@ function AddressBlock({
   const addressShort = address ? formatAddress(address, { prefix: 5, suffix: 5 }) : '-';
 
   return (
-    <div className="text-xs h-8 flex items-center font-normal text-[#131e40] rounded-md px-[10px] border border-[#00000010] py-1 gap-1">
+    <div className="text-xs h-8 flex items-center font-normal text-[#131e40] rounded-md px-[10px] border border-[#00000010] py-1 gap-[10px]">
       <span>{addressShort}</span>
       {withEdit && (
         <Image

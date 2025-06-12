@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 
 import { PageHeader } from './page-header';
+import PageTitle from './page-header/page-title';
 
 export function CommonPageLayout({
   title,
@@ -15,15 +16,18 @@ export function CommonPageLayout({
 }) {
   return (
     <>
-      <PageHeader title={title} src={iconSrc} />
+      <PageHeader />
       <div className="grid-main dark:bg-primary-foreground bg-bg-gray relative flex flex-grow flex-col overflow-x-hidden">
         <div
           className={cn(
-            'scrollbar-hover sm:py-8 flex h-full flex-col bg-white rounded-t-md items-center overflow-x-hidden overflow-y-scroll py-6',
+            'scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll pt-6',
             pageConClx
           )}
         >
-          <div className="max-w-container-main flex w-full flex-col">{children}</div>
+          <PageTitle title={title} src={iconSrc} />
+          <div className="max-w-container-main flex w-full flex-col rounded-t-md bg-white flex-1 pb-4">
+            {children}
+          </div>
         </div>
       </div>
     </>

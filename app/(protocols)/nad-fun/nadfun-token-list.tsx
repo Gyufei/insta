@@ -53,7 +53,7 @@ export function NadFunTokenList({
             />
           )}
           {tokens && tokens.length > 0 && (
-            <div className="grid w-full min-w-min grid-cols-1 gap-4 sm:grid-cols-2 2xl:gap-6">
+            <div className="grid w-full min-w-min grid-cols-1 sm:grid-cols-2 gap-4">
               {tokens.map((token) => (
                 <NadFunTokenCard
                   key={token.address}

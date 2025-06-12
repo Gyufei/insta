@@ -94,7 +94,10 @@ const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: st
       <SidebarGroup className="py-0 px-[10px]">
         <SidebarGroupLabel
           asChild
-          className={cn('h-10', isGroupActive ? 'text-primary bg-white' : 'text-pro-gray')}
+          className={cn(
+            'h-10 hover:text-primary hover:bg-white',
+            isGroupActive ? 'text-primary bg-white/60' : 'text-pro-gray'
+          )}
         >
           <CollapsibleTrigger className={cn('flex w-full items-center')}>
             {group.icon}

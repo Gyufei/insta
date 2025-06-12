@@ -124,7 +124,7 @@ export function FaucetContainer() {
   }
 
   return (
-    <div className={cn('border-border border rounded-3xl px-5 py-4 mt-5')}>
+    <div className={cn('border-border border rounded-[8px] px-5 py-4 mt-5')}>
       <h1 className="text-lg text-primary font-normal">Select Token</h1>
       <Select value={selectedToken} onValueChange={setSelectedToken}>
         <SelectTrigger className="w-full mt-3 shadow-none focus-visible:ring-0">
@@ -181,8 +181,7 @@ export function FaucetContainer() {
 
       <Button
         disabled={errorData.showError || isPending}
-        className="w-full mt-4 bg-pro-blue/20 text-pro-blue hover:bg-pro-blue/30 hover:text-pro-blue"
-        size="lg"
+        className="h-8 w-full mt-4 bg-pro-blue/20 text-pro-blue hover:bg-pro-blue/30 hover:text-pro-blue"
         variant="outline"
         onClick={handleAirdrop}
       >
