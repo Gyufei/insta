@@ -104,9 +104,6 @@ export function AmbientRemoveLiquidity() {
     return a1;
   }, [percent, totalBidTick]);
 
-  console.log(token0Amount, amount0, token1Amount, amount1);
-  console.log(totalAskTick, askTick, totalBidTick, bidTick);
-
   function handleBack() {
     setIsOpen(false);
   }
