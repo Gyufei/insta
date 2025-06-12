@@ -1,7 +1,8 @@
-import { PageHeader } from '@/components/layout/page-header';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { BarChart, Coins, Heart, MessageCircle, Search, TrendingUp } from 'lucide-react';
+
+import { PageHeader } from '@/components/layout/page-header';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
 const memeTokens = [
@@ -79,7 +80,7 @@ const stats = [
 export default function Meme() {
   return (
     <div className="flex min-h-screen flex-col">
-      <PageHeader title="Meme" src="/icons/monad.svg" />
+      <PageHeader />
       <div className="scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6 2xl:py-12 2xl:px-4">
         <div className="max-w-container-main flex w-full flex-col">
           <div className="mb-8">
@@ -105,7 +106,9 @@ export default function Meme() {
                   <div className="text-sm font-medium">75%</div>
                 </div>
                 <Progress value={75} className="h-2" />
-                <div className="mt-2 text-xs text-gray-300-500">Based on social media sentiment</div>
+                <div className="mt-2 text-xs text-gray-300-500">
+                  Based on social media sentiment
+                </div>
               </Card>
             </div>
           </div>
@@ -153,7 +156,9 @@ export default function Meme() {
                     <div className="flex items-center space-x-6">
                       <div className="text-right">
                         <div className="text-muted-foreground text-xs">24h Change</div>
-                        <div className={`font-medium ${token.change24h.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
+                        <div
+                          className={`font-medium ${token.change24h.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}
+                        >
                           {token.change24h}
                         </div>
                       </div>
@@ -165,7 +170,10 @@ export default function Meme() {
                         <div className="text-muted-foreground text-xs">24h Volume</div>
                         <div className="font-medium">{token.volume24h}</div>
                       </div>
-                      <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                      <Button
+                        size="sm"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
                         Trade
                       </Button>
                     </div>
@@ -212,7 +220,11 @@ export default function Meme() {
                         <MessageCircle className="h-4 w-4 text-blue-500" />
                         <span className="text-sm">{post.comments}</span>
                       </div>
-                      <Button size="sm" variant="ghost" className="text-primary hover:bg-blue-500/50">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-primary hover:bg-blue-500/50"
+                      >
                         View
                       </Button>
                     </div>
@@ -225,4 +237,4 @@ export default function Meme() {
       </div>
     </div>
   );
-} 
+}

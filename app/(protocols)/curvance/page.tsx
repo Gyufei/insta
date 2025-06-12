@@ -1,7 +1,8 @@
-import { PageHeader } from '@/components/layout/page-header';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { ArrowDownUp, BarChart, Coins, Search, TrendingUp } from 'lucide-react';
+
+import { PageHeader } from '@/components/layout/page-header';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
 const pools = [
@@ -55,7 +56,7 @@ const stats = [
 export default function Curvance() {
   return (
     <div className="flex min-h-screen flex-col">
-      <PageHeader title="Curvance" src="/icons/curvance.svg" />
+      <PageHeader />
       <div className="scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll py-6 2xl:py-12 2xl:px-4">
         <div className="max-w-container-main flex w-full flex-col">
           <div className="mb-8">
@@ -119,7 +120,11 @@ export default function Curvance() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="relative flex">
-                        <img src={pool.icon1} alt={pool.name.split('/')[0]} className="h-8 w-8 rounded-full" />
+                        <img
+                          src={pool.icon1}
+                          alt={pool.name.split('/')[0]}
+                          className="h-8 w-8 rounded-full"
+                        />
                         <img
                           src={pool.icon2}
                           alt={pool.name.split('/')[1]}
@@ -142,11 +147,16 @@ export default function Curvance() {
                       </div>
                       <div className="text-right">
                         <div className="text-muted-foreground text-xs">Curve Type</div>
-                        <div className={`font-medium ${pool.curve === 'Stable' ? 'text-blue-500' : 'text-amber-500'}`}>
+                        <div
+                          className={`font-medium ${pool.curve === 'Stable' ? 'text-blue-500' : 'text-amber-500'}`}
+                        >
                           {pool.curve}
                         </div>
                       </div>
-                      <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                      <Button
+                        size="sm"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
                         Trade
                       </Button>
                     </div>
@@ -185,4 +195,4 @@ export default function Curvance() {
       </div>
     </div>
   );
-} 
+}
