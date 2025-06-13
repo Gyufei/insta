@@ -46,8 +46,8 @@ export default function FeeTierSelector({ selectedTier = '0.3', onChange }: FeeT
 
   return (
     <div className="flex flex-col gap-2 pointer-events-auto">
-      <div className="text-lg font-medium text-primary">Fee tier</div>
-      <div className="border border-border rounded-xl">
+      <div className="text-base font-medium text-primary">Fee tier</div>
+      <div className="border border-border bg-white rounded-xl">
         <div className="flex flex-row justify-between items-center px-4 py-2">
           <div className="flex-grow flex-shrink min-w-0 flex flex-col gap-1">
             <span className="text-sm text-primary">{selectedTier}% fee tier</span>

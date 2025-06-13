@@ -191,7 +191,7 @@ export function UniswapSwap() {
                 <div className="flex items-center relative h-3">
                   <div
                     onClick={handleSwapTokens}
-                    className="absolute left-1/2 border-white dark:border-gray-500 border-2 -translate-x-1/2 flex items-center justify-center rounded-sm cursor-pointer bg-accent p-2"
+                    className="absolute left-1/2 dark:border-gray-500 border-2 -translate-x-1/2 flex items-center justify-center rounded-sm cursor-pointer bg-white border-[#f5f6f9] p-2"
                   >
                     <ArrowDown className="h-4 w-4 text-muted-foreground" />
                   </div>

@@ -1,8 +1,9 @@
 import { ChevronDown } from 'lucide-react';
 
+import { IToken } from '@/config/tokens';
+
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 
-import { IToken } from '@/config/tokens';
 import { cn } from '@/lib/utils';
 
 interface TokenDisplayProps {
@@ -14,8 +15,7 @@ export const PairTokenDisplay = ({ token, onClick }: TokenDisplayProps) => {
   return (
     <div
       className={cn(
-        'flex flex-1 rounded-sm p-2 text-primary gap-1 cursor-pointer items-center justify-between bg-gray-200',
-        token ? 'bg-primary-foreground text-primary border border-border' : 'text-primary bg-gray-300 border-gray-500'
+        'flex flex-1 rounded-sm p-2 text-primary gap-1 cursor-pointer items-center justify-between bg-primary-foreground border border-border'
       )}
       onClick={onClick}
     >

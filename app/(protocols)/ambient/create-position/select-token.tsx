@@ -18,7 +18,7 @@ export function SelectToken({
   return (
     <div className="flex flex-col gap-4 px-[1px]">
       <div className="flex flex-col px-[1px]">
-        <div className="text-lg font-medium text-primary">Select pair</div>
+        <div className="text-base font-medium text-primary">Select pair</div>
         <div className="text-xs text-gray-400">
           Choose the tokens you want to provide liquidity for.{' '}
         </div>

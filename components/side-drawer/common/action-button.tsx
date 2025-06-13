@@ -98,7 +98,7 @@ export function ActionButton({
         <Button
           disabled={isDisabled}
           onClick={handleClick}
-          className="w-full"
+          className={cn('w-full')}
           variant="default"
           size="sm"
           {...rest}

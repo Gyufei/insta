@@ -3,8 +3,8 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { ERROR_MESSAGES } from '@/config/const-msg';
-
 import { IToken } from '@/config/tokens';
+
 import { ErrorVO } from '@/lib/model/error-vo';
 import { cn } from '@/lib/utils';
 
@@ -88,7 +88,7 @@ export default function UniswapTokenInput({
 
   return (
     <div onClick={handleOutsideClick} className={cn('flex flex-col gap-1', className)}>
-      <div className="flex items-stretch flex-col pb-1 border rounded-2xl bg-muted p-4 focus-within:bg-primary-foreground">
+      <div className="flex items-stretch flex-col pb-1 border rounded-2xl p-4 bg-primary-foreground">
         {label && <div className="text-xs text-gray-400">{label}</div>}
         <div className="flex justify-between items-center">
           <div className="flex-1">
