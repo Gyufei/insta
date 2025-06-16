@@ -30,7 +30,7 @@ import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useTokenStationSwap } from '@/lib/data/use-token-station-swap';
 import { cn, formatAddress } from '@/lib/utils';
-import { useWalletTokenBalance } from '@/lib/web3/use-wallet-token-balance';
+import { useGetWalletBalance } from '@/lib/web3/use-get-wallet-balance';
 
 import { STATION_FROM_TOKENS, STATION_TO_TOKENS } from './station-config';
 
@@ -46,10 +46,13 @@ export function TokenStation() {
 
   const [toAddress, setToAddress] = useState(address || '');
 
-  const { balance: fromBalance, isPending: isFromBalancePending } = useWalletTokenBalance(
+  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetWalletBalance(
+    NetworkConfigs.eth.id,
     tokenFrom.address
   );
-  const { balance: toBalance, isPending: isToBalancePending } = useWalletTokenBalance(
+
+  const { balance: toBalance, isBalancePending: isToBalancePending } = useGetWalletBalance(
+    NetworkConfigs.monadTestnet.id,
     tokenTo.address
   );
 
@@ -224,8 +227,8 @@ export function TokenStation() {
             <div className="flex flex-col justify-center gap-[10px]">
               <div className="flex justify-between items-center font-normal">
                 <span className="text-base text-[#131e40] ">You pay:</span>
-                <span className="text-sm text-[#A5ADC6]">
-                  {tokenFrom.symbol}:{' '}
+                <span className="text-sm flex items-center gap-1 text-[#A5ADC6]">
+                  <span>{tokenFrom.symbol}: </span>
                   {isFromBalancePending ? (
                     <Skeleton className="w-10 h-4" />
                   ) : (
@@ -316,8 +319,8 @@ export function TokenStation() {
             <div className="flex flex-col justify-center gap-[10px]">
               <div className="flex justify-between items-center font-normal">
                 <span className="text-base text-[#131e40]">You receive:</span>
-                <span className="text-sm text-[#A5ADC6]">
-                  {tokenTo.symbol}:{' '}
+                <span className="text-sm flex items-center gap-1 text-[#A5ADC6]">
+                  <span>{tokenTo.symbol}: </span>
                   {isToBalancePending ? (
                     <Skeleton className="w-10 h-4" />
                   ) : (

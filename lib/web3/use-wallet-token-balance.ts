@@ -9,7 +9,7 @@ import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
 
 import { formatBig } from '@/lib/utils/number';
 
-export function useWalletTokenBalance(tokenAddress: string, enableQuery = true) {
+export function useWalletTokenBalance(chainId: number, tokenAddress: string, enableQuery = true) {
   const { address } = useAccount();
   const tokens = [...STATION_FROM_TOKENS, ...STATION_TO_TOKENS];
   const currentToken = tokens.find((token) => token.address === tokenAddress);
@@ -19,6 +19,7 @@ export function useWalletTokenBalance(tokenAddress: string, enableQuery = true) 
     abi: erc20Abi,
     functionName: 'balanceOf',
     args: [address as `0x${string}`],
+    chainId: Number(chainId),
     query: {
       enabled: !!address && !!tokenAddress && enableQuery,
       initialData: BigInt(0),

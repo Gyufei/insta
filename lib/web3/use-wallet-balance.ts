@@ -1,14 +1,17 @@
-import { useMemo } from 'react';
 import { useAccount, useBalance } from 'wagmi';
+
+import { useMemo } from 'react';
+
 import { formatBig } from '../utils/number';
 
-export function useWalletBalance() {
+export function useWalletBalance(chainId: number, enableQuery = true) {
   const { address } = useAccount();
 
   const { data: balanceData, isPending } = useBalance({
     address: address as `0x${string}`,
+    chainId,
     query: {
-      enabled: !!address,
+      enabled: !!address && enableQuery,
     },
   });
 
