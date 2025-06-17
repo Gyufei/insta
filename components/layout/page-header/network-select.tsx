@@ -30,6 +30,8 @@ const NETWORKS = [
 
 const BaseNetIds = [String(NetworkConfigs.base.id), String(NetworkConfigs.eth.id)] as string[];
 
+const BaseNetUrlPath = ['/token-station', '/badge-gallery'];
+
 export default function NetworkSelect() {
   const { chainId, switchNetwork } = useAppKitNetwork();
   const [selectedNetwork, setSelectedNetwork] = useState<INetworkConfig>(
@@ -52,12 +54,16 @@ export default function NetworkSelect() {
   }
 
   useEffect(() => {
+    const isBasePath = BaseNetUrlPath.includes(pathname);
+
     if (isBaseNet) {
-      router.replace('/token-station');
+      if (!isBasePath) {
+        router.replace('/token-station');
+      }
     } else {
       const beforePageUrl = localStorage.getItem('monad-before-page-url');
-      console.log('beforePageUrl', beforePageUrl, pathname);
-      if (pathname === '/token-station') {
+
+      if (isBasePath) {
         router.replace(beforePageUrl || '/');
       }
     }
