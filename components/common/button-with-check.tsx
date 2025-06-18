@@ -32,7 +32,7 @@ export function ButtonWithCheck({
         )}
         onClick={onClick}
       >
-        <p className="text-sm leading-none font-semibold">{label}</p>
+        <p className="text-sm leading-none font-medium">{label}</p>
         {isActive && (
           <Image
             alt="check"
