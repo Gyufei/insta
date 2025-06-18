@@ -31,7 +31,7 @@ export function ToggleTheme({ className }: ThemeToggleProps) {
   return (
     <div
       className={cn(
-        'flex w-[72px] h-9 rounded-[8px] border border-border bg-primary-foreground transition-all duration-300',
+        'flex w-[72px] h-9 rounded-[8px] border border-[#ebebeb] bg-primary-foreground transition-all duration-300',
         className
       )}
     >
@@ -39,7 +39,7 @@ export function ToggleTheme({ className }: ThemeToggleProps) {
       <button
         className={cn(
           'flex-1 flex items-center justify-center transition-all duration-300 h-full',
-          !isDark ? 'bg-primary-foreground border-r border-border rounded-[8px]' : 'bg-transparent'
+          !isDark ? 'bg-primary-foreground border-r border-[#ebebeb] rounded-[8px]' : 'bg-transparent'
         )}
         style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
         onClick={() => setTheme(false)}
@@ -54,7 +54,7 @@ export function ToggleTheme({ className }: ThemeToggleProps) {
       <button
         className={cn(
           'flex-1 flex items-center justify-center transition-all duration-300 h-full',
-          isDark ? 'bg-primary-foreground border-l border-border rounded-[8px]' : 'bg-transparent'
+          isDark ? 'bg-primary-foreground border-l border-[#ebebeb] rounded-[8px]' : 'bg-transparent'
         )}
         style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
         onClick={() => setTheme(true)}

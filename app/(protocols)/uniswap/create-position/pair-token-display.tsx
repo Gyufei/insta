@@ -15,7 +15,7 @@ export const PairTokenDisplay = ({ token, onClick }: TokenDisplayProps) => {
   return (
     <div
       className={cn(
-        'flex flex-1 rounded-sm p-2 text-primary gap-1 cursor-pointer items-center justify-between bg-primary-foreground border border-border'
+        'flex flex-1 rounded-sm p-2 text-primary gap-1 cursor-pointer items-center justify-between bg-primary-foreground border border-[#ebebeb]'
       )}
       onClick={onClick}
     >

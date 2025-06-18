@@ -132,7 +132,7 @@ export function AmbientRemoveLiquidity() {
                 variant="outline"
                 size="sm"
                 className={`px-1 py-1.5 rounded-xl border text-xs transition
-                  ${percent === v.toString() ? 'bg-muted border-border text-primary' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                  ${percent === v.toString() ? 'bg-muted border-[#ebebeb] text-primary' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'}`}
                 onClick={() => handlePercentChange(v.toString())}
               >
                 {v === 100 ? 'Max' : `${v}%`}

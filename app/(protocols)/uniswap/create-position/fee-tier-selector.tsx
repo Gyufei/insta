@@ -47,7 +47,7 @@ export default function FeeTierSelector({ selectedTier = '0.3', onChange }: FeeT
   return (
     <div className="flex flex-col gap-2 pointer-events-auto">
       <div className="text-base font-medium text-primary">Fee tier</div>
-      <div className="border border-border bg-white rounded-xl">
+      <div className="border border-[#ebebeb] bg-white rounded-xl">
         <div className="flex flex-row justify-between items-center px-4 py-2">
           <div className="flex-grow flex-shrink min-w-0 flex flex-col gap-1">
             <span className="text-sm text-primary">{selectedTier}% fee tier</span>
@@ -84,7 +84,7 @@ export default function FeeTierSelector({ selectedTier = '0.3', onChange }: FeeT
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className={cn(
-                    'flex flex-col flex-grow w-full p-2 gap-1 rounded-xl border border-border cursor-pointer justify-between transition-colors bg-primary-foreground hover:bg-primary-foreground/80'
+                    'flex flex-col flex-grow w-full p-2 gap-1 rounded-xl border border-[#ebebeb] cursor-pointer justify-between transition-colors bg-primary-foreground hover:bg-primary-foreground/80'
                   )}
                 >
                   <div className="flex flex-col gap-1">

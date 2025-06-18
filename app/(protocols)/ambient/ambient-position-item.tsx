@@ -59,7 +59,7 @@ export function PositionItem({ position }: PositionItemProps) {
   };
 
   return (
-    <Card className="py-0 mt-4 relative border border-border hover:border-gray-200 gap-0 transition-colors">
+    <Card className="py-0 mt-4 relative border border-[#ebebeb] hover:border-gray-200 gap-0 transition-colors">
       <TokenPairAndStatus token0={token0!} token1={token1!} />
 
       <div className="flex justify-between items-center p-4 bg-gray-100 dark:bg-black/80 rounded-b-xl">
@@ -125,7 +125,7 @@ export function PositionItem({ position }: PositionItemProps) {
         <div className="absolute top-4 right-4">
           <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="border-border border h-8 w-8">
+              <Button variant="ghost" size="icon" className="border-[#ebebeb] border h-8 w-8">
                 <Ellipsis className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

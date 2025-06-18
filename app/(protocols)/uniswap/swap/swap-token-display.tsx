@@ -12,7 +12,7 @@ interface TokenDisplayProps {
 export const SwapTokenDisplay = ({ token, onClick }: TokenDisplayProps) => {
   return (
     <div
-      className="flex rounded-[8px] px-[10px] border border-border h-9 text-primary gap-1 cursor-pointer items-center"
+      className="flex rounded-[8px] px-[10px] border border-[#ebebeb] h-9 text-primary gap-1 cursor-pointer items-center"
       onClick={onClick}
     >
       {token ? (

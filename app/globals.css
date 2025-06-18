@@ -75,11 +75,6 @@
   --color-no-text: #b91c1c; /* Red-700 */
   --color-no-hover: #f1dbdb; /* Darker light red */
 
-  /* Navigation colors */
-  --color-nav-text: #4b5563; /* Gray-600 */
-  --color-nav-text-hover: #111827; /* Gray-900 */
-  --color-nav-text-active: #6e75f9; /* Primary color */
-
   /* Orderbook colors */
   --color-ask-bg: rgba(185, 28, 28, 0.1); /* Red-700 with 10% opacity */
   --color-ask-text: #b91c1c; /* Red-700 */
@@ -202,7 +197,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply outline-ring/50 border-[#ebebeb];
   }
   body {
     @apply bg-background text-foreground;

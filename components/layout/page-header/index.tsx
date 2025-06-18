@@ -5,6 +5,8 @@ import { Power } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
+import { cn } from '@/lib/utils';
+
 import { AccountBtn } from './account-btn';
 import NetworkSelect from './network-select';
 
@@ -18,8 +20,13 @@ export function PageHeader() {
   }
 
   return (
-    <header className="grid-header-nav bg-bg-gray border-border flex items-center flex-nowrap pt-4">
-      <div className="flex justify-between items-center gap-2 flex-nowrap px-8 w-[360px]">
+    <header className="grid-header-nav bg-bg-gray border-[#ebebeb] flex items-center flex-nowrap pt-4">
+      <div
+        className={cn(
+          'flex items-center gap-2 flex-nowrap px-8 w-[360px]',
+          isConnected ? 'justify-between' : 'justify-end'
+        )}
+      >
         {isConnected ? (
           <>
             <AccountBtn />

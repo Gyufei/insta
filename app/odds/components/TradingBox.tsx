@@ -247,11 +247,11 @@ export default function TradingBox({ market }: TradingBoxProps) {
       </button>
 
       {showOutcomesDropdown && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-white border rounded-lg shadow-none z-10">
+        <div className="absolute left-0 right-0 top-full mt-[2px] bg-white border rounded-lg shadow-none z-10">
           {market.outcomes.map((outcome, index) => (
             <button
               key={index}
-              className="w-full flex items-center gap-3 p-3 hover:bg-gray-50"
+              className="w-full flex items-center gap-2 p-2 hover:bg-gray-50"
               onClick={() => {
                 setSelectedOutcome({
                   ...market.outcomes[index],
@@ -268,11 +268,11 @@ export default function TradingBox({ market }: TradingBoxProps) {
               <Image
                 src={outcome.logo}
                 alt={outcome.name}
-                width={32}
-                height={32}
-                className="w-8 h-8 rounded-full"
+                width={24}
+                height={24}
+                className="w-6 h-6 rounded-full"
               />
-              <span className="text-lg font-medium">{outcome.name}</span>
+              <span className="text-sm font-medium">{outcome.name}</span>
             </button>
           ))}
         </div>

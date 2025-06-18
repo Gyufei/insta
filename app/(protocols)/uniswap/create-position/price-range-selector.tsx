@@ -54,7 +54,7 @@ export default function PriceRangeSelector({
       <div className="text-lg font-medium text-primary">Price range</div>
 
       <Tabs value={rangeType} onValueChange={handleRangeTypeChange} className="w-full">
-        <TabsList className="w-full grid grid-cols-2 h-9 p-1 bg-transparent border border-border rounded-full">
+        <TabsList className="w-full grid grid-cols-2 h-9 p-1 bg-transparent border border-[#ebebeb] rounded-full">
           <TabsTrigger
             value="FULL"
             className={cn(

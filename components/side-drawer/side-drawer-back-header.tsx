@@ -7,7 +7,7 @@ interface HeaderProps {
 
 export function SideDrawerBackHeader({ title, onClick }: HeaderProps) {
   return (
-    <div className="items h-10 border-border relative flex w-full flex-shrink-0">
+    <div className="items h-10 border-[#ebebeb] relative flex w-full flex-shrink-0">
       <div className="mx-auto flex w-full items-center">
         <button
           onClick={onClick}

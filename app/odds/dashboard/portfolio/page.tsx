@@ -266,7 +266,7 @@ export default function Portfolio() {
       </div>
 
       {/* Positions Table */}
-      <div>
+      <div className="border border-[#ebebeb] rounded-[8px] p-4">
         <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
           <div className="col-span-6">MARKET</div>
           <div className="col-span-2">STATE</div>

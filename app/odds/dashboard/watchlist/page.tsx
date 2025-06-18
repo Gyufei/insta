@@ -58,7 +58,7 @@ export default function Watchlist() {
             Track your favorite markets
           </span>
         </div>
-        <div className="animate-pulse space-y-4">
+        <div className="animate-pulse space-y-4 border border-[#ebebeb] rounded-[8px] p-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white rounded-lg p-4 space-y-3">
               <div className="h-6 bg-gray-200 rounded w-3/4"></div>
@@ -79,7 +79,7 @@ export default function Watchlist() {
             Track your favorite markets
           </span>
         </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+        <div className="bg-red-50 border border-[#ebebeb] rounded-[8px] p-4 text-red-700">
           {error.message}
         </div>
       </div>
@@ -96,67 +96,71 @@ export default function Watchlist() {
         </span>
       </div>
 
-      {favoriteMarkets.length > 0 ? (
-        <div>
-          <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
-            <div className="col-span-6">MARKET</div>
-            <div className="col-span-2">VOLUME</div>
-            <div className="col-span-2">TOP OUTCOME</div>
-            <div className="col-span-2 text-right">CHANCE</div>
-          </div>
+      <div className="border border-[#ebebeb] rounded-[8px] p-4">
+        <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
+          <div className="col-span-6">MARKET</div>
+          <div className="col-span-2">VOLUME</div>
+          <div className="col-span-2">TOP OUTCOME</div>
+          <div className="col-span-2 text-right">CHANCE</div>
+        </div>
 
-          <div className="divide-y">
-            {favoriteMarkets.map((market) => (
-              <div
-                key={market.id}
-                className="py-4 grid grid-cols-12 gap-4 items-center transition-colors hover:bg-gray-100/50"
-              >
-                <div className="col-span-6 flex items-center gap-3 min-w-0">
-                  <Link
-                    href={`/odds/market/${market.id}`}
-                    className="flex items-center gap-3 min-w-0 hover:text-[var(--color-odd-main)]"
-                  >
-                    <Image
-                      src={market.imageUrl}
-                      alt=""
-                      width={40}
-                      height={40}
-                      className="rounded-lg object-cover flex-shrink-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="font-medium mb-1 truncate">{market.title}</div>
-                      <div className="text-sm text-gray-600">{market.endDate}</div>
+        <div className="divide-y">
+          {favoriteMarkets.length === 0 ? (
+            <div className="py-4 text-center text-gray-500 mt-4">
+              No markets in your watchlist yet.
+            </div>
+          ) : (
+            <>
+              {favoriteMarkets.map((market) => (
+                <div
+                  key={market.id}
+                  className="py-4 grid grid-cols-12 gap-4 items-center transition-colors hover:bg-gray-100/50"
+                >
+                  <div className="col-span-6 flex items-center gap-3 min-w-0">
+                    <Link
+                      href={`/odds/market/${market.id}`}
+                      className="flex items-center gap-3 min-w-0 hover:text-[var(--color-odd-main)]"
+                    >
+                      <Image
+                        src={market.imageUrl}
+                        alt=""
+                        width={40}
+                        height={40}
+                        className="rounded-lg object-cover flex-shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="font-medium mb-1 truncate">{market.title}</div>
+                        <div className="text-sm text-gray-600">{market.endDate}</div>
+                      </div>
+                    </Link>
+                  </div>
+
+                  <div className="col-span-2 whitespace-nowrap">
+                    ${market.totalVolume.toLocaleString()}
+                  </div>
+
+                  <div className="col-span-2 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={market.topOutcome.logo}
+                        alt={market.topOutcome.name}
+                        width={32}
+                        height={32}
+                        className="w-8 h-8 rounded-full flex-shrink-0"
+                      />
+                      <span className="font-medium truncate">{market.topOutcome.name}</span>
                     </div>
-                  </Link>
-                </div>
+                  </div>
 
-                <div className="col-span-2 whitespace-nowrap">
-                  ${market.totalVolume.toLocaleString()}
-                </div>
-
-                <div className="col-span-2 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src={market.topOutcome.logo}
-                      alt={market.topOutcome.name}
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 rounded-full flex-shrink-0"
-                    />
-                    <span className="font-medium truncate">{market.topOutcome.name}</span>
+                  <div className="col-span-2 flex items-center justify-end gap-2 flex-shrink-0">
+                    <span className="font-medium">{market.topOutcome.probability}</span>
                   </div>
                 </div>
-
-                <div className="col-span-2 flex items-center justify-end gap-2 flex-shrink-0">
-                  <span className="font-medium">{market.topOutcome.probability}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </>
+          )}
         </div>
-      ) : (
-        <div className="text-center py-12 text-gray-500">No markets in your watchlist yet.</div>
-      )}
+      </div>
     </div>
   );
 }

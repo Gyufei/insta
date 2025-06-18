@@ -14,6 +14,7 @@ export default function Trade() {
   const [activeTab, setActiveTab] = useState<'position' | 'open-orders'>('position');
 
   const { data: userInfo } = useOddsUserInfo();
+
   const userId = userInfo?.user_id;
 
   const { mutateAsync: cancelOrder, isPending: isCancellingOrder } = useCancelOrder();
@@ -27,6 +28,7 @@ export default function Trade() {
   const positions = positionsData?.positions;
 
   const { data: ordersData, isLoading: isLoadingOrders, error: ordersError } = useUserOrders();
+
   const orders = ordersData?.orders;
 
   function handleCancelOrder(orderId: string) {
@@ -79,7 +81,7 @@ export default function Trade() {
 
       {/* Content */}
       {activeTab === 'position' && (
-        <div>
+        <div className="border border-[#ebebeb] rounded-[8px] p-4">
           <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
             <div className="col-span-6">MARKET</div>
             <div className="col-span-3">OUTCOME</div>
@@ -143,7 +145,7 @@ export default function Trade() {
       )}
 
       {activeTab === 'open-orders' && (
-        <div>
+        <div className="border border-[#ebebeb] rounded-[8px] p-4">
           <div className="py-1 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
             <div className="col-span-5">MARKET</div>
             <div className="col-span-2">OUTCOME</div>
@@ -159,7 +161,7 @@ export default function Trade() {
               </div>
             ) : ordersError ? (
               <div className="py-8 text-center text-red-600">{ordersError?.message}</div>
-            ) : orders?.length === 0 ? (
+            ) : !!orders?.length ? (
               <div className="py-8 text-center text-gray-500">No open orders found.</div>
             ) : (
               (orders || []).map((order) => (

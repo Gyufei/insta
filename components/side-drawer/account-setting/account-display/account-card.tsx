@@ -26,7 +26,7 @@ export function AccountCard({
         'flex h-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm border text-xs font-semibold whitespace-nowrap shadow-none transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50',
         isCurrent
           ? 'border-primary bg-primary text-primary-foreground'
-          : 'border-border bg-muted text-card-foreground hover:bg-muted/80',
+          : 'border-[#ebebeb] bg-muted text-card-foreground hover:bg-muted/80',
         className
       )}
     >
@@ -48,7 +48,7 @@ export function AccountCard({
           <div
             className={cn(
               'flex h-7 flex-1 items-center justify-center border-r border-l text-center leading-none',
-              isCurrent ? 'border-primary-foreground/50' : 'border-border/50'
+              isCurrent ? 'border-primary-foreground/50' : 'border-[#ebebeb]/50'
             )}
           >
             #{accountInfo?.id}

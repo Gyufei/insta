@@ -28,7 +28,7 @@ export default function TokenSelector({ onSelect, onClose }: TokenSelectorProps)
 
   return (
     <div className="flex flex-col gap-1 mt-2">
-      <div className="flex items-center gap-2 mb-4 border border-border rounded-lg p-2">
+      <div className="flex items-center gap-2 mb-4 border border-[#ebebeb] rounded-lg p-2">
         <Search className="h-4 w-4 text-foreground" />
         <input
           type="text"
