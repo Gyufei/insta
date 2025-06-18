@@ -146,65 +146,74 @@ export default function MarketList() {
   return (
     <>
       {/* Categories */}
-      <div className="border-b bg-white">
-        <div className="w-full px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex-1 overflow-x-auto no-scrollbar">
-              <div className="flex items-center gap-6 min-w-max">
-                {CATEGORIES.map((category) => (
-                  <button
-                    key={category}
-                    className={`px-2 py-3 border-b-2 -mb-px whitespace-nowrap ${
-                      activeFilter.type === 'category' &&
-                      activeFilter.value.toLowerCase() === category.toLowerCase()
-                        ? 'border-[var(--color-tab-border-active)] text-[var(--color-tab-text-active)]'
-                        : 'border-transparent text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
-                    }`}
-                    onClick={() => handleCategoryChange(category)}
-                  >
-                    {category}
-                  </button>
-                ))}
+      <div className="border-b bg-white mt-5 w-full">
+        <div className="flex items-center justify-between">
+          <div className="flex-1 overflow-x-auto overflow-visible no-scrollbar">
+            <div className="flex items-center gap-6 min-w-max">
+              {CATEGORIES.map((category) => (
                 <button
-                  className={`px-2 py-3 border-b-2 -mb-px whitespace-nowrap ${
-                    activeFilter.type === 'status' && activeFilter.value === 'ended'
-                      ? 'border-[var(--color-tab-border-active)] text-[var(--color-tab-text-active)]'
-                      : 'border-transparent text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
+                  key={category}
+                  className={`px-2 py-3 relative whitespace-nowrap font-medium ${
+                    activeFilter.type === 'category' &&
+                    activeFilter.value.toLowerCase() === category.toLowerCase()
+                      ? 'text-[var(--color-tab-text-active)]'
+                      : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
                   }`}
-                  onClick={() => handleStatusChange('ended')}
+                  onClick={() => handleCategoryChange(category)}
                 >
-                  Ended
+                  {category}
+                  {activeFilter.type === 'category' &&
+                    activeFilter.value.toLowerCase() === category.toLowerCase() && (
+                      <div className="w-full h-[2px] bg-[#131E40] absolute bottom-[-0.5px] left-0"></div>
+                    )}
                 </button>
-                <button
-                  className={`px-2 py-3 border-b-2 -mb-px whitespace-nowrap ${
-                    activeFilter.type === 'status' && activeFilter.value === 'resolved'
-                      ? 'border-[var(--color-tab-border-active)] text-[var(--color-tab-text-active)]'
-                      : 'border-transparent text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
-                  }`}
-                  onClick={() => handleStatusChange('resolved')}
-                >
-                  Resolved
-                </button>
-              </div>
-            </div>
-            <div className="flex-none pl-6">
+              ))}
               <button
-                onClick={() => setShowFavorites(!showFavorites)}
-                className={`p-2 rounded-lg border transition-colors ${
-                  showFavorites ? 'border-gray-300' : 'text-gray-600 hover:bg-gray-100'
+                className={`px-2 py-3 relative whitespace-nowrap font-medium ${
+                  activeFilter.type === 'status' && activeFilter.value === 'ended'
+                    ? 'text-[var(--color-tab-text-active)]'
+                    : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
                 }`}
+                onClick={() => handleStatusChange('ended')}
               >
-                <Star
-                  className={`h-5 w-5 ${showFavorites ? 'fill-yellow-500 text-yellow-500' : ''}`}
-                />
+                Ended
+                {activeFilter.type === 'status' && activeFilter.value.toLowerCase() === 'ended' && (
+                  <div className="w-full h-[2px] bg-[#131E40] absolute bottom-[-0.5px] left-0"></div>
+                )}
+              </button>
+              <button
+                className={`px-2 py-3 relative whitespace-nowrap font-medium ${
+                  activeFilter.type === 'status' && activeFilter.value === 'resolved'
+                    ? 'text-[var(--color-tab-text-active)]'
+                    : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
+                }`}
+                onClick={() => handleStatusChange('resolved')}
+              >
+                Resolved
+                {activeFilter.type === 'status' &&
+                  activeFilter.value.toLowerCase() === 'resolved' && (
+                    <div className="w-full h-[2px] bg-[#131E40] absolute bottom-[-0.5px] left-0"></div>
+                  )}
               </button>
             </div>
+          </div>
+          <div className="flex-none pl-6">
+            <button
+              onClick={() => setShowFavorites(!showFavorites)}
+              className={`p-2 rounded-lg transition-colors ${
+                showFavorites ? 'text-[#131E40]' : 'text-[#A5ADC6] hover:text-[#6E75F9]'
+              }`}
+            >
+              <Star
+                className={`h-5 w-5 ${showFavorites ? 'fill-yellow-500 text-yellow-500' : ''}`}
+              />
+            </button>
           </div>
         </div>
       </div>
 
       {/* Markets Grid */}
-      <main className="w-full px-4 py-8 min-h-[900px]">
+      <main className="w-full py-8 min-h-[900px]">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-7xl mx-auto">
           {marketError && (
             <div className="col-span-3 text-center py-12 bg-white rounded-lg border p-8">
@@ -260,7 +269,7 @@ export default function MarketList() {
           {/* Recent Activity */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold">Recent Activity</h2>
+              <h2 className="text-lg font-medium text-[#131E40]">Recent Activity</h2>
             </div>
             <div className="space-y-1">
               {isLoadingActivities ? (
@@ -356,7 +365,7 @@ export default function MarketList() {
 
           {/* Top Volume This Week */}
           <div>
-            <h2 className="text-xl font-bold mb-6">Top Volume This Week</h2>
+            <h2 className="text-lg font-medium text-[#131E40] mb-6">Top Volume This Week</h2>
             <div className="space-y-4">
               {isLoadingVolumeLeaders ? (
                 // Loading state
@@ -379,7 +388,13 @@ export default function MarketList() {
                   <div key={leader.rank} className="flex items-center gap-4">
                     <div className="w-6 text-gray-500">{leader.rank}</div>
                     {leader.avatar ? (
-                      <img src={leader.avatar} alt="" className="w-8 h-8 rounded-full" />
+                      <Image
+                        src={leader.avatar}
+                        alt=""
+                        className="w-8 h-8 rounded-full"
+                        width={32}
+                        height={32}
+                      />
                     ) : (
                       <ColorAvatar name={leader.name} className="w-8 h-8" />
                     )}

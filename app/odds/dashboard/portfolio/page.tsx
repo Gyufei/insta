@@ -118,19 +118,21 @@ export default function Portfolio() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-8">
+    <div className="space-y-6 pb-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Portfolio</h1>
-        <p className="text-gray-600 mt-2">Track your performance</p>
+      <div className="flex gap-3 items-center leading-[140%]">
+        <span className="text-xl font-medium text-[#131E40]">Portfolio</span>
+        <span className="text-[#A5ADC6] font-normal text-sm mt-[6px]">Track your performance</span>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-12">
         {/* Funding Balance Card */}
-        <div className="bg-white rounded-xl border p-6">
-          <div className="text-sm text-gray-500 uppercase mb-2">Funding Balance</div>
-          <div className="flex items-center gap-2 mb-4 min-h-[48px]">
+        <div className="bg-white rounded-[8px] border border-[#EBEBEB] p-5">
+          <div className="text-sm text-[#A5ADC6] font-normal uppercase mb-[10px]">
+            Funding Balance
+          </div>
+          <div className="flex items-center gap-2 mb-[10px] min-h-[48px]">
             {isLoadingFundingBalance ? (
               <div className="flex items-center gap-2">
                 <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
@@ -138,14 +140,14 @@ export default function Portfolio() {
               </div>
             ) : (
               <>
-                <div className="text-4xl font-bold">${fundingBalance}</div>
+                <div className="text-3xl font-medium">${fundingBalance}</div>
                 <button
                   onClick={() => refetchFundingBalance()}
                   disabled={isLoadingFundingBalance}
-                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-1 hover:bg-gray-100 rounded-[8px] transition-colors"
                 >
                   <RotateCw
-                    className={`h-5 w-5 text-gray-500 ${isLoadingFundingBalance ? 'animate-spin' : ''}`}
+                    className={`h-4 w-4 text-[#A5ADC6] ${isLoadingFundingBalance ? 'animate-spin' : ''}`}
                   />
                 </button>
               </>
@@ -156,10 +158,10 @@ export default function Portfolio() {
             <button
               onClick={handleClaim}
               disabled={isProcessingClaim || isLoadingFundingBalance}
-              className={`flex items-center justify-center gap-1 py-2 px-1 text-xs rounded-lg ${
+              className={`flex items-center justify-center gap-1 py-2 font-semibold px-1 text-xs rounded-lg ${
                 isLoadingFundingBalance
                   ? 'bg-gray-200 animate-pulse cursor-not-allowed'
-                  : 'bg-[var(--color-odd-main)] text-white hover:bg-[var(--color-odd-main-hover)]'
+                  : 'bg-[#6E75F910] text-[#6E75F9] hover:bg-[#6E75F920]'
               }`}
             >
               {isLoadingFundingBalance ? (
@@ -185,19 +187,19 @@ export default function Portfolio() {
                 setShowTransferModal(true);
               }}
               disabled={isTransferringToTrading || isLoadingFundingBalance}
-              className={`flex items-center justify-center gap-1 py-2 text-xs rounded-lg ${
+              className={`flex items-center justify-center gap-1 py-2 text-xs rounded-[8px] ${
                 isLoadingFundingBalance
                   ? 'bg-gray-200 animate-pulse cursor-not-allowed'
-                  : 'bg-gray-100 text-gray-900 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed'
+                  : 'bg-[#F5F6F9] text-[#131E40] hover:bg-[#F5F6F980] disabled:opacity-50 disabled:cursor-not-allowed'
               }`}
             >
               {isLoadingFundingBalance ? (
                 <div className="h-5 w-16 bg-gray-300 rounded" />
               ) : (
                 <>
-                  <ArrowRightFromLine className="h-5 w-5" />
+                  <ArrowRightFromLine className="h-4 w-4" />
                   {isTransferringToTrading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     'Transfer'
                   )}
@@ -208,22 +210,24 @@ export default function Portfolio() {
         </div>
 
         {/* Trading Balance Card */}
-        <div className="bg-white rounded-xl border p-6">
-          <div className="text-sm text-gray-500 uppercase mb-2">Trading Balance</div>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="text-4xl font-bold min-h-[48px] flex items-center">
+        <div className="bg-white rounded-[8px] border border-[#EBEBEB] p-5">
+          <div className="text-sm text-[#A5ADC6] font-normal uppercase mb-[10px]">
+            Trading Balance
+          </div>
+          <div className="flex items-center gap-2 mb-[10px]">
+            <div className="text-3xl font-medium min-h-[48px] flex items-center">
               ${tradingBalance}
             </div>
             <button
               id="btnSwap"
               onClick={handleSwapClick}
-              className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-1 hover:bg-gray-100 rounded-[8px] transition-colors"
             >
-              <BadgeDollarSign className="h-5 w-5 text-gray-500" />
+              <BadgeDollarSign className="h-4 w-4 text-gray-500" />
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1">
             <button
               id="btnTransferToFunding"
               onClick={() => {
@@ -231,7 +235,11 @@ export default function Portfolio() {
                 setShowTransferModal(true);
               }}
               disabled={isTransferringToFunding}
-              className="flex items-center justify-center gap-1 py-2 text-xs bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`flex items-center justify-center gap-1 py-2 text-xs rounded-[8px] ${
+                isTransferringToFunding
+                  ? 'bg-gray-200 animate-pulse cursor-not-allowed'
+                  : 'bg-[#F5F6F9] text-[#131E40] hover:bg-[#F5F6F980] disabled:opacity-50 disabled:cursor-not-allowed'
+              }`}
             >
               <ArrowLeftFromLine className="h-4 w-4" />
               {isTransferringToFunding ? (
@@ -248,10 +256,10 @@ export default function Portfolio() {
 
       {/* My Markets Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">My Markets</h2>
+        <h2 className="text-xl font-medium text-[#131E40]">My Markets</h2>
         <button
           onClick={() => router.push('/odds/dashboard/create-market')}
-          className="px-4 py-2 bg-[var(--color-odd-main)] text-white rounded-lg hover:bg-[var(--color-odd-main-hover)]"
+          className="px-4 py-2 bg-[#6E75F910] text-[#6E75F9] rounded-[8px] hover:bg-[#6E75F920]"
         >
           Create Market
         </button>

@@ -87,10 +87,10 @@
   --color-bid-text: #15803d; /* Green-700 */
 
   /* Tab colors */
-  --color-tab-text: #4b5563; /* Gray-600 */
-  --color-tab-text-hover: #111827; /* Gray-900 */
-  --color-tab-text-active: #6e75f9; /* Primary color */
-  --color-tab-border-active: #6e75f9; /* Primary color */
+  --color-tab-text: #a5adc6;
+  --color-tab-text-hover: #6e75f9;
+  --color-tab-text-active: #131e40; /* Primary color */
+  --color-tab-border-active: #131e40; /* Primary color */
 }
 
 .dark {

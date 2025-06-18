@@ -29,55 +29,25 @@ export default function DashboardNav() {
   }
 
   return (
-    <>
-      {/* Mobile Navigation */}
-      <div className="lg:hidden flex items-center w-full pt-2">
-        <div className="flex items-center gap-2 h-16 px-4">
-          {allViews.map((view) => {
-            const Icon = view.icon;
-            return (
-              <Link
-                key={view.id}
-                href={view.href}
-                className={`flex flex-col items-center gap-1 px-4 py-2 ${
-                  isActive(view)
-                    ? 'bg-[var(--color-odd-main-light)] text-[var(--color-odd-main)]'
-                    : 'text-[var(--color-nav-text)] hover:text-[var(--color-nav-text-hover)]'
-                }`}
-              >
-                <Icon className="h-5 w-5" />
-                <span>{view.label}</span>
-              </Link>
-            );
-          })}
-        </div>
+    <div className="overflow-visible no-scrollbar mt-5 border-b border-[#EBEBEB]">
+      <div className="flex items-center gap-6 min-w-max">
+        {allViews.map((views) => (
+          <Link
+            key={views.id}
+            href={views.href}
+            className={`px-2 relative py-3 -mb-px whitespace-nowrap font-medium ${
+              isActive(views)
+                ? 'text-[var(--color-tab-text-active)]'
+                : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
+            }`}
+          >
+            <span>{views.label}</span>
+            {isActive(views) && (
+              <div className="w-full h-[2px] bg-[#131E40] absolute bottom-[-0.5px] left-0"></div>
+            )}
+          </Link>
+        ))}
       </div>
-
-      {/* Sidebar */}
-      <div className="hidden lg:block w-64">
-        <div className="p-6">
-          <h1 className="text-sm font-medium text-gray-500 uppercase">Dashboard</h1>
-          <nav className="mt-6 space-y-1">
-            {allViews.map((view) => {
-              const Icon = view.icon;
-              return (
-                <Link
-                  key={view.id}
-                  href={view.href}
-                  className={`flex items-center gap-3 px-4 py-2 text-sm w-full text-left ${
-                    isActive(view)
-                      ? 'bg-[var(--color-odd-main-light)] text-[var(--color-odd-main)]'
-                      : 'text-[var(--color-nav-text)] hover:text-[var(--color-nav-text-hover)]'
-                  } rounded-lg`}
-                >
-                  <Icon className="h-5 w-5" />
-                  {view.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }

@@ -6,9 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useCancelOrder } from '../../common/use-order';
+import { useOddsUserInfo } from '../../common/use-user-info';
 import { useUserOrders } from '../../common/use-user-orders';
 import { useUserPositions } from '../../common/use-user-positions';
-import { useOddsUserInfo } from '../../common/use-user-info';
 
 export default function Trade() {
   const [activeTab, setActiveTab] = useState<'position' | 'open-orders'>('position');
@@ -43,29 +43,30 @@ export default function Trade() {
 
   return (
     <div className="mx-auto space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Trade</h1>
-        <p className="text-gray-600 mt-2">Track your performance</p>
-      </div>
+      <div className="flex items-center justify-between">
+        <div className="flex gap-3 items-center leading-[140%]">
+          <span className="text-xl font-medium text-[#131E40]">Trade</span>
+          <span className="text-[#A5ADC6] font-normal text-sm mt-[6px]">
+            Track your performance
+          </span>
+        </div>
 
-      {/* Tabs */}
-      <div className="border-b">
-        <div className="flex gap-8">
+        <div className="flex gap-3">
           <button
-            className={`py-2 font-medium border-b-2 transition-colors ${
+            className={`font-medium text-sm h-8 flex items-center px-[10px] rounded-[8px] transition-colors ${
               activeTab === 'position'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
+                ? 'bg-[#FAFAFA] text-[#131E40]'
+                : 'text-[#A5ADC6] hover:text-[#6E75F9]'
             }`}
             onClick={() => setActiveTab('position')}
           >
             Position
           </button>
           <button
-            className={`py-2 font-medium border-b-2 transition-colors ${
+            className={`font-medium text-sm h-8 flex items-center px-[10px] rounded-[8px] transition-colors ${
               activeTab === 'open-orders'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
+                ? 'bg-[#FAFAFA] text-[#131E40]'
+                : 'text-[#A5ADC6] hover:text-[#6E75F9]'
             }`}
             onClick={() => setActiveTab('open-orders')}
           >
@@ -73,6 +74,8 @@ export default function Trade() {
           </button>
         </div>
       </div>
+
+      {/* Tabs */}
 
       {/* Content */}
       {activeTab === 'position' && (

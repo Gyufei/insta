@@ -8,29 +8,43 @@ import useOnclickOutside from 'react-cool-onclickoutside';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { cn } from '@/lib/utils';
+
 import { IMarket, useMarkets } from '../common/use-markets';
 import SearchSuggestions from './SearchSuggestions';
 
 interface NavLinkProps {
   href: string;
-  icon: React.ReactNode;
   label: string;
   isActive: boolean;
+  icon: React.ReactNode;
 }
 
-const NavLink = ({ href, icon, label, isActive }: NavLinkProps) => (
-  <Link
-    href={href}
-    className={`flex items-center gap-1 ${
-      isActive
-        ? 'text-[var(--color-nav-text-active)]'
-        : 'text-[var(--color-nav-text)] hover:text-[var(--color-nav-text-hover)]'
-    }`}
-  >
-    {icon}
-    <span>{label}</span>
-  </Link>
-);
+const NavLink = ({ href, label, icon, isActive }: NavLinkProps) => {
+  const [isHover, setIsHover] = useState(false);
+
+  return (
+    <Link
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+      href={href}
+      className={`flex font-medium items-center gap-1 px-[10px] h-8 rounded-[8px] text-sm ${
+        isActive ? 'text-white bg-[#6E75F9]' : 'text-[#A5ADC6] bg-transparent hover:text-[#6E75F9]'
+      }`}
+    >
+      <span
+        className={cn(
+          'text-[#A5ADC6]',
+          isActive && 'text-white',
+          !isActive && isHover && 'text-[#6E75F9]'
+        )}
+      >
+        {icon}
+      </span>
+      <span>{label}</span>
+    </Link>
+  );
+};
 
 interface SearchInputProps {
   searchQuery: string;
@@ -60,20 +74,20 @@ const SearchInput = ({
   ref,
 }: SearchInputProps) => (
   <div ref={ref} className="relative w-full z-10">
-    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
     <input
       type="text"
-      placeholder="Search markets"
+      placeholder="Search Currency"
       value={searchQuery}
       onChange={(e) => onSearchChange(e.target.value)}
-      className={`w-full pl-10 ${searchQuery ? 'pr-10' : 'pr-4'} py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-odd-main-ring)]`}
+      className={`w-full pl-10 ${searchQuery ? 'pr-10' : 'pr-4'} h-12 border border-[#EBEBEB] rounded-[8px] focus:outline-none`}
     />
     {searchQuery && (
       <button
         onClick={onClear}
         className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
       >
-        <X className="h-4 w-4" />
+        <X className="h-5 w-5" />
       </button>
     )}
     {showSuggestions && (
@@ -142,40 +156,36 @@ export default function OddsHeader() {
     <>
       {/* Desktop Header */}
       <header className="hidden lg:block px-12">
-        <div className="max-w-[1920px] mx-auto w-full border-b ">
-          <div className="flex items-center gap-8 mb-2">
-            <div className="flex-1 flex items-center gap-8 min-w-0">
-              <div className="flex-1 min-w-[200px]">
-                <SearchInput {...searchInputProps} />
-              </div>
-
-              <nav className="flex-none flex items-center gap-6">
-                <NavLink
-                  href="/odds/markets"
-                  icon={<Grid className="h-4 w-4" />}
-                  label="Markets"
-                  isActive={pathname === '/odds/markets' || pathname === '/odds'}
-                />
-                <NavLink
-                  href="/odds/dashboard"
-                  icon={<LayoutDashboard className="h-4 w-4" />}
-                  label="Dashboard"
-                  isActive={pathname.startsWith('/odds/dashboard')}
-                />
-                <NavLink
-                  href="/odds/ranks"
-                  icon={<Medal className="h-4 w-4" />}
-                  label="Ranks"
-                  isActive={pathname === '/odds/ranks'}
-                />
-              </nav>
-            </div>
+        <div className="flex-1 flex items-center gap-6 min-w-0">
+          <div className="flex-1 min-w-[200px]">
+            <SearchInput {...searchInputProps} />
           </div>
+
+          <nav className="flex-none flex items-center gap-6">
+            <NavLink
+              href="/odds/markets"
+              label="Markets"
+              icon={<Grid className="h-4 w-4" />}
+              isActive={pathname === '/odds/markets' || pathname === '/odds'}
+            />
+            <NavLink
+              href="/odds/dashboard"
+              icon={<LayoutDashboard className="h-4 w-4" />}
+              label="Dashboard"
+              isActive={pathname.startsWith('/odds/dashboard')}
+            />
+            <NavLink
+              icon={<Medal className="h-4 w-4" />}
+              href="/odds/ranks"
+              label="Ranks"
+              isActive={pathname === '/odds/ranks'}
+            />
+          </nav>
         </div>
       </header>
 
       {/* Mobile Header */}
-      <header className="lg:hidden border-b">
+      <header className="lg:hidden">
         <div className="w-full px-4">
           <div className="flex flex-col py-4">
             <SearchInput {...searchInputProps} />

@@ -9,7 +9,7 @@ export default function BaseLayout({ children }: { children: React.ReactNode }) 
     <SidebarProvider defaultOpen={true}>
       <div
         id="app"
-        className="min-w-app text-primary dark:text-primary-foreground relative grid grid-home w-full flex-1 overflow-hidden text-sm font-semibold"
+        className="min-w-app text-primary dark:text-primary-foreground relative grid grid-home w-full flex-1 overflow-hidden text-sm font-normal"
       >
         <MbHeader />
         {children}

@@ -79,14 +79,14 @@ export default function NetworkSelect() {
         }
       }}
     >
-      <SelectTrigger className="shadow-none focus-visible:ring-0 bg-transparent border-black/10">
+      <SelectTrigger className="shadow-none focus-visible:ring-0 bg-transparent border-black/10 font-medium">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         {NETWORKS.map((network) => (
           <SelectItem key={network.name} value={network.name}>
             <Image src={network.icon} alt={network.name} width={20} height={20} />
-            <span className="capitalize text-primary">{network.name}</span>
+            <span className="capitalize text-primary font-medium">{network.name}</span>
           </SelectItem>
         ))}
       </SelectContent>

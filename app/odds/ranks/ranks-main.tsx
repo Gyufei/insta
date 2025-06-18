@@ -1,5 +1,4 @@
-"use client";
-import { Clock } from 'lucide-react';
+'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -74,43 +73,40 @@ export default function Ranks() {
   }, [calculateTimeToNextMidnight]);
 
   return (
-    <div className="mx-auto px-4 py-8 w-full">
-      <h1 className="text-4xl font-bold text-center mb-6">Ranks</h1>
-
-      {/* Time Range Selector */}
-      <div className="flex items-center justify-center gap-1 mb-4">
-        {(['Day', 'Week', 'Month', 'All'] as TimeRange[]).map((range) => (
-          <button
-            key={range}
-            onMouseEnter={() => setIsHovered(range)}
-            onMouseLeave={() => setIsHovered(null)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              timeRange === range
-                ? 'bg-[var(--color-odd-main)] text-white'
-                : isHovered === range
-                  ? 'bg-[var(--color-odd-main-light)] text-[var(--color-odd-main)]'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-            onClick={() => setTimeRange(range)}
-          >
-            {range}
-          </button>
-        ))}
+    <div className="mt-[50px]">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl font-medium text-[#131E40]">Ranks</h1>
+          <div className="flex items-center justify-center mt-[2px]">
+            <span className="text-sm text-[#6E75F9]">Resets in {countdown}</span>
+          </div>
+        </div>
+        <div className="flex items-center justify-center gap-1">
+          {(['All', 'Day', 'Week', 'Month'] as TimeRange[]).map((range) => (
+            <button
+              key={range}
+              onMouseEnter={() => setIsHovered(range)}
+              onMouseLeave={() => setIsHovered(null)}
+              className={`px-[10px] h-8 flex items-center justify-center rounded-[8px] text-sm font-medium transition-colors ${
+                timeRange === range
+                  ? 'bg-[#FAFAFA] text-[#131E40]'
+                  : isHovered === range
+                    ? 'text-[#6E75F9]'
+                    : 'bg-transparent text-[#A5ADC6] hover:bg-[#6E75F9]'
+              }`}
+              onClick={() => setTimeRange(range)}
+            >
+              {range}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Reset Timer */}
-      <div className="flex items-center justify-center gap-2 text-gray-600 mb-8">
-        <Clock className="h-4 w-4" />
-        <span className="text-sm">Resets in {countdown}</span>
-      </div>
-
-      {/* Leaderboards Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-[22px]">
         {/* Volume Leaders */}
-        <div className="bg-white rounded-lg border p-6">
+        <div className="bg-white rounded-[8px] border border-[#EBEBEB] p-5">
           <div className="flex items-center gap-2 mb-6">
-            <div className="h-5 w-1 bg-blue-600 rounded-full" />
-            <h2 className="text-xl font-bold">Volume</h2>
+            <h2 className="text-lg font-medium text-[#131E40]">Volume</h2>
           </div>
 
           <div className="space-y-4">
@@ -156,10 +152,9 @@ export default function Ranks() {
         </div>
 
         {/* Profit Leaders */}
-        <div className="bg-white rounded-lg border p-6">
+        <div className="bg-white rounded-[8px] border border-[#EBEBEB] p-5">
           <div className="flex items-center gap-2 mb-6">
-            <div className="h-5 w-1 bg-blue-600 rounded-full" />
-            <h2 className="text-xl font-bold">Profit</h2>
+            <h2 className="text-lg font-medium text-[#131E40]">Profit</h2>
           </div>
 
           <div className="space-y-4">

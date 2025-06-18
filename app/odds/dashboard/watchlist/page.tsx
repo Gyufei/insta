@@ -52,9 +52,11 @@ export default function Watchlist() {
   if (isLoading) {
     return (
       <div className="max-w-5xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Watchlist</h1>
-          <p className="text-gray-600 mt-2">Track your favorite markets</p>
+        <div className="flex gap-3 items-center leading-[140%]">
+          <span className="text-xl font-medium text-[#131E40]">Watchlist</span>
+          <span className="text-[#A5ADC6] font-normal text-sm mt-[6px]">
+            Track your favorite markets
+          </span>
         </div>
         <div className="animate-pulse space-y-4">
           {[1, 2, 3].map((i) => (
@@ -71,21 +73,27 @@ export default function Watchlist() {
   if (error) {
     return (
       <div className="max-w-5xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Watchlist</h1>
-          <p className="text-gray-600 mt-2">Track your favorite markets</p>
+        <div className="flex gap-3 items-center leading-[140%]">
+          <span className="text-xl font-medium text-[#131E40]">Watchlist</span>
+          <span className="text-[#A5ADC6] font-normal text-sm mt-[6px]">
+            Track your favorite markets
+          </span>
         </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">{error.message}</div>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+          {error.message}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Watchlist</h1>
-        <p className="text-gray-600 mt-2">Track your favorite markets</p>
+      <div className="flex gap-3 items-center leading-[140%]">
+        <span className="text-xl font-medium text-[#131E40]">Watchlist</span>
+        <span className="text-[#A5ADC6] font-normal text-sm mt-[6px]">
+          Track your favorite markets
+        </span>
       </div>
 
       {favoriteMarkets.length > 0 ? (
