@@ -6,12 +6,15 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useBadgeWalletNfts } from '@/lib/data/use-badge-account-nfts';
 import { useBadgeNfts } from '@/lib/data/use-badge-nfts';
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import { BadgeList } from './badge-list';
 import { BadgeTitle } from './badge-title';
 import { SwapImg } from './swap-img';
 
 export function BadgeContent() {
+  const { setCurrentComponent } = useSideDrawerStore();
+
   const { data: allNfts } = useBadgeNfts();
   const { data: userBadgeNfts } = useBadgeWalletNfts();
 
@@ -29,6 +32,17 @@ export function BadgeContent() {
 
   return (
     <div className="px-4 2xl:px-12">
+      <button
+        className="bg-black text-white px-4 py-2 rounded-md"
+        onClick={() =>
+          setCurrentComponent({
+            name: 'BadgeNftBuy',
+            props: null,
+          })
+        }
+      >
+        Buy
+      </button>
       <BadgeTitle />
 
       <div className="flex flex-col sm:flex-row gap-4 mt-4">

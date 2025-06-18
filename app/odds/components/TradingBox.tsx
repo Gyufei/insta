@@ -476,133 +476,131 @@ export default function TradingBox({ market }: TradingBoxProps) {
   );
 
   return (
-    <div className="w-full">
-      <div className="py-2">
-        <div className="flex items-center border-b mb-6">
-          <button
-            className={`px-2 py-2 font-medium transition-colors ${
-              tradeState.direction === 'buy'
-                ? 'text-[var(--color-tab-text-active)] border-b-2 border-[var(--color-tab-border-active)]'
-                : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
-            }`}
-            onClick={() => {
-              setTradeState({ ...tradeState, direction: 'buy' });
-              handleUpdateDirection('buy');
-            }}
-          >
-            Buy
-          </button>
-          <button
-            className={`ml-4 px-2 py-2 font-medium transition-colors ${
-              tradeState.direction === 'sell'
-                ? 'text-[var(--color-tab-text-active)] border-b-2 border-[var(--color-tab-border-active)]'
-                : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
-            }`}
-            onClick={() => {
-              setTradeState({ ...tradeState, direction: 'sell' });
-              handleUpdateDirection('sell');
-            }}
-          >
-            Sell
-          </button>
-          <div className="flex-1 flex justify-end">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    className={`w-6 h-6 flex items-center justify-center rounded-l-[4px] rounded-r-none transition-colors ${
-                      tradingMode === 'fast'
-                        ? 'bg-[#c5d1da] text-[#0a0a0a]'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}
-                    onClick={() => setTradingMode('fast')}
+    <div className="w-full py-2">
+      <div className="flex items-center border-b mb-6">
+        <button
+          className={`px-2 py-2 font-medium transition-colors ${
+            tradeState.direction === 'buy'
+              ? 'text-[var(--color-tab-text-active)] border-b-2 border-[var(--color-tab-border-active)]'
+              : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
+          }`}
+          onClick={() => {
+            setTradeState({ ...tradeState, direction: 'buy' });
+            handleUpdateDirection('buy');
+          }}
+        >
+          Buy
+        </button>
+        <button
+          className={`ml-4 px-2 py-2 font-medium transition-colors ${
+            tradeState.direction === 'sell'
+              ? 'text-[var(--color-tab-text-active)] border-b-2 border-[var(--color-tab-border-active)]'
+              : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
+          }`}
+          onClick={() => {
+            setTradeState({ ...tradeState, direction: 'sell' });
+            handleUpdateDirection('sell');
+          }}
+        >
+          Sell
+        </button>
+        <div className="flex-1 flex justify-end">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className={`w-6 h-6 flex items-center justify-center rounded-l-[4px] rounded-r-none transition-colors ${
+                    tradingMode === 'fast'
+                      ? 'bg-[#c5d1da] text-[#0a0a0a]'
+                      : 'bg-gray-100 text-gray-600'
+                  }`}
+                  onClick={() => setTradingMode('fast')}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-zap"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-zap"
-                    >
-                      <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
-                    </svg>
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-[300px]">
-                  <p className="text-xs">Fast</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    className={`w-6 h-6 flex items-center justify-center rounded-r-[4px] rounded-l-none transition-colors ${
-                      tradingMode === 'limit'
-                        ? 'bg-[#c5d1da] text-[#0a0a0a]'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}
-                    onClick={() => setTradingMode('limit')}
-                    tld-tooltip="Limit"
+                    <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+                  </svg>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-[300px]">
+                <p className="text-xs">Fast</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className={`w-6 h-6 flex items-center justify-center rounded-r-[4px] rounded-l-none transition-colors ${
+                    tradingMode === 'limit'
+                      ? 'bg-[#c5d1da] text-[#0a0a0a]'
+                      : 'bg-gray-100 text-gray-600'
+                  }`}
+                  onClick={() => setTradingMode('limit')}
+                  tld-tooltip="Limit"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-chart-no-axes-gantt"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-chart-no-axes-gantt"
-                    >
-                      <path d="M8 6h10" />
-                      <path d="M6 12h9" />
-                      <path d="M11 18h7" />
-                    </svg>
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-[300px]">
-                  <p className="text-xs">Limit</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+                    <path d="M8 6h10" />
+                    <path d="M6 12h9" />
+                    <path d="M11 18h7" />
+                  </svg>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-[300px]">
+                <p className="text-xs">Limit</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
-
-        {selectedOutcome && (
-          <div>
-            {tradeState.direction === 'buy' && renderBuyLayout()}
-            {tradeState.direction === 'sell' && renderSellLayout()}
-
-            <button
-              onClick={handleTrade}
-              disabled={
-                isSubmitting ||
-                (tradeState.direction === 'sell' && tradeState.sharesToSell > userShares)
-              }
-              className={`w-full py-[6px] text-white text-sm font-medium rounded-lg mb-4 ${
-                tradeState.direction === 'buy'
-                  ? 'bg-[var(--color-buy-button)] hover:bg-[var(--color-buy-button-hover)]'
-                  : `bg-[var(--color-sell-button)] hover:bg-[var(--color-sell-button-hover)] ${
-                      (tradeState.direction === 'sell' && tradeState.sharesToSell > userShares) ||
-                      isSubmitting
-                        ? 'opacity-50 cursor-not-allowed bg-gray-400 hover:bg-gray-400'
-                        : ''
-                    }`
-              }`}
-            >
-              {isSubmitting ? 'Processing...' : tradeState.direction === 'buy' ? 'Buy' : 'Sell'}
-            </button>
-          </div>
-        )}
       </div>
+
+      {selectedOutcome && (
+        <div>
+          {tradeState.direction === 'buy' && renderBuyLayout()}
+          {tradeState.direction === 'sell' && renderSellLayout()}
+
+          <button
+            onClick={handleTrade}
+            disabled={
+              isSubmitting ||
+              (tradeState.direction === 'sell' && tradeState.sharesToSell > userShares)
+            }
+            className={`w-full py-[6px] text-white text-sm font-medium rounded-lg mb-4 ${
+              tradeState.direction === 'buy'
+                ? 'bg-[var(--color-buy-button)] hover:bg-[var(--color-buy-button-hover)]'
+                : `bg-[var(--color-sell-button)] hover:bg-[var(--color-sell-button-hover)] ${
+                    (tradeState.direction === 'sell' && tradeState.sharesToSell > userShares) ||
+                    isSubmitting
+                      ? 'opacity-50 cursor-not-allowed bg-gray-400 hover:bg-gray-400'
+                      : ''
+                  }`
+            }`}
+          >
+            {isSubmitting ? 'Processing...' : tradeState.direction === 'buy' ? 'Buy' : 'Sell'}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

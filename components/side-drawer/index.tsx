@@ -21,6 +21,7 @@ import { UniswapAddLiquidity } from '@/app/(protocols)/uniswap/add-liquidity';
 import { UniswapCreatePosition } from '@/app/(protocols)/uniswap/create-position';
 import { UniswapRemoveLiquidity } from '@/app/(protocols)/uniswap/remove-liquidity';
 import { UniswapSwap } from '@/app/(protocols)/uniswap/swap';
+import { BadgeNftBuy } from '@/app/badge-gallery/badge-nft-buy';
 import { OddsMarketSellAndBuy } from '@/app/odds/market/market-sell-and-buy';
 
 import { SideDrawerComponent, useSideDrawerStore } from '@/lib/state/side-drawer';
@@ -55,6 +56,7 @@ const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   AmbientAddLiquidity: AmbientAddLiquidity,
   AmbientRemoveLiquidity: AmbientRemoveLiquidity,
   OddsMarketSellAndBuy: OddsMarketSellAndBuy,
+  BadgeNftBuy: BadgeNftBuy,
 } as const;
 
 const ANIMATION_CONFIG = {
