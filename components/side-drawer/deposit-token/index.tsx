@@ -1,6 +1,8 @@
+import { NetworkConfigs } from '@/config/network-config';
+import { MONAD } from '@/config/tokens';
+
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
-import { MONAD } from '@/config/tokens';
 import { useDeposit } from '@/lib/data/use-deposit';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';
@@ -18,7 +20,7 @@ export function DepositToken() {
   const { setIsOpen } = useSideDrawerStore();
   const { mutate: deposit, isPending } = useDeposit();
 
-  const { balance, isPending: isBalancePending } = useWalletBalance();
+  const { balance, isPending: isBalancePending } = useWalletBalance(NetworkConfigs.monadTestnet.id);
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
 
   const handleDeposit = () => {
