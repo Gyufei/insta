@@ -2,14 +2,7 @@ import { useAccount } from 'wagmi';
 
 import { ApiPath } from './api-path';
 import { createQueryHook } from './helpers';
-
-export interface INftInfo {
-  name: string;
-  category: string;
-  price: number;
-  total_release_amount: number;
-  total_release_times: number;
-}
+import { IBadgeNft } from './use-badge-nfts';
 
 export interface IClaimInfo {
   is_available: boolean;
@@ -22,7 +15,9 @@ export interface IClaimInfo {
 export interface IAccountNft {
   nextClaimAmount: string;
   remainingClaims: string;
-  nftInfo: INftInfo;
+  nftInfo: IBadgeNft & {
+    category: string;
+  };
   claimInfo: IClaimInfo;
 }
 

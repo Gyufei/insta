@@ -268,10 +268,6 @@ body {
   color: rgb(44 80 160 / var(--tw-text-opacity));
 }
 
-.scrollbar-hidden {
-  scrollbar-width: none;
-}
-
 #WEB3_CONNECT_MODAL_ID {
   z-index: 89;
 }

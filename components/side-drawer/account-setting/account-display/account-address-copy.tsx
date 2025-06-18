@@ -15,7 +15,7 @@ export function AccountAddressCopy({ className }: { className?: string }) {
 
   return (
     <div className={cn('mt-2 flex', className)}>
-      <div className="scrollbar-hidden text-blue relative flex w-max min-w-20 items-center overflow-x-auto rounded-l-sm rounded-r-none border px-3 py-2 text-xs leading-5 transition duration-150 ease-in-out">
+      <div className="no-scrollbar text-blue relative flex w-max min-w-20 items-center overflow-x-auto rounded-l-sm rounded-r-none border px-3 py-2 text-xs leading-5 transition duration-150 ease-in-out">
         <a
           href={`${network.blockExplorers.default.url}/address/${accountAddress}`}
           target="_blank"
