@@ -26,8 +26,10 @@ export function BadgeContent() {
   useEffect(() => {
     if (userBadgeNfts?.nftInfo) {
       setSelectedNftName(userBadgeNfts.nftInfo.name);
+    } else {
+      setSelectedNftName(allNfts?.[0]?.name);
     }
-  }, [userBadgeNfts]);
+  }, [userBadgeNfts, allNfts]);
 
   useEffect(() => {
     const unsubscribe = eventBus.subscribe(
