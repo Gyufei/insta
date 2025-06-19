@@ -32,13 +32,13 @@ import { useTokenStationSwap } from '@/lib/data/use-token-station-swap';
 import { cn, formatAddress } from '@/lib/utils';
 import { useGetWalletBalance } from '@/lib/web3/use-get-wallet-balance';
 
-import { STATION_FROM_TOKENS, STATION_TO_TOKENS } from './station-config';
+import { STATION_FROM_TOKENS_ETH, STATION_TO_TOKENS } from './station-config';
 
 export function TokenStation() {
   const { chainId, switchNetwork } = useAppKitNetwork();
   const { address } = useAccount();
 
-  const [tokenFrom, setTokenFrom] = useState(STATION_FROM_TOKENS[0]);
+  const [tokenFrom, setTokenFrom] = useState(STATION_FROM_TOKENS_ETH[0]);
   const [tokenTo, setTokenTo] = useState(STATION_TO_TOKENS[0]);
 
   const [fromAmount, setFromAmount] = useState('0');
@@ -186,7 +186,7 @@ export function TokenStation() {
                 <Select
                   value={tokenFrom.symbol}
                   onValueChange={(value) => {
-                    const selectedToken = STATION_FROM_TOKENS.find(
+                    const selectedToken = STATION_FROM_TOKENS_ETH.find(
                       (token) => token.symbol === value
                     );
                     if (selectedToken) {
@@ -201,7 +201,7 @@ export function TokenStation() {
                     </div>
                   </SelectTrigger>
                   <SelectContent>
-                    {STATION_FROM_TOKENS.map((token) => (
+                    {STATION_FROM_TOKENS_ETH.map((token) => (
                       <SelectItem key={token.symbol} value={token.symbol}>
                         <div className="flex items-center gap-2">
                           <Image src={token.logo} alt={token.symbol} width={20} height={20} />

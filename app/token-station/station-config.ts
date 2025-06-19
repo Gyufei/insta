@@ -1,6 +1,6 @@
 import { MONAD, MonUSD } from '@/config/tokens';
 
-export const STATION_FROM_TOKENS = [
+export const STATION_FROM_TOKENS_ETH = [
   {
     name: 'Eth',
     symbol: 'ETH',

@@ -25,14 +25,12 @@ export function useBadgeWalletNfts() {
   const { address } = useAccount();
 
   return createQueryHook<IAccountNft>(
-    ApiPath.badgeWalletNfts,
+    ApiPath.badgeWalletNft.replace('{wallet}', address ?? ''),
     () => ['badge', 'wallet', 'nfts', address ?? ''],
     (url) => {
       if (!address) {
         return null;
       }
-
-      url.pathname = url.pathname.replace('{wallet}', address);
 
       return url;
     },

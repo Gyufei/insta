@@ -93,7 +93,7 @@ export const ApiPath = {
   tokenStationAllowance: `${ApiHost}/token_station/allowance`,
 
   badgeNfts: `${ApiHost}/badge/market/nfts`,
-  badgeWalletNfts: `${ApiHost}/badge/{wallet}/nfts`,
+  badgeWalletNft: `${ApiHost}/badge/{wallet}/nft`,
   badgeAllowance: `${ApiHost}/badge/allowance`,
   badgePurchase: `${ApiHost}/badge/purchase`,
   badgeClaim: `${ApiHost}/badge/claim`,

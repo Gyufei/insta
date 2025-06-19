@@ -166,7 +166,7 @@ export default function OddsHeader() {
               href="/odds/markets"
               label="Markets"
               icon={<Grid className="h-4 w-4" />}
-              isActive={pathname === '/odds/markets' || pathname === '/odds'}
+              isActive={pathname === '/odds' || pathname.startsWith('/odds/market')}
             />
             <NavLink
               href="/odds/dashboard"

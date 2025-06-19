@@ -31,6 +31,7 @@ export const ERROR_MESSAGES = {
   TRANSFER_TO_TRADING_FAILED: 'Transfer to trading failed',
   TRANSFER_TO_FUNDING_FAILED: 'Transfer to funding failed',
   BADGE_PURCHASE_FAILED: 'Badge purchase failed',
+  INSUFFICIENT_BALANCE: 'Insufficient balance',
 } as const;
 
 export const SUCCESS_MESSAGES = {

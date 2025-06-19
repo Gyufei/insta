@@ -20,6 +20,16 @@ export function useCheckAllowance(checkName: 'badge' | 'tokenStation', tokenName
   async function checkAllowance() {
     if (!address) return null;
 
+    if (tokenName === 'ETH') {
+      return {
+        allowance: Infinity,
+        txParams: {
+          to: address,
+          value: 0,
+        },
+      };
+    }
+
     const path = CheckUrlMap[checkName];
 
     const checkAllowanceRes = await Fetcher(`${path}?wallet=${address}&token_name=${tokenName}`);

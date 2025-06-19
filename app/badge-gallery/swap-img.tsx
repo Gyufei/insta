@@ -47,15 +47,15 @@ export function SwapImg({
       {badgeArr.map((nft, idx) => (
         <div
           key={nft.name}
-          className="size-full sm:size-[min(320px,100%)] flex items-center justify-center aspect-square [grid-row:1/2]"
+          className="size-full sm:size-[min(500px,100%)] flex items-center justify-center aspect-square [grid-row:1/2]"
           id={`item-${idx + 1}`}
           onClick={() => handleClickItem(idx, nft)}
           style={{
             gridColumnStart: idx < 2 ? CssColStartAndEnd[idx][0] : CssColStartAndEnd[2][0],
             gridColumnEnd: idx < 2 ? CssColStartAndEnd[idx][1] : CssColStartAndEnd[2][1],
             zIndex: idx < 2 ? CssColStartAndEnd[idx][2] : CssColStartAndEnd[2][2],
-            visibility: idx < 3 ? 'visible' : 'hidden',
-            animation: idx < 3 ? 'scale 0.5s ease-in-out' : 'none',
+            visibility: idx < 2 ? 'visible' : 'hidden',
+            animation: idx < 2 ? 'scale 0.5s ease-in-out' : 'none',
           }}
         >
           <div
