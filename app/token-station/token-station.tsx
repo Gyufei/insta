@@ -46,6 +46,8 @@ export function TokenStation() {
 
   const [toAddress, setToAddress] = useState(address || '');
 
+  const [isCCIP, setIsCCIP] = useState(true);
+
   const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetWalletBalance(
     NetworkConfigs.eth.id,
     tokenFrom.address
@@ -342,7 +344,13 @@ export function TokenStation() {
 
         <div className="flex justify-between items-center mt-5">
           <div className="flex items-center gap-3">
-            <Button className="h-12 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8">
+            <Button
+              className={cn(
+                'h-12 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8',
+                isCCIP && 'border-[#6E75F9] text-[#6E75F9]'
+              )}
+              onClick={() => setIsCCIP(!isCCIP)}
+            >
               CCIP
             </Button>
             <Button className="h-12 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8">
@@ -372,10 +380,10 @@ export function TokenStation() {
                 {isSwapPending ? (
                   <span className="flex items-center">
                     <Loader className="w-6 h-6 mr-1 animate-spin" />
-                    <span>Creating...</span>
+                    <span>Topping up...</span>
                   </span>
                 ) : (
-                  'Create swap'
+                  'Top-up ETH'
                 )}{' '}
                 &gt;&gt;
               </span>
