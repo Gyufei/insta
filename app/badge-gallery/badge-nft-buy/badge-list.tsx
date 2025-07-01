@@ -30,7 +30,7 @@ export function BadgeList({
         <div className="flex items-center"></div>
       </div>
       <div className="mt-4 mb-6 overflow-auto scrollbar-hover max-h-[450px] space-y-2">
-        {allNfts?.map((nft) => (
+        {allNfts?.map((nft, index) => (
           <div
             key={nft.name}
             className="grid grid-cols-4 rounded-[8px] bg-white text-sm text-[#131E40] font-medium relative px-[10px] py-[10px] h-14 transition-colors duration-300 ease-out items-center"
@@ -43,7 +43,7 @@ export function BadgeList({
             )}
             <span className="flex items-center gap-2">
               <Image
-                src={`/images/badge-nft/${nft.name}.jpeg`}
+                src={`/images/badge-nft/${nft.name}.svg`}
                 alt={nft.name}
                 width={36}
                 height={36}
@@ -52,7 +52,7 @@ export function BadgeList({
               <span className="truncate text-sm leading-5 tracking-[-0.06%]">{nft.name}</span>
             </span>
 
-            <span className="flex items-center pl-3">1</span>
+            <span className="flex items-center pl-3">{index + 1}</span>
 
             <span className="flex flex-1 items-center justify-center">
               <span className="flex items-center gap-1">

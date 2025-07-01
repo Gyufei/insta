@@ -68,7 +68,7 @@ export function SwapImg({
             <div className="overflow-hidden rounded-md pointer-events-none absolute inset-0 size-full">
               <div className="rounded-md">
                 <Image
-                  src={`/images/badge-nft/${nft.name}.jpeg`}
+                  src={`/images/badge-nft/${nft.name}.svg`}
                   className="rounded-[inherit] opacity-100 object-cover scale-125 blur-md [-webkit-user-drag:none] select-none transform-gpu size-full"
                   width="320"
                   height="320"
@@ -79,7 +79,7 @@ export function SwapImg({
             </div>
             <div className="rounded-md">
               <Image
-                src={`/images/badge-nft/${nft.name}.jpeg`}
+                src={`/images/badge-nft/${nft.name}.svg`}
                 className="rounded-[inherit] opacity-100 [-webkit-user-drag:none] select-none transform-gpu size-full absolute inset-0 object-contain"
                 width="320"
                 height="320"
