@@ -32,7 +32,7 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
   const displayBalance = realBalance ? formatNumber(realBalance) : '';
 
   return (
-    <Card className="flex flex-1 px-5 flex-shrink-0 flex-col gap-3 shadow-none outline-none">
+    <Card className="flex flex-1 md:px-5 px-4 py-4 md:py-5 flex-shrink-0 flex-col gap-3 shadow-none outline-none">
       <CardHeader className="flex h-14 items-center justify-between px-0">
         <div className="flex items-center gap-3">
           <div className="flex -space-x-3 overflow-hidden">

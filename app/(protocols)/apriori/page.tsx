@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function Apriori() {
   return (
     <CommonPageLayout title="Apriori" iconSrc="/icons/apriori.svg">
-      <div className="mb-6 flex w-full flex-shrink-0 justify-between px-4 mt-0 2xl:px-12">
+      <div className="md:mb-6 mb-4 flex w-full flex-shrink-0 justify-between px-4 mt-0 2xl:px-12">
         <TitleH2>Overview</TitleH2>
       </div>
       <AprioriStats />

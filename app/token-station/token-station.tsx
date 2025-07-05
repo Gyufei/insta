@@ -174,7 +174,7 @@ export function TokenStation() {
   return (
     <>
       <div className="px-4 2xl:px-12">
-        <div className="flex justify-between flex-1 gap-0 shadow-none">
+        <div className="flex md:flex-row flex-col justify-between flex-1 gap-0 shadow-none">
           {/* 左侧：From */}
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
             <div className="flex items-center justify-between">
@@ -214,8 +214,8 @@ export function TokenStation() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="h-full flex items-end pb-3">
-                <span className="text-xs text-[#909399]">/</span>
+              <div className="flex items-end pb-3 self-stretch">
+                <span className="text-base md:text-xs text-[#909399]">/</span>
               </div>
               <div className="flex-1 flex flex-col gap-[10px]">
                 <div className="text-sm text-[#A5ADC6] font-normal">Network</div>
@@ -258,8 +258,8 @@ export function TokenStation() {
             </div>
           </Card>
 
-          <div className="flex justify-center items-center px-2 -mx-[20px] z-10">
-            <div className="border border-[#ebebeb] rounded-md h-10 w-10 flex items-center justify-center bg-white">
+          <div className="flex justify-center items-center md:px-2 px-0 py-2 md:py-0 md:-mx-[20px] mx-0 -my-[20px] md:my-0 z-10">
+            <div className="border border-[#ebebeb] rounded-md h-10 w-10 flex items-center justify-center bg-white md:rotate-0 rotate-90">
               <Image src="/icons/switch.svg" alt="switch" width={20} height={20} />
             </div>
           </div>
@@ -300,8 +300,8 @@ export function TokenStation() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="h-full flex items-end pb-3">
-                <span className="text-xs text-[#909399]">/</span>
+              <div className="flex items-end pb-3 self-stretch">
+                <span className="text-base md:text-xs text-[#909399]">/</span>
               </div>
               <div className="flex-1 flex flex-col gap-[10px]">
                 <div className="text-sm text-[#A5ADC6] font-normal">Network</div>
@@ -342,18 +342,18 @@ export function TokenStation() {
           </Card>
         </div>
 
-        <div className="flex justify-between items-center mt-5">
+        <div className="flex md:flex-row flex-col md:justify-between md:items-center mt-5 gap-2 md:gap-0">
           <div className="flex items-center gap-3">
             <Button
               className={cn(
-                'h-12 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8',
+                'md:h-12 h-8 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8',
                 isCCIP && 'border-[#6E75F9] text-[#6E75F9]'
               )}
               onClick={() => setIsCCIP(!isCCIP)}
             >
               CCIP
             </Button>
-            <Button className="h-12 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8">
+            <Button className="md:h-12 h-8 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8">
               Bridge Router
             </Button>
           </div>

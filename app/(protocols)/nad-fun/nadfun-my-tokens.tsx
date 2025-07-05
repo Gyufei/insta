@@ -22,7 +22,7 @@ export function NadFunMyTokens() {
 
   return (
     <NadFunTokenList
-      className="2xl:mt-4"
+      className="mt-4"
       tokens={parseTokens || undefined}
       isLoading={isLoading}
       title="My Tokens"
