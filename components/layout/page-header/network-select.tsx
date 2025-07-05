@@ -15,6 +15,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+import { useIsMobile } from '@/lib/utils/use-mobile';
+
 const NETWORKS = [
   {
     ...NetworkConfigs.monadTestnet,
@@ -41,6 +43,8 @@ export default function NetworkSelect() {
   const router = useRouter();
 
   const isBaseNet = useMemo(() => BaseNetIds.includes(String(chainId)), [chainId]);
+
+  const isMobile = useIsMobile();
 
   function handleSelectNetwork(net: INetworkConfig) {
     if (BaseNetIds.includes(String(net.id) as unknown as (typeof BaseNetIds)[number])) {
@@ -80,7 +84,11 @@ export default function NetworkSelect() {
       }}
     >
       <SelectTrigger className="shadow-none focus-visible:ring-0 bg-transparent border-black/10 font-medium">
-        <SelectValue />
+        {isMobile ? (
+          <Image src={selectedNetwork.icon} alt={selectedNetwork.name} width={20} height={20} />
+        ) : (
+          <SelectValue />
+        )}
       </SelectTrigger>
       <SelectContent>
         {NETWORKS.map((network) => (

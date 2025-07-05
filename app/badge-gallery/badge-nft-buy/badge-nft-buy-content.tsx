@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
 import { useBadgeNfts } from '@/lib/data/use-badge-nfts';
+import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
 
 import { BadgeList } from './badge-list';
 import { ClaimBtn } from './claim-btn';

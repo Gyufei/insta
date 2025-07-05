@@ -19,10 +19,7 @@ export function AprioriWithdraw() {
       <SideDrawerBackHeader title="Withdraw" onClick={() => setIsOpen(false)} />
       <SideDrawerLayout>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full py-0">
-          <div
-            className="mx-auto grid w-full grid-cols-2 gap-2 whitespace-nowrap"
-            style={{ maxWidth: '296px' }}
-          >
+          <div className="mx-auto grid w-full grid-cols-2 gap-2 whitespace-nowrap">
             <ButtonWithCheck
               label="Request"
               value="withdraw"

@@ -24,9 +24,13 @@ export function CommonPageLayout({
             pageConClx
           )}
         >
-          <PageTitle title={title} src={iconSrc} />
-          <div className="flex w-full flex-col rounded-t-md bg-white flex-1 pb-4">
-            {children}
+          <div className="w-full h-full rounded-t-xl bg-white overflow-x-auto">
+            <div className="md:min-w-[700px] h-full">
+              <PageTitle title={title} src={iconSrc} />
+              <div className="flex w-full flex-col rounded-t-md bg-white flex-1 pb-4">
+                {children}
+              </div>
+            </div>
           </div>
         </div>
       </div>

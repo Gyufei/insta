@@ -6,30 +6,32 @@ import { MONAD } from '@/config/tokens';
 
 import { Progress } from '@/components/ui/progress';
 
-import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
 import { IBadgeNft } from '@/lib/data/use-badge-nfts';
+import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
 import { formatNumber } from '@/lib/utils/number';
 
 export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
   const { data: userBadgeData } = useBadgeWalletNfts();
-  const isUserNft = userBadgeData?.nftInfo?.name === selectedNft.name;
+  const isUserNft = selectedNft && userBadgeData?.nftInfo?.name === selectedNft?.name;
 
-  const total = selectedNft.total_release_times;
+  const total = selectedNft?.total_release_times || 0;
   const remainCount = isUserNft ? userBadgeData?.remainingClaims : 0;
   const claimedCount = total - Number(remainCount);
 
   const claimed =
     isUserNft && remainCount
       ? multiply(
-          String(selectedNft.total_release_amount),
+          String(selectedNft?.total_release_amount || 0),
           divide(String(claimedCount), String(total))
         )
       : 0;
 
-  const maxClaimable = divide(
-    String(selectedNft.total_release_amount),
-    String(selectedNft.total_release_times)
-  );
+  const maxClaimable = selectedNft
+    ? divide(
+        String(selectedNft?.total_release_amount || 0),
+        String(selectedNft?.total_release_times || 0)
+      )
+    : 0;
 
   const nextClaimTime = useMemo(() => {
     if (!isUserNft) {

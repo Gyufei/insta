@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppKitNetwork } from '@reown/appkit/react';
-import { Circle, CircleUserRound, Codesandbox, Minus, Orbit, Plus } from 'lucide-react';
+import { Circle, CircleUserRound, Codesandbox, Minus, Orbit, Plus, X } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
 
@@ -11,6 +11,7 @@ import { usePathname } from 'next/navigation';
 
 import { NetworkConfigs } from '@/config/network-config';
 
+import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   DropdownMenu,
@@ -38,6 +39,7 @@ import {
 
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/lib/utils/use-mobile';
 
 import { Version } from './version';
 
@@ -169,8 +171,8 @@ export default function AppSidebar() {
   const { chainId } = useAppKitNetwork();
 
   const pathname = usePathname();
-  const { open } = useSidebar();
-  const isMobile = false;
+  const { open, toggleSidebar } = useSidebar();
+  const isMobile = useIsMobile();
 
   const testnetItems = [{ href: '/faucet', label: 'Faucet', icon: <Orbit className="h-3 w-3" /> }];
 
@@ -315,6 +317,19 @@ export default function AppSidebar() {
     setMenuGroup(groups);
   }, [chainId, accountInfo?.sandbox_account]);
 
+  function MobileCloseBtn() {
+    return (
+      <Button
+        onClick={() => toggleSidebar()}
+        variant="ghost"
+        size="icon"
+        className="h-9 w-9 bg-transparent"
+      >
+        <X className="h-5 w-5" />
+      </Button>
+    );
+  }
+
   return (
     <Sidebar className="grid-sidebar-nav border-none" collapsible="icon">
       <SidebarHeader
@@ -333,7 +348,7 @@ export default function AppSidebar() {
             <Image src="/icons/logo-small.svg" alt="logo" width={30} height={30} className="" />
           )}
         </Link>
-        <SidebarTrigger className="text-muted-foreground/80" />
+        {isMobile ? <MobileCloseBtn /> : <SidebarTrigger className="text-muted-foreground/80" />}
       </SidebarHeader>
 
       <SidebarContent className="scrollbar-hover mt-[10px]">

@@ -86,17 +86,12 @@ const SideDrawer = () => {
     return null;
   }
 
-  const containerStyle = {
-    maxWidth: 'clamp(var(--min-width-app), var(--width-sidebar-context), 100%)',
-  };
-
   return (
     <div
       className={cn(
-        'grid-sidebar-context absolute bg-bg-gray inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden duration-200 2xl:relative 2xl:transform-none',
+        'grid-sidebar-context md:w-[360px] absolute bg-bg-gray inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden duration-200 2xl:relative 2xl:transform-none',
         !isMobile ? 'translate-x-0' : isOpen ? 'translate-x-0' : 'translate-x-full'
       )}
-      style={containerStyle}
       ref={ref}
     >
       <AnimatePresence mode="wait">
@@ -108,9 +103,7 @@ const SideDrawer = () => {
           exit={{ x: 0 }}
           transition={ANIMATION_CONFIG}
         >
-          <div className="flex h-full flex-col" style={containerStyle}>
-            {renderContent()}
-          </div>
+          <div className="flex h-full flex-col w-full md:w-[360px]">{renderContent()}</div>
         </motion.div>
       </AnimatePresence>
     </div>
