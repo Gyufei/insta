@@ -45,10 +45,10 @@ export function AmbientPositionsSection() {
 
   return (
     <div className="flex w-full flex-grow flex-col px-4 2xl:px-12">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-row items-center justify-between">
         <TitleH2>Your Positions</TitleH2>
-        <div className="mt-4 flex items-center sm:mt-0">
-          <div className="w-full sm:w-40">
+        <div className="mt-3 md:mt-4 flex items-center sm:mt-0">
+          <div className="w-full md:block hidden sm:w-40">
             <div className="relative flex w-full items-center">
               <Input
                 type="text"
@@ -60,6 +60,7 @@ export function AmbientPositionsSection() {
               <Search className="search-icon absolute h-4 w-4" style={{ left: '12px' }} />
             </div>
           </div>
+
           <div className="ml-3">
             <Button
               size="sm"
@@ -75,7 +76,20 @@ export function AmbientPositionsSection() {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-grow flex-col min-h-50">
+      <div className="w-full mt-3 md:hidden block">
+        <div className="relative flex w-full items-center">
+          <Input
+            type="text"
+            placeholder="Search position"
+            className="form-input w-full pr-2 leading-none pl-9 py-1 h-8 shadow-none outline-none focus-visible:ring-0"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <Search className="search-icon absolute h-4 w-4" style={{ left: '12px' }} />
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-grow flex-col gap-4 min-h-50">
         {isLoading ? (
           <div className="py-20 rounded-sm bg-muted/80 flex items-center justify-center">
             <WithLoading isLoading={true} />

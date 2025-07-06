@@ -107,6 +107,7 @@ export default function OddsHeader() {
   const { data: marketData, isFetching: isSearching } = useMarkets('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
   const ref = useOnclickOutside(() => setShowSuggestions(false));
 
   const allMarkets = useMemo(() => marketData?.market_list ?? [], [marketData]);
@@ -152,16 +153,20 @@ export default function OddsHeader() {
     ref,
   };
 
+  function handleMobileSearch() {
+    setShowMobileSearch(!showMobileSearch);
+  }
+
   return (
     <>
       {/* Desktop Header */}
-      <header className="hidden lg:block px-12">
-        <div className="flex-1 flex items-center gap-6 min-w-0">
-          <div className="flex-1 min-w-[200px]">
+      <header className="md:px-12 px-4">
+        <div className="flex-1 flex items-center justify-between gap-6 min-w-0">
+          <div className="flex-1 min-w-[200px] md:block hidden">
             <SearchInput {...searchInputProps} />
           </div>
 
-          <nav className="flex-none flex items-center gap-6">
+          <nav className="flex-none flex items-center gap-6 border border-[#EBEBEB] rounded-[8px] p-1">
             <NavLink
               href="/odds/markets"
               label="Markets"
@@ -181,16 +186,26 @@ export default function OddsHeader() {
               isActive={pathname === '/odds/ranks'}
             />
           </nav>
-        </div>
-      </header>
 
-      {/* Mobile Header */}
-      <header className="lg:hidden">
-        <div className="w-full px-4">
-          <div className="flex flex-col py-4">
+          <div className="md:hidden block">
+            <div
+              className="flex items-center justify-center gap-2 border border-[#EBEBEB] rounded-[8px] p-1 h-10 w-10"
+              onClick={handleMobileSearch}
+            >
+              <Search className="h-5 w-5" />
+            </div>
+          </div>
+
+          <div className="flex-1 min-w-[200px] md:block hidden">
             <SearchInput {...searchInputProps} />
           </div>
         </div>
+
+        {showMobileSearch && (
+          <div className="flex-1 min-w-[200px] md:hidden block mt-3">
+            <SearchInput {...searchInputProps} />
+          </div>
+        )}
       </header>
     </>
   );

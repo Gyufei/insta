@@ -8,7 +8,7 @@ export default function OddsLayout({ children }: { children: React.ReactNode }) 
     <FavoritesProvider>
       <CommonPageLayout title="Odds" iconSrc={null} pageConClx="p-0 pt-6">
         <OddsHeader />
-        <div className="px-12">{children}</div>
+        <div className="md:px-12 px-4">{children}</div>
       </CommonPageLayout>
     </FavoritesProvider>
   );

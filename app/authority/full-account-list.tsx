@@ -35,7 +35,7 @@ export function FullAccountList() {
           <WithLoading isLoading={isCreatePending}>Create new</WithLoading>
         </Button>
       </div>
-      <div className="mt-16 grid w-full flex-shrink-0 grid-cols-4 gap-4 px-4 2xl:px-12">
+      <div className="mt-16 grid w-full flex-shrink-0 md:grid-cols-4 grid-cols-1 gap-4 px-4 2xl:px-12">
         {allAccounts?.map((account) => (
           <AccountCard
             key={account.id}

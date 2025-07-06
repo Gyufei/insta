@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function Faucet() {
   return (
     <CommonPageLayout title="Faucet" iconSrc={null}>
-      <div className="flex flex-col items-start px-4 2xl:px-12">
+      <div className="flex w-full md:w-fit flex-col items-start px-4 2xl:px-12">
         <FaucetContainer />
       </div>
     </CommonPageLayout>

@@ -124,7 +124,7 @@ export function FaucetContainer() {
   }
 
   return (
-    <div className={cn('border-[#ebebeb] border rounded-[8px] px-5 py-4 mt-5')}>
+    <div className={cn('border-[#ebebeb] w-full md:w-fit border rounded-[8px] px-5 py-4 mt-5')}>
       <h1 className="text-lg text-primary font-normal">Select Token</h1>
       <Select value={selectedToken} onValueChange={setSelectedToken}>
         <SelectTrigger className="w-full mt-3 shadow-none focus-visible:ring-0">

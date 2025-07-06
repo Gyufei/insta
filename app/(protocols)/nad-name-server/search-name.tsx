@@ -5,9 +5,9 @@ import { ChevronRight, Search, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { TitleH2 } from '@/components/common/title-h2';
+import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { WithLoading } from '@/components/common/with-loading';
 
 import { useNadNameCheckAvailability } from '@/lib/data/use-nadname-check-name-availability';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
@@ -68,7 +68,7 @@ export function SearchName() {
   }, [debouncedSearchTerm, inputTerm]);
 
   return (
-    <div className="container px-4 2xl:px-12">
+    <div className="w-full px-4 2xl:px-12">
       <TitleH2>Search name</TitleH2>
       <div className="relative mt-4">
         <div className="relative border rounded-sm pl-10">

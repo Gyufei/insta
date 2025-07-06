@@ -36,7 +36,7 @@ export function MyNames() {
   }
 
   return (
-    <div className="container px-4 2xl:px-12 mt-6 sm:mt-12">
+    <div className="w-full px-4 2xl:px-12 mt-6">
       <TitleH2>My names</TitleH2>
 
       {isLoading ? (
@@ -56,19 +56,28 @@ export function MyNames() {
               key={name.id}
               className="py-0 hover:bg-accent/50 transition-colors cursor-pointer shadow-none outline-none"
             >
-              <div className="flex items-center justify-between p-4">
-                <div className="flex items-center gap-4">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-0 md:justify-between p-4">
+                <div className="flex items-center gap-4 w-full">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-900 to-purple-500" />
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-1 items-center justify-between gap-3">
                     <span className="text-xl font-medium">{name.name}.nad</span>
+                    {name.isPrimary && (
+                      <Badge
+                        variant="secondary"
+                        className="md:hidden flex items-center gap-2 bg-green-100 text-green-700 hover:bg-green-100 h-8"
+                      >
+                        <Sparkle className="w-4 h-4" />
+                        Your primary name
+                      </Badge>
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
                   {name.isPrimary ? (
                     <>
                       <Badge
                         variant="secondary"
-                        className="bg-green-100 text-green-700 hover:bg-green-100 h-8"
+                        className="hidden md:flex items-center gap-2 bg-green-100 text-green-700 hover:bg-green-100 h-8"
                       >
                         <Sparkle className="w-4 h-4" />
                         Your primary name

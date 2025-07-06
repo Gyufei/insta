@@ -50,7 +50,7 @@ export function UniswapPositionsSection() {
     <div className="flex w-full flex-grow flex-col px-4 2xl:px-12">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <TitleH2>Your Positions</TitleH2>
-        <div className="mt-4 flex items-center sm:mt-0">
+        <div className="mt-3 md:mt-4 flex items-center sm:mt-0">
           <div className="w-full sm:w-40">
             <div className="relative flex w-full items-center">
               <Input
@@ -78,7 +78,7 @@ export function UniswapPositionsSection() {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-grow flex-col min-h-50">
+      <div className="mt-4 flex flex-grow flex-col gap-4 min-h-50">
         {isLoading ? (
           <div className="py-20 rounded-sm bg-muted/80 flex items-center justify-center">
             <WithLoading isLoading={true} />

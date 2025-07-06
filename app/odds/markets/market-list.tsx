@@ -7,6 +7,16 @@ import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+import { cn } from '@/lib/utils';
+
 import { useFavorites } from '../common/favorite-context';
 import { CATEGORIES } from '../common/odds-const';
 import { useMarketActivities } from '../common/use-market-activities';
@@ -143,10 +153,27 @@ export default function MarketList() {
     }
   };
 
+  const [mbSelectedValue, setMbSelectedValue] = useState('All');
+
+  function handleMbCategoryChange(val: string) {
+    if (val === 'Favorites') {
+      setShowFavorites(!showFavorites);
+      return;
+    }
+
+    if (val === 'Ended') {
+      handleStatusChange('ended');
+    } else if (val === 'Resolved') {
+      handleStatusChange('resolved');
+    } else {
+      handleCategoryChange(val);
+    }
+  }
+
   return (
     <>
       {/* Categories */}
-      <div className="border-b bg-white mt-5 w-full">
+      <div className="border-b bg-white mt-5 w-full md:block hidden">
         <div className="flex items-center justify-between">
           <div className="flex-1 overflow-x-auto overflow-visible no-scrollbar">
             <div className="flex items-center gap-6 min-w-max">
@@ -197,6 +224,7 @@ export default function MarketList() {
               </button>
             </div>
           </div>
+
           <div className="flex-none pl-6">
             <button
               onClick={() => setShowFavorites(!showFavorites)}
@@ -210,6 +238,45 @@ export default function MarketList() {
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="md:hidden block">
+        <Select value="All">
+          <SelectTrigger className="w-full mt-3 shadow-none focus-visible:ring-0">
+            <SelectValue placeholder="Select a token" />
+          </SelectTrigger>
+          <SelectContent className="border border-[#EBEBEB] shadow-none">
+            {CATEGORIES.map((category) => (
+              <SelectItem
+                className="border-b border-[#EBEBEB] last:border-b-0"
+                key={category}
+                value={category}
+              >
+                <div className="flex items-center gap-2">
+                  <span>{category}</span>
+                </div>
+              </SelectItem>
+            ))}
+            <SelectItem value={'Ended'}>
+              <div className="flex items-center gap-2">
+                <span>Ended</span>
+              </div>
+            </SelectItem>
+            <SelectItem value={'Resolved'}>
+              <div className="flex items-center gap-2">
+                <span>Resolved</span>
+              </div>
+            </SelectItem>
+            <SelectItem value={'Favorites'}>
+              <div className="flex items-center gap-2">
+                <span>Collect</span>
+                <Star
+                  className={cn('h-4 w-4', showFavorites ? 'fill-yellow-500 text-yellow-500' : '')}
+                />
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Markets Grid */}
