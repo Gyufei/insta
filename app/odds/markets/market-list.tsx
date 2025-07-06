@@ -156,6 +156,8 @@ export default function MarketList() {
   const [mbSelectedValue, setMbSelectedValue] = useState('All');
 
   function handleMbCategoryChange(val: string) {
+    setMbSelectedValue(val);
+
     if (val === 'Favorites') {
       setShowFavorites(!showFavorites);
       return;
@@ -241,7 +243,7 @@ export default function MarketList() {
       </div>
 
       <div className="md:hidden block">
-        <Select value="All">
+        <Select value={mbSelectedValue} onValueChange={handleMbCategoryChange}>
           <SelectTrigger className="w-full mt-3 shadow-none focus-visible:ring-0">
             <SelectValue placeholder="Select a token" />
           </SelectTrigger>

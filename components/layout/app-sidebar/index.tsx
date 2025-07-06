@@ -288,6 +288,23 @@ export default function AppSidebar() {
   const [menuGroups, setMenuGroup] = useState<MenuGroup[]>(initGroup);
 
   useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1440 && open) {
+        toggleSidebar(); // 折叠侧边栏
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // 初始化时检查窗口大小
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
     let groups: MenuGroup[] = [];
     if (
       String(chainId) === String(NetworkConfigs.base.id) ||
