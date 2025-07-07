@@ -166,7 +166,7 @@ export default function OddsHeader() {
             <SearchInput {...searchInputProps} />
           </div>
 
-          <nav className="flex-none flex items-center gap-6 border border-[#EBEBEB] rounded-[8px] p-1">
+          <nav className="flex-none flex items-center gap-6 md:border-none border border-[#EBEBEB] rounded-[8px] p-1">
             <NavLink
               href="/odds/markets"
               label="Markets"
@@ -194,10 +194,6 @@ export default function OddsHeader() {
             >
               <Search className="h-5 w-5" />
             </div>
-          </div>
-
-          <div className="flex-1 min-w-[200px] md:block hidden">
-            <SearchInput {...searchInputProps} />
           </div>
         </div>
 

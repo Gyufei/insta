@@ -52,7 +52,7 @@ export default function Watchlist() {
   if (isLoading) {
     return (
       <div className="max-w-5xl mx-auto space-y-6">
-        <div className="flex gap-3 items-center leading-[140%]">
+        <div className="flex md:flex-row flex-col md:gap-3 gap-0 md:items-center items-start leading-[140%]">
           <span className="text-xl font-medium text-[#131E40]">Watchlist</span>
           <span className="text-[#A5ADC6] font-normal text-sm mt-[6px]">
             Track your favorite markets
@@ -73,7 +73,7 @@ export default function Watchlist() {
   if (error) {
     return (
       <div className="max-w-5xl mx-auto space-y-6">
-        <div className="flex gap-3 items-center leading-[140%]">
+        <div className="flex flex-col md:flex-row md:gap-3 gap-0 items-center leading-[140%]">
           <span className="text-xl font-medium text-[#131E40]">Watchlist</span>
           <span className="text-[#A5ADC6] font-normal text-sm mt-[6px]">
             Track your favorite markets
@@ -89,7 +89,7 @@ export default function Watchlist() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex gap-3 items-center leading-[140%]">
+      <div className="flex md:flex-row flex-col md:gap-3 gap-0 md:items-center items-start leading-[140%]">
         <span className="text-xl font-medium text-[#131E40]">Watchlist</span>
         <span className="text-[#A5ADC6] font-normal text-sm mt-[6px]">
           Track your favorite markets
@@ -98,10 +98,10 @@ export default function Watchlist() {
 
       <div className="border border-[#ebebeb] rounded-[8px] p-4">
         <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
-          <div className="col-span-6">MARKET</div>
-          <div className="col-span-2">VOLUME</div>
-          <div className="col-span-2">TOP OUTCOME</div>
-          <div className="col-span-2 text-right">CHANCE</div>
+          <div className="md:col-span-6 col-span-4">MARKET</div>
+          <div className="md:col-span-2 col-span-3">VOLUME</div>
+          <div className="md:col-span-2 col-span-3">TOP OUTCOME</div>
+          <div className="md:col-span-2 col-span-2 text-right">CHANCE</div>
         </div>
 
         <div className="divide-y">

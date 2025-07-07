@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/lib/utils/use-mobile';
 
 import { useFavorites } from '../common/favorite-context';
 import { CATEGORIES } from '../common/odds-const';
@@ -37,6 +38,9 @@ export default function MarketList() {
   const { favorites } = useFavorites();
   const [showFavorites, setShowFavorites] = useState(false);
   const [visibleCount, setVisibleCount] = useState<number>(18);
+
+  const isMobile = useIsMobile();
+  const [showTabs, setShowTabs] = useState<'Markets' | 'Activity' | 'Volume'>('Markets');
 
   // Format timestamp to relative time
   const formatRelativeTime = (timestamp: number) => {
@@ -242,7 +246,46 @@ export default function MarketList() {
         </div>
       </div>
 
-      <div className="md:hidden block">
+      <div className="md:hidden relative flex justify-between items-center mt-4">
+        <div className="absolute bottom-0  right-0 left-0 h-[1px] bg-[#ebebeb]"></div>
+        <div className="flex items-center gap-2">
+          <div
+            onClick={() => setShowTabs('Markets')}
+            className={cn(
+              'text-sm px-2 py-3 font-medium ',
+              showTabs === 'Markets' ? 'text-[#131E40] border-b border-[#131E40]' : 'text-[#A5ADC6]'
+            )}
+          >
+            Markets
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div
+            onClick={() => setShowTabs('Activity')}
+            className={cn(
+              'text-sm px-2 py-3 font-medium ',
+              showTabs === 'Activity'
+                ? 'text-[#131E40] border-b border-[#131E40]'
+                : 'text-[#A5ADC6]'
+            )}
+          >
+            Recent Activity
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div
+            onClick={() => setShowTabs('Volume')}
+            className={cn(
+              'text-sm px-2 py-3 font-medium ',
+              showTabs === 'Volume' ? 'text-[#131E40] border-b border-[#131E40]' : 'text-[#A5ADC6]'
+            )}
+          >
+            Top Volume This Week
+          </div>
+        </div>
+      </div>
+
+      <div className={cn('md:hidden block mt-4', isMobile && showTabs !== 'Markets' && 'hidden')}>
         <Select value={mbSelectedValue} onValueChange={handleMbCategoryChange}>
           <SelectTrigger className="w-full mt-3 shadow-none focus-visible:ring-0">
             <SelectValue placeholder="Select a token" />
@@ -282,7 +325,12 @@ export default function MarketList() {
       </div>
 
       {/* Markets Grid */}
-      <main className="w-full py-8 min-h-[900px]">
+      <main
+        className={cn(
+          'w-full md:py-8 py-4 min-h-[900px]',
+          isMobile && showTabs !== 'Markets' && 'hidden'
+        )}
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-7xl mx-auto">
           {marketError && (
             <div className="col-span-3 text-center py-12 bg-white rounded-lg border p-8">
@@ -333,11 +381,11 @@ export default function MarketList() {
       </main>
 
       {/* Recent Activity and Top Volume Sections */}
-      <div className="w-full px-4 py-8 border-t">
+      <div className={cn('w-full md:px-4 px-0 md:py-8 py-1 md:border-t border-none')}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {/* Recent Activity */}
-          <div>
-            <div className="flex items-center justify-between mb-6">
+          <div className={cn(isMobile && showTabs !== 'Activity' && 'hidden')}>
+            <div className="md:flex hidden items-center justify-between mb-6">
               <h2 className="text-lg font-medium text-[#131E40]">Recent Activity</h2>
             </div>
             <div className="space-y-1">
@@ -365,7 +413,7 @@ export default function MarketList() {
                 activities.map((activity, index) => (
                   <div
                     key={`${activity.market.id}-${index}`}
-                    className="flex items-center justify-between hover:bg-gray-50 py-2 px-3 -mx-3 rounded-lg"
+                    className="flex items-center justify-between hover:bg-gray-50 py-2 px-3 -mx-3 rounded-lg md:border-none border-b border-[#EBEBEB]"
                     style={{ maxWidth: '100%' }}
                   >
                     <div className="flex items-center gap-2 min-w-0">
@@ -433,9 +481,11 @@ export default function MarketList() {
           </div>
 
           {/* Top Volume This Week */}
-          <div>
-            <h2 className="text-lg font-medium text-[#131E40] mb-6">Top Volume This Week</h2>
-            <div className="space-y-4">
+          <div className={cn(isMobile && showTabs !== 'Volume' && 'hidden')}>
+            <h2 className="text-lg md:block hidden font-medium text-[#131E40] mb-6">
+              Top Volume This Week
+            </h2>
+            <div className="md:space-y-4 space-y-0 md:py-0 py-1">
               {isLoadingVolumeLeaders ? (
                 // Loading state
                 <div className="animate-pulse space-y-4">
@@ -454,7 +504,10 @@ export default function MarketList() {
               ) : (
                 // Data display
                 volumeLeaders.map((leader) => (
-                  <div key={leader.rank} className="flex items-center gap-4">
+                  <div
+                    key={leader.rank}
+                    className="flex py-4 md:py-0 items-center gap-4 md:border-none border-b border-[#ebebeb]"
+                  >
                     <div className="w-6 text-gray-500">{leader.rank}</div>
                     {leader.avatar ? (
                       <Image

@@ -120,7 +120,7 @@ export default function Portfolio() {
   return (
     <div className="space-y-6 pb-8">
       {/* Header */}
-      <div className="flex gap-3 items-center leading-[140%]">
+      <div className="flex md:flex-row flex-col md:gap-3 gap-0 md:items-center items-start leading-[140%]">
         <span className="text-xl font-medium text-[#131E40]">Portfolio</span>
         <span className="text-[#A5ADC6] font-normal text-sm mt-[6px]">Track your performance</span>
       </div>
@@ -268,10 +268,10 @@ export default function Portfolio() {
       {/* Positions Table */}
       <div className="border border-[#ebebeb] rounded-[8px] p-4">
         <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
-          <div className="col-span-6">MARKET</div>
+          <div className="md:col-span-6 col-span-5">MARKET</div>
           <div className="col-span-2">STATE</div>
           <div className="col-span-2 text-right">PLAYERS</div>
-          <div className="col-span-2 text-right">VOL.</div>
+          <div className="md:col-span-2 col-span-3 text-right">VOL.</div>
         </div>
 
         <div className="divide-y">
@@ -296,14 +296,14 @@ export default function Portfolio() {
                 key={market.market_id}
                 className="py-4 grid grid-cols-12 gap-4 items-center hover:bg-gray-50"
               >
-                <div className="col-span-6">
+                <div className="md:col-span-6 col-span-5">
                   <Link href={`/market/${market.market_id}`} className="flex items-center gap-3">
                     <Image
                       src={market.image_url}
                       alt=""
                       width={40}
                       height={40}
-                      className="w-10 h-10 rounded-lg object-cover"
+                      className="w-5 h-5 rounded-lg object-cover md:w-10 md:h-10"
                     />
                     <div className="font-medium hover:text-[var(--color-odd-main)]">
                       {market.title}
@@ -324,7 +324,7 @@ export default function Portfolio() {
                   </span>
                 </div>
                 <div className="col-span-2 text-right">{market?.players?.toLocaleString()}</div>
-                <div className="col-span-2 text-right">${market?.volume || '0'}</div>
+                <div className="md:col-span-2 col-span-3 text-right">${market?.volume || '0'}</div>
               </div>
             ))
           )}

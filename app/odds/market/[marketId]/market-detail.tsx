@@ -12,6 +12,7 @@ import { eventBus } from '@/lib/state/eventBus';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { formatDate } from '@/lib/utils';
 import { formatCurrency } from '@/lib/utils/number';
+import { useIsMobile } from '@/lib/utils/use-mobile';
 
 import { useFavorites } from '../../common/favorite-context';
 import { useMarketDetail } from '../../common/use-market-detail';
@@ -79,6 +80,8 @@ export default function MarketDetail({ mId }: { mId: string }) {
     return formatted;
   }, [activitiesData]);
 
+  const isMobile = useIsMobile();
+
   const topHolders = useMemo(() => {
     if (!holdersData)
       return {
@@ -103,7 +106,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
   }
 
   useEffect(() => {
-    if (market) {
+    if (market && !isMobile) {
       setCurrentComponent({
         name: 'OddsMarketSellAndBuy',
         props: {
@@ -140,7 +143,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
 
   if (isMarketLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-0 md:px-4 py-6">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 rounded w-1/2"></div>
           <div className="h-4 bg-gray-200 rounded w-1/4"></div>
@@ -152,7 +155,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
 
   if (marketError) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto md:px-4 px-0 py-6">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
           {marketError?.message}
         </div>
@@ -286,8 +289,8 @@ export default function MarketDetail({ mId }: { mId: string }) {
             <div className="bg-white">
               <div className="flex items-center py-3 text-sm font-medium text-gray-500 border-b">
                 <div className="flex-1">OUTCOME</div>
-                <div className="w-32 text-right pr-[20px]">CHANCE</div>
-                <div className="w-48"></div>
+                <div className="md:w-32 w-16 text-right pr-[20px]">CHANCE</div>
+                <div className="md:w-48 w-24"></div>
               </div>
 
               <div className="divide-y">
@@ -323,12 +326,12 @@ export default function MarketDetail({ mId }: { mId: string }) {
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <span className="text-2xl font-bold w-32 text-right">
+                        <span className="md:text-2xl text-base md:font-bold font-medium md:w-32 w-16 text-right">
                           {outcome.probability}%
                         </span>
-                        <div className="flex gap-2 w-48 justify-end">
+                        <div className="flex gap-2 md:w-48 w-24 justify-end">
                           <button
-                            className={`w-24 px-4 py-2 rounded-lg font-medium transition-colors ${
+                            className={`w-16 px-4 md:px-3 md:py-2 py-1 rounded-lg font-medium transition-colors ${
                               tradeDirection === 'sell'
                                 ? 'hidden'
                                 : 'bg-[var(--color-yes-bg)] text-[var(--color-yes-text)] hover:bg-[var(--color-yes-hover)]'
@@ -344,7 +347,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                             ${outcome.price}
                           </button>
                           <button
-                            className={`w-24 px-4 py-2 rounded-lg font-medium transition-colors ${
+                            className={`md:w-24 w-16 md:px-4 px-3 md:py-2 py-1 rounded-lg font-medium transition-colors ${
                               tradeDirection === 'buy'
                                 ? 'hidden'
                                 : 'bg-[var(--color-no-bg)] text-[var(--color-no-text)] hover:bg-[var(--color-no-hover)]'
@@ -391,7 +394,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                 <div className="flex items-center justify-between w-full">
                   <div className="flex">
                     <button
-                      className={`px-2 py-3 font-medium ${
+                      className={`px-2 py-3 font-medium flex items-center gap-2 ${
                         activeTab === 'holders'
                           ? 'text-[var(--color-tab-text-active)] border-b-2 border-[var(--color-tab-border-active)]'
                           : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
@@ -399,6 +402,22 @@ export default function MarketDetail({ mId }: { mId: string }) {
                       onClick={() => setActiveTab('holders')}
                     >
                       Top Holders
+                      <div
+                        className="md:hidden flex items-center gap-1"
+                        onClick={() => setIsOutcomeFilterOpen(!isOutcomeFilterOpen)}
+                      >
+                        <span>-</span>
+                        <span>{selectedOutcomeFilter}</span>
+                        <svg
+                          className={`w-4 h-4 transition-transform ${isOutcomeFilterOpen ? 'rotate-180' : ''}`}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </div>
                     </button>
                     <button
                       className={`ml-4 px-2 py-3 font-medium ${
@@ -412,7 +431,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                     </button>
                   </div>
 
-                  <div className="relative">
+                  <div className="relative md:block hidden">
                     <button
                       onClick={() => setIsOutcomeFilterOpen(!isOutcomeFilterOpen)}
                       className="flex h-8 items-center gap-2 px-[10px] bg-gray-100 rounded-[8px] text-sm hover:bg-gray-200"
@@ -454,67 +473,91 @@ export default function MarketDetail({ mId }: { mId: string }) {
               </div>
 
               {activeTab === 'holders' ? (
-                <div className="pt-6">
-                  <div className="grid grid-cols-2 gap-12">
-                    <div>
-                      {topHolders && market.outcomes?.[0] && (
-                        <>
-                          {isLoadingHolders ? (
-                            <div className="animate-pulse space-y-4">
-                              <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-                              <div className="space-y-2">
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                  <div key={i} className="h-12 bg-gray-200 rounded"></div>
-                                ))}
+                <>
+                  <div className="relative md:hidden block">
+                    {isOutcomeFilterOpen && (
+                      <div className="absolute w-full right-0 top-full mt-1 bg-white border rounded-lg shadow-none overflow-hidden z-10">
+                        {['All', ...(market?.outcomes?.map((o) => o.name) || [])].map((outcome) => (
+                          <button
+                            key={outcome}
+                            className={`w-full px-4 py-2 text-left hover:bg-gray-50 ${
+                              outcome === selectedOutcomeFilter
+                                ? 'text-[var(--color-odd-main)]'
+                                : 'text-gray-900'
+                            }`}
+                            onClick={() => {
+                              setSelectedOutcomeFilter(outcome);
+                              setIsOutcomeFilterOpen(false);
+                            }}
+                          >
+                            {outcome}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="pt-6">
+                    <div className="grid md:grid-cols-2 grid-cols-1 gap-12">
+                      <div>
+                        {topHolders && market.outcomes?.[0] && (
+                          <>
+                            {isLoadingHolders ? (
+                              <div className="animate-pulse space-y-4">
+                                <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                                <div className="space-y-2">
+                                  {[1, 2, 3, 4, 5].map((i) => (
+                                    <div key={i} className="h-12 bg-gray-200 rounded"></div>
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                          ) : holdersError ? (
-                            <div className="text-red-600">{holdersError.message}</div>
-                          ) : (
-                            <MarketHolders
-                              title={`${market.outcomes[0].name} holders`}
-                              holders={
-                                topHolders[market.outcomes[0].name as keyof typeof topHolders] ||
-                                topHolders['0'] ||
-                                []
-                              }
-                              isPositive={true}
-                            />
-                          )}
-                        </>
-                      )}
-                    </div>
+                            ) : holdersError ? (
+                              <div className="text-red-600">{holdersError.message}</div>
+                            ) : (
+                              <MarketHolders
+                                title={`${market.outcomes[0].name} holders`}
+                                holders={
+                                  topHolders[market.outcomes[0].name as keyof typeof topHolders] ||
+                                  topHolders['0'] ||
+                                  []
+                                }
+                                isPositive={true}
+                              />
+                            )}
+                          </>
+                        )}
+                      </div>
 
-                    <div>
-                      {topHolders && market.outcomes?.[1] && (
-                        <>
-                          {isLoadingHolders ? (
-                            <div className="animate-pulse space-y-4">
-                              <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-                              <div className="space-y-2">
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                  <div key={i} className="h-12 bg-gray-200 rounded"></div>
-                                ))}
+                      <div>
+                        {topHolders && market.outcomes?.[1] && (
+                          <>
+                            {isLoadingHolders ? (
+                              <div className="animate-pulse space-y-4">
+                                <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                                <div className="space-y-2">
+                                  {[1, 2, 3, 4, 5].map((i) => (
+                                    <div key={i} className="h-12 bg-gray-200 rounded"></div>
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                          ) : holdersError ? (
-                            <div className="text-red-600">{holdersError.message}</div>
-                          ) : (
-                            <MarketHolders
-                              title={`${market.outcomes[1].name} holders`}
-                              holders={
-                                topHolders[market.outcomes[1].name as keyof typeof topHolders] ||
-                                topHolders['1'] ||
-                                []
-                              }
-                              isPositive={false}
-                            />
-                          )}
-                        </>
-                      )}
+                            ) : holdersError ? (
+                              <div className="text-red-600">{holdersError.message}</div>
+                            ) : (
+                              <MarketHolders
+                                title={`${market.outcomes[1].name} holders`}
+                                holders={
+                                  topHolders[market.outcomes[1].name as keyof typeof topHolders] ||
+                                  topHolders['1'] ||
+                                  []
+                                }
+                                isPositive={false}
+                              />
+                            )}
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </>
               ) : (
                 <div className="pt-6">
                   {isLoadingActivities ? (
@@ -533,7 +576,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                       {filteredActivities.map((activity, index) => (
                         <div
                           key={`${activity.user.name}-${index}`}
-                          className="flex items-center justify-between"
+                          className="flex md:flex-row flex-col md:items-center md:gap-0 gap-2 items-start justify-between"
                         >
                           <div className="flex items-center gap-3">
                             {activity.user.avatar ? (
@@ -542,12 +585,12 @@ export default function MarketDetail({ mId }: { mId: string }) {
                                 alt=""
                                 width={32}
                                 height={32}
-                                className="w-8 h-8 rounded-full"
+                                className="w-4 h-4 rounded-full md:w-8 md:h-8"
                               />
                             ) : (
                               <ColorAvatar name={activity.user.name} className="w-8 h-8" />
                             )}
-                            <div>
+                            <div className="md:block flex flex-wrap">
                               <span className="font-medium">{activity.user.name}</span>{' '}
                               <span className="text-gray-600">{activity.type}</span>{' '}
                               <span
@@ -566,7 +609,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                               </span>
                             </div>
                           </div>
-                          <span className="text-gray-500">{activity.time}</span>
+                          <span className="md:ml-0 ml-[30px] text-gray-500">{activity.time}</span>
                         </div>
                       ))}
                     </div>

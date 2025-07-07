@@ -4,6 +4,17 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Image from 'next/image';
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/lib/utils/use-mobile';
+
 import { type TimeRange, useProfitLeaders, useVolumeLeaders } from '../common/use-ranks';
 import ColorAvatar from '../components/ColorAvatar';
 
@@ -11,6 +22,10 @@ export default function Ranks() {
   const [timeRange, setTimeRange] = useState<TimeRange>('All');
   const [isHovered, setIsHovered] = useState<TimeRange | null>(null);
   const [countdown, setCountdown] = useState('');
+
+  const [showTabs, setShowTabs] = useState<'Volume' | 'Profit'>('Volume');
+
+  const isMobile = useIsMobile();
 
   const {
     data: volumeData,
@@ -73,15 +88,16 @@ export default function Ranks() {
   }, [calculateTimeToNextMidnight]);
 
   return (
-    <div className="mt-[50px]">
+    <div className="md:mt-[50px] mt-5">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-1 md:justify-start justify-between items-center gap-3">
           <h1 className="text-xl font-medium text-[#131E40]">Ranks</h1>
           <div className="flex items-center justify-center mt-[2px]">
             <span className="text-sm text-[#6E75F9]">Resets in {countdown}</span>
           </div>
         </div>
-        <div className="flex items-center justify-center gap-1">
+
+        <div className="items-center justify-center gap-1 md:flex hidden">
           {(['All', 'Day', 'Week', 'Month'] as TimeRange[]).map((range) => (
             <button
               key={range}
@@ -102,14 +118,66 @@ export default function Ranks() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-[22px]">
+      <div className={cn('md:hidden block mt-4')}>
+        <Select value={timeRange} onValueChange={(val) => setTimeRange(val as TimeRange)}>
+          <SelectTrigger className="w-full mt-3 shadow-none focus-visible:ring-0">
+            <SelectValue placeholder="Select a token" />
+          </SelectTrigger>
+          <SelectContent className="border border-[#EBEBEB] shadow-none">
+            {(['All', 'Day', 'Week', 'Month'] as TimeRange[]).map((category) => (
+              <SelectItem
+                className="border-b border-[#EBEBEB] last:border-b-0"
+                key={category}
+                value={category}
+              >
+                <div className="flex items-center gap-2">
+                  <span>{category}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="md:hidden relative flex justify-start items-center mt-3 gap-2">
+        <div className="absolute bottom-0  right-0 left-0 h-[1px] bg-[#ebebeb]"></div>
+        <div className="flex items-center gap-2">
+          <div
+            onClick={() => setShowTabs('Volume')}
+            className={cn(
+              'text-sm px-2 py-3 font-medium ',
+              showTabs === 'Volume' ? 'text-[#131E40] border-b border-[#131E40]' : 'text-[#A5ADC6]'
+            )}
+          >
+            Volume
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div
+            onClick={() => setShowTabs('Profit')}
+            className={cn(
+              'text-sm px-2 py-3 font-medium ',
+              showTabs === 'Profit' ? 'text-[#131E40] border-b border-[#131E40]' : 'text-[#A5ADC6]'
+            )}
+          >
+            Profit
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:mt-[22px] mt-2">
         {/* Volume Leaders */}
-        <div className="bg-white rounded-[8px] border border-[#EBEBEB] p-5">
-          <div className="flex items-center gap-2 mb-6">
+        <div
+          className={cn(
+            'bg-white rounded-[8px] md:border md:border-[#EBEBEB] border-none md:p-5 p-0',
+            isMobile && showTabs !== 'Volume' ? 'hidden' : 'block'
+          )}
+        >
+          <div className="md:flex items-center gap-2 mb-6 hidden">
             <h2 className="text-lg font-medium text-[#131E40]">Volume</h2>
           </div>
 
-          <div className="space-y-4">
+          <div className="md:space-y-4 space-y-0">
             {isLoadingVolume ? (
               // Loading state
               <div className="animate-pulse space-y-4">
@@ -130,7 +198,10 @@ export default function Ranks() {
             ) : (
               // Data display
               volumeLeaders.map((user) => (
-                <div key={user.id} className="flex items-center gap-4">
+                <div
+                  key={user.id}
+                  className="flex items-center gap-4 py-4 md:py-0 border-b md:border-b-0 border-[#EBEBEB] md:border-none"
+                >
                   <div className="w-6 text-gray-500 font-medium">{user.rank}</div>
                   {user?.avatar ? (
                     <Image
@@ -152,12 +223,17 @@ export default function Ranks() {
         </div>
 
         {/* Profit Leaders */}
-        <div className="bg-white rounded-[8px] border border-[#EBEBEB] p-5">
-          <div className="flex items-center gap-2 mb-6">
+        <div
+          className={cn(
+            'bg-white rounded-[8px] md:border md:border-[#EBEBEB] border-none md:p-5 p-0',
+            isMobile && showTabs !== 'Profit' ? 'hidden' : 'block'
+          )}
+        >
+          <div className="md:flex items-center gap-2 mb-6 hidden">
             <h2 className="text-lg font-medium text-[#131E40]">Profit</h2>
           </div>
 
-          <div className="space-y-4">
+          <div className="md:space-y-4 space-y-0">
             {isLoadingProfit ? (
               // Loading state
               <div className="animate-pulse space-y-4">
@@ -178,7 +254,10 @@ export default function Ranks() {
             ) : (
               // Data display
               profitLeaders.map((user) => (
-                <div key={user.id} className="flex items-center gap-4">
+                <div
+                  key={user.id}
+                  className="flex items-center gap-4 py-4 md:py-0 border-b md:border-b-0 border-[#EBEBEB] md:border-none"
+                >
                   <div className="w-6 text-gray-500 font-medium">{user.rank}</div>
                   {user?.avatar ? (
                     <Image

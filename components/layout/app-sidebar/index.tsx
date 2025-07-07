@@ -166,11 +166,14 @@ const CollapsedMenuGroup = ({
   );
 };
 
+let prevPath = '';
+
 export default function AppSidebar() {
   const { data: accountInfo } = useSelectedAccount();
   const { chainId } = useAppKitNetwork();
 
   const pathname = usePathname();
+
   const { open, toggleSidebar } = useSidebar();
   const isMobile = useIsMobile();
 
@@ -289,8 +292,12 @@ export default function AppSidebar() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 1440 && open) {
+      if (window.innerWidth > 768 && window.innerWidth < 1440 && open) {
         toggleSidebar(); // 折叠侧边栏
+      }
+
+      if (window.innerWidth < 768 && !open) {
+        toggleSidebar(); // 展开侧边栏
       }
     };
 
@@ -346,6 +353,14 @@ export default function AppSidebar() {
       </Button>
     );
   }
+
+  useEffect(() => {
+    if (prevPath !== pathname && isMobile && open) {
+      toggleSidebar();
+    }
+
+    prevPath = pathname;
+  }, [isMobile, open, pathname]);
 
   return (
     <Sidebar className="grid-sidebar-nav border-none" collapsible="icon">

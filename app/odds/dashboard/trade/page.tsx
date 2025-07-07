@@ -46,7 +46,7 @@ export default function Trade() {
   return (
     <div className="mx-auto space-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex gap-3 items-center leading-[140%]">
+        <div className="flex md:flex-row flex-col md:items-center items-start md:gap-3 gap-0 leading-[140%]">
           <span className="text-xl font-medium text-[#131E40]">Trade</span>
           <span className="text-[#A5ADC6] font-normal text-sm mt-[6px]">
             Track your performance
@@ -83,10 +83,10 @@ export default function Trade() {
       {activeTab === 'position' && (
         <div className="border border-[#ebebeb] rounded-[8px] p-4">
           <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
-            <div className="col-span-6">MARKET</div>
-            <div className="col-span-3">OUTCOME</div>
-            <div className="col-span-2 text-right">SHARES</div>
-            <div className="col-span-1 text-right">VALUE</div>
+            <div className="md:col-span-6 col-span-5">MARKET</div>
+            <div className="md:col-span-3 col-span-3">OUTCOME</div>
+            <div className="md:col-span-2 col-span-2 text-right">SHARES</div>
+            <div className="md:col-span-1 col-span-2 text-right">VALUE</div>
           </div>
 
           <div className="divide-y">
@@ -105,13 +105,13 @@ export default function Trade() {
                   key={index}
                   className="py-4 grid grid-cols-12 gap-4 items-center transition-colors hover:bg-gray-100/50"
                 >
-                  <div className="col-span-6 flex items-center gap-3">
+                  <div className="md:col-span-6 col-span-5 flex items-center gap-3">
                     <Image
                       src={position.market.image_url}
                       alt=""
                       width={40}
                       height={40}
-                      className="rounded-lg object-cover flex-shrink-0"
+                      className="rounded-lg object-cover flex-shrink-0 md:h-10 md:w-10 h-5 w-5"
                     />
                     <div className="min-w-0">
                       <Link
@@ -129,14 +129,14 @@ export default function Trade() {
                       alt={position.outcome.name}
                       width={32}
                       height={32}
-                      className="w-8 h-8 rounded-full"
+                      className="w-4 h-4 rounded-full md:h-10 md:w-10"
                     />
                     <span className="font-medium">{position.outcome.name}</span>
                   </div>
 
                   <div className="col-span-2 text-right">{position.shares}</div>
 
-                  <div className="col-span-1 text-right">${position.value}</div>
+                  <div className="md:col-span-1 col-span-2 text-right">${position.value}</div>
                 </div>
               ))
             )}
