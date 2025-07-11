@@ -41,6 +41,16 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
 
   const { mutate: purchase, isPending: isPurchasePending } = useBadgePurchase();
 
+  function handleToggleToken(token: 'ETH' | 'USDT' | 'USDC') {
+    setPayToken(token);
+    if (errorData.showError && errorData.errorMessage === ERROR_MESSAGES.INSUFFICIENT_BALANCE) {
+      setErrorData({
+        showError: false,
+        errorMessage: '',
+      });
+    }
+  }
+
   const {
     allowance: tokenAllowance,
     isLoading: isAllowanceLoading,
@@ -134,11 +144,7 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
           value="ETH"
           activeTab={payToken}
           onClick={() => {
-            setPayToken('ETH');
-            setErrorData({
-              showError: false,
-              errorMessage: '',
-            });
+            handleToggleToken('ETH');
           }}
         />
         <ButtonWithCheck
@@ -147,7 +153,7 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
           value="USDT"
           activeTab={payToken}
           onClick={() => {
-            setPayToken('USDT');
+            handleToggleToken('USDT');
           }}
         />
         <ButtonWithCheck
@@ -156,7 +162,7 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
           value="USDC"
           activeTab={payToken}
           onClick={() => {
-            setPayToken('USDC');
+            handleToggleToken('USDC');
           }}
         />
       </div>
