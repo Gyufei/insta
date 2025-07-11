@@ -1,3 +1,4 @@
+import { useAppKitNetwork } from '@reown/appkit/react';
 import { LoaderCircle } from 'lucide-react';
 import { divide, utils } from 'safebase';
 import { useAccount } from 'wagmi';
@@ -11,9 +12,9 @@ import { ButtonWithCheck } from '@/components/common/button-with-check';
 import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { Button } from '@/components/ui/button';
 
-import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
 import { IBadgeNft } from '@/lib/data/use-badge-nfts';
 import { useBadgePurchase } from '@/lib/data/use-badge-purchase';
+import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
 import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useGetWalletBalance } from '@/lib/web3/use-get-wallet-balance';
@@ -22,6 +23,7 @@ import { BUY_TOKEN_CONFIG_BASE } from './buy-token-config';
 
 export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
   const { address } = useAccount();
+  const { chainId, switchNetwork } = useAppKitNetwork();
   const [payToken, setPayToken] = useState<'ETH' | 'USDT' | 'USDC'>('ETH');
 
   const { data: userBadgeData } = useBadgeWalletNfts();
@@ -82,7 +84,16 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
         errorMessage: ERROR_MESSAGES.WALLET_NOT_CONNECTED,
       });
     }
-  }, [address]);
+
+    if (chainId !== NetworkConfigs.base.id) {
+      setErrorData({
+        showError: true,
+        errorMessage: 'Please switch to Base network to buy badge',
+      });
+      switchNetwork(NetworkConfigs.base);
+      return;
+    }
+  }, [address, chainId]);
 
   function handlePay() {
     if (shouldApprove) {
@@ -124,6 +135,10 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
           activeTab={payToken}
           onClick={() => {
             setPayToken('ETH');
+            setErrorData({
+              showError: false,
+              errorMessage: '',
+            });
           }}
         />
         <ButtonWithCheck

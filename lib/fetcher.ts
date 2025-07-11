@@ -48,7 +48,7 @@ async function parsedRes(res: Response) {
       throw new Error(json.message || 'Internal server error');
     }
 
-    return json?.data || json;
+    return 'data' in json ? json.data : json;
   } catch (e) {
     throw e;
   }

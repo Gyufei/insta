@@ -1,5 +1,7 @@
-import { base, mainnet, monadTestnet } from '@reown/appkit/networks';
+import { base, baseSepolia, mainnet, monadTestnet, sepolia } from '@reown/appkit/networks';
 import { Chain } from '@reown/appkit/networks';
+
+import { isProduction } from '@/lib/data/api-path';
 
 export interface INetworkConfig extends Chain {
   icon: string;
@@ -14,11 +16,11 @@ export const NetworkConfigs = {
     },
   },
   eth: {
-    ...mainnet,
+    ...(isProduction ? mainnet : sepolia),
     icon: '/icons/eth.svg',
   },
   base: {
-    ...base,
+    ...(isProduction ? base : baseSepolia),
     icon: '/icons/base.svg',
   },
 };

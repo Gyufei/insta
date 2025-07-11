@@ -1,6 +1,6 @@
 'use client';
 
-import { base, mainnet, monadTestnet } from '@reown/appkit/networks';
+import { base, baseSepolia, mainnet, monadTestnet, sepolia } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type Config, WagmiProvider, cookieToInitialState } from 'wagmi';
@@ -27,7 +27,7 @@ const metadata = {
 createAppKit({
   adapters: [wagmiAdapter],
   projectId,
-  networks: [monadTestnet, mainnet, base],
+  networks: [monadTestnet, mainnet, base, baseSepolia, sepolia],
   defaultNetwork: monadTestnet,
   metadata: metadata,
   features: {
