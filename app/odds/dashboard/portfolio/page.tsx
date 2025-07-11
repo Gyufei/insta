@@ -305,7 +305,7 @@ export default function Portfolio() {
                       height={40}
                       className="w-5 h-5 rounded-lg object-cover md:w-10 md:h-10"
                     />
-                    <div className="font-medium hover:text-[var(--color-odd-main)]">
+                    <div className="font-medium hover:text-pro-blue">
                       {market.title}
                     </div>
                   </Link>

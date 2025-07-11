@@ -97,7 +97,7 @@ export function MarketDetails({
               onClick={() => onMarketTypeChange('binary')}
               className={`flex flex-col items-center gap-2 p-4 border rounded-lg transition-colors ${
                 marketType === 'binary'
-                  ? 'bg-[var(--color-odd-main-light)] border-[var(--color-odd-main)] text-[var(--color-odd-main)]'
+                  ? 'bg-[var(--color-odd-main-light)] border-pro-blue text-pro-blue'
                   : 'hover:bg-gray-50'
               }`}
             >
@@ -109,7 +109,7 @@ export function MarketDetails({
               onClick={() => onMarketTypeChange('multiple')}
               className={`flex flex-col items-center gap-2 p-4 border rounded-lg transition-colors ${
                 marketType === 'multiple'
-                  ? 'bg-[var(--color-odd-main-light)] border-[var(--color-odd-main)] text-[var(--color-odd-main)]'
+                  ? 'bg-[var(--color-odd-main-light)] border-pro-blue text-pro-blue'
                   : 'hover:bg-gray-50'
               }`}
             >
@@ -220,7 +220,7 @@ export function MarketDetails({
                       <button
                         type="button"
                         onClick={onAddOutcome}
-                        className="p-2 text-gray-400 hover:text-[var(--color-odd-main)] rounded-lg transition-colors"
+                        className="p-2 text-gray-400 hover:text-pro-blue rounded-lg transition-colors"
                       >
                         <svg
                           width="20"

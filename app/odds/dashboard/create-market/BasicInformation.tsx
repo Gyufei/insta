@@ -120,7 +120,7 @@ export function BasicInformation({
                 disabled={!selectedCategories.includes(category) && selectedCategories.length >= 3}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                   selectedCategories.includes(category)
-                    ? 'bg-[var(--color-odd-main-light)] text-[var(--color-odd-main)] border border-[var(--color-odd-main)]'
+                    ? 'bg-[var(--color-odd-main-light)] text-pro-blue border border-pro-blue'
                     : selectedCategories.length >= 3
                       ? 'bg-gray-50 text-gray-400 cursor-not-allowed'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'

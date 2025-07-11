@@ -37,7 +37,7 @@ export function ResolutionRules({
               type="button"
               className={`flex flex-col items-center gap-2 p-4 border rounded-lg transition-colors ${
                 resolutionType === 'date'
-                  ? 'bg-[var(--color-odd-main-light)] border-[var(--color-odd-main)] text-[var(--color-odd-main)]'
+                  ? 'bg-[var(--color-odd-main-light)] border-pro-blue text-pro-blue'
                   : 'hover:bg-gray-50'
               }`}
               onClick={() => onResolutionTypeChange('date')}
@@ -49,7 +49,7 @@ export function ResolutionRules({
               type="button"
               className={`flex flex-col items-center gap-2 p-4 border rounded-lg transition-colors ${
                 resolutionType === 'event'
-                  ? 'bg-[var(--color-odd-main-light)] border-[var(--color-odd-main)] text-[var(--color-odd-main)]'
+                  ? 'bg-[var(--color-odd-main-light)] border-pro-blue text-pro-blue'
                   : 'hover:bg-gray-50'
               }`}
               onClick={() => onResolutionTypeChange('event')}
@@ -92,7 +92,7 @@ export function ResolutionRules({
               type="button"
               className={`flex items-center justify-center gap-2 px-4 py-3 border rounded-lg transition-colors ${
                 resolutionSource === 'chainlink'
-                  ? 'bg-[var(--color-odd-main-light)] border-[var(--color-odd-main)] text-[var(--color-odd-main)] hover:bg-[var(--color-odd-main-light)]'
+                  ? 'bg-[var(--color-odd-main-light)] border-pro-blue text-pro-blue hover:bg-[var(--color-odd-main-light)]'
                   : 'hover:bg-gray-50'
               }`}
               onClick={() => onResolutionSourceChange('chainlink')}
@@ -103,7 +103,7 @@ export function ResolutionRules({
               type="button"
               className={`flex items-center justify-center gap-2 px-4 py-3 border rounded-lg transition-colors ${
                 resolutionSource === 'uma'
-                  ? 'bg-[var(--color-odd-main-light)] border-[var(--color-odd-main)] text-[var(--color-odd-main)] hover:bg-[var(--color-odd-main-light)]'
+                  ? 'bg-[var(--color-odd-main-light)] border-pro-blue text-pro-blue hover:bg-[var(--color-odd-main-light)]'
                   : 'hover:bg-gray-50'
               }`}
               onClick={() => onResolutionSourceChange('uma')}

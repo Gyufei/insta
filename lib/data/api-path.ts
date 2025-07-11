@@ -9,6 +9,23 @@ const OddsDevHost = 'https://preview-odds-api.tadle.com';
 export const ApiHost = isProduction ? ProdHost : DevHost;
 export const OddsApiHost = isProduction ? OddsProdHost : OddsDevHost;
 
+export function WithCDN(path: string) {
+  const prodCDN = `https://cdn.tadle.com`;
+  const devCDN = `https://preview-cdn.tadle.com`;
+  const cdn = isProduction ? prodCDN : devCDN;
+  return `${cdn}${path}`;
+}
+
+export function WithProjectImgCDN(path: string, chain: string) {
+  const goPath = path.endsWith('.png') ? path : `${path}.png`;
+  return WithCDN(`/${chain}/images/project/${goPath}`);
+}
+
+export function WithPointImgCDN(path: string, chain: string) {
+  const goPath = path.endsWith('.png') ? path : `${path}.png`;
+  return WithCDN(`/${chain}/images/point/${goPath}`);
+}
+
 export const ApiPath = {
   account: `${ApiHost}/account/sandbox_account`,
   createAccount: `${ApiHost}/account/create_sandbox_account`,
@@ -97,4 +114,7 @@ export const ApiPath = {
   badgeAllowance: `${ApiHost}/badge/allowance`,
   badgePurchase: `${ApiHost}/badge/purchase`,
   badgeClaim: `${ApiHost}/badge/claim`,
+
+  c2cMarketplaces: `${ApiHost}/c2c/markets`,
+  c2cSalesVolume: `${ApiHost}/c2c/market_place/sales_volume_history`,
 };

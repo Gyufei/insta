@@ -275,7 +275,7 @@ export default function CreateMarketPage() {
           type="button"
           onClick={handleCreateMarket}
           disabled={isSubmitting}
-          className={`w-full py-4 bg-[var(--color-odd-main)] text-white text-lg font-medium rounded-lg hover:bg-[var(--color-odd-main-hover)] ${
+          className={`w-full py-4 bg-pro-blue text-white text-lg font-medium rounded-lg hover:bg-[var(--color-odd-main-hover)] ${
             isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >

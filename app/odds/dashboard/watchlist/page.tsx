@@ -119,7 +119,7 @@ export default function Watchlist() {
                   <div className="col-span-6 flex items-center gap-3 min-w-0">
                     <Link
                       href={`/odds/market/${market.id}`}
-                      className="flex items-center gap-3 min-w-0 hover:text-[var(--color-odd-main)]"
+                      className="flex items-center gap-3 min-w-0 hover:text-pro-blue"
                     >
                       <Image
                         src={market.imageUrl}

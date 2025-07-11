@@ -264,7 +264,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                       onClick={() => setSelectedTimeframe(timeframe)}
                       className={`px-3 py-1 text-sm rounded-full transition-colors ${
                         selectedTimeframe === timeframe
-                          ? 'bg-[var(--color-odd-main)] text-[var(--color-button-text)]'
+                          ? 'bg-pro-blue text-[var(--color-button-text)]'
                           : 'bg-gray-100 hover:bg-gray-200'
                       }`}
                     >
@@ -455,7 +455,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                             key={outcome}
                             className={`w-full px-4 py-2 text-left hover:bg-gray-50 ${
                               outcome === selectedOutcomeFilter
-                                ? 'text-[var(--color-odd-main)]'
+                                ? 'text-pro-blue'
                                 : 'text-gray-900'
                             }`}
                             onClick={() => {
@@ -482,7 +482,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                             key={outcome}
                             className={`w-full px-4 py-2 text-left hover:bg-gray-50 ${
                               outcome === selectedOutcomeFilter
-                                ? 'text-[var(--color-odd-main)]'
+                                ? 'text-pro-blue'
                                 : 'text-gray-900'
                             }`}
                             onClick={() => {

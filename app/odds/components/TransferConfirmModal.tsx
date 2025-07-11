@@ -104,7 +104,7 @@ export default function TransferConfirmModal({
             className={`w-full py-4 text-white text-lg font-medium rounded-lg ${
               !amount || !!error
                 ? "bg-gray-300 cursor-not-allowed"
-                : "bg-[var(--color-odd-main)] hover:bg-[var(--color-odd-main-hover)]"
+                : "bg-pro-blue hover:bg-[var(--color-odd-main-hover)]"
             }`}
           >
             {isAwaitingConfirm

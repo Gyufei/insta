@@ -240,16 +240,16 @@ export function useMarketForm() {
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.currentTarget.classList.add('border-[var(--color-odd-main)]');
+    e.currentTarget.classList.add('border-pro-blue');
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.currentTarget.classList.remove('border-[var(--color-odd-main)]');
+    e.currentTarget.classList.remove('border-pro-blue');
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>, targetId: number) => {
     e.preventDefault();
-    e.currentTarget.classList.remove('border-[var(--color-odd-main)]');
+    e.currentTarget.classList.remove('border-pro-blue');
 
     if (draggedOutcome === null) return;
 

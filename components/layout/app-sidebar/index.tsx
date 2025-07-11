@@ -185,6 +185,11 @@ export default function AppSidebar() {
       label: 'Odds',
       icon: <Circle className="h-3 w-3" />,
     },
+    // {
+    //   href: '/c2c',
+    //   label: 'C2C',
+    //   icon: <Circle className="h-3 w-3" />,
+    // },
   ];
 
   const baseModulesItems = [
@@ -355,7 +360,10 @@ export default function AppSidebar() {
   }
 
   useEffect(() => {
-    if (prevPath !== pathname && isMobile && open) {
+    const isInsideOdd = prevPath.includes('/odds') && pathname.includes('/odds');
+    const isInsideC2C = prevPath.includes('/c2c') && pathname.includes('/c2c');
+
+    if (prevPath !== pathname && isMobile && open && !isInsideOdd && !isInsideC2C) {
       toggleSidebar();
     }
 

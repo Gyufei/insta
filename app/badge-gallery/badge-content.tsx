@@ -63,7 +63,7 @@ export function BadgeContent() {
     <div className="px-4 2xl:px-12">
       <BadgeTitle />
 
-      <div className="flex flex-col sm:flex-row gap-4 mt-6">
+      <div className="flex flex-col gap-4 mt-6">
         <SwapImg selectedName={selectedNftName} setSelectedName={handleClickImg} />
 
         <div className="mt-5 font-medium text-base leading-6">{selectedNft?.name}</div>

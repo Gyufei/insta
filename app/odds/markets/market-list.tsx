@@ -459,7 +459,7 @@ export default function MarketList() {
                         </div>
                         <Link
                           href={`/odds/market/${activity.market.id}`}
-                          className="text-sm text-gray-500 hover:text-[var(--color-odd-main)] block mt-1"
+                          className="text-sm text-gray-500 hover:text-pro-blue block mt-1"
                           style={{
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',

@@ -66,7 +66,7 @@ export default function SearchSuggestions({
             <div key={result.id} className="flex items-start gap-4 p-4 hover:bg-gray-50">
               <div className="flex-1 min-w-0">
                 <div
-                  className="font-medium text-gray-900 overflow-hidden mb-1 cursor-pointer hover:text-[var(--color-odd-main)]"
+                  className="font-medium text-gray-900 overflow-hidden mb-1 cursor-pointer hover:text-pro-blue"
                   onClick={() => handleMarketClick(result.id)}
                 >
                   <div className="whitespace-nowrap hover:animate-marquee">{result.title}</div>
