@@ -7,23 +7,23 @@ import { cn } from '@/lib/utils';
 export default function BalanceFooterSocial({ className }: { className?: string }) {
   // 常量定义
   const SOCIAL_LINKS = [
-    { href: '', src: '/icons/mail.svg', hoverSrc: '/icons/mail-hover.svg' },
+    { href: 'mailto:support@tadle.com', src: '/icons/mail.svg', hoverSrc: '/icons/mail-hover.svg' },
     {
-      href: 'https://twitter.com/instadapp',
+      href: 'https://x.com/tadle_com',
       src: '/icons/twitter.svg',
       hoverSrc: '/icons/twitter-hover.svg',
     },
     {
-      href: 'https://discord.gg/instadapp',
+      href: 'https://discord.com/invite/nUjeqvDm24',
       src: '/icons/discord.svg',
       hoverSrc: '/icons/discord-hover.svg',
     },
     {
-      href: 'https://docs.instadapp.io',
+      href: 'https://t.me/tadlecom',
       src: '/icons/telegram.svg',
       hoverSrc: '/icons/telegram-hover.svg',
     },
-    { href: '/', src: '/icons/setting-two.svg', hoverSrc: '/icons/setting-two-hover.svg' },
+    // { href: '/', src: '/icons/setting-two.svg', hoverSrc: '/icons/setting-two-hover.svg' },
   ];
 
   return (
