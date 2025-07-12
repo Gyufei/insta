@@ -54,7 +54,7 @@ export function useCheckAllowance(checkName: 'badge' | 'tokenStation', tokenName
   async function handleApprove() {
     setIsApproving(true);
     try {
-      const res = await send(txParams as ITxResponse);
+      const res = await send({ tx_data: txParams } as unknown as ITxResponse);
       refetch();
       setIsApproving(false);
       return res;
