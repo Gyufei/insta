@@ -97,16 +97,16 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
     }
 
     if (chainId !== NetworkConfigs.base.id) {
-      setErrorData({
-        showError: true,
-        errorMessage: 'Please switch to Base network to buy badge',
-      });
       switchNetwork(NetworkConfigs.base);
       return;
     }
   }, [address, chainId]);
 
   function handlePay() {
+    if (chainId !== NetworkConfigs.base.id) {
+      switchNetwork(NetworkConfigs.base);
+    }
+
     if (shouldApprove) {
       handleApprove();
       return;

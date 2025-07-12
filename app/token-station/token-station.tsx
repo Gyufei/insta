@@ -160,7 +160,10 @@ export function TokenStation() {
   }
 
   function handleSwap() {
-    console.log('handleSwap');
+    if (chainId !== NetworkConfigs.eth.id) {
+      switchNetwork(NetworkConfigs.eth);
+    }
+
     if (Number(fromAmount) > Number(fromBalance)) {
       toast.error('Insufficient balance');
       return;
