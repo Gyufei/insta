@@ -27,8 +27,7 @@ export function useBadgeWalletNfts() {
   return createQueryHook<IAccountNft>(
     ApiPath.badgeWalletNft.replace(
       '{wallet}',
-      '0x3a69f8E93aFC0F803dc6c25dBBf6B0af9b11de94'
-      //address ?? ''
+      address ?? ''
     ),
     () => ['badge', 'wallet', 'nfts', address ?? ''],
     (url) => {

@@ -39,7 +39,8 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
     }
 
     const nextClaimDayNum = userBadgeData ? userBadgeData?.claimInfo.last_claim_day : 0;
-    const nextClaimDay = userBadgeData ? (Number(nextClaimDayNum) + 1) * 60 * 60 * 24 * 1000 : '';
+    const nextClaimDay =
+      Number(nextClaimDayNum) > 0 ? (Number(nextClaimDayNum) + 1) * 60 * 60 * 24 * 1000 : '';
 
     if (!nextClaimDay || nextClaimDay < Date.now()) {
       return '-';
