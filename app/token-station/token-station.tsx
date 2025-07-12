@@ -385,9 +385,8 @@ export function TokenStation() {
                     <span>Topping up...</span>
                   </span>
                 ) : (
-                  'Top-up ETH'
-                )}{' '}
-                &gt;&gt;
+                  <span>Top-up ETH &gt;&gt;</span>
+                )}
               </span>
             )}
           </Button>
