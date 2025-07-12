@@ -39,8 +39,6 @@ export function useGetWalletBalance(
   const balanceBig = isNative ? nativeBalanceBig : tokenBalanceBig;
   const isBalancePending = isNative ? !!isNativeBalancePending : !!isTokenBalancePending;
 
-  console.log('balance', nativeBalance, tokenBalance, isNative);
-
   return {
     balance,
     balanceBig,
