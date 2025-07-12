@@ -15,6 +15,7 @@ interface BalanceResult {
 export function useGetWalletBalance(
   chainId: number,
   tokenAddress: string,
+  tokens: { address: string; decimals: number }[],
   enableQuery = true
 ): BalanceResult {
   const isNative = tokenAddress === DEFAULT_NATIVE_ADDRESS;
@@ -29,7 +30,7 @@ export function useGetWalletBalance(
     balance: tokenBalance,
     balanceBig: tokenBalanceBig,
     isPending: isTokenBalancePending,
-  } = useWalletTokenBalance(chainId, tokenAddress, !isNative && enableQuery);
+  } = useWalletTokenBalance(chainId, tokenAddress, tokens, !isNative && enableQuery);
 
   const balance = isNative
     ? utils.roundResult(nativeBalance, 4)
@@ -37,6 +38,8 @@ export function useGetWalletBalance(
 
   const balanceBig = isNative ? nativeBalanceBig : tokenBalanceBig;
   const isBalancePending = isNative ? !!isNativeBalancePending : !!isTokenBalancePending;
+
+  console.log('balance', nativeBalance, tokenBalance, isNative);
 
   return {
     balance,

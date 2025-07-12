@@ -50,12 +50,14 @@ export function TokenStation() {
 
   const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetWalletBalance(
     NetworkConfigs.eth.id,
-    tokenFrom.address
+    tokenFrom.address,
+    [...STATION_FROM_TOKENS_ETH, ...STATION_TO_TOKENS]
   );
 
   const { balance: toBalance, isBalancePending: isToBalancePending } = useGetWalletBalance(
     NetworkConfigs.monadTestnet.id,
-    tokenTo.address
+    tokenTo.address,
+    [...STATION_FROM_TOKENS_ETH, ...STATION_TO_TOKENS]
   );
 
   const {

@@ -34,7 +34,8 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
 
   const { balance: tokenBalance, isBalancePending } = useGetWalletBalance(
     NetworkConfigs.base.id,
-    payTokenAddress
+    payTokenAddress,
+    BUY_TOKEN_CONFIG_BASE
   );
 
   const { data: priceData, isLoading: isPriceLoading } = useTokenStationPrice();

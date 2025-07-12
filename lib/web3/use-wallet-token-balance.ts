@@ -3,15 +3,17 @@ import { useAccount, useReadContract } from 'wagmi';
 
 import { useMemo } from 'react';
 
-import { STATION_FROM_TOKENS_ETH, STATION_TO_TOKENS } from '@/app/token-station/station-config';
-
 import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
 
 import { formatBig } from '@/lib/utils/number';
 
-export function useWalletTokenBalance(chainId: number, tokenAddress: string, enableQuery = true) {
+export function useWalletTokenBalance(
+  chainId: number,
+  tokenAddress: string,
+  tokens: { address: string; decimals: number }[],
+  enableQuery = true
+) {
   const { address } = useAccount();
-  const tokens = [...STATION_FROM_TOKENS_ETH, ...STATION_TO_TOKENS];
   const currentToken = tokens.find((token) => token.address === tokenAddress);
 
   const res = useReadContract({
