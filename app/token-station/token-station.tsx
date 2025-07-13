@@ -125,6 +125,43 @@ export function TokenStation() {
     return;
   }
 
+  function handleFromTokenChange(token: (typeof STATION_FROM_TOKENS_ETH)[number]) {
+    setTokenFrom(token);
+
+    if (fromAmount === '0') {
+      setToAmount('0');
+      return;
+    }
+
+    const fPrice = token.symbol === 'ETH' ? Number(ETHPrice) : 1;
+    const tPrice = tokenTo.symbol === 'MONAD' ? Number(monPrice) : 1;
+
+    const withSlippage = calculateToAmount(fromAmount, fPrice, tPrice);
+    setToAmount(withSlippage);
+  }
+
+  function calculateToAmount(value: string, fPrice: number | string, tPrice: number | string) {
+    const fromAmountPrice = multiply(value, String(fPrice));
+
+    // less than 1, return 0
+    if (Number(fromAmountPrice) < 1) {
+      return '0';
+    }
+
+    const processingFee = multiply(fromAmountPrice, String(0.01));
+
+    let swapFromExcludeFee;
+    if (Number(processingFee) < 1) {
+      swapFromExcludeFee = String(Number(fromAmountPrice) - 1);
+    } else {
+      swapFromExcludeFee = String(Number(fromAmountPrice) - Number(processingFee));
+    }
+
+    const amount = divide(swapFromExcludeFee, String(tPrice));
+    const withSlippage = utils.roundResult(multiply(amount, String(0.9)), 8);
+    return withSlippage;
+  }
+
   function handleFromChange(value: string) {
     setFromAmount(value);
 
@@ -133,8 +170,7 @@ export function TokenStation() {
       return;
     }
 
-    const amount = divide(multiply(value, String(fromPrice)), String(toPrice));
-    const withSlippage = utils.roundResult(multiply(amount, String(0.99)), 8);
+    const withSlippage = calculateToAmount(value, fromPrice, toPrice);
     setToAmount(withSlippage);
   }
 
@@ -146,9 +182,27 @@ export function TokenStation() {
       return;
     }
 
-    const amount = divide(multiply(value, String(toPrice)), String(fromPrice));
-    const withSlippage = utils.roundResult(multiply(amount, String(1.01)), 8);
+    const withSlippage = calcFromAmount(value, fromPrice, toPrice);
     setFromAmount(withSlippage.toString());
+  }
+
+  function calcFromAmount(value: string, fPrice: number | string, tPrice: number | string) {
+    if (Number(value) === 0) {
+      return '0';
+    }
+
+    const toAmountPrice = multiply(value, String(tPrice));
+    const shouldFromExcludeFee = multiply(toAmountPrice, String(1.1));
+
+    let swapFromReal;
+    if (divide(shouldFromExcludeFee, String(99)) < 1) {
+      swapFromReal = String(Number(shouldFromExcludeFee) + 1);
+    } else {
+      swapFromReal = String(divide(shouldFromExcludeFee, String(0.99)));
+    }
+
+    const withSlippage = utils.roundResult(divide(swapFromReal, String(fPrice)), 8);
+    return withSlippage;
   }
 
   function handleConfirm() {
@@ -170,6 +224,11 @@ export function TokenStation() {
     }
 
     swap({
+      //   wallet: '0x9C5265d6768a937AaF2C1951F42DAE4569c7AEC5',
+      //   token_name: 'USDT',
+      //   amount_in: '2',
+      //   min_amount_out: '0.8',
+      // });
       token_name: tokenFrom.symbol,
       amount_in: fromAmount,
       min_amount_out: toAmount,
@@ -197,7 +256,7 @@ export function TokenStation() {
                       (token) => token.symbol === value
                     );
                     if (selectedToken) {
-                      setTokenFrom(selectedToken);
+                      handleFromTokenChange(selectedToken);
                     }
                   }}
                 >
