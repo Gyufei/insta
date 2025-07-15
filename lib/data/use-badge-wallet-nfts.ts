@@ -8,6 +8,7 @@ export interface IClaimInfo {
   is_available: boolean;
   category: string;
   total_claim_count: string;
+  total_claim_amount: string;
   last_claim_count: string;
   last_claim_day: string;
 }

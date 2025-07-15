@@ -28,15 +28,22 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
-import { useTokenStationSwap } from '@/lib/data/use-token-station-swap';
+import { useTokenStationSwapBridge } from '@/lib/data/use-token-station-swap-bridge';
+import { useTokenStationSwapCCIP } from '@/lib/data/use-token-station-swap-ccip';
 import { cn, formatAddress } from '@/lib/utils';
 import { useGetWalletBalance } from '@/lib/web3/use-get-wallet-balance';
 
-import { STATION_FROM_TOKENS_ETH, STATION_TO_TOKENS } from './station-config';
+import {
+  STATION_FROM_TOKENS_BASE,
+  STATION_FROM_TOKENS_ETH,
+  STATION_TO_TOKENS,
+} from './station-config';
 
 export function TokenStation() {
   const { chainId, switchNetwork } = useAppKitNetwork();
   const { address } = useAccount();
+
+  const [mode, setMode] = useState<'CCIP' | 'BRIDGE'>('CCIP');
 
   const [tokenFrom, setTokenFrom] = useState(STATION_FROM_TOKENS_ETH[0]);
   const [tokenTo, setTokenTo] = useState(STATION_TO_TOKENS[0]);
@@ -46,18 +53,46 @@ export function TokenStation() {
 
   const [toAddress, setToAddress] = useState(address || '');
 
-  const [isCCIP, setIsCCIP] = useState(true);
+  const tokenFromAddress = useMemo(() => {
+    if (mode === 'BRIDGE') {
+      return (
+        STATION_FROM_TOKENS_ETH.find((token) => token.symbol === tokenFrom.symbol)?.address || ''
+      );
+    }
+
+    return (
+      STATION_FROM_TOKENS_BASE.find((token) => token.symbol === tokenFrom.symbol)?.address || ''
+    );
+  }, [mode, tokenFrom]);
+
+  const allTokens = useMemo(() => {
+    if (mode === 'BRIDGE') {
+      return [...STATION_FROM_TOKENS_BASE, ...STATION_TO_TOKENS];
+    }
+
+    return [...STATION_FROM_TOKENS_ETH, ...STATION_TO_TOKENS];
+  }, [mode]);
+
+  const currentNet = useMemo(() => {
+    if (chainId === NetworkConfigs.eth.id) {
+      return NetworkConfigs.eth;
+    } else if (chainId === NetworkConfigs.base.id) {
+      return NetworkConfigs.base;
+    }
+
+    return NetworkConfigs.eth;
+  }, [chainId]);
 
   const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetWalletBalance(
-    NetworkConfigs.eth.id,
-    tokenFrom.address,
-    [...STATION_FROM_TOKENS_ETH, ...STATION_TO_TOKENS]
+    currentNet.id,
+    tokenFromAddress,
+    allTokens
   );
 
   const { balance: toBalance, isBalancePending: isToBalancePending } = useGetWalletBalance(
     NetworkConfigs.monadTestnet.id,
     tokenTo.address,
-    [...STATION_FROM_TOKENS_ETH, ...STATION_TO_TOKENS]
+    [...STATION_TO_TOKENS]
   );
 
   const {
@@ -65,11 +100,17 @@ export function TokenStation() {
     isLoading: isFromAllowanceLoading,
     handleApprove: handleFromApprove,
     isApproving: isFromApproving,
-  } = useCheckAllowance('tokenStation', tokenFrom.symbol);
+  } = useCheckAllowance(
+    mode === 'CCIP' ? 'tokenStation-ccip' : 'tokenStation-bridge',
+    tokenFrom.symbol
+  );
 
   const { data: priceData } = useTokenStationPrice();
 
-  const { mutate: swap, isPending: isSwapPending } = useTokenStationSwap();
+  const { mutate: swapCCIP, isPending: isSwapPendingCCIP } = useTokenStationSwapCCIP();
+  const { mutate: swapBridge, isPending: isSwapPendingBridge } = useTokenStationSwapBridge();
+  const swap = mode === 'CCIP' ? swapCCIP : swapBridge;
+  const isSwapPending = mode === 'CCIP' ? isSwapPendingCCIP : isSwapPendingBridge;
 
   const ETHPrice = useMemo(() => {
     if (!priceData) return '0';
@@ -114,15 +155,37 @@ export function TokenStation() {
     return Number(fromAllowance) < Number(fromValue);
   }, [fromAllowance, fromValue]);
 
+  const [init, setInit] = useState(false);
   useEffect(() => {
-    if (chainId !== NetworkConfigs.eth.id && chainId === NetworkConfigs.base.id) {
-      switchNetwork(NetworkConfigs.eth);
+    if (init) {
+      return;
     }
-  }, [chainId, switchNetwork]);
+
+    if (chainId === NetworkConfigs.eth.id) {
+      setMode('CCIP');
+    } else if (chainId === NetworkConfigs.base.id) {
+      setMode('BRIDGE');
+    } else {
+      switchNetwork(NetworkConfigs.eth);
+      setMode('CCIP');
+    }
+
+    setInit(true);
+  }, [init, chainId]);
 
   function handleFromMax() {
     setFromAmount(fromBalance);
     return;
+  }
+
+  function handleChangeMode(mode: 'CCIP' | 'BRIDGE') {
+    if (mode === 'CCIP' && chainId !== NetworkConfigs.eth.id) {
+      switchNetwork(NetworkConfigs.eth);
+    } else if (mode === 'BRIDGE' && chainId !== NetworkConfigs.base.id) {
+      switchNetwork(NetworkConfigs.base);
+    }
+
+    setMode(mode);
   }
 
   function handleFromTokenChange(token: (typeof STATION_FROM_TOKENS_ETH)[number]) {
@@ -224,14 +287,11 @@ export function TokenStation() {
     }
 
     swap({
-      //   wallet: '0x9C5265d6768a937AaF2C1951F42DAE4569c7AEC5',
-      //   token_name: 'USDT',
-      //   amount_in: '2',
-      //   min_amount_out: '0.8',
-      // });
       token_name: tokenFrom.symbol,
       amount_in: fromAmount,
       min_amount_out: toAmount,
+      recipient: toAddress,
+      token_out_name: tokenTo.symbol,
     });
   }
 
@@ -411,13 +471,19 @@ export function TokenStation() {
             <Button
               className={cn(
                 'md:h-12 h-8 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8',
-                isCCIP && 'border-[#6E75F9] text-[#6E75F9]'
+                mode === 'CCIP' && 'border-[#6E75F9] text-[#6E75F9]'
               )}
-              onClick={() => setIsCCIP(!isCCIP)}
+              onClick={() => handleChangeMode('CCIP')}
             >
               CCIP
             </Button>
-            <Button className="md:h-12 h-8 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8">
+            <Button
+              className={cn(
+                'md:h-12 h-8 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8',
+                mode === 'BRIDGE' && 'border-[#6E75F9] text-[#6E75F9]'
+              )}
+              onClick={() => handleChangeMode('BRIDGE')}
+            >
               Bridge Router
             </Button>
           </div>

@@ -1,4 +1,4 @@
-import { divide, multiply, utils } from 'safebase';
+import { divide, utils } from 'safebase';
 
 import { useMemo } from 'react';
 
@@ -16,15 +16,13 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
 
   const total = selectedNft?.total_release_times || 0;
   const remainCount = isUserNft ? userBadgeData?.remainingClaims : 0;
-  const claimedCount = total - Number(remainCount);
 
-  const claimed =
-    isUserNft && remainCount
-      ? multiply(
-          String(selectedNft?.total_release_amount || 0),
-          divide(String(claimedCount), String(total))
-        )
-      : 0;
+  const claimed = isUserNft
+    ? utils.roundResult(
+        divide(String(userBadgeData?.claimInfo.total_claim_amount || 0), String(MONAD.decimals)),
+        3
+      )
+    : 0;
 
   const maxClaimable = selectedNft
     ? divide(

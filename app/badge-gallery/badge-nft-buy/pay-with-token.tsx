@@ -95,12 +95,21 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
         errorMessage: ERROR_MESSAGES.WALLET_NOT_CONNECTED,
       });
     }
+  }, [address, chainId]);
+
+  const [init, setInit] = useState(false);
+  useEffect(() => {
+    if (init) {
+      return;
+    }
 
     if (chainId !== NetworkConfigs.base.id) {
       switchNetwork(NetworkConfigs.base);
       return;
     }
-  }, [address, chainId]);
+
+    setInit(true);
+  }, [init, chainId]);
 
   function handlePay() {
     if (chainId !== NetworkConfigs.base.id) {

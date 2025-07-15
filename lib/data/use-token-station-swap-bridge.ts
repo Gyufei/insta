@@ -8,6 +8,8 @@ interface TokenStationSwapParams {
   token_name: string;
   amount_in: string;
   min_amount_out: string;
+  recipient: string;
+  token_out_name: string;
   [key: string]: unknown;
 }
 
@@ -15,18 +17,22 @@ interface TokenStationSwapArgs {
   token_name: string;
   amount_in: string;
   min_amount_out: string;
+  recipient: string;
+  token_out_name: string;
 }
 
-export function useTokenStationSwap() {
+export function useTokenStationSwapBridge() {
   return createMutationHook<TokenStationSwapParams>(
-    ApiPath.tokenStationSwap,
+    ApiPath.tokenStationSwapBridge,
     (args: unknown, address: string) => {
       const params = args as TokenStationSwapArgs;
       return {
         wallet: address,
         token_name: params.token_name,
+        recipient: params.recipient,
         amount_in: params.amount_in,
         min_amount_out: params.min_amount_out,
+        token_out_name: params.token_out_name,
       };
     },
     SUCCESS_MESSAGES.SWAP_SUCCESS,

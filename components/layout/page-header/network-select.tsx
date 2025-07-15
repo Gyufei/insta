@@ -5,7 +5,12 @@ import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { INetworkConfig, MONAD_TESTNET_NAME, NetworkConfigs } from '@/config/network-config';
+import {
+  BaseNetIds,
+  INetworkConfig,
+  MONAD_TESTNET_NAME,
+  NetworkConfigs,
+} from '@/config/network-config';
 
 import {
   Select,
@@ -15,6 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useIsMobile } from '@/lib/utils/use-mobile';
 
 const NETWORKS = [
@@ -30,8 +36,6 @@ const NETWORKS = [
   },
 ] as const;
 
-const BaseNetIds = [String(NetworkConfigs.base.id), String(NetworkConfigs.eth.id)] as string[];
-
 const BaseNetUrlPath = ['/token-station', '/badge-gallery'];
 
 export default function NetworkSelect() {
@@ -42,13 +46,21 @@ export default function NetworkSelect() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const { setCurrentComponent } = useSideDrawerStore();
+
   const isBaseNet = useMemo(() => BaseNetIds.includes(String(chainId)), [chainId]);
 
   const isMobile = useIsMobile();
 
   function handleSelectNetwork(net: INetworkConfig) {
-    if (BaseNetIds.includes(String(net.id) as unknown as (typeof BaseNetIds)[number])) {
+    if (
+      !isBaseNet &&
+      BaseNetIds.includes(String(net.id) as unknown as (typeof BaseNetIds)[number])
+    ) {
       localStorage.setItem('monad-before-page-url', pathname);
+      setCurrentComponent({
+        name: 'Balance',
+      });
     }
 
     if (String(chainId) !== String(net.id)) {
@@ -56,6 +68,15 @@ export default function NetworkSelect() {
       switchNetwork(net);
     }
   }
+
+  useEffect(() => {
+    if (chainId && selectedNetwork.id !== chainId) {
+      const shouldChain = NETWORKS.find((n) => String(n.id) === String(chainId));
+      if (shouldChain) {
+        setSelectedNetwork(shouldChain);
+      }
+    }
+  }, [chainId]);
 
   useEffect(() => {
     const isBasePath = BaseNetUrlPath.includes(pathname);

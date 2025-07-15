@@ -30,3 +30,8 @@ export const MONAD_TESTNET_NAME = 'Monad';
 export const DEFAULT_NATIVE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
+
+export const BaseNetIds = [
+  String(NetworkConfigs.base.id),
+  String(NetworkConfigs.eth.id),
+] as string[];

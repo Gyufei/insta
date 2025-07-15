@@ -10,10 +10,14 @@ import { ApiPath } from './api-path';
 
 const CheckUrlMap = {
   badge: `${ApiPath.badgeAllowance}`,
-  tokenStation: `${ApiPath.tokenStationAllowance}`,
+  'tokenStation-ccip': `${ApiPath.tokenStationAllowanceCCIP}`,
+  'tokenStation-bridge': `${ApiPath.tokenStationAllowanceBridge}`,
 };
 
-export function useCheckAllowance(checkName: 'badge' | 'tokenStation', tokenName: string) {
+export function useCheckAllowance(
+  checkName: 'badge' | 'tokenStation-ccip' | 'tokenStation-bridge',
+  tokenName: string
+) {
   const { address } = useAccount();
   const { send } = useSendTx();
 
@@ -38,7 +42,7 @@ export function useCheckAllowance(checkName: 'badge' | 'tokenStation', tokenName
   }
 
   const res = useQuery({
-    queryKey: ['check-allowance', tokenName, address],
+    queryKey: ['check-allowance', checkName, tokenName, address],
     queryFn: checkAllowance,
     enabled: !!tokenName && !!address,
   });

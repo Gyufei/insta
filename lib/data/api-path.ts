@@ -106,8 +106,10 @@ export const ApiPath = {
   oddsClaim: `${ApiHost}/odds/claim`,
 
   tokenStationPrice: `${ApiHost}/token_station/price`,
-  tokenStationSwap: `${ApiHost}/token_station/swap`,
-  tokenStationAllowance: `${ApiHost}/token_station/allowance`,
+  tokenStationSwapCCIP: `${ApiHost}/token_station/ccip/swap`,
+  tokenStationSwapBridge: `${ApiHost}/token_station/bridge/swap`,
+  tokenStationAllowanceCCIP: `${ApiHost}/token_station/ccip/allowance`,
+  tokenStationAllowanceBridge: `${ApiHost}/token_station/bridge/allowance`,
 
   badgeNfts: `${ApiHost}/badge/market/nfts`,
   badgeWalletNft: `${ApiHost}/badge/{wallet}/nft`,
