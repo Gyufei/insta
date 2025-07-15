@@ -277,6 +277,11 @@ export function TokenStation() {
   }
 
   function handleSwap() {
+    if (Number(toAmount) === 0) {
+      toast.error('There is not enough handling fee to swap');
+      return;
+    }
+
     if (chainId !== NetworkConfigs.eth.id) {
       switchNetwork(NetworkConfigs.eth);
     }
