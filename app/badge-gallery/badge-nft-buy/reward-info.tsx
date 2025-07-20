@@ -19,7 +19,10 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
 
   const claimed = isUserNft
     ? utils.roundResult(
-        divide(String(userBadgeData?.claimInfo.total_claim_amount || 0), String(MONAD.decimals)),
+        divide(
+          String(userBadgeData?.claimInfo.total_claim_amount || 0),
+          String(10 ** MONAD.decimals)
+        ),
         3
       )
     : 0;
