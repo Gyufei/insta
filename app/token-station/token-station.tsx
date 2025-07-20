@@ -54,7 +54,7 @@ export function TokenStation() {
   const [toAddress, setToAddress] = useState(address || '');
 
   const tokenFromAddress = useMemo(() => {
-    if (mode === 'BRIDGE') {
+    if (mode === 'CCIP') {
       return (
         STATION_FROM_TOKENS_ETH.find((token) => token.symbol === tokenFrom.symbol)?.address || ''
       );
@@ -66,22 +66,22 @@ export function TokenStation() {
   }, [mode, tokenFrom]);
 
   const allTokens = useMemo(() => {
-    if (mode === 'BRIDGE') {
-      return [...STATION_FROM_TOKENS_BASE, ...STATION_TO_TOKENS];
+    if (mode === 'CCIP') {
+      return [...STATION_FROM_TOKENS_ETH, ...STATION_TO_TOKENS];
     }
 
-    return [...STATION_FROM_TOKENS_ETH, ...STATION_TO_TOKENS];
+    return [...STATION_FROM_TOKENS_BASE, ...STATION_TO_TOKENS];
   }, [mode]);
 
   const currentNet = useMemo(() => {
-    if (chainId === NetworkConfigs.eth.id) {
+    if (mode === 'CCIP') {
       return NetworkConfigs.eth;
-    } else if (chainId === NetworkConfigs.base.id) {
+    } else if (mode === 'BRIDGE') {
       return NetworkConfigs.base;
     }
 
     return NetworkConfigs.eth;
-  }, [chainId]);
+  }, [mode]);
 
   const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetWalletBalance(
     currentNet.id,
@@ -155,6 +155,14 @@ export function TokenStation() {
     return Number(fromAllowance) < Number(fromValue);
   }, [fromAllowance, fromValue]);
 
+  const fromTokenOptions = useMemo(() => {
+    if (mode === 'CCIP') {
+      return STATION_FROM_TOKENS_ETH;
+    }
+
+    return STATION_FROM_TOKENS_BASE;
+  }, [mode]);
+
   const [init, setInit] = useState(false);
   useEffect(() => {
     if (init) {
@@ -181,22 +189,47 @@ export function TokenStation() {
   function handleChangeMode(mode: 'CCIP' | 'BRIDGE') {
     if (mode === 'CCIP' && chainId !== NetworkConfigs.eth.id) {
       switchNetwork(NetworkConfigs.eth);
+
+      const selectedToken = STATION_FROM_TOKENS_ETH.find(
+        (token) => token.symbol === tokenFrom.symbol
+      );
+
+      if (selectedToken) {
+        setTokenFrom(selectedToken as (typeof STATION_FROM_TOKENS_ETH)[number]);
+      }
     } else if (mode === 'BRIDGE' && chainId !== NetworkConfigs.base.id) {
       switchNetwork(NetworkConfigs.base);
+
+      const selectedToken = STATION_FROM_TOKENS_BASE.find(
+        (token) => token.symbol === tokenFrom.symbol
+      );
+
+      if (selectedToken) {
+        setTokenFrom(selectedToken as (typeof STATION_FROM_TOKENS_ETH)[number]);
+      }
     }
 
     setMode(mode);
   }
 
-  function handleFromTokenChange(token: (typeof STATION_FROM_TOKENS_ETH)[number]) {
-    setTokenFrom(token);
+  function handleFromTokenChange(tokenSymbol: string) {
+    const allToken = mode === 'CCIP' ? STATION_FROM_TOKENS_ETH : STATION_FROM_TOKENS_BASE;
+    const selectedToken = allToken.find((token) => token.symbol === tokenSymbol);
+
+    if (selectedToken) {
+      setTokenFrom(selectedToken as (typeof STATION_FROM_TOKENS_ETH)[number]);
+    }
+
+    if (!selectedToken) {
+      return;
+    }
 
     if (fromAmount === '0') {
       setToAmount('0');
       return;
     }
 
-    const fPrice = token.symbol === 'ETH' ? Number(ETHPrice) : 1;
+    const fPrice = selectedToken.symbol === 'ETH' ? Number(ETHPrice) : 1;
     const tPrice = tokenTo.symbol === 'MONAD' ? Number(monPrice) : 1;
 
     const withSlippage = calculateToAmount(fromAmount, fPrice, tPrice);
@@ -282,8 +315,10 @@ export function TokenStation() {
       return;
     }
 
-    if (chainId !== NetworkConfigs.eth.id) {
+    if (mode === 'CCIP' && chainId !== NetworkConfigs.eth.id) {
       switchNetwork(NetworkConfigs.eth);
+    } else if (mode === 'BRIDGE' && chainId !== NetworkConfigs.base.id) {
+      switchNetwork(NetworkConfigs.base);
     }
 
     if (Number(fromAmount) > Number(fromBalance)) {
@@ -317,12 +352,7 @@ export function TokenStation() {
                 <Select
                   value={tokenFrom.symbol}
                   onValueChange={(value) => {
-                    const selectedToken = STATION_FROM_TOKENS_ETH.find(
-                      (token) => token.symbol === value
-                    );
-                    if (selectedToken) {
-                      handleFromTokenChange(selectedToken);
-                    }
+                    handleFromTokenChange(value);
                   }}
                 >
                   <SelectTrigger className="w-full focus-visible:ring-0">
@@ -332,7 +362,7 @@ export function TokenStation() {
                     </div>
                   </SelectTrigger>
                   <SelectContent>
-                    {STATION_FROM_TOKENS_ETH.map((token) => (
+                    {fromTokenOptions.map((token) => (
                       <SelectItem key={token.symbol} value={token.symbol}>
                         <div className="flex items-center gap-2">
                           <Image src={token.logo} alt={token.symbol} width={20} height={20} />
@@ -349,8 +379,15 @@ export function TokenStation() {
               <div className="flex-1 flex flex-col gap-[10px]">
                 <div className="text-sm text-[#A5ADC6] font-normal">Network</div>
                 <div className="w-full h-9 flex justify-start items-center border-[#00000010] border gap-2 rounded-md px-2 py-1">
-                  <Image src={NetworkConfigs.eth.icon} alt="eth" width={20} height={20} />
-                  <span className="truncate text-nowrap">{NetworkConfigs.eth.name}</span>
+                  <Image
+                    src={mode === 'CCIP' ? NetworkConfigs.eth.icon : NetworkConfigs.base.icon}
+                    alt="eth"
+                    width={20}
+                    height={20}
+                  />
+                  <span className="truncate text-nowrap">
+                    {mode === 'CCIP' ? NetworkConfigs.eth.name : NetworkConfigs.base.name}
+                  </span>
                 </div>
               </div>
             </div>

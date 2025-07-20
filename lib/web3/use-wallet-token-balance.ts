@@ -28,6 +28,8 @@ export function useWalletTokenBalance(
     },
   });
 
+  console.log(tokenAddress, chainId, res);
+
   const { data: balanceData, isPending: isBalancePending } = res;
 
   const balanceBig = useMemo(() => {
