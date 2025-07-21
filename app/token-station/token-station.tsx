@@ -2,7 +2,7 @@
 
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { Loader } from 'lucide-react';
-import { divide, multiply, utils } from 'safebase';
+import { add, divide, multiply, subtract, utils } from 'safebase';
 import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
@@ -26,6 +26,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { isProduction } from '@/lib/data/api-path';
 import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useTokenStationSwapBridge } from '@/lib/data/use-token-station-swap-bridge';
@@ -38,6 +39,9 @@ import {
   STATION_FROM_TOKENS_ETH,
   STATION_TO_TOKENS,
 } from './station-config';
+
+const MIN_SWAP_FEE = isProduction ? 3 : 1;
+const PROCESSING_FEE = isProduction ? 0.02 : 0.01;
 
 export function TokenStation() {
   const { chainId, switchNetwork } = useAppKitNetwork();
@@ -240,17 +244,17 @@ export function TokenStation() {
     const fromAmountPrice = multiply(value, String(fPrice));
 
     // less than 1, return 0
-    if (Number(fromAmountPrice) < 1) {
+    if (Number(fromAmountPrice) < MIN_SWAP_FEE) {
       return '0';
     }
 
-    const processingFee = multiply(fromAmountPrice, String(0.01));
+    const processingFee = multiply(fromAmountPrice, String(PROCESSING_FEE));
 
     let swapFromExcludeFee;
-    if (Number(processingFee) < 1) {
-      swapFromExcludeFee = String(Number(fromAmountPrice) - 1);
+    if (Number(processingFee) < MIN_SWAP_FEE) {
+      swapFromExcludeFee = subtract(String(fromAmountPrice), String(MIN_SWAP_FEE));
     } else {
-      swapFromExcludeFee = String(Number(fromAmountPrice) - Number(processingFee));
+      swapFromExcludeFee = subtract(String(fromAmountPrice), String(processingFee));
     }
 
     const amount = divide(swapFromExcludeFee, String(tPrice));
@@ -291,10 +295,11 @@ export function TokenStation() {
     const shouldFromExcludeFee = multiply(toAmountPrice, String(1.1));
 
     let swapFromReal;
-    if (divide(shouldFromExcludeFee, String(99)) < 1) {
-      swapFromReal = String(Number(shouldFromExcludeFee) + 1);
+    const withFee = divide(shouldFromExcludeFee, String(1 - PROCESSING_FEE));
+    if (Number(withFee) < MIN_SWAP_FEE) {
+      swapFromReal = add(shouldFromExcludeFee, String(MIN_SWAP_FEE));
     } else {
-      swapFromReal = String(divide(shouldFromExcludeFee, String(0.99)));
+      swapFromReal = withFee;
     }
 
     const withSlippage = utils.roundResult(divide(swapFromReal, String(fPrice)), 8);
