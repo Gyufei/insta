@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 
 import Link from 'next/link';
 
+import { OddsApiHost } from '@/lib/data/api-path';
+
 import { useOddsUserInfo } from '../../common/use-user-info';
 import { BasicInformation } from './BasicInformation';
 import { MarketDetails } from './MarketDetails';
@@ -179,7 +181,7 @@ export default function CreateMarketPage() {
       };
 
       // Create market
-      const responseData = await fetch('/market/create', {
+      const responseData = await fetch(`${OddsApiHost}/market/create`, {
         method: 'POST',
         body: JSON.stringify(marketData),
         headers: {
