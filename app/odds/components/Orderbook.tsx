@@ -112,8 +112,8 @@ export default function Orderbook({ marketId, outcomeIndex }: OrderbookProps) {
         {/* Spread and Last Price */}
         <div ref={spreadBoxRef} className="sticky z-10 px-2 py-4 bg-gray-50 border-y">
           <div className="flex items-center justify-between text-sm">
-            <div className="font-medium">Last: ${formatNumber(lastPrice)}</div>
-            <div className="text-gray-500">Spread: ${formatNumber(spread)}</div>
+            <div className="font-medium">Last: ${formatNumber(lastPrice || 0)}</div>
+            <div className="text-gray-500">Spread: ${formatNumber(spread || 0)}</div>
           </div>
         </div>
 
