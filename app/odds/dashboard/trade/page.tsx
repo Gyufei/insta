@@ -31,8 +31,6 @@ export default function Trade() {
 
   const orders = ordersData?.orders;
 
-  console.log(orders);
-
   function handleCancelOrder(orderId: string) {
     if (!userId) return;
 

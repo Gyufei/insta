@@ -1,7 +1,11 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 
 import { ApiPath } from '@/lib/data/api-path';
-import { createMutationHook } from '@/lib/data/helpers';
+import { Fetcher } from '@/lib/fetcher';
+import { ITxResponse } from '@/lib/model';
 
 import { useOddsUserInfo } from './use-user-info';
 
@@ -21,39 +25,78 @@ export interface ICancelOrderParams {
 export function useCloseOrder() {
   const { data: userInfo } = useOddsUserInfo();
   const userId = userInfo?.user_id;
+  const queryClient = useQueryClient();
 
-  return createMutationHook<ICloseOrderParams>(
-    ApiPath.oddsCloseOrder,
-    (args: unknown) => {
+  async function executeMutation(args: unknown) {
+    try {
       const params = args as ICloseOrderParams;
+      const url = ApiPath.oddsCloseOrder;
 
-      return {
-        user_id: userId || '',
-        order_id: params.order_id,
-      };
+      const res = await Fetcher<ITxResponse>(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId || '',
+          order_id: params.order_id,
+        }),
+      });
+
+      return res;
+    } catch (error) {
+      toast.error(ERROR_MESSAGES.ORDER_CLOSED_FAILED);
+      throw error;
+    }
+  }
+
+  const mutation = useMutation({
+    mutationFn: executeMutation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user', 'orders'] });
+      toast.success(SUCCESS_MESSAGES.ORDER_CLOSED_SUCCESS);
     },
-    SUCCESS_MESSAGES.ORDER_CLOSED_SUCCESS,
-    ERROR_MESSAGES.ORDER_CLOSED_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['user', 'orders'] }
-  )();
+  });
+
+  return mutation;
 }
 
 export function useCancelOrder() {
   const { data: userInfo } = useOddsUserInfo();
   const userId = userInfo?.user_id;
+  const queryClient = useQueryClient();
 
-  return createMutationHook<ICancelOrderParams>(
-    ApiPath.oddsCancelOrder,
-    (args: unknown) => {
+  async function executeMutation(args: unknown) {
+    try {
       const params = args as ICancelOrderParams;
-      return {
-        user_id: userId || '',
-        order_id: params.order_id,
-        signature: params.signature,
-      };
+      const url = ApiPath.oddsCancelOrder;
+
+      const res = await Fetcher<ITxResponse>(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId || '',
+          order_id: params.order_id,
+          signature: params.signature,
+        }),
+      });
+
+      return res;
+    } catch (error) {
+      toast.error(ERROR_MESSAGES.ORDER_CANCELLED_FAILED);
+      throw error;
+    }
+  }
+
+  const mutation = useMutation({
+    mutationFn: executeMutation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user', 'orders'] });
+      toast.success(SUCCESS_MESSAGES.ORDER_CANCELLED_SUCCESS);
     },
-    SUCCESS_MESSAGES.ORDER_CANCELLED_SUCCESS,
-    ERROR_MESSAGES.ORDER_CANCELLED_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['user', 'orders'] }
-  )();
+  });
+
+  return mutation;
 }
