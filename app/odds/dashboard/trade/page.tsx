@@ -31,6 +31,8 @@ export default function Trade() {
 
   const orders = ordersData?.orders;
 
+  console.log(orders);
+
   function handleCancelOrder(orderId: string) {
     if (!userId) return;
 
@@ -161,7 +163,7 @@ export default function Trade() {
               </div>
             ) : ordersError ? (
               <div className="py-8 text-center text-red-600">{ordersError?.message}</div>
-            ) : !!orders?.length ? (
+            ) : !orders?.length ? (
               <div className="py-8 text-center text-gray-500">No open orders found.</div>
             ) : (
               (orders || []).map((order) => (
