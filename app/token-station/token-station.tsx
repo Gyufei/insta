@@ -138,7 +138,7 @@ export function TokenStation() {
   }, [isFromIsETH, ETHPrice]);
 
   const toPrice = useMemo(() => {
-    if (tokenTo.symbol === 'MONAD') {
+    if (tokenTo.symbol === 'MON') {
       return monPrice;
     }
     return 1;
@@ -234,7 +234,7 @@ export function TokenStation() {
     }
 
     const fPrice = selectedToken.symbol === 'ETH' ? Number(ETHPrice) : 1;
-    const tPrice = tokenTo.symbol === 'MONAD' ? Number(monPrice) : 1;
+    const tPrice = tokenTo.symbol === 'MON' ? Number(monPrice) : 1;
 
     const withSlippage = calculateToAmount(fromAmount, fPrice, tPrice);
     setToAmount(withSlippage);
