@@ -1,5 +1,7 @@
 import { DEFAULT_NATIVE_ADDRESS } from '@/config/network-config';
 
+import { isProduction } from '@/lib/data/api-path';
+
 export interface IToken {
   name: string;
   symbol: string;
@@ -41,7 +43,7 @@ export const MonUSD = {
 };
 
 export const TokenPriceMap: Record<string, number> = {
-  MON: 0.00038,
-  aprMON: 0.00038,
-  gMON: 0.00038,
+  MON: isProduction ? 2 : 1,
+  aprMON: isProduction ? 2 : 1,
+  gMON: isProduction ? 2 : 1,
 };
