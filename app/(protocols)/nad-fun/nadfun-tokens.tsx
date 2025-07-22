@@ -1,15 +1,16 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-
+// import { Button } from '@/components/ui/button';
 import { IToken } from '@/config/tokens';
+
 import { useNadFunTokens } from '@/lib/data/use-nadfun-tokens';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
+
+// import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import { NadFunTokenList } from './nadfun-token-list';
 
 export function NadFunTokens() {
-  const { setCurrentComponent } = useSideDrawerStore();
+  // const { setCurrentComponent } = useSideDrawerStore();
   const { data: tokens, isLoading } = useNadFunTokens();
 
   const parseTokens = tokens?.map(
@@ -21,11 +22,11 @@ export function NadFunTokens() {
       }) as IToken & { balance?: string }
   );
 
-  function handleCreateToken() {
-    setCurrentComponent({
-      name: 'NadFunCreateToken',
-    });
-  }
+  // function handleCreateToken() {
+  //   setCurrentComponent({
+  //     name: 'NadFunCreateToken',
+  //   });
+  // }
 
   return (
     <>

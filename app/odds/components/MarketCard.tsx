@@ -75,7 +75,7 @@ export default function MarketCard({
         <div className="mt-4">
           <MarketTitle title={title} id={parseInt(id)} />
         </div>
-        <div className="h-[74px] overflow-y-auto no-scrollbar space-y-[5px] mb-4">
+        <div className="h-[78px] overflow-y-auto no-scrollbar space-y-[5px] mb-4">
           {outcomes.map((outcome, index) => (
             <div key={index} className="flex items-center justify-between h-[24px]">
               <span className="text-gray-700 text-[15px]">{outcome.name || 'Unknown'}</span>
