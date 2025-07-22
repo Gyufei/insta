@@ -92,7 +92,7 @@ export function useMarketForm() {
 
   // Handle title change
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value.trim().replace(/\s+/g, ' ');
+    const newTitle = e.target.value.replace(/\s+/g, ' ');
     setTitle(newTitle);
     setTitleErrors(validateTitle(newTitle));
     setStaticLink(generateStaticLink(newTitle));

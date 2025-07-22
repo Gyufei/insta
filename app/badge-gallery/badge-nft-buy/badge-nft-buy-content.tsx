@@ -27,13 +27,14 @@ export function BadgeNftBuyContent({
   }, [allNfts, nftName]);
 
   const { data: userBadgeData } = useBadgeWalletNfts();
+  const haveUserNft = userBadgeData?.nftInfo?.name;
   const isUserNft = userBadgeData?.nftInfo?.name === selectedNft?.name;
 
   return (
     <div className="w-full py-2">
       <BadgeList selectedNft={selectedNft} handleSelectNft={handleNftName} />
       <RewardInfo selectedNft={selectedNft!} />
-      {isUserNft ? <ClaimBtn /> : <PayWithToken selectedNft={selectedNft!} />}
+      {haveUserNft ? isUserNft ? <ClaimBtn /> : <></> : <PayWithToken selectedNft={selectedNft!} />}
     </div>
   );
 }

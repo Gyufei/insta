@@ -15,7 +15,7 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
   const isUserNft = selectedNft && userBadgeData?.nftInfo?.name === selectedNft?.name;
 
   const total = selectedNft?.total_release_times || 0;
-  const remainCount = isUserNft ? userBadgeData?.remainingClaims : 0;
+  const remainCount = isUserNft ? Number(userBadgeData?.remainingClaims) : total;
 
   const claimed = isUserNft
     ? utils.roundResult(
@@ -35,7 +35,7 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
     : 0;
 
   const nextClaimTime = useMemo(() => {
-    if (!isUserNft) {
+    if (!isUserNft || !Number(remainCount)) {
       return '-';
     }
 
@@ -62,7 +62,9 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
   }, [isUserNft, userBadgeData]);
 
   // 进度条百分比
-  const progress = utils.roundResult(divide(String(remainCount), String(total)), 2);
+  const progress = isUserNft
+    ? utils.roundResult(divide(String(Number(remainCount)), String(total)), 2)
+    : 1;
 
   return (
     <div className="flex flex-col border-y border-[#E6E6E6] py-6">
@@ -73,7 +75,7 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
         </span>
       </div>
 
-      <Progress className="" value={progress} />
+      <Progress className="" value={progress * 100} />
 
       <div className="flex flex-col gap-4 mt-5">
         <div className="flex justify-between">

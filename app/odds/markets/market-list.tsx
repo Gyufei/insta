@@ -108,7 +108,7 @@ export default function MarketList() {
         return {
           id: market.market_id?.toString() || '',
           title: market.title || '',
-          imageUrl: market.image_url || '/image/img_placeholder.png',
+          imageUrl: market.image_url || '/images/img_placeholder.png',
           volume: formattedVolume,
           outcomes: Array.isArray(market.outcomes)
             ? market.outcomes.map((outcome) => ({

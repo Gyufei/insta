@@ -18,6 +18,7 @@ export function useAccounts() {
   const { address } = useAccount();
   // console.log('fake', fake);
   // const address = '0x3a69f8E93aFC0F803dc6c25dBBf6B0af9b11de94';
+  // '0x3a69f8E93aFC0F803dc6c25dBBf6B0af9b11de94';
 
   async function getAccounts(): Promise<IAccountInfo[]> {
     if (!address) {

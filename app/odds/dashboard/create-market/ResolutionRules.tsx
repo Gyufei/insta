@@ -97,7 +97,7 @@ export function ResolutionRules({
               }`}
               onClick={() => onResolutionSourceChange('chainlink')}
             >
-              <Image src="/icons/chainlink_logo.svg" alt="Chainlink" width={16} height={16} />
+              <Image src="/icons/chainlink_logo.svg" alt="Chainlink" width={64} height={16} />
             </button>
             <button
               type="button"
@@ -108,7 +108,7 @@ export function ResolutionRules({
               }`}
               onClick={() => onResolutionSourceChange('uma')}
             >
-              <Image src="/icons/uma_logo.svg" alt="UMA" width={16} height={16} />
+              <Image src="/icons/uma_logo.svg" alt="UMA" width={64} height={16} />
             </button>
           </div>
         </div>
@@ -126,4 +126,4 @@ export function ResolutionRules({
       </div>
     </div>
   );
-} 
+}

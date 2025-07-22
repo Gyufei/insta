@@ -40,7 +40,7 @@ export default function Watchlist() {
         endDate: market.endDate || '',
         topOutcome: {
           name: market.outcomes?.[0]?.name || 'Unknown',
-          logo: market.outcomes?.[0]?.logo || '/image/img_placeholder.png',
+          logo: market.outcomes?.[0]?.logo || '/images/img_placeholder.png',
           probability: market.outcomes?.[0]?.probability?.toString() + '%' || '0%',
         },
       }))

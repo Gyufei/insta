@@ -65,7 +65,7 @@ export default function MarketCard({
   return (
     <div className="border rounded-lg overflow-hidden hover:shadow-none transition-shadow">
       <Image
-        src={imageUrl || '/image/img_placeholder.png'}
+        src={imageUrl || '/images/img_placeholder.png'}
         alt={title}
         width={300}
         height={108}
