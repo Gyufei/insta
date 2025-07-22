@@ -14,7 +14,6 @@ export type IAccountInfo = {
 };
 
 export function useAccounts() {
-  // TODO: Remove this once we have a way to get the address
   const { address } = useAccount();
   // console.log('fake', fake);
   // const address = '0x3a69f8E93aFC0F803dc6c25dBBf6B0af9b11de94';

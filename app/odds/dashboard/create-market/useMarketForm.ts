@@ -2,6 +2,8 @@ import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
+import { OddsApiHost } from '@/lib/data/api-path';
+
 interface Outcome {
   id: number;
   name: string;
@@ -160,17 +162,17 @@ export function useMarketForm() {
     formData.append('image', file);
 
     try {
-      const responseData = await fetch('/user/uploadImage', {
+      const responseData = await fetch(`${OddsApiHost}/user/uploadImage`, {
         method: 'POST',
         body: formData,
       });
       const response = await responseData.json();
 
-      if (!response?.url) {
+      if (!response?.data?.url) {
         throw new Error('Invalid response format');
       }
 
-      setThumbnail(response.url);
+      setThumbnail(response.data.url);
       toast.success('Market thumbnail uploaded successfully');
     } catch (err) {
       console.error('Upload error:', err);
@@ -193,7 +195,7 @@ export function useMarketForm() {
       const formData = new FormData();
       formData.append('image', file);
 
-      const responseData = await fetch('/user/uploadImage', {
+      const responseData = await fetch(`${OddsApiHost}/user/uploadImage`, {
         method: 'POST',
         body: formData,
       });
