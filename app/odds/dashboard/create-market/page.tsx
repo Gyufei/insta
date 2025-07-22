@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 import Link from 'next/link';
 
-import { OddsApiHost } from '@/lib/data/api-path';
+import { ApiPath } from '@/lib/data/api-path';
 
 import { useOddsUserInfo } from '../../common/use-user-info';
 import { BasicInformation } from './BasicInformation';
@@ -181,7 +181,7 @@ export default function CreateMarketPage() {
       };
 
       // Create market
-      const responseData = await fetch(`${OddsApiHost}/market/create`, {
+      const responseData = await fetch(ApiPath.oddsMarketCreate, {
         method: 'POST',
         body: JSON.stringify(marketData),
         headers: {
@@ -191,7 +191,9 @@ export default function CreateMarketPage() {
 
       const response = await responseData.json();
 
-      if (response.market_id && Number.isInteger(response.market_id)) {
+      const data = response.data;
+
+      if (data.market_id && Number.isInteger(data.market_id)) {
         toast.success('Market created successfully');
 
         // Navigate to the new market

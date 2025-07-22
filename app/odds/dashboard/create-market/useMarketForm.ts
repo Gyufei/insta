@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
-import { OddsApiHost } from '@/lib/data/api-path';
+import { ApiPath } from '@/lib/data/api-path';
 
 interface Outcome {
   id: number;
@@ -162,7 +162,7 @@ export function useMarketForm() {
     formData.append('image', file);
 
     try {
-      const responseData = await fetch(`${OddsApiHost}/user/uploadImage`, {
+      const responseData = await fetch(ApiPath.oddsUploadImage, {
         method: 'POST',
         body: formData,
       });
@@ -195,7 +195,7 @@ export function useMarketForm() {
       const formData = new FormData();
       formData.append('image', file);
 
-      const responseData = await fetch(`${OddsApiHost}/user/uploadImage`, {
+      const responseData = await fetch(ApiPath.oddsUploadImage, {
         method: 'POST',
         body: formData,
       });
