@@ -1,9 +1,11 @@
-import { ApiPath } from './api-path';
-import { Fetcher } from '../fetcher';
 import { useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
+
 import { useEffect, useMemo } from 'react';
+
+import { Fetcher } from '../fetcher';
 import { useAccountStore } from '../state/account';
+import { ApiPath } from './api-path';
 
 export type IAccountInfo = {
   id: string;
@@ -12,7 +14,10 @@ export type IAccountInfo = {
 };
 
 export function useAccounts() {
-  const { address } = useAccount();
+  // TODO: Remove this once we have a way to get the address
+  const { address: fake } = useAccount();
+  console.log('fake', fake);
+  const address = '0x3a69f8E93aFC0F803dc6c25dBBf6B0af9b11de94';
 
   async function getAccounts(): Promise<IAccountInfo[]> {
     if (!address) {

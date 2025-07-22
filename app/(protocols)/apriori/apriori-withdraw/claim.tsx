@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 
+import { APR_MONAD } from '@/config/tokens';
+
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { Separator } from '@/components/ui/separator';
 
-import { APR_MONAD } from '@/config/tokens';
 import { useAprioriClaim } from '@/lib/data/use-apriori-claim';
 import { useGetAprioriClaim } from '@/lib/data/use-get-apriori-claim';
 import { formatBig, formatNumber } from '@/lib/utils/number';
@@ -27,6 +28,27 @@ export function Claim() {
     if (!selectedClaim) return '0';
     return formatBig(String(selectedClaim.token_amount), aprMonToken?.decimals);
   }, [selectedClaim, aprMonToken]);
+
+  const waitingForClaim = useMemo(() => {
+    if (!selectedClaim) return false;
+    if (selectedClaim.status !== 'pending') return false;
+
+    const requestTime = new Date(selectedClaim.request_at * 1000);
+    const timeDiff = Date.now() - requestTime.getTime();
+    const tenMinutes = 10 * 60 * 1000;
+    if (timeDiff < tenMinutes) return true;
+
+    return false;
+  }, [selectedClaim]);
+
+  const canClaim = useMemo(() => {
+    if (!selectedClaim) return false;
+    if (canClaimAmount === '0') return false;
+    if (selectedClaim.status !== 'pending') return false;
+    if (waitingForClaim) return false;
+
+    return true;
+  }, [canClaimAmount, waitingForClaim, selectedClaim]);
 
   const handleClaim = () => {
     if (selectedRequestId) {
@@ -68,14 +90,18 @@ export function Claim() {
           <div className="text-gray-300-400 py-4 text-center">No request found</div>
         )}
       </div>
-      <Separator className='mt-4' />
+      <Separator className="mt-4" />
       <ActionButton
-        disabled={isClaimRecordsPending || canClaimAmount === '0' || !selectedRequestId}
+        disabled={isClaimRecordsPending || !canClaim}
         onClick={handleClaim}
         isPending={isClaiming}
         error={errorData}
       >
-        Claim {formatNumber(canClaimAmount)} MON
+        {selectedClaim?.status === 'completed'
+          ? 'Claimed'
+          : waitingForClaim
+            ? 'Waiting for claim'
+            : `Claim ${formatNumber(canClaimAmount)} MON`}
       </ActionButton>
     </>
   );
