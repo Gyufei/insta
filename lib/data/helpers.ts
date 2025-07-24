@@ -104,8 +104,24 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
         const txRes = await sendApiRequest<ITxResponse>(url.toString(), params);
         await handleTransaction(txRes, send, errorMessage);
       } catch (err) {
-        const errMsg = (err as Error).message || errorMessage;
-        const errDisplay = errMsg.length > 40 ? errMsg.slice(0, 40) + '...' : errMsg;
+        let errDisplay = (err as Error).message;
+        if (!errDisplay) {
+          toast.error(errorMessage);
+          throw err;
+        }
+
+        if (errDisplay.includes('error:')) {
+          errDisplay = errDisplay.split('error:')[1].trim();
+        }
+
+        if (errDisplay.includes('reverted:')) {
+          errDisplay = errDisplay.split('reverted:')[1].trim();
+        }
+
+        if (errDisplay.length > 60) {
+          errDisplay = errDisplay.slice(0, 60) + '...';
+        }
+
         toast.error(errDisplay);
         throw err;
       }

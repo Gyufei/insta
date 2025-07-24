@@ -8,6 +8,7 @@ import { APR_MONAD, G_MONAD, TokenPriceMap } from '@/config/tokens';
 import { WithLoading } from '@/components/common/with-loading';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+import { useSelectedAccount } from '@/lib/data/use-account';
 import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
@@ -15,7 +16,10 @@ import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { formatBig, formatNumber } from '@/lib/utils/number';
 
 export default function BalanceSection() {
-  const { data: balanceData, isPending: isPendingBalance } = useApiAccountTokenBalance();
+  const { data: accountInfo } = useSelectedAccount();
+  const account = accountInfo?.sandbox_account;
+
+  const { data: balanceData, isPending: isPendingBalance } = useApiAccountTokenBalance(true);
   const { data: priceData, isPending: isPendingPrice } = useTokenStationPrice();
 
   const { data: aprioriBalance, isPending: isPendingApr } = useAprioriBalance();
@@ -26,12 +30,17 @@ export default function BalanceSection() {
   const gMonBalance = formatBig(magmaBalance?.balance || '0');
   const gMonPrice = TokenPriceMap[G_MONAD.symbol];
 
-  const isPending = isPendingBalance || isPendingPrice || isPendingApr || isPendingMagma;
+  const isPending =
+    Boolean(account) && (isPendingBalance || isPendingPrice || isPendingApr || isPendingMagma);
 
   const ethPrice = priceData?.eth_price;
   const monPrice = priceData?.mon_price;
 
   const priceValue = useMemo(() => {
+    if (!account) {
+      return '0';
+    }
+
     let price = '0';
 
     if (!balanceData) {
@@ -65,7 +74,7 @@ export default function BalanceSection() {
     }
 
     return price;
-  }, [balanceData, monPrice, ethPrice, aprBalance, gMonBalance, aprPrice, gMonPrice]);
+  }, [balanceData, account, monPrice, ethPrice, aprBalance, gMonBalance, aprPrice, gMonPrice]);
 
   return (
     <div className="pl-2 mt-6 mb-5 flex w-full flex-shrink-0 flex-col items-start">

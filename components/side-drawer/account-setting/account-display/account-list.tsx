@@ -1,7 +1,11 @@
 'use client';
-import { AccountCard } from './account-card';
-import { WithLoading } from '@/components/common/with-loading';
+
 import { useAccountList } from '@/app/authority/use-account-list';
+
+import { WithLoading } from '@/components/common/with-loading';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+
+import { AccountCard } from './account-card';
 
 export function AccountList() {
   const {
@@ -10,6 +14,7 @@ export function AccountList() {
     isCreatePending: isPending,
     handleCreateAccount,
     handleToggleAccount: handleAccountClick,
+    tooLessGasForCreate,
   } = useAccountList();
 
   return (
@@ -22,13 +27,27 @@ export function AccountList() {
           onClick={() => handleAccountClick(account.sandbox_account)}
         />
       ))}
-      <button
-        disabled={isPending}
-        onClick={handleCreateAccount}
-        className="text-primary hover:border-blue hover:text-blue focus:border-blue focus:text-blue dark:text-primary-foreground dark:hover:text-blue flex h-8 w-full flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border border-gray-200 bg-primary-foreground text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
-      >
-        <WithLoading isLoading={!!isPending}>+ New</WithLoading>
-      </button>
+      {tooLessGasForCreate ? (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              disabled
+              className="text-primary hover:border-blue hover:text-blue focus:border-blue focus:text-blue dark:text-primary-foreground dark:hover:text-blue flex h-8 w-full flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border border-gray-200 bg-primary-foreground text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+            >
+              <WithLoading isLoading={!!isPending}>+ New</WithLoading>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>Insufficient Monad gas for create account</TooltipContent>
+        </Tooltip>
+      ) : (
+        <button
+          disabled={isPending}
+          onClick={handleCreateAccount}
+          className="text-primary hover:border-blue hover:text-blue focus:border-blue focus:text-blue dark:text-primary-foreground dark:hover:text-blue flex h-8 w-full flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border border-gray-200 bg-primary-foreground text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+        >
+          <WithLoading isLoading={!!isPending}>+ New</WithLoading>
+        </button>
+      )}
     </div>
   );
 }

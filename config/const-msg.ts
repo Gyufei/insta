@@ -32,6 +32,7 @@ export const ERROR_MESSAGES = {
   TRANSFER_TO_FUNDING_FAILED: 'Transfer to funding failed',
   BADGE_PURCHASE_FAILED: 'Badge purchase failed',
   INSUFFICIENT_BALANCE: 'Insufficient balance',
+  FAUCET_AIRDROP_FAILED: 'Faucet airdrop failed',
 } as const;
 
 export const SUCCESS_MESSAGES = {
@@ -57,4 +58,5 @@ export const SUCCESS_MESSAGES = {
   TRANSFER_TO_TRADING_SUCCESS: 'Transfer to trading successfully',
   TRANSFER_TO_FUNDING_SUCCESS: 'Transfer to funding successfully',
   BADGE_PURCHASE_SUCCESS: 'Badge purchased successfully',
+  FAUCET_AIRDROP_SUCCESS: 'Faucet airdrop successfully',
 } as const;

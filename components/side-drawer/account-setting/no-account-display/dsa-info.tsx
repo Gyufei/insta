@@ -3,9 +3,10 @@ import { useAccount } from 'wagmi';
 
 import Image from 'next/image';
 
-import { WithLoading } from '@/components/common/with-loading';
+import { useAccountList } from '@/app/authority/use-account-list';
 
-import { useCreateAccount } from '@/lib/data/use-create-account';
+import { WithLoading } from '@/components/common/with-loading';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function DSAInfo() {
   const features = [
@@ -17,12 +18,26 @@ export function DSAInfo() {
   ];
 
   const { address } = useAccount();
-  const { mutateAsync: createAccount, isPending } = useCreateAccount();
+  const { handleCreateAccount, isCreatePending, tooLessGasForCreate } = useAccountList();
 
-  async function handleCreateAccount() {
+  async function handleCreateAccountClick() {
     if (!address) return;
-    await createAccount(address);
+    await handleCreateAccount();
   }
+
+  const isDisabled = isCreatePending || !address || tooLessGasForCreate;
+
+  const button = (
+    <button
+      onClick={handleCreateAccountClick}
+      className="shadow-cta scale-xs flex flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-blue-500 px-4 py-2 text-sm leading-none font-semibold whitespace-nowrap text-primary-foreground duration-75 ease-out select-none focus:outline-none disabled:bg-blue-300 disabled:cursor-not-allowed dark:shadow-none"
+      style={{ minHeight: '24px' }}
+      disabled={isDisabled}
+    >
+      <WithLoading isLoading={!!isCreatePending} className="mr-2" />
+      Create DSA Account
+    </button>
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,15 +53,16 @@ export function DSAInfo() {
         height={190}
       />
 
-      <button
-        onClick={handleCreateAccount}
-        className="shadow-cta scale-xs flex flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-blue-500 px-4 py-2 text-sm leading-none font-semibold whitespace-nowrap text-primary-foreground duration-75 ease-out select-none focus:outline-none dark:shadow-none"
-        style={{ minHeight: '24px' }}
-        disabled={isPending || !address}
-      >
-        <WithLoading isLoading={!!isPending} className="mr-2" />
-        Create DSA Account
-      </button>
+      {tooLessGasForCreate ? (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>{button}</TooltipTrigger>
+            <TooltipContent>Insufficient Monad gas for create account</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : (
+        button
+      )}
 
       <div>
         <h3 className="text-gray-300 mb-6">

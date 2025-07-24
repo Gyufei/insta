@@ -41,6 +41,19 @@ export function FaucetContainer() {
     currentAccount?.sandbox_account || null
   );
 
+  const [isInit, setIsInit] = useState(false);
+
+  useEffect(() => {
+    if (isInit) {
+      return;
+    }
+
+    if (currentAccount) {
+      setSelectedAccount(currentAccount.sandbox_account);
+      setIsInit(true);
+    }
+  }, [currentAccount, isInit]);
+
   const { code, error, goTwitter, removeXVerifyCode } = useTwitterSign();
   const {
     mutate: saveXBind,

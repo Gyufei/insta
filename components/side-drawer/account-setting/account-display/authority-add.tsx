@@ -1,15 +1,23 @@
 'use client';
 
-import { useState } from 'react';
 import { toast } from 'sonner';
 import { isAddress } from 'viem';
-import { useCreateAuthority } from '@/lib/data/use-create-authority';
+
+import { useState } from 'react';
+
 import { ERROR_MESSAGES } from '@/config/const-msg';
+
 import { WithLoading } from '@/components/common/with-loading';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
+import { useSelectedAccount } from '@/lib/data/use-account';
+import { useCreateAuthority } from '@/lib/data/use-create-authority';
 
 export function AuthorityAdd() {
+  const { data: accountInfo } = useSelectedAccount();
+  const accountAddress = accountInfo?.sandbox_account;
+
   const { mutateAsync: createAuthority, isPending } = useCreateAuthority();
 
   const [isError, setIsError] = useState(false);
@@ -19,6 +27,11 @@ export function AuthorityAdd() {
     if (!isAddress(inputValue)) {
       toast.error(ERROR_MESSAGES.INVALID_ADDRESS);
       setIsError(true);
+      return;
+    }
+
+    if (!accountAddress) {
+      toast.error(ERROR_MESSAGES.ACCOUNT_NOT_CREATED);
       return;
     }
 

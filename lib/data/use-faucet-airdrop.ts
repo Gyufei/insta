@@ -24,8 +24,8 @@ export function useFaucetAirdrop() {
         sandbox_account,
       };
     },
-    SUCCESS_MESSAGES.DEPOSIT_SUCCESS,
-    ERROR_MESSAGES.DEPOSIT_FAILED,
+    SUCCESS_MESSAGES.FAUCET_AIRDROP_SUCCESS,
+    ERROR_MESSAGES.FAUCET_AIRDROP_FAILED,
     { checkAddress: true, checkAccount: true, refreshQueryKey: ['balance'] }
   )();
 }

@@ -27,13 +27,13 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { isProduction } from '@/lib/data/api-path';
+import { useApiWalletBalance } from '@/lib/data/use-api-wallet-balance';
 import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useTokenStationSwapBridge } from '@/lib/data/use-token-station-swap-bridge';
 import { useTokenStationSwapCCIP } from '@/lib/data/use-token-station-swap-ccip';
 import { cn, formatAddress } from '@/lib/utils';
 import { formatNumber } from '@/lib/utils/number';
-import { useApiWalletBalance } from '@/lib/data/use-api-wallet-balance';
 
 import {
   STATION_FROM_TOKENS_BASE,
@@ -47,6 +47,7 @@ const PROCESSING_FEE = isProduction ? 0.02 : 0.01;
 export function TokenStation() {
   const { chainId, switchNetwork } = useAppKitNetwork();
   const { address } = useAccount();
+  const prevAddressRef = useRef<string | undefined>(undefined);
 
   const [mode, setMode] = useState<'CCIP' | 'BRIDGE'>('CCIP');
 
@@ -57,6 +58,14 @@ export function TokenStation() {
   const [toAmount, setToAmount] = useState('0');
 
   const [toAddress, setToAddress] = useState(address || '');
+
+  useEffect(() => {
+    const prevAddress = prevAddressRef.current;
+    if (prevAddress && address && prevAddress !== address && toAddress === prevAddress) {
+      setToAddress(address);
+    }
+    prevAddressRef.current = address;
+  }, [address, toAddress]);
 
   const tokenFromAddress = useMemo(() => {
     if (mode === 'CCIP') {

@@ -21,7 +21,7 @@ const BaseTokenData = STATION_FROM_TOKENS_BASE;
 const EthTokenData = STATION_FROM_TOKENS_ETH;
 
 export default function TokenList() {
-  const { data: balanceData } = useApiAccountTokenBalance();
+  const { data: balanceData } = useApiAccountTokenBalance(true);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [MonadTokens, setMonadTokens] = useState<IToken[]>(MonadTokenData);

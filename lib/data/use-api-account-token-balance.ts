@@ -12,7 +12,7 @@ export interface IAccountTokenBalance {
   formattedBalance: string;
 }
 
-export function useApiAccountTokenBalance() {
+export function useApiAccountTokenBalance(withAccount = false) {
   const { address: wallet } = useAccount();
 
   return createQueryHook<IAccountTokenBalance[]>(
@@ -32,7 +32,7 @@ export function useApiAccountTokenBalance() {
       return url;
     },
     {
-      withAccount: false,
+      withAccount,
     }
   )();
 }

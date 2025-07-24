@@ -8,6 +8,8 @@ import { useSelectedAccount } from '@/lib/data/use-account';
 export function FullAccountAddress() {
   const { data: accountInfo } = useSelectedAccount();
 
+  if (!accountInfo?.sandbox_account) return null;
+
   return (
     <Card className="w-full flex-shrink-0">
       <CardContent className="flex flex-col justify-between px-4 sm:flex-row">
