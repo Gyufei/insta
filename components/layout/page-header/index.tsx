@@ -1,13 +1,9 @@
 'use client';
 
-import { useAppKit, useAppKitAccount, useAppKitNetwork, useDisconnect } from '@reown/appkit/react';
+import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 import { Power } from 'lucide-react';
 
-import { useMemo } from 'react';
-
 import Image from 'next/image';
-
-import { BaseNetIds } from '@/config/network-config';
 
 import { Button } from '@/components/ui/button';
 
@@ -27,9 +23,6 @@ export function PageHeader() {
   const { setIsOpen } = useSideDrawerStore();
   const isMobile = useIsMobile();
 
-  const { chainId } = useAppKitNetwork();
-  const isBaseNet = useMemo(() => BaseNetIds.includes(String(chainId)), [chainId]);
-
   function openWeb3Modal() {
     open();
   }
@@ -40,7 +33,7 @@ export function PageHeader() {
 
   const ConnectBtn = () =>
     isConnected ? (
-      <>{!isBaseNet && <AccountBtn />}</>
+      <AccountBtn />
     ) : (
       <Button
         variant="outline"

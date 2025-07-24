@@ -32,6 +32,7 @@ export const STATION_FROM_TOKENS_ETH = [
 
 export const STATION_FROM_TOKENS_BASE = [
   {
+    name: 'Eth',
     symbol: 'ETH',
     logo: '/icons/eth.svg',
     decimals: 18,

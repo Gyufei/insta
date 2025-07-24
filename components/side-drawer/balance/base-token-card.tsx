@@ -2,7 +2,7 @@ import { multiply } from 'safebase';
 
 import Image from 'next/image';
 
-import { IToken, TokenPriceMap } from '@/config/tokens';
+import { IToken } from '@/config/tokens';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,13 +14,23 @@ import { formatNumber } from '@/lib/utils/number';
 interface BaseTokenCardProps {
   token: IToken;
   balance: string;
+  price: string;
+  chain: string;
+  showTrade?: boolean;
   className?: string;
 }
 
-export function BaseTokenCard({ token, balance, className }: BaseTokenCardProps) {
+export function BaseTokenCard({
+  token,
+  balance,
+  price,
+  showTrade = true,
+  chain,
+  className,
+}: BaseTokenCardProps) {
   const { setCurrentComponent } = useSideDrawerStore();
 
-  const priceValue = multiply(balance, String(TokenPriceMap[token.symbol] || 0));
+  const priceValue = multiply(balance, String(price || 0));
 
   function handleTrade() {
     setCurrentComponent({ name: 'UniswapSwap', props: { token } });
@@ -31,7 +41,7 @@ export function BaseTokenCard({ token, balance, className }: BaseTokenCardProps)
       <CardContent className="flex justify-between items-center px-0">
         <div className="flex items-center">
           <div className="flex h-10 w-10 items-center justify-center dark:opacity-90">
-            <div className="flex max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full">
+            <div className="flex relative max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full">
               {token.logo ? (
                 <Image
                   width={40}
@@ -45,6 +55,9 @@ export function BaseTokenCard({ token, balance, className }: BaseTokenCardProps)
                   {token.symbol.toLowerCase()}
                 </div>
               )}
+              <div className="absolute top-0 bg-white -right-[2px] rounded-full">
+                <Image width={16} height={16} src={`/icons/${chain}.svg`} alt={chain} />
+              </div>
             </div>
           </div>
 
@@ -58,14 +71,16 @@ export function BaseTokenCard({ token, balance, className }: BaseTokenCardProps)
           </div>
         </div>
 
-        <Button
-          onClick={handleTrade}
-          variant="outline"
-          size="sm"
-          className="hover:border-pro-blue/20 cursor-pointer hover:bg-pro-blue/20 hover:text-pro-blue text-xs px-3 h-6"
-        >
-          Trade
-        </Button>
+        {showTrade && (
+          <Button
+            onClick={handleTrade}
+            variant="outline"
+            size="sm"
+            className="hover:border-pro-blue/20 cursor-pointer hover:bg-pro-blue/20 hover:text-pro-blue text-xs px-3 h-6"
+          >
+            Trade
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

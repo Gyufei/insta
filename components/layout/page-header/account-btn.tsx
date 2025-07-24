@@ -1,4 +1,9 @@
+import { useAppKitNetwork } from '@reown/appkit/react';
 import { useAccount } from 'wagmi';
+
+import { useMemo } from 'react';
+
+import { BaseNetIds } from '@/config/network-config';
 
 import { Button } from '@/components/ui/button';
 
@@ -10,11 +15,18 @@ export function AccountBtn() {
   const { data: accountInfo, isLoading } = useSelectedAccount();
   const account = accountInfo?.sandbox_account;
 
+  const { chainId } = useAppKitNetwork();
+  const isBaseNet = useMemo(() => BaseNetIds.includes(String(chainId)), [chainId]);
+
   const { setCurrentComponent } = useSideDrawerStore();
 
   function handleCreate() {
     if (!address) return;
     setCurrentComponent({ name: 'AccountSetting' });
+  }
+
+  if (isBaseNet && !account) {
+    return null;
   }
 
   return (

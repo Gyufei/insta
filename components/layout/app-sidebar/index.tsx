@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppKitNetwork } from '@reown/appkit/react';
-import { Circle, CircleUserRound, Codesandbox, Minus, Orbit, Plus, X } from 'lucide-react';
+import { CircleUserRound, Codesandbox, Minus, Plus, X } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
 
@@ -48,12 +48,14 @@ type MenuItem = {
   href: string;
   label: string;
   icon: React.ReactNode;
+  hoverIcon?: React.ReactNode;
 };
 
 type MenuGroup = {
   id: string;
   label: string;
   icon: React.ReactNode;
+  hoverIcon?: React.ReactNode;
   items: MenuItem[];
 };
 
@@ -68,8 +70,7 @@ function MenuItemLink({ item, isActive }: { item: MenuItem; isActive: boolean })
       href={item.href}
       className={cn(
         'flex p-[10px] relative items-center text-pro-gray overflow-visible rounded-md',
-        isActive && 'bg-white text-primary',
-        isHover && 'bg-white text-primary'
+        (isActive || isHover) && 'bg-white text-primary'
       )}
     >
       <div
@@ -78,7 +79,7 @@ function MenuItemLink({ item, isActive }: { item: MenuItem; isActive: boolean })
           isActive || isHover ? 'opacity-100' : 'opacity-0'
         )}
       />
-      {item.icon}
+      {isActive || isHover ? item.hoverIcon || item.icon : item.icon}
       <span className="ml-2 text-xs font-medium">{item.label}</span>
     </Link>
   );
@@ -89,6 +90,7 @@ function checkIsGroupActive(group: MenuGroup, pathname: string) {
 }
 
 const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: string }) => {
+  const [isHover, setIsHover] = useState(false);
   const isGroupActive = checkIsGroupActive(group, pathname);
 
   return (
@@ -97,12 +99,17 @@ const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: st
         <SidebarGroupLabel
           asChild
           className={cn(
-            'h-10 hover:text-primary hover:bg-white',
+            'h-10',
+            isHover && 'text-primary bg-white',
             isGroupActive ? 'text-primary bg-white/60' : 'text-pro-gray'
           )}
         >
-          <CollapsibleTrigger className={cn('flex w-full items-center')}>
-            {group.icon}
+          <CollapsibleTrigger
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
+            className={cn('flex w-full items-center')}
+          >
+            {isGroupActive ? group.hoverIcon || group.icon : group.icon}
             <span className="ml-2 text-sm font-medium">{group.label}</span>
             <Minus className="ml-auto h-5 w-5 transition-transform hidden group-data-[state=open]/collapsible:inline-block" />
             <Plus className="ml-auto h-5 w-5 transition-transform inline-block group-data-[state=open]/collapsible:hidden" />
@@ -114,7 +121,7 @@ const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: st
               {group.items.map((item) => (
                 <SidebarMenuSubItem key={item.href}>
                   <SidebarMenuSubButton className="relative" asChild>
-                    <MenuItemLink item={item} isActive={pathname === item.href} />
+                    <MenuItemLink item={item} isActive={pathname.startsWith(item.href)} />
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
               ))}
@@ -155,7 +162,7 @@ const CollapsedMenuGroup = ({
           {group.items.map((item) => (
             <DropdownMenuItem asChild key={item.href}>
               <Link href={item.href} className="flex items-center">
-                {item.icon}
+                {isGroupActive ? item.hoverIcon || item.icon : item.icon}
                 <span className="ml-2">{item.label}</span>
               </Link>
             </DropdownMenuItem>
@@ -177,13 +184,35 @@ export default function AppSidebar() {
   const { open, toggleSidebar } = useSidebar();
   const isMobile = useIsMobile();
 
-  const testnetItems = [{ href: '/faucet', label: 'Faucet', icon: <Orbit className="h-3 w-3" /> }];
+  const testnetItems = [
+    {
+      href: '/faucet',
+      label: 'Faucet',
+      icon: (
+        <Image
+          src="/icons/faucet-gray.svg"
+          alt="faucet"
+          width={12}
+          height={12}
+          className="h-3 w-3"
+        />
+      ),
+      hoverIcon: (
+        <Image src="/icons/faucet.svg" alt="faucet" width={12} height={12} className="h-3 w-3" />
+      ),
+    },
+  ];
 
   const monadModulesItems = [
     {
       href: '/odds',
       label: 'Odds',
-      icon: <Circle className="h-3 w-3" />,
+      icon: (
+        <Image src="/icons/odds-gray.svg" alt="odds" width={12} height={12} className="h-3 w-3" />
+      ),
+      hoverIcon: (
+        <Image src="/icons/odds.svg" alt="odds" width={12} height={12} className="h-3 w-3" />
+      ),
     },
     // {
     //   href: '/c2c',
@@ -196,12 +225,46 @@ export default function AppSidebar() {
     {
       href: '/badge-gallery',
       label: 'Badge Gallery',
-      icon: <Circle className="h-3 w-3" />,
+      icon: (
+        <Image
+          src="/icons/badge-gallery-gray.svg"
+          alt="badge-gallery"
+          width={12}
+          height={12}
+          className="h-3 w-3"
+        />
+      ),
+      hoverIcon: (
+        <Image
+          src="/icons/badge-gallery.svg"
+          alt="badge-gallery"
+          width={12}
+          height={12}
+          className="h-3 w-3"
+        />
+      ),
     },
     {
       href: '/token-station',
       label: 'Token Station',
-      icon: <Circle className="h-3 w-3" />,
+      icon: (
+        <Image
+          src="/icons/token-station-gray.svg"
+          alt="token-station"
+          width={12}
+          height={12}
+          className="h-3 w-3"
+        />
+      ),
+      hoverIcon: (
+        <Image
+          src="/icons/token-station.svg"
+          alt="token-station"
+          width={12}
+          height={12}
+          className="h-3 w-3"
+        />
+      ),
     },
   ];
 
@@ -276,19 +339,58 @@ export default function AppSidebar() {
     {
       id: 'protocols',
       label: 'Protocols',
-      icon: <Codesandbox className="h-5 w-5" />,
+      icon: (
+        <Image
+          src="/icons/protocols-gray.svg"
+          alt="protocol"
+          width={12}
+          height={12}
+          className="h-5 w-5"
+        />
+      ),
+      hoverIcon: (
+        <Image
+          src="/icons/protocols.svg"
+          alt="protocol"
+          width={12}
+          height={12}
+          className="h-5 w-5"
+        />
+      ),
       items: protocolItems,
     },
     {
       id: 'modules',
       label: 'Modules',
-      icon: <Codesandbox className="h-5 w-5" />,
+      icon: (
+        <Image
+          src="/icons/modules-gray.svg"
+          alt="modules"
+          width={12}
+          height={12}
+          className="h-5 w-5"
+        />
+      ),
+      hoverIcon: (
+        <Image src="/icons/modules.svg" alt="modules" width={12} height={12} className="h-5 w-5" />
+      ),
       items: monadModulesItems,
     },
     {
       id: 'testnet',
       label: 'Testnet',
-      icon: <Codesandbox className="h-5 w-5" />,
+      icon: (
+        <Image
+          src="/icons/testnet-gray.svg"
+          alt="testnet"
+          width={12}
+          height={12}
+          className="h-5 w-5"
+        />
+      ),
+      hoverIcon: (
+        <Image src="/icons/testnet.svg" alt="testnet" width={12} height={12} className="h-5 w-5" />
+      ),
       items: testnetItems,
     },
   ];
@@ -326,7 +428,24 @@ export default function AppSidebar() {
         {
           id: 'modules',
           label: 'Modules',
-          icon: <Codesandbox className="h-5 w-5" />,
+          icon: (
+            <Image
+              src="/icons/modules-gray.svg"
+              alt="modules"
+              width={12}
+              height={12}
+              className="h-5 w-5"
+            />
+          ),
+          hoverIcon: (
+            <Image
+              src="/icons/modules.svg"
+              alt="modules"
+              width={12}
+              height={12}
+              className="h-5 w-5"
+            />
+          ),
           items: baseModulesItems,
         },
       ];

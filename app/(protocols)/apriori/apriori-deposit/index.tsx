@@ -12,7 +12,7 @@ import { APR_MONAD, MONAD } from '@/config/tokens';
 import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';
-import { useAccountBalance } from '@/lib/web3/use-account-balance';
+import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 
 export function AprioriDeposit() {
   const monToken = MONAD;
@@ -21,7 +21,7 @@ export function AprioriDeposit() {
   const { setIsOpen } = useSideDrawerStore();
   const { mutate: deposit, isPending } = useAprioriDeposit();
 
-  const { balance, isPending: isBalancePending } = useAccountBalance();
+  const { balance, isPending: isBalancePending } = useApiMonadBalance();
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
   const { isMax, handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
 

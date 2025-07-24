@@ -177,7 +177,7 @@ export function FaucetContainer() {
         </Select>
       </div>
 
-      <p className="text-sm mt-2 text-primary/60 font-normal">(Maximum 1 request every 12 hours)</p>
+      <p className="text-sm mt-2 text-primary/60 font-normal">(Maximum 1 request every 24 hours)</p>
 
       <Button
         disabled={errorData.showError || isPending}

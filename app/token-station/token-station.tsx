@@ -32,7 +32,8 @@ import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useTokenStationSwapBridge } from '@/lib/data/use-token-station-swap-bridge';
 import { useTokenStationSwapCCIP } from '@/lib/data/use-token-station-swap-ccip';
 import { cn, formatAddress } from '@/lib/utils';
-import { useGetWalletBalance } from '@/lib/web3/use-get-wallet-balance';
+import { formatNumber } from '@/lib/utils/number';
+import { useApiWalletBalance } from '@/lib/data/use-api-wallet-balance';
 
 import {
   STATION_FROM_TOKENS_BASE,
@@ -69,14 +70,6 @@ export function TokenStation() {
     );
   }, [mode, tokenFrom]);
 
-  const allTokens = useMemo(() => {
-    if (mode === 'CCIP') {
-      return [...STATION_FROM_TOKENS_ETH, ...STATION_TO_TOKENS];
-    }
-
-    return [...STATION_FROM_TOKENS_BASE, ...STATION_TO_TOKENS];
-  }, [mode]);
-
   const currentNet = useMemo(() => {
     if (mode === 'CCIP') {
       return NetworkConfigs.eth;
@@ -87,16 +80,14 @@ export function TokenStation() {
     return NetworkConfigs.eth;
   }, [mode]);
 
-  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetWalletBalance(
+  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useApiWalletBalance(
     currentNet.id,
-    tokenFromAddress,
-    allTokens
+    tokenFromAddress
   );
 
-  const { balance: toBalance, isBalancePending: isToBalancePending } = useGetWalletBalance(
+  const { balance: toBalance, isBalancePending: isToBalancePending } = useApiWalletBalance(
     NetworkConfigs.monadTestnet.id,
-    tokenTo.address,
-    [...STATION_TO_TOKENS]
+    tokenTo.address
   );
 
   const {
@@ -405,7 +396,7 @@ export function TokenStation() {
                   {isFromBalancePending ? (
                     <Skeleton className="w-10 h-4" />
                   ) : (
-                    <span>{fromBalance}</span>
+                    <span>{formatNumber(fromBalance)}</span>
                   )}
                   <span
                     className="text-[#6E75F9] cursor-pointer ml-1 font-medium"
@@ -431,7 +422,7 @@ export function TokenStation() {
 
           <div className="flex justify-center items-center md:px-2 px-0 py-2 md:py-0 md:-mx-[20px] mx-0 -my-[20px] md:my-0 z-10">
             <div className="border border-[#ebebeb] rounded-md h-10 w-10 flex items-center justify-center bg-white md:rotate-0 rotate-90">
-              <Image src="/icons/switch.svg" alt="switch" width={20} height={20} />
+              <Image src="/icons/right-arrow.svg" alt="switch" width={20} height={20} />
             </div>
           </div>
 
@@ -497,7 +488,7 @@ export function TokenStation() {
                   {isToBalancePending ? (
                     <Skeleton className="w-10 h-4" />
                   ) : (
-                    <span>{toBalance}</span>
+                    <span>{formatNumber(toBalance)}</span>
                   )}
                 </span>
               </div>

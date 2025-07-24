@@ -16,7 +16,7 @@ import {
 import { useWithdraw } from '@/lib/data/use-withdraw';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';
-import { useAccountBalance } from '@/lib/web3/use-account-balance';
+import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 
 import { ActionButton } from '../common/action-button';
 import { SetMax } from '../common/set-max';
@@ -34,7 +34,7 @@ export function WithdrawToken() {
 
   const token = TOKENS.find((t) => t.address === selectedToken) || MONAD;
 
-  const { balance } = useAccountBalance();
+  const { balance } = useApiMonadBalance();
 
   const { mutate: withdraw, isPending } = useWithdraw();
 

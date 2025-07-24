@@ -43,7 +43,6 @@ export const MonUSD = {
 };
 
 export const TokenPriceMap: Record<string, number> = {
-  MON: isProduction ? 2 : 1,
   aprMON: isProduction ? 2 : 1,
   gMON: isProduction ? 2 : 1,
 };

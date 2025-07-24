@@ -7,6 +7,9 @@ import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
 
 import { formatBig } from '@/lib/utils/number';
 
+// current wallet address's token balance query use rpc
+// deprecated, use api query
+// but token use api query must be in list, so reserve this for future other token
 export function useWalletTokenBalance(
   chainId: number,
   tokenAddress: string,

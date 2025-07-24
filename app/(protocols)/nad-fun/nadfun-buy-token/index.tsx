@@ -13,7 +13,7 @@ import { useNadFunBuy } from '@/lib/data/use-nadfun-buy';
 import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { formatBig, parseBig } from '@/lib/utils/number';
-import { useAccountBalance } from '@/lib/web3/use-account-balance';
+import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 
 import { TokenHeader } from '../common/token-header';
 import { TokenInputSection } from '../common/token-input-section';
@@ -24,7 +24,7 @@ export function NadFunBuyToken() {
   const { currentComponent, setIsOpen } = useSideDrawerStore();
   const { token } = currentComponent?.props || { token: null };
 
-  const { balance } = useAccountBalance();
+  const { balance } = useApiMonadBalance();
   const { inputValue, btnDisabled, errorData, setErrorData, handleInputChange } =
     useTokenInput(balance);
   const { mutateAsync: buyToken, isPending } = useNadFunBuy();

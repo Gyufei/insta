@@ -1,7 +1,7 @@
 export const isPreview = process.env.NEXT_PUBLIC_IS_PREVIEW === '1';
 export const isProduction = process.env.NODE_ENV === 'production' && !isPreview;
 
-const ProdHost = 'https://api-sandbox.tadle.com'
+const ProdHost = 'https://api-sandbox.tadle.com';
 const DevHost = 'https://preview-sandbox-api.tadle.com';
 const OddsProdHost = 'https://preview-odds-api.tadle.com';
 const OddsDevHost = 'https://preview-odds-api.tadle.com';
@@ -36,6 +36,7 @@ export const ApiPath = {
   sendTx: `${ApiHost}/transaction/send`,
   faucetAirdrop: `${ApiHost}/airdrop/claim`,
   saveXBind: `${ApiHost}/x/bind`,
+  accountBalance: `${ApiHost}/account/token_balance`,
 
   aprioriInfo: `https://stake-api.apr.io/info`,
   aprioriBalance: `${ApiHost}/aprior/balance`,

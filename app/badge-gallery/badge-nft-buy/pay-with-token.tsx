@@ -17,7 +17,7 @@ import { useBadgePurchase } from '@/lib/data/use-badge-purchase';
 import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
 import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
-import { useGetWalletBalance } from '@/lib/web3/use-get-wallet-balance';
+import { useApiWalletBalance } from '@/lib/data/use-api-wallet-balance';
 
 import { BUY_TOKEN_CONFIG_BASE } from './buy-token-config';
 
@@ -32,10 +32,9 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
     return BUY_TOKEN_CONFIG_BASE.find((token) => token.symbol === payToken)?.address || '';
   }, [payToken]);
 
-  const { balance: tokenBalance, isBalancePending } = useGetWalletBalance(
+  const { balance: tokenBalance, isBalancePending } = useApiWalletBalance(
     NetworkConfigs.base.id,
-    payTokenAddress,
-    BUY_TOKEN_CONFIG_BASE
+    payTokenAddress
   );
 
   const { data: priceData, isLoading: isPriceLoading } = useTokenStationPrice();
