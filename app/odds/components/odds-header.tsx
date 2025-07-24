@@ -161,12 +161,12 @@ export default function OddsHeader() {
     <>
       {/* Desktop Header */}
       <header className="md:px-12 px-4">
-        <div className="flex-1 flex items-center justify-between gap-6 min-w-0">
+        <div className="flex-1 flex items-center justify-between md:gap-6 gap-2 min-w-0">
           <div className="flex-1 min-w-[200px] md:block hidden">
             <SearchInput {...searchInputProps} />
           </div>
 
-          <nav className="flex-none flex items-center gap-6 md:border-none border border-[#EBEBEB] rounded-[8px] p-1">
+          <nav className="flex-none flex items-center md:gap-6 gap-2 md:border-none border border-[#EBEBEB] rounded-[8px] p-1">
             <NavLink
               href="/odds/markets"
               label="Markets"

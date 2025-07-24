@@ -85,13 +85,13 @@ export function PageHeader() {
       >
         {isMobile ? (
           <>
-            <NetworkSelect />
+            <SidebarToggle />
 
             <div className="flex items-center gap-2">
               <ConnectBtn />
               <BalanceBtn />
+              <NetworkSelect />
               <DisconnectBtn />
-              <SidebarToggle />
             </div>
           </>
         ) : (

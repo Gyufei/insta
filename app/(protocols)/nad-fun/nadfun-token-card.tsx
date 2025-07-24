@@ -43,7 +43,7 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
                   alt={symbol}
                   width={48}
                   height={48}
-                  className="flex-grow rounded-full"
+                  className="flex-grow rounded-full h-12 w-12"
                 />
               </div>
             </div>
