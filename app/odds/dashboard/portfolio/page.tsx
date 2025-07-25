@@ -17,6 +17,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { NetworkConfigs } from '@/config/network-config';
 import { MonUSD } from '@/config/tokens';
 
 import { useSelectedAccount } from '@/lib/data/use-account';
@@ -39,7 +40,7 @@ export default function Portfolio() {
     balance: fundingBalance,
     isPending: isLoadingFundingBalance,
     refetch: refetchFundingBalance,
-  } = useAccountTokenBalance(MonUSD.address);
+  } = useAccountTokenBalance(NetworkConfigs.monadTestnet.id, MonUSD.address);
 
   const { data: tradingBalanceData } = useTradingBalance();
 
@@ -305,9 +306,7 @@ export default function Portfolio() {
                       height={40}
                       className="w-5 h-5 rounded-lg object-cover md:w-10 md:h-10"
                     />
-                    <div className="font-medium hover:text-pro-blue">
-                      {market.title}
-                    </div>
+                    <div className="font-medium hover:text-pro-blue">{market.title}</div>
                   </Link>
                 </div>
                 <div className="col-span-2">

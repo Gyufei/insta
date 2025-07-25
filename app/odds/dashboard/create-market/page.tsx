@@ -197,7 +197,7 @@ export default function CreateMarketPage() {
         toast.success('Market created successfully');
 
         // Navigate to the new market
-        window.location.href = `/odds/market/${response.market_id}`;
+        window.location.href = `/odds/market/${data.market_id}`;
       } else {
         throw new Error(response?.message || 'Failed to create market');
       }

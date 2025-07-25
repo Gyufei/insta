@@ -34,6 +34,7 @@ import { useTokenStationSwapBridge } from '@/lib/data/use-token-station-swap-bri
 import { useTokenStationSwapCCIP } from '@/lib/data/use-token-station-swap-ccip';
 import { cn, formatAddress } from '@/lib/utils';
 import { formatNumber } from '@/lib/utils/number';
+import { useGetAddressBalance } from '@/lib/web3/use-get-address-balance';
 
 import {
   STATION_FROM_TOKENS_BASE,
@@ -94,9 +95,11 @@ export function TokenStation() {
     tokenFromAddress
   );
 
-  const { balance: toBalance, isBalancePending: isToBalancePending } = useApiWalletBalance(
+  const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAddressBalance(
     NetworkConfigs.monadTestnet.id,
-    tokenTo.address
+    toAddress,
+    tokenTo.address,
+    STATION_TO_TOKENS
   );
 
   const {
@@ -514,7 +517,7 @@ export function TokenStation() {
         </div>
 
         <div className="flex md:flex-row flex-col md:justify-between md:items-center mt-5 gap-2 md:gap-0">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between md:justify-start gap-3">
             <Button
               className={cn(
                 'md:h-12 h-8 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8',
@@ -583,6 +586,10 @@ function AddressEditBlock({
 
   const [inputValue, setInputValue] = useState(address);
   const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    setInputValue(address);
+  }, [address]);
 
   function handleEdit() {
     setIsEdit(true);
