@@ -576,7 +576,7 @@ export function TokenStation() {
                     <span>Topping up...</span>
                   </span>
                 ) : (
-                  <span>Top-up ETH &gt;&gt;</span>
+                  <span>Top-up &gt;&gt;</span>
                 )}
               </span>
             )}

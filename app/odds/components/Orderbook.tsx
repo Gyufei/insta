@@ -2,6 +2,7 @@ import { toast } from 'sonner';
 
 import React, { useEffect, useRef } from 'react';
 
+import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/utils/number';
 
 import { useMarketOrderbook } from '../common/use-market-orderbook';
@@ -110,12 +111,28 @@ export default function Orderbook({ marketId, outcomeIndex }: OrderbookProps) {
         </div>
 
         {/* Spread and Last Price */}
-        <div ref={spreadBoxRef} className="sticky z-10 px-2 py-4 bg-gray-50 border-y">
-          <div className="flex items-center justify-between text-sm">
-            <div className="font-medium">Last: ${formatNumber(lastPrice || 0)}</div>
-            <div className="text-gray-500">Spread: ${formatNumber(spread || 0)}</div>
-          </div>
-        </div>
+        {lastPrice ||
+          (spread && (
+            <div ref={spreadBoxRef} className="sticky z-10 px-2 py-4 bg-gray-50 border-y">
+              <div
+                className={cn(
+                  'flex items-center justify-between text-sm',
+                  lastPrice && spread
+                    ? 'justify-between'
+                    : lastPrice && !spread
+                      ? 'justify-end'
+                      : 'justify-start'
+                )}
+              >
+                {lastPrice && (
+                  <div className="font-medium">Last: ${formatNumber(lastPrice || 0)}</div>
+                )}
+                {spread && (
+                  <div className="text-gray-500">Spread: ${formatNumber(spread || 0)}</div>
+                )}
+              </div>
+            </div>
+          ))}
 
         {/* Bids (Buy Orders) */}
         <div ref={bidsRef} className="divide-y">

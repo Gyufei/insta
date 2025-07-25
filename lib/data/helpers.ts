@@ -99,7 +99,7 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
 
       const url = new URL(apiPath);
       const params = buildParams(args, address!, account!);
-
+      
       try {
         const txRes = await sendApiRequest<ITxResponse>(url.toString(), params);
         await handleTransaction(txRes, send, errorMessage);
