@@ -17,6 +17,7 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { useAmbientCreatePosition } from '@/lib/data/use-ambient-create-position';
 import { ErrorVO } from '@/lib/model/error-vo';
 
+import { INFINITY_PRICE } from '../../uniswap/create-position/price-range-selector';
 import { SelectToken } from './select-token';
 import { SetPriceAndAmount } from './set-price-and-amount';
 
@@ -108,12 +109,15 @@ export function AmbientCreatePosition() {
     const tokenA = replaceNativeAddressUseBackend(token0.address);
     const tokenB = replaceNativeAddressUseBackend(token1.address);
 
+    const priceMin = Number(priceRangeMin) === 0 ? '0.00001' : priceRangeMin;
+    const priceMax = priceRangeMax === INFINITY_PRICE ? '99999' : priceRangeMax;
+
     const args = {
       token_a: tokenA,
       token_b: tokenB,
       price_current: initPrice || '0',
-      price_lower: priceRangeMin,
-      price_upper: priceRangeMax,
+      price_lower: priceMin,
+      price_upper: priceMax,
       token_a_amount: amount0,
       token_a_decimals: token0.decimals.toString(),
       token_b_decimals: token1.decimals.toString(),
