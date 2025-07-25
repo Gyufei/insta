@@ -304,10 +304,12 @@ export default function MarketDetail({ mId }: { mId: string }) {
                         } else {
                           setExpandedOutcome(outcome.name);
                         }
-                        handleUpdateSelectedOutcome({
-                          ...outcome,
-                          index,
-                        });
+                        if (!isMobile) {
+                          handleUpdateSelectedOutcome({
+                            ...outcome,
+                            index,
+                          });
+                        }
                       }}
                     >
                       <div className="flex items-center gap-4 flex-1">
@@ -454,9 +456,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                           <button
                             key={outcome}
                             className={`w-full px-4 py-2 text-left hover:bg-gray-50 ${
-                              outcome === selectedOutcomeFilter
-                                ? 'text-pro-blue'
-                                : 'text-gray-900'
+                              outcome === selectedOutcomeFilter ? 'text-pro-blue' : 'text-gray-900'
                             }`}
                             onClick={() => {
                               setSelectedOutcomeFilter(outcome);
@@ -481,9 +481,7 @@ export default function MarketDetail({ mId }: { mId: string }) {
                           <button
                             key={outcome}
                             className={`w-full px-4 py-2 text-left hover:bg-gray-50 ${
-                              outcome === selectedOutcomeFilter
-                                ? 'text-pro-blue'
-                                : 'text-gray-900'
+                              outcome === selectedOutcomeFilter ? 'text-pro-blue' : 'text-gray-900'
                             }`}
                             onClick={() => {
                               setSelectedOutcomeFilter(outcome);
