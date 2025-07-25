@@ -27,17 +27,24 @@ export default function Trade() {
 
   const positions = positionsData?.positions;
 
-  const { data: ordersData, isLoading: isLoadingOrders, error: ordersError } = useUserOrders();
+  const {
+    data: ordersData,
+    isLoading: isLoadingOrders,
+    error: ordersError,
+    refetch: refetchOrders,
+  } = useUserOrders();
 
   const orders = ordersData?.orders;
 
-  function handleCancelOrder(orderId: string) {
+  async function handleCancelOrder(orderId: string) {
     if (!userId) return;
 
     try {
-      cancelOrder({
+      await cancelOrder({
         order_id: orderId,
       });
+
+      refetchOrders();
     } catch (err) {
       console.error('Cancel order error:', err);
     }
@@ -82,7 +89,8 @@ export default function Trade() {
       {/* Content */}
       {activeTab === 'position' && (
         <div className="border border-[#ebebeb] rounded-[8px] p-4">
-          <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
+          {/* 表头：仅大屏显示 */}
+          <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 hidden md:grid">
             <div className="md:col-span-6 col-span-5">MARKET</div>
             <div className="md:col-span-3 col-span-3">OUTCOME</div>
             <div className="md:col-span-2 col-span-2 text-right">SHARES</div>
@@ -103,40 +111,57 @@ export default function Trade() {
               (positions || []).map((position, index) => (
                 <div
                   key={index}
-                  className="py-4 grid grid-cols-12 gap-4 items-center transition-colors hover:bg-gray-100/50"
+                  className="py-4 md:grid md:grid-cols-12 md:gap-4 md:items-center flex flex-col gap-2 border-b last:border-b-0"
                 >
-                  <div className="md:col-span-6 col-span-5 flex items-center gap-3">
-                    <Image
-                      src={position.market.image_url}
-                      alt=""
-                      width={40}
-                      height={40}
-                      className="rounded-lg object-cover flex-shrink-0 md:h-10 md:w-10 h-5 w-5"
-                    />
-                    <div className="min-w-0">
-                      <Link
-                        href={`/odds/market/${position.market.id}`}
-                        className="font-medium mb-1 hover:text-pro-blue block truncate"
-                      >
-                        {position.market.title}
-                      </Link>
+                  {/* MARKET */}
+                  <div className="md:col-span-6 flex items-center justify-between gap-6">
+                    {/* 小屏幕字段名 */}
+                    <div className="md:hidden text-xs text-gray-400">MARKET</div>
+                    <div className="flex items-center gap-1 min-w-0">
+                      <Image
+                        src={position.market.image_url}
+                        alt=""
+                        width={40}
+                        height={40}
+                        className="rounded-lg object-cover flex-shrink-0 md:h-10 md:w-10 h-5 w-5"
+                      />
+                      <div className="min-w-0">
+                        <Link
+                          href={`/odds/market/${position.market.id}`}
+                          className="font-medium mb-1 hover:text-pro-blue block truncate"
+                        >
+                          {position.market.title}
+                        </Link>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="col-span-3 flex items-center gap-3">
-                    <Image
-                      src={position.outcome.logo}
-                      alt={position.outcome.name}
-                      width={32}
-                      height={32}
-                      className="w-4 h-4 rounded-full md:h-10 md:w-10"
-                    />
-                    <span className="font-medium">{position.outcome.name}</span>
+                  {/* OUTCOME */}
+                  <div className="md:col-span-3 flex items-center justify-between gap-3">
+                    <div className="md:hidden text-xs text-gray-400">OUTCOME</div>
+                    <div className="flex items-center gap-1">
+                      <Image
+                        src={position.outcome.logo}
+                        alt={position.outcome.name}
+                        width={32}
+                        height={32}
+                        className="w-4 h-4 rounded-full md:h-10 md:w-10"
+                      />
+                      <span className="font-medium">{position.outcome.name}</span>
+                    </div>
                   </div>
 
-                  <div className="col-span-2 text-right">{position.shares}</div>
+                  {/* SHARES */}
+                  <div className="md:col-span-2 text-right flex md:block justify-between items-center w-full">
+                    <span className="md:hidden text-xs text-gray-400">SHARES</span>
+                    <span className="font-medium">{position.shares}</span>
+                  </div>
 
-                  <div className="md:col-span-1 col-span-2 text-right">${position.value}</div>
+                  {/* VALUE */}
+                  <div className="md:col-span-1 text-right flex md:block justify-between items-center w-full">
+                    <span className="md:hidden text-xs text-gray-400">VALUE</span>
+                    <span className="font-medium">${position.value}</span>
+                  </div>
                 </div>
               ))
             )}
@@ -146,7 +171,8 @@ export default function Trade() {
 
       {activeTab === 'open-orders' && (
         <div className="border border-[#ebebeb] rounded-[8px] p-4">
-          <div className="py-1 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
+          {/* 表头：仅大屏显示 */}
+          <div className="py-1 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 hidden md:grid">
             <div className="col-span-5">MARKET</div>
             <div className="col-span-2">OUTCOME</div>
             <div className="col-span-2 text-right">SHARES</div>
@@ -167,56 +193,80 @@ export default function Trade() {
               (orders || []).map((order) => (
                 <div
                   key={order.order_id}
-                  className="py-4 grid grid-cols-12 gap-4 items-center transition-colors hover:bg-gray-100/50"
+                  className="py-4 md:grid md:grid-cols-12 md:gap-4 md:items-center flex flex-col gap-2 border-b last:border-b-0"
                 >
-                  <div className="col-span-5 flex items-center gap-3">
-                    <Image
-                      src={order.market.image_url}
-                      alt=""
-                      width={40}
-                      height={40}
-                      className="rounded-lg object-cover flex-shrink-0"
-                    />
-                    <div className="min-w-0">
-                      <Link
-                        href={`/odds/market/${order.market.id}`}
-                        className="font-medium mb-1 hover:text-pro-blue block truncate"
-                      >
-                        {order.market.title}
-                      </Link>
-                      <div className="text-sm text-gray-600">
-                        {order.trading_direction === 'buy' ? 'Buy' : 'Sell'} @ ${order.price}
+                  {/* MARKET */}
+                  <div className="md:col-span-5 flex items-center justify-between gap-3">
+                    <div className="md:hidden text-xs text-gray-400">MARKET</div>
+                    <div className="flex items-center justify-between gap-1 md:w-full min-w-0">
+                      <Image
+                        src={order.market.image_url}
+                        alt=""
+                        width={40}
+                        height={40}
+                        className="rounded-lg hidden md:block object-cover flex-shrink-0 md:h-10 md:w-10 h-5 w-5"
+                      />
+                      <div className="min-w-0">
+                        <Link
+                          href={`/odds/market/${order.market.id}`}
+                          className="font-medium mb-1 hover:text-pro-blue block truncate"
+                        >
+                          {order.market.title}
+                        </Link>
+                        <div className="text-sm text-gray-600 md:block hidden">
+                          {order.trading_direction === 'buy' ? 'Buy' : 'Sell'} @ ${order.price}
+                        </div>
+                        {/* 小屏幕字段名 */}
+                        <div className="md:hidden text-xs text-gray-400">
+                          {order.trading_direction === 'buy' ? 'Buy' : 'Sell'} @ ${order.price}
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="col-span-2 flex items-center gap-3">
-                    <Image
-                      src={order.outcome.logo}
-                      alt={order.outcome.name}
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 rounded-full"
-                    />
-                    <span className="font-medium truncate">{order.outcome.name}</span>
+                  {/* OUTCOME */}
+                  <div className="md:col-span-2 flex items-center justify-between gap-3">
+                    <span className="md:hidden text-xs text-gray-400">OUTCOME</span>
+                    <div className="flex items-center gap-1">
+                      <Image
+                        src={order.outcome.logo}
+                        alt={order.outcome.name}
+                        width={32}
+                        height={32}
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <span className="font-medium truncate">{order.outcome.name}</span>
+                    </div>
                   </div>
 
-                  <div className="col-span-2 text-right">
-                    <div className="font-medium">{order.available_shares}</div>
-                    <div className="text-sm text-gray-600">of {order.shares}</div>
+                  {/* SHARES */}
+                  <div className="md:col-span-2 text-right flex md:block justify-between items-center w-full">
+                    <div className="md:hidden text-xs text-gray-400">SHARES</div>
+                    <div className="flex items-center gap-1 md:justify-end">
+                      <div className="font-medium">{order.available_shares}</div>
+                      <div className="text-sm text-gray-600 md:block hidden">of {order.shares}</div>
+                      <div className="md:hidden text-xs text-gray-400">of {order.shares}</div>
+                    </div>
                   </div>
 
-                  <div className="col-span-3 flex items-center justify-end gap-4">
-                    <div className="text-right">
-                      <div className="font-medium">${order.available_value}</div>
-                      <div className="text-sm text-gray-600">of ${order.value}</div>
+                  {/* VALUE + 操作 */}
+                  <div className="md:col-span-3 flex md:justify-end md:items-center flex-col md:flex-row gap-2 md:gap-4 w-full md:text-right">
+                    <div className="flex w-full items-center justify-between md:justify-end gap-3">
+                      <div className="md:hidden text-xs text-gray-400">VALUE</div>
+                      <div className="text-right md:w-auto">
+                        <div className="font-medium">${order.available_value}</div>
+                        <div className="text-sm text-gray-600 md:block hidden">
+                          of ${order.value}
+                        </div>
+                        <div className="md:hidden text-xs text-gray-400">of ${order.value}</div>
+                      </div>
                     </div>
                     <button
                       onClick={() => handleCancelOrder(order.order_id)}
-                      className="px-3 py-1.5 border border-red-600 text-red-600 rounded-lg hover:bg-red-50"
+                      className="px-3 py-1.5 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 w-full md:w-auto disabled:opacity-50"
                       disabled={isCancellingOrder}
                     >
-                      Cancel
+                      {isCancellingOrder ? 'Cancelling...' : 'Cancel'}
                     </button>
                   </div>
                 </div>

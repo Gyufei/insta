@@ -268,7 +268,8 @@ export default function Portfolio() {
 
       {/* Positions Table */}
       <div className="border border-[#ebebeb] rounded-[8px] p-4">
-        <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
+        {/* 表头：仅大屏显示 */}
+        <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 hidden md:grid">
           <div className="md:col-span-6 col-span-5">MARKET</div>
           <div className="col-span-2">STATE</div>
           <div className="col-span-2 text-right">PLAYERS</div>
@@ -295,21 +296,34 @@ export default function Portfolio() {
             (markets || []).map((market) => (
               <div
                 key={market.market_id}
-                className="py-4 grid grid-cols-12 gap-4 items-center hover:bg-gray-50"
+                className="py-4 md:grid md:grid-cols-12 md:gap-4 md:items-center flex flex-col gap-2 border-b last:border-b-0"
               >
-                <div className="md:col-span-6 col-span-5">
-                  <Link href={`/market/${market.market_id}`} className="flex items-center gap-3">
+                {/* MARKET */}
+                <div className="md:col-span-6 flex items-center justify-between gap-6">
+                  {/* 小屏幕字段名 */}
+                  <div className="md:hidden text-xs text-gray-400">MARKET</div>
+                  <div className="flex items-center gap-1 min-w-0">
                     <Image
                       src={market.image_url}
                       alt=""
                       width={40}
                       height={40}
-                      className="w-5 h-5 rounded-lg object-cover md:w-10 md:h-10"
+                      className="rounded-lg object-cover flex-shrink-0 md:h-10 md:w-10 h-4 w-4"
                     />
-                    <div className="font-medium hover:text-pro-blue">{market.title}</div>
-                  </Link>
+                    <div className="min-w-0">
+                      <Link
+                        href={`/market/${market.market_id}`}
+                        className="font-medium mb-1 hover:text-pro-blue block truncate"
+                      >
+                        {market.title}
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-                <div className="col-span-2">
+
+                {/* STATE */}
+                <div className="md:col-span-2 flex items-center justify-between gap-3">
+                  <div className="md:hidden text-xs text-gray-400">STATE</div>
                   <span
                     className={`px-2 py-1 rounded text-sm font-medium ${
                       market.state === 'online'
@@ -322,8 +336,18 @@ export default function Portfolio() {
                     {market.state}
                   </span>
                 </div>
-                <div className="col-span-2 text-right">{market?.players?.toLocaleString()}</div>
-                <div className="md:col-span-2 col-span-3 text-right">${market?.volume || '0'}</div>
+
+                {/* PLAYERS */}
+                <div className="md:col-span-2 text-right flex md:block justify-between items-center w-full">
+                  <span className="md:hidden text-xs text-gray-400">PLAYERS</span>
+                  <span className="font-medium">{market?.players?.toLocaleString()}</span>
+                </div>
+
+                {/* VOL. */}
+                <div className="md:col-span-2 text-right flex md:block justify-between items-center w-full">
+                  <span className="md:hidden text-xs text-gray-400">VOL.</span>
+                  <span className="font-medium">${market?.volume || '0'}</span>
+                </div>
               </div>
             ))
           )}

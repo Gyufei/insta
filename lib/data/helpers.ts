@@ -118,6 +118,10 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
           errDisplay = errDisplay.split('reverted:')[1].trim();
         }
 
+        if (errDisplay.includes('BondingCurve')) {
+          errDisplay = 'The current price curve is abnormal and cannot be traded';
+        }
+
         if (errDisplay.length > 60) {
           errDisplay = errDisplay.slice(0, 60) + '...';
         }

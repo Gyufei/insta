@@ -54,12 +54,17 @@ export function DSAInfo() {
       />
 
       {tooLessGasForCreate ? (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>{button}</TooltipTrigger>
-            <TooltipContent>Insufficient Monad gas for create account</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div className="flex flex-col gap-2">
+          <div className="flex text-sm md:hidden justify-center items-center my-1 text-red-200">
+            Insufficient Monad gas for create account
+          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>{button}</TooltipTrigger>
+              <TooltipContent>Insufficient Monad gas for create account</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       ) : (
         button
       )}

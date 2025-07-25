@@ -97,7 +97,8 @@ export default function Watchlist() {
       </div>
 
       <div className="border border-[#ebebeb] rounded-[8px] p-4">
-        <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
+        {/* 表头：仅大屏显示 */}
+        <div className="py-3 border-b grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 hidden md:grid">
           <div className="md:col-span-6 col-span-4">MARKET</div>
           <div className="md:col-span-2 col-span-3">VOLUME</div>
           <div className="md:col-span-2 col-span-3">TOP OUTCOME</div>
@@ -114,19 +115,21 @@ export default function Watchlist() {
               {favoriteMarkets.map((market) => (
                 <div
                   key={market.id}
-                  className="py-4 grid grid-cols-12 gap-4 items-center transition-colors hover:bg-gray-100/50"
+                  className="py-4 md:grid md:grid-cols-12 md:gap-4 md:items-center flex flex-col gap-2 md:bg-transparent mb-4 md:mb-0"
                 >
-                  <div className="col-span-6 flex items-center gap-3 min-w-0">
+                  {/* MARKET */}
+                  <div className="md:col-span-6 flex items-center gap-6 min-w-0 w-full">
+                    <div className="md:hidden text-xs text-gray-400 mb-1">MARKET</div>
                     <Link
                       href={`/odds/market/${market.id}`}
-                      className="flex items-center gap-3 min-w-0 hover:text-pro-blue"
+                      className="flex items-center gap-3 min-w-0 hover:text-pro-blue w-full"
                     >
                       <Image
                         src={market.imageUrl}
                         alt=""
                         width={40}
                         height={40}
-                        className="rounded-lg object-cover flex-shrink-0"
+                        className="rounded-lg object-cover flex-shrink-0 md:h-10 md:w-10 h-5 w-5"
                       />
                       <div className="min-w-0 flex-1">
                         <div className="font-medium mb-1 truncate">{market.title}</div>
@@ -135,11 +138,15 @@ export default function Watchlist() {
                     </Link>
                   </div>
 
-                  <div className="col-span-2 whitespace-nowrap">
-                    ${market.totalVolume.toLocaleString()}
+                  {/* VOLUME */}
+                  <div className="md:col-span-2 whitespace-nowrap w-full flex md:block justify-between items-center">
+                    <div className="md:hidden text-xs text-gray-400 mb-1">VOLUME</div>
+                    <span className="font-medium">${market.totalVolume.toLocaleString()}</span>
                   </div>
 
-                  <div className="col-span-2 min-w-0">
+                  {/* TOP OUTCOME */}
+                  <div className="md:col-span-2 min-w-0 w-full flex md:block items-center gap-2 justify-between md:justify-end">
+                    <div className="md:hidden text-xs text-gray-400 mb-1">TOP OUTCOME</div>
                     <div className="flex items-center gap-2">
                       <Image
                         src={market.topOutcome.logo}
@@ -152,7 +159,9 @@ export default function Watchlist() {
                     </div>
                   </div>
 
-                  <div className="col-span-2 flex items-center justify-end gap-2 flex-shrink-0">
+                  {/* CHANCE */}
+                  <div className="md:col-span-2 flex items-center md:justify-end justify-between gap-2 flex-shrink-0 w-full">
+                    <div className="md:hidden text-xs text-gray-400 mb-1">CHANCE</div>
                     <span className="font-medium">{market.topOutcome.probability}</span>
                   </div>
                 </div>

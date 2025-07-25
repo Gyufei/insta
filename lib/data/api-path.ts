@@ -37,6 +37,7 @@ export const ApiPath = {
   faucetAirdrop: `${ApiHost}/airdrop/claim`,
   saveXBind: `${ApiHost}/x/bind`,
   accountBalance: `${ApiHost}/account/token_balance`,
+  claimedAirdrop: `${ApiHost}/account/airdrop/amount`,
 
   aprioriInfo: `https://stake-api.apr.io/info`,
   aprioriBalance: `${ApiHost}/aprior/balance`,

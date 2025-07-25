@@ -30,12 +30,19 @@ export function AccountList() {
       {tooLessGasForCreate ? (
         <Tooltip>
           <TooltipTrigger asChild>
-            <button
-              disabled
-              className="text-primary hover:border-blue hover:text-blue focus:border-blue focus:text-blue dark:text-primary-foreground dark:hover:text-blue flex h-8 w-full flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border border-gray-200 bg-primary-foreground text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
-            >
-              <WithLoading isLoading={!!isPending}>+ New</WithLoading>
-            </button>
+            <div className="flex flex-col gap-2">
+              {tooLessGasForCreate && (
+                <div className="flex text-sm md:hidden justify-center items-center my-1 text-red-200">
+                  Insufficient Monad gas for create account
+                </div>
+              )}
+              <button
+                disabled
+                className="text-primary hover:border-blue hover:text-blue focus:border-blue focus:text-blue dark:text-primary-foreground dark:hover:text-blue flex h-8 w-full flex-shrink-0 cursor-pointer items-center justify-center rounded-sm border border-gray-200 bg-primary-foreground text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none disabled:opacity-50"
+              >
+                <WithLoading isLoading={!!isPending}>+ New</WithLoading>
+              </button>
+            </div>
           </TooltipTrigger>
           <TooltipContent>Insufficient Monad gas for create account</TooltipContent>
         </Tooltip>

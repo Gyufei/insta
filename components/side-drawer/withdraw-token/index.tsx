@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { divide, subtract } from 'safebase';
+
+import { useMemo, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -13,10 +15,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
+import { useClaimedAirdrop } from '@/lib/data/use-claimed-airdrop';
 import { useWithdraw } from '@/lib/data/use-withdraw';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';
-import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 
 import { ActionButton } from '../common/action-button';
 import { SetMax } from '../common/set-max';
@@ -34,12 +37,39 @@ export function WithdrawToken() {
 
   const token = TOKENS.find((t) => t.address === selectedToken) || MONAD;
 
-  const { balance } = useApiMonadBalance();
+  const { data: balanceData } = useApiAccountTokenBalance();
+
+  const { data: airdropData } = useClaimedAirdrop();
+  const airdropAmount = useMemo(() => {
+    if (!airdropData) return 0;
+    return divide(airdropData?.mon_amount, String(10 ** MONAD.decimals));
+  }, [airdropData]);
+
+  const tokenBalance = useMemo(() => {
+    if (!balanceData) return 0;
+
+    const monBalances = balanceData.filter((bRes) => bRes.network === 'MON');
+    const balance = monBalances.find((bRes) => bRes.token === token.symbol)?.formattedBalance;
+    return balance;
+  }, [balanceData, token.symbol]);
+
+  const canClaimAmount = useMemo(() => {
+    if (Number(tokenBalance) < Number(airdropAmount)) return 0;
+    return subtract(String(tokenBalance), String(airdropAmount));
+  }, [airdropAmount, tokenBalance]);
+
+  console.log('tokenBalance', tokenBalance);
+  console.log('airdropAmount', airdropAmount);
+  console.log('canClaimAmount', canClaimAmount);
 
   const { mutate: withdraw, isPending } = useWithdraw();
 
-  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
-  const { isMax, handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
+  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(canClaimAmount);
+  const { isMax, handleSetMax, handleInput } = useSetMax(
+    inputValue,
+    canClaimAmount,
+    handleInputChange
+  );
 
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
@@ -69,7 +99,7 @@ export function WithdrawToken() {
             </SelectContent>
           </Select>
         </div>
-        <TokenDisplay token={token} balance={balance} balanceLabel="Supply" />
+        <TokenDisplay token={token} balance={canClaimAmount} balanceLabel="Supply" />
         <TokenInput
           inputValue={inputValue}
           onInputChange={handleInput}

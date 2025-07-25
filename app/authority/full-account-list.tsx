@@ -29,7 +29,12 @@ export function FullAccountList() {
         <TitleH2>Accounts</TitleH2>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span>
+            <span className="flex items-center gap-2">
+              {tooLessGasForCreate && (
+                <div className="flex text-sm md:hidden justify-center items-center my-1 text-red-200">
+                  Insufficient Monad gas for create account
+                </div>
+              )}
               <Button
                 size="sm"
                 disabled={isCreatePending || tooLessGasForCreate}
