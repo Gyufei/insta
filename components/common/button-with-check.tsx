@@ -26,13 +26,13 @@ export function ButtonWithCheck({
       <Button
         variant="outline"
         className={cn(
-          'relative flex flex-1 rounded-[8px] cursor-pointer items-center gap-2 border px-4 py-3 outline-none select-none focus:outline-none',
+          'relative flex flex-1 rounded-[8px] text-sm cursor-pointer items-center gap-2 border px-4 py-3 outline-none select-none focus:outline-none',
           isActive ? 'border-[#6E75F9] ' : 'border-[#EBEBEB] hover:border-[#6E75F9]',
           className
         )}
         onClick={onClick}
       >
-        <p className="text-sm leading-none font-medium">{label}</p>
+        <p className="leading-none font-medium">{label}</p>
         {isActive && (
           <Image
             alt="check"

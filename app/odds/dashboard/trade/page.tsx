@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,12 +13,6 @@ import { useUserPositions } from '../../common/use-user-positions';
 export default function Trade() {
   const [activeTab, setActiveTab] = useState<'position' | 'open-orders'>('position');
 
-  const { data: userInfo } = useOddsUserInfo();
-
-  const userId = userInfo?.user_id;
-
-  const { mutateAsync: cancelOrder, isPending: isCancellingOrder } = useCancelOrder();
-
   const {
     data: positionsData,
     isLoading: isLoadingPositions,
@@ -27,27 +21,16 @@ export default function Trade() {
 
   const positions = positionsData?.positions;
 
-  const {
-    data: ordersData,
-    isLoading: isLoadingOrders,
-    error: ordersError,
-    refetch: refetchOrders,
-  } = useUserOrders();
+  const { data: ordersData, isLoading: isLoadingOrders, error: ordersError } = useUserOrders();
 
-  const orders = ordersData?.orders;
+  const [hasCancelOrderId, setHasCancelOrderId] = useState<string[]>([]);
 
-  async function handleCancelOrder(orderId: string) {
-    if (!userId) return;
+  const orders = useMemo(() => {
+    return ordersData?.orders.filter((order) => !hasCancelOrderId.includes(order.order_id));
+  }, [hasCancelOrderId, ordersData]);
 
-    try {
-      await cancelOrder({
-        order_id: orderId,
-      });
-
-      refetchOrders();
-    } catch (err) {
-      console.error('Cancel order error:', err);
-    }
+  function handleCancelOrderSuccess(orderId: string) {
+    setHasCancelOrderId((prev) => [...prev, orderId]);
   }
 
   return (
@@ -261,13 +244,7 @@ export default function Trade() {
                         <div className="md:hidden text-xs text-gray-400">of ${order.value}</div>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleCancelOrder(order.order_id)}
-                      className="px-3 py-1.5 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 w-full md:w-auto disabled:opacity-50"
-                      disabled={isCancellingOrder}
-                    >
-                      {isCancellingOrder ? 'Cancelling...' : 'Cancel'}
-                    </button>
+                    <CancelOrder orderId={order.order_id} onSuccess={handleCancelOrderSuccess} />
                   </div>
                 </div>
               ))
@@ -276,5 +253,42 @@ export default function Trade() {
         </div>
       )}
     </div>
+  );
+}
+
+function CancelOrder({
+  orderId,
+  onSuccess,
+}: {
+  orderId: string;
+  onSuccess: (orderId: string) => void;
+}) {
+  const { data: userInfo } = useOddsUserInfo();
+  const userId = userInfo?.user_id;
+
+  const { mutateAsync: cancelOrder, isPending: isCancellingOrder } = useCancelOrder();
+
+  async function handleCancelOrder(orderId: string) {
+    if (!userId) return;
+
+    try {
+      await cancelOrder({
+        order_id: orderId,
+      });
+
+      onSuccess(orderId);
+    } catch (err) {
+      console.error('Cancel order error:', err);
+    }
+  }
+
+  return (
+    <button
+      onClick={() => handleCancelOrder(orderId)}
+      className="px-3 py-1.5 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 w-full md:w-auto disabled:opacity-50"
+      disabled={isCancellingOrder}
+    >
+      {isCancellingOrder ? 'Cancelling...' : 'Cancel'}
+    </button>
   );
 }

@@ -13,6 +13,7 @@ import Image from 'next/image';
 
 import { NetworkConfigs } from '@/config/network-config';
 
+import { ButtonWithCheck } from '@/components/common/button-with-check';
 import { NumberInput } from '@/components/common/number-input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -34,6 +35,7 @@ import { useTokenStationSwapBridge } from '@/lib/data/use-token-station-swap-bri
 import { useTokenStationSwapCCIP } from '@/lib/data/use-token-station-swap-ccip';
 import { cn, formatAddress } from '@/lib/utils';
 import { formatNumber } from '@/lib/utils/number';
+import { useIsMobile } from '@/lib/utils/use-mobile';
 import { useGetAddressBalance } from '@/lib/web3/use-get-address-balance';
 
 import {
@@ -50,6 +52,7 @@ export function TokenStation() {
   const { address } = useAccount();
   const prevAddressRef = useRef<string | undefined>(undefined);
 
+  const isMobile = useIsMobile();
   const [mode, setMode] = useState<'CCIP' | 'BRIDGE'>('CCIP');
 
   const [tokenFrom, setTokenFrom] = useState(STATION_FROM_TOKENS_ETH[0]);
@@ -343,9 +346,38 @@ export function TokenStation() {
     });
   }
 
+  const ModeSwitch = () => {
+    return (
+      <div className="md:flex md:items-center md:justify-start grid grid-cols-2 gap-3 mb-4 md:mb-0">
+        <ButtonWithCheck
+          className={cn(
+            'md:h-12 md:flex-0 flex-1 h-10 flex md:text-xl text-base active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8',
+            mode === 'CCIP' && 'border-[#6E75F9] text-[#6E75F9]'
+          )}
+          label="CCIP"
+          value="CCIP"
+          activeTab={mode}
+          onClick={() => handleChangeMode('CCIP')}
+        />
+        <ButtonWithCheck
+          className={cn(
+            'md:h-12 h-10 flex md:flex-0 flex-1 md:text-xl text-base active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8',
+            mode === 'BRIDGE' && 'border-[#6E75F9] text-[#6E75F9]'
+          )}
+          label="Bridge Router"
+          value="BRIDGE"
+          activeTab={mode}
+          onClick={() => handleChangeMode('BRIDGE')}
+        />
+      </div>
+    );
+  };
+
   return (
     <>
       <div className="px-4 2xl:px-12">
+        {isMobile && <ModeSwitch />}
+
         <div className="flex md:flex-row flex-col justify-between flex-1 gap-0 shadow-none">
           {/* 左侧：From */}
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
@@ -517,26 +549,7 @@ export function TokenStation() {
         </div>
 
         <div className="flex md:flex-row flex-col md:justify-between md:items-center mt-5 gap-2 md:gap-0">
-          <div className="flex items-center justify-between md:justify-start gap-3">
-            <Button
-              className={cn(
-                'md:h-12 h-8 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8',
-                mode === 'CCIP' && 'border-[#6E75F9] text-[#6E75F9]'
-              )}
-              onClick={() => handleChangeMode('CCIP')}
-            >
-              CCIP
-            </Button>
-            <Button
-              className={cn(
-                'md:h-12 h-8 flex text-xl active:bg-white hover:bg-white items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-8',
-                mode === 'BRIDGE' && 'border-[#6E75F9] text-[#6E75F9]'
-              )}
-              onClick={() => handleChangeMode('BRIDGE')}
-            >
-              Bridge Router
-            </Button>
-          </div>
+          {!isMobile && <ModeSwitch />}
 
           <Button
             className="min-w-40 h-12 text-xl font-medium flex leading-[24px] items-center justify-center rounded-md bg-[#6E75F9] text-white hover:bg-[#6E75F990]"
