@@ -9,6 +9,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { cn } from '@/lib/utils';
 
+export const INFINITY_PRICE = '∞';
+
 interface PriceRangeSelectorProps {
   token0Symbol: string;
   token1Symbol: string;
@@ -34,7 +36,7 @@ export default function PriceRangeSelector({
 
     if (newRangeType === 'FULL') {
       onMinPriceChange?.('0');
-      onMaxPriceChange?.('∞');
+      onMaxPriceChange?.(INFINITY_PRICE);
     } else {
       onMinPriceChange?.('');
       onMaxPriceChange?.('');

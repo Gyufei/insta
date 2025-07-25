@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { multiply } from 'safebase';
+import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
@@ -78,6 +79,11 @@ export function UniswapCreatePosition() {
 
   function handleNewPosition() {
     if (!token0 || !token1) return;
+
+    if (!priceRangeMin || !priceRangeMax) {
+      toast.error('Please set price range');
+      return;
+    }
 
     const args = {
       token_a_address: token0.address,
