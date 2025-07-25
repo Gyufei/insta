@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { multiply } from 'safebase';
+import { divide, multiply, utils } from 'safebase';
 import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
@@ -55,6 +55,30 @@ export function UniswapCreatePosition() {
   const { mutate: createPosition, isPending } = useNewPosition(isNewPool);
 
   const initPriceRequired = !isNewPool || (isNewPool && initPrice);
+
+  function handleAmount0Change(value: string) {
+    setAmount0(value);
+    if (value && initPrice) {
+      const reciprocal = utils.roundResult(multiply(String(value), initPrice), token1?.decimals);
+      setAmount1(reciprocal);
+    }
+  }
+
+  function handleAmount1Change(value: string) {
+    setAmount1(value);
+    if (value && initPrice) {
+      const reciprocal = utils.roundResult(divide(String(value), initPrice), token0?.decimals);
+      setAmount0(reciprocal);
+    }
+  }
+
+  function handleInitPriceChange(value: string) {
+    setInitPrice(value);
+    if (value && amount0) {
+      const reciprocal = utils.roundResult(divide(String(amount0), value), token1?.decimals);
+      setAmount1(reciprocal);
+    }
+  }
 
   const handleTokenSelectWrapper = (token: IToken) => {
     const result = handleTokenSelect(token);
@@ -180,11 +204,11 @@ export function UniswapCreatePosition() {
                   token0={token0!}
                   token1={token1!}
                   feeTier={feeTier}
-                  setInitPrice={setInitPrice}
+                  setInitPrice={handleInitPriceChange}
                   setPriceRangeMin={setPriceRangeMin}
                   setPriceRangeMax={setPriceRangeMax}
-                  setAmount0={setAmount0}
-                  setAmount1={setAmount1}
+                  setAmount0={handleAmount0Change}
+                  setAmount1={handleAmount1Change}
                   priceRangeMin={priceRangeMin}
                   priceRangeMax={priceRangeMax}
                   amount0={amount0}
