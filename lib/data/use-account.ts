@@ -14,11 +14,10 @@ export type IAccountInfo = {
 };
 
 export function useAccounts() {
-  // const { address } = useAccount();
+  const { address } = useAccount();
   // console.log('fake', fake);
-  const address = '0x28d919c2EEb49481D9b7B3e87F728aBd40D9404E';
-  // '0x3a69f8E93aFC0F803dc6c25dBBf6B0af9b11de94';
   // const address = '0x28d919c2EEb49481D9b7B3e87F728aBd40D9404E';
+  // '0x3a69f8E93aFC0F803dc6c25dBBf6B0af9b11de94';
 
   async function getAccounts(): Promise<IAccountInfo[]> {
     if (!address) {
