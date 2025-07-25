@@ -49,7 +49,10 @@ export function WithdrawToken() {
     if (!balanceData) return 0;
 
     const monBalances = balanceData.filter((bRes) => bRes.network === 'MON');
-    const balance = monBalances.find((bRes) => bRes.token === token.symbol)?.formattedBalance;
+    const balanceRes = monBalances.find((bRes) => bRes.token === token.symbol);
+    const balanceBig = balanceRes?.balance;
+    const balance = divide(String(balanceBig), String(10 ** (balanceRes?.decimals || 18)));
+
     return balance;
   }, [balanceData, token.symbol]);
 
@@ -57,10 +60,6 @@ export function WithdrawToken() {
     if (Number(tokenBalance) < Number(airdropAmount)) return 0;
     return subtract(String(tokenBalance), String(airdropAmount));
   }, [airdropAmount, tokenBalance]);
-
-  console.log('tokenBalance', tokenBalance);
-  console.log('airdropAmount', airdropAmount);
-  console.log('canClaimAmount', canClaimAmount);
 
   const { mutate: withdraw, isPending } = useWithdraw();
 
