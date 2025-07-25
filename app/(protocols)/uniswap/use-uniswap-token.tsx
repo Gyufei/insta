@@ -1,4 +1,4 @@
-import { APR_MONAD, G_MONAD, IToken, MONAD } from '@/config/tokens';
+import { APR_MONAD, G_MONAD, IToken, MONAD, MonUSD } from '@/config/tokens';
 
 export const USDT_TOKEN: IToken = {
   address: '0xfBC2D240A5eD44231AcA3A9e9066bc4b33f01149',
@@ -18,6 +18,7 @@ export const UNISWAP_TOKENS: Array<IToken> = [
     decimals: 18,
   },
   USDT_TOKEN,
+  MonUSD,
   APR_MONAD,
   G_MONAD,
   {
