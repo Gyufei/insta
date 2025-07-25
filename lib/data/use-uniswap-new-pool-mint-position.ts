@@ -17,6 +17,7 @@ export function useUniswapNewPoolMintPosition() {
     ApiPath.uniswapCreatePoolAndMintPosition,
     (args: unknown, address: string, account: string) => {
       const params = args as UniswapNewPoolMintPositionArgs;
+
       return {
         // wallet: '0x28d919c2EEb49481D9b7B3e87F728aBd40D9404E', //address,
         wallet: address,

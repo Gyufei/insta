@@ -1,11 +1,13 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { divide, multiply, utils } from 'safebase';
+import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
 import TokenSelector from '@/app/(protocols)/uniswap/uni-common/token-selector';
 import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 
+import { replaceNativeAddressUseBackend } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
@@ -98,9 +100,17 @@ export function AmbientCreatePosition() {
   function handleNewPosition() {
     if (!token0 || !token1) return;
 
+    if (!priceRangeMin || !priceRangeMax) {
+      toast.error('Please set price range');
+      return;
+    }
+
+    const tokenA = replaceNativeAddressUseBackend(token0.address);
+    const tokenB = replaceNativeAddressUseBackend(token1.address);
+
     const args = {
-      token_a: token0.address,
-      token_b: token1.address,
+      token_a: tokenA,
+      token_b: tokenB,
       price_current: initPrice || '0',
       price_lower: priceRangeMin,
       price_upper: priceRangeMax,
@@ -191,7 +201,7 @@ export function AmbientCreatePosition() {
                   onSetError={setErrorData}
                 />
                 <ActionButton
-                  disabled={!amount0 || !amount1}
+                  disabled={!amount0 || !amount1 || errorData.showError}
                   isPending={isPending}
                   onClick={handleNewPosition}
                   error={errorData}

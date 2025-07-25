@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 
+import { replaceNativeAddressUseBackend } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
@@ -109,9 +110,12 @@ export function UniswapCreatePosition() {
       return;
     }
 
+    const tokenA = replaceNativeAddressUseBackend(token0.address);
+    const tokenB = replaceNativeAddressUseBackend(token1.address);
+
     const args = {
-      token_a_address: token0.address,
-      token_b_address: token1.address,
+      token_a_address: tokenA,
+      token_b_address: tokenB,
       fee: multiply(feeTier, String(10_000)),
       price_lower: priceRangeMin,
       price_upper: priceRangeMax,
@@ -215,7 +219,7 @@ export function UniswapCreatePosition() {
                   amount1={amount1}
                 />
                 <ActionButton
-                  disabled={!amount0 || !amount1 || !initPriceRequired}
+                  disabled={!amount0 || !amount1 || !initPriceRequired || errorData.showError}
                   isPending={isPending}
                   onClick={handleNewPosition}
                   error={errorData}

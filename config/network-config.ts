@@ -29,9 +29,18 @@ export const MONAD_TESTNET_NAME = 'Monad';
 
 export const DEFAULT_NATIVE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
+export const BACKEND_NATIVE_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
 export const BaseNetIds = [
   String(NetworkConfigs.base.id),
   String(NetworkConfigs.eth.id),
 ] as string[];
+
+export function replaceNativeAddressUseBackend(tokenAddress: string) {
+  if (tokenAddress === DEFAULT_NATIVE_ADDRESS) {
+    return BACKEND_NATIVE_ADDRESS;
+  }
+  return tokenAddress;
+}
