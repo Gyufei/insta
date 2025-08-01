@@ -114,7 +114,10 @@ export function PositionItem({ position }: PositionItemProps) {
               <div>
                 <span className="text-gray-500">Max: </span>
                 <span>
-                  {formatNumber(price_upper || '-')} {token1?.symbol} / {token0?.symbol}
+                  {String(formatNumber(price_upper)).length > 10
+                    ? String(formatNumber(price_upper)).slice(0, 10) + '...'
+                    : formatNumber(price_upper) || '-'}
+                  {token1?.symbol} / {token0?.symbol}
                 </span>
               </div>
             </div>

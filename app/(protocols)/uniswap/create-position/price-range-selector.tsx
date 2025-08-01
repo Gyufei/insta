@@ -93,7 +93,7 @@ export default function PriceRangeSelector({
             />
             {token0Symbol && token1Symbol && (
               <span className="text-xs text-gray-500">
-                {token0Symbol} = 1 {token1Symbol}
+                {token1Symbol} = 1 {token0Symbol}
               </span>
             )}
           </div>
@@ -112,7 +112,7 @@ export default function PriceRangeSelector({
             />
             {token0Symbol && token1Symbol && (
               <span className="text-xs text-gray-500">
-                {token0Symbol} = 1 {token1Symbol}
+                {token1Symbol} = 1 {token0Symbol}
               </span>
             )}
           </div>

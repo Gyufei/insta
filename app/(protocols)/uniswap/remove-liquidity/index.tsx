@@ -76,8 +76,8 @@ export function UniswapRemoveLiquidity() {
     const liq = divide(multiply(uniswapPosition!.v3Position.liquidity, val), String(100));
     const liqNum = Math.floor(Number(liq));
     setLiquidity(liqNum.toString());
-    setAmount0(divide(multiply(token0Amount, val), String(100)));
-    setAmount1(divide(multiply(token1Amount, val), String(100)));
+    setAmount0(divide(multiply(token0Amount, String(Number(val) - 1)), String(100)));
+    setAmount1(divide(multiply(token1Amount, String(Number(val) - 1)), String(100)));
   }
 
   if (!uniswapPosition) {
