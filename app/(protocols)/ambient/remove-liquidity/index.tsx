@@ -77,16 +77,12 @@ export function AmbientRemoveLiquidity() {
     if (!ambientPosition || !percent || parseFloat(percent) <= 0 || parseFloat(percent) > 100)
       return;
 
-    const liquidity = Math.floor(
-      divide(multiply(String(ambientPosition.concLiq), String(Number(percent) - 1)), String(100))
-    ).toString();
-
     removeLiquidity({
       base_token: ambientPosition.base,
       quote_token: ambientPosition.quote,
       bid_tick: ambientPosition.bidTick,
       ask_tick: ambientPosition.askTick,
-      liquidity,
+      liquidity: ambientPosition.concLiq,
     });
   };
 
