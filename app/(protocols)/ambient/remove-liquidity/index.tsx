@@ -28,7 +28,7 @@ export function AmbientRemoveLiquidity() {
 
   const { token0, token1, token0Amount, token1Amount } = useAmbientPositionFormat(ambientPosition!);
 
-  const [percent, setPercent] = useState('');
+  const [percent, setPercent] = useState('100');
 
   const amount0 = useMemo(() => {
     if (percent === '') {
@@ -108,16 +108,17 @@ export function AmbientRemoveLiquidity() {
           <span className="text-gray-500 text-base font-semibold mb-2">Withdrawal amount</span>
           <div className="relative flex items-center justify-center w-36">
             <NumberInput
-              className="!text-2xl font-bold text-center w-full pr-8 bg-transparent outline-none transition border-none shadow-none focus-visible:ring-0"
+              className="hidden !text-2xl font-bold text-center w-full pr-8 bg-transparent outline-none transition border-none shadow-none focus-visible:ring-0"
               placeholder="0"
               value={percent}
               onChange={(v) => handlePercentChange(v)}
             />
-            <span className="absolute right-2 text-2xl font-bold text-gray-400 pointer-events-none">
+            <span className="text-2xl font-bold text-primary pointer-events-none">100%</span>
+            <span className="hidden absolute right-2 text-2xl font-bold text-gray-400 pointer-events-none">
               %
             </span>
           </div>
-          <div className="flex flex-row gap-3 justify-center w-full mt-2">
+          <div className="hidden flex-row gap-3 justify-center w-full mt-2">
             {[25, 50, 75, 100].map((v) => (
               <Button
                 key={v}

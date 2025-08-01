@@ -1,6 +1,8 @@
 import { TokenInput } from '@/components/side-drawer/common/token-input';
-import { SetInputBtn } from './set-input-btn';
+
 import { formatNumber } from '@/lib/utils/number';
+
+import { SetInputBtn } from './set-input-btn';
 
 interface TokenInputSectionProps {
   inputValue: string;
@@ -31,10 +33,7 @@ export function TokenInputSection({
         suffix={suffix}
       />
 
-      <div
-        className="group mt-2 cursor-pointer pl-1 text-xs text-gray-300"
-        onClick={() => onInputChange(balance)}
-      >
+      <div className="group mt-2 cursor-pointer pl-1 text-xs text-gray-300">
         <span className="font-semibold text-gray-400">
           {tokenSymbol} Balance:&nbsp;
           <span className="group-hover:text-primary">{formatNumber(balance)}</span>
