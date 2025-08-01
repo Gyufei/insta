@@ -58,7 +58,7 @@ export function UniswapAddLiquidity() {
   const { data: liquidityRatio } = useUniswapLiquidityRatio({
     tokenA: replaceNativeAddressUseBackend(token0?.address || ''),
     tokenB: replaceNativeAddressUseBackend(token1?.address || ''),
-    fee: multiply(feeTier, String(10_000)),
+    fee: Number(feeTier),
     price_current: String(price) || '0',
     price_lower: String(minPrice) || '0',
     price_upper: String(maxPrice) || INFINITY_PRICE,
