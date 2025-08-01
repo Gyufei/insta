@@ -98,7 +98,7 @@ export function PositionItem({ position }: PositionItemProps) {
             </div>
             <span className="block text-sm text-gray-500 truncate">Amount</span>
           </div>
-          <div className="flex-1 basis-0">
+          <div className="flex-1 basis-0 flex flex-col items-end sm:items-start">
             <span className="text-base font-semibold text-primary">
               ${formatNumber(totalLiquidityUsd)}
             </span>

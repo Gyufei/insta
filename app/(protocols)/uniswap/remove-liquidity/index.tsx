@@ -32,6 +32,7 @@ export function UniswapRemoveLiquidity() {
   const [percent, setPercent] = useState('');
   const [amount0, setAmount0] = useState('');
   const [amount1, setAmount1] = useState('');
+  const [liquidity, setLiquidity] = useState('');
 
   function handleBack() {
     setIsOpen(false);
@@ -39,10 +40,10 @@ export function UniswapRemoveLiquidity() {
 
   const handleConfirm = () => {
     if (!uniswapPosition) return;
-    
+
     removeLiquidity({
       token_id: uniswapPosition.v3Position.tokenId,
-      liquidity: uniswapPosition.v3Position.liquidity,
+      liquidity: liquidity,
       token0_amount_min: amount0,
       token1_amount_min: amount1,
       token0_decimals: token0.decimals,
@@ -56,6 +57,7 @@ export function UniswapRemoveLiquidity() {
       setPercent('');
       setAmount0('');
       setAmount1('');
+      setLiquidity('');
       return;
     }
 
@@ -63,12 +65,17 @@ export function UniswapRemoveLiquidity() {
       setPercent(val);
       setAmount0(token0Amount);
       setAmount1(token1Amount);
+      setLiquidity(uniswapPosition!.v3Position.liquidity);
       return;
     }
 
     if (Number(val) > 100 || Number(val) < 1 || val.length > 2 || val.includes('.')) return;
 
     setPercent(val);
+
+    const liq = divide(multiply(uniswapPosition!.v3Position.liquidity, val), String(100));
+    const liqNum = Math.floor(Number(liq));
+    setLiquidity(liqNum.toString());
     setAmount0(divide(multiply(token0Amount, val), String(100)));
     setAmount1(divide(multiply(token1Amount, val), String(100)));
   }

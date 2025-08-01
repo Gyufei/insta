@@ -4,6 +4,8 @@ import { Plus, Search } from 'lucide-react';
 
 import { useState } from 'react';
 
+import { IToken } from '@/config/tokens';
+
 import { EmptyState } from '@/components/common/empty-state';
 import { TitleH2 } from '@/components/common/title-h2';
 import { WithLoading } from '@/components/common/with-loading';
@@ -15,6 +17,19 @@ import { PositionStatus, useUniswapPosition } from '@/lib/data/use-uniswap-posit
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import { PositionItem } from './uniswap-position-item';
+import { UNISWAP_TOKENS } from './use-uniswap-token';
+
+function getToken(token: Omit<IToken, 'logo'>, tokens: IToken[]): IToken {
+  const t = tokens.find((t) => t.address === token.address);
+  if (!t) {
+    return {
+      ...token,
+      logo: '',
+    };
+  }
+
+  return t;
+}
 
 export function UniswapPositionsSection() {
   const { setCurrentComponent } = useSideDrawerStore();
@@ -25,6 +40,7 @@ export function UniswapPositionsSection() {
 
   const withFilter = hideClosedPositions || searchQuery;
 
+  const tokens = UNISWAP_TOKENS;
   const filteredPositions = positions?.filter((position) => {
     if (hideClosedPositions && position.status === PositionStatus.POSITION_STATUS_CLOSED) {
       return false;
@@ -32,10 +48,14 @@ export function UniswapPositionsSection() {
 
     if (searchQuery) {
       const { token0, token1 } = position.v3Position;
+      const wrapToken0 = getToken(token0, tokens) || token0;
+      const wrapToken1 = getToken(token1, tokens) || token1;
       const searchLower = searchQuery.toLowerCase();
       return (
         token0.symbol.toLowerCase().includes(searchLower) ||
-        token1.symbol.toLowerCase().includes(searchLower)
+        token1.symbol.toLowerCase().includes(searchLower) ||
+        wrapToken0.symbol.toLowerCase().includes(searchLower) ||
+        wrapToken1.symbol.toLowerCase().includes(searchLower)
       );
     }
 
