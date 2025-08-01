@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { divide, multiply } from 'safebase';
 import { toast } from 'sonner';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 
@@ -13,6 +13,7 @@ import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
+import { useUniswapPositionInfo } from '@/lib/data/use-uniswap-position-info';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { truncateNumber } from '@/lib/utils/number';
 
@@ -34,8 +35,6 @@ export enum CreatePositionStep {
 }
 
 export function UniswapCreatePosition() {
-  const [isNewPool] = useState(true);
-
   const [token0, setToken0] = useState<IToken>();
   const [token1, setToken1] = useState<IToken>();
   const [feeTier, setFeeTier] = useState<string>('0.3');
@@ -53,6 +52,28 @@ export function UniswapCreatePosition() {
   const [step, setStep] = useState<CreatePositionStep>(CreatePositionStep.SelectTokenAndFeeTier);
   const { showTokenSelector, setShowTokenSelector, handleTokenSelect, handleBack } =
     useTokenSelector();
+
+  const { data: positionInfo } = useUniswapPositionInfo({
+    token_a_address: replaceNativeAddressUseBackend(token0?.address || ''),
+    token_b_address: replaceNativeAddressUseBackend(token1?.address || ''),
+    decimals_a: token0?.decimals.toString() || '',
+    decimals_b: token1?.decimals.toString() || '',
+    fee: multiply(feeTier, String(10_000)),
+  });
+
+  const isNewPool = useMemo(() => {
+    return (
+      !positionInfo ||
+      positionInfo.pool_addr === '0x0000000000000000000000000000000000000000' ||
+      positionInfo.price === '0'
+    );
+  }, [positionInfo]);
+
+  useEffect(() => {
+    if (positionInfo && positionInfo.price && positionInfo.price !== '0') {
+      setInitPrice(positionInfo.price);
+    }
+  }, [positionInfo]);
 
   const { mutate: createPosition, isPending } = useNewPosition(isNewPool);
 

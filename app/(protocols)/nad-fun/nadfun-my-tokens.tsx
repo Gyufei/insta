@@ -1,6 +1,7 @@
 'use client';
 
 import { IToken } from '@/config/tokens';
+
 import { useNadFunMyTokens } from '@/lib/data/use-nadfun-my-tokens';
 
 import { NadFunTokenList } from './nadfun-token-list';
@@ -8,17 +9,19 @@ import { NadFunTokenList } from './nadfun-token-list';
 export function NadFunMyTokens() {
   const { data: tokens, isLoading } = useNadFunMyTokens();
 
-  const parseTokens = tokens?.map(
-    (token) =>
-      ({
-        ...token,
-        address: token.token_address,
-        logo: token.logo_url,
-        symbol: token.symbol,
-        name: token.name,
-        decimals: 18,
-      }) as IToken & { balance: string }
-  );
+  const parseTokens = tokens
+    ?.map(
+      (token) =>
+        ({
+          ...token,
+          address: token.token_address,
+          logo: token.logo_url,
+          symbol: token.symbol,
+          name: token.name,
+          decimals: 18,
+        }) as IToken & { balance: string }
+    )
+    .filter((token) => Number(token.balance) > 10 ** 8);
 
   return (
     <NadFunTokenList

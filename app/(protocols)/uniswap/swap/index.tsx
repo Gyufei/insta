@@ -9,7 +9,11 @@ import {
   useTokenSelector,
 } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 
-import { DEFAULT_NATIVE_ADDRESS, DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
+import {
+  DEFAULT_NATIVE_ADDRESS,
+  DEFAULT_TOKEN_DECIMALS,
+  replaceNativeAddressUseBackend,
+} from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
@@ -53,8 +57,8 @@ export function UniswapSwap() {
   const quoteParams =
     sellToken && buyToken && sellValue
       ? {
-          tokenIn: sellToken.address,
-          tokenOut: buyToken.address,
+          tokenIn: replaceNativeAddressUseBackend(sellToken.address),
+          tokenOut: replaceNativeAddressUseBackend(buyToken.address),
           amountIn: sellValue,
           amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
         }

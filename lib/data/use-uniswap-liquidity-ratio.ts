@@ -9,9 +9,9 @@ interface ILiquidityRatioParams {
   tokenA: string;
   tokenB: string;
   fee: number;
-  price_current: number;
-  price_lower: number;
-  price_upper: number;
+  price_current: string;
+  price_lower: string;
+  price_upper: string;
   decimals_a: number;
   decimals_b: number;
 }

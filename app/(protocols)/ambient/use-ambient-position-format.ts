@@ -18,6 +18,13 @@ function calculateTokenAmounts(
   token1Decimals: number,
   liq: string
 ) {
+  console.log('lowerPrice', lowerPrice);
+  console.log('upperPrice', upperPrice);
+  console.log('currentPrice', currentPrice);
+  console.log('token0Decimals', token0Decimals);
+  console.log('token1Decimals', token1Decimals);
+  console.log('liq', liq);
+
   // 输入验证
   if (
     Number(lowerPrice) >= Number(upperPrice) ||
@@ -67,8 +74,8 @@ function calculateTokenAmounts(
 
   // 返回结果，保留合理精度
   return {
-    amount0: Number(amount0.toFixed(token0Decimals)),
-    amount1: Number(amount1.toFixed(token1Decimals)),
+    amount0: truncateNumber(String(amount0), 4),
+    amount1: truncateNumber(String(amount1), 4),
   };
 }
 

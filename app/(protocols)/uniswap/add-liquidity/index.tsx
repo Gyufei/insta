@@ -13,6 +13,7 @@ import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { truncateNumber } from '@/lib/utils/number';
 
+import { INFINITY_PRICE } from '../create-position/price-range-selector';
 import { TokenPairAndStatus } from '../uni-common/token-pair-and-status';
 import { TwoTokenAmount } from '../uni-common/two-token-amount';
 import UniswapTokenInput from '../uni-common/uniswap-token-input';
@@ -46,9 +47,9 @@ export function UniswapAddLiquidity() {
     tokenA: token0?.address || '',
     tokenB: token1?.address || '',
     fee: 3000,
-    price_current: price || 0,
-    price_lower: Number(minPrice) || 0,
-    price_upper: Number(maxPrice) || 0,
+    price_current: String(price) || '0',
+    price_lower: String(minPrice) || '0',
+    price_upper: String(maxPrice) || INFINITY_PRICE,
     decimals_a: token0?.decimals || 18,
     decimals_b: token1?.decimals || 18,
   });
