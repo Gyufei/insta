@@ -13,11 +13,13 @@ import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
+import { useUniswapLiquidityRatio } from '@/lib/data/use-uniswap-liquidity-ratio';
 import { useUniswapPositionInfo } from '@/lib/data/use-uniswap-position-info';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { truncateNumber } from '@/lib/utils/number';
 
 import TokenSelector from '../uni-common/token-selector';
+import { INFINITY_PRICE } from './price-range-selector';
 import { SelectTokenAndFeeTier } from './select-token-and-fee-tier';
 import { SetPriceAndAmount } from './set-price-and-amount';
 import { useNewPosition } from './use-new-position';
@@ -61,6 +63,23 @@ export function UniswapCreatePosition() {
     fee: multiply(feeTier, String(10_000)),
   });
 
+  const { data: liquidityRatio } = useUniswapLiquidityRatio({
+    tokenA: token0?.address || '',
+    tokenB: token1?.address || '',
+    fee: 3000,
+    price_current: String(initPrice) || '0',
+    price_lower: String(priceRangeMin) || '0',
+    price_upper: String(priceRangeMax) || INFINITY_PRICE,
+    decimals_a: token0?.decimals || 18,
+    decimals_b: token1?.decimals || 18,
+  });
+
+  const ratio = liquidityRatio?.ratio
+    ? ['Infinity', 'NaN'].includes(liquidityRatio?.ratio || '')
+      ? initPrice
+      : liquidityRatio?.ratio
+    : initPrice;
+
   const isNewPool = useMemo(() => {
     return (
       !positionInfo ||
@@ -81,8 +100,8 @@ export function UniswapCreatePosition() {
 
   function handleAmount0Change(value: string) {
     setAmount0(value);
-    if (value && initPrice) {
-      const reciprocal = truncateNumber(multiply(String(value), initPrice), token1?.decimals || 18);
+    if (value && ratio) {
+      const reciprocal = truncateNumber(multiply(String(value), ratio), token1?.decimals || 18);
       setAmount1(reciprocal);
     }
   }
@@ -90,7 +109,7 @@ export function UniswapCreatePosition() {
   function handleAmount1Change(value: string) {
     setAmount1(value);
     if (value && initPrice) {
-      const reciprocal = truncateNumber(divide(String(value), initPrice), token0?.decimals || 18);
+      const reciprocal = truncateNumber(divide(String(value), ratio), token0?.decimals || 18);
       setAmount0(reciprocal);
     }
   }
@@ -180,6 +199,13 @@ export function UniswapCreatePosition() {
       errorMessage: '',
     });
   }, [priceRangeMin, priceRangeMax]);
+
+  useEffect(() => {
+    if (ratio && amount0) {
+      const reciprocal = truncateNumber(multiply(String(amount0), ratio), token1?.decimals || 18);
+      setAmount1(reciprocal);
+    }
+  }, [ratio, amount0, token1]);
 
   return (
     <>
