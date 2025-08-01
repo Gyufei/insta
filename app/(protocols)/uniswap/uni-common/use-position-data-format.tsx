@@ -163,6 +163,7 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
   return {
     version,
     fee,
+    feeTier,
     token0: wrapToken0,
     token1: wrapToken1,
     token0Amount,

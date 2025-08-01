@@ -63,10 +63,12 @@ export function UniswapCreatePosition() {
     fee: multiply(feeTier, String(10_000)),
   });
 
+  console.log('fee', feeTier);
+
   const { data: liquidityRatio } = useUniswapLiquidityRatio({
     tokenA: replaceNativeAddressUseBackend(token0?.address || ''),
     tokenB: replaceNativeAddressUseBackend(token1?.address || ''),
-    fee: 3000,
+    fee: multiply(feeTier, String(10_000)),
     price_current: String(initPrice) || '0',
     price_lower: String(priceRangeMin) || '0',
     price_upper: String(priceRangeMax) || INFINITY_PRICE,

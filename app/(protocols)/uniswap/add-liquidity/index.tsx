@@ -30,8 +30,18 @@ export function UniswapAddLiquidity() {
       uniswapPosition?: IUniswapPosition;
     }) || {};
 
-  const { version, fee, token0, token1, token0Amount, token1Amount, price, minPrice, maxPrice } =
-    usePositionDataFormat(uniswapPosition!);
+  const {
+    version,
+    fee,
+    feeTier,
+    token0,
+    token1,
+    token0Amount,
+    token1Amount,
+    price,
+    minPrice,
+    maxPrice,
+  } = usePositionDataFormat(uniswapPosition!);
 
   const [amount0, setAmount0] = useState('');
   const [amount1, setAmount1] = useState('');
@@ -48,7 +58,7 @@ export function UniswapAddLiquidity() {
   const { data: liquidityRatio } = useUniswapLiquidityRatio({
     tokenA: replaceNativeAddressUseBackend(token0?.address || ''),
     tokenB: replaceNativeAddressUseBackend(token1?.address || ''),
-    fee: 3000,
+    fee: multiply(feeTier, String(10_000)),
     price_current: String(price) || '0',
     price_lower: String(minPrice) || '0',
     price_upper: String(maxPrice) || INFINITY_PRICE,

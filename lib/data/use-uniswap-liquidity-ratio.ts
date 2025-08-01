@@ -21,6 +21,10 @@ export function useUniswapLiquidityRatio(params: ILiquidityRatioParams) {
     ApiPath.uniswapLiquidityRatio,
     () => ['uniswap', 'liquidity-ratio', JSON.stringify(params)],
     (url) => {
+      if (!params.tokenA || !params.tokenB) {
+        return null;
+      }
+
       url.searchParams.set('tokenA', params.tokenA);
       url.searchParams.set('tokenB', params.tokenB);
       url.searchParams.set('fee', params.fee.toString());
