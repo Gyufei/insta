@@ -50,7 +50,8 @@ export function NadFunSellToken() {
       }
 
       const tokenOut = calcTokenIn(value);
-      setTokenOut(tokenOut);
+      const withSlippage = (tokenOut * BigInt(90)) / BigInt(100);
+      setTokenOut(withSlippage);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setErrorData({

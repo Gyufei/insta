@@ -2,6 +2,8 @@ import { divide, multiply } from 'safebase';
 
 import { useState } from 'react';
 
+import { replaceNativeAddressUseBackend } from '@/config/network-config';
+
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
@@ -44,8 +46,8 @@ export function UniswapAddLiquidity() {
   }
 
   const { data: liquidityRatio } = useUniswapLiquidityRatio({
-    tokenA: token0?.address || '',
-    tokenB: token1?.address || '',
+    tokenA: replaceNativeAddressUseBackend(token0?.address || ''),
+    tokenB: replaceNativeAddressUseBackend(token1?.address || ''),
     fee: 3000,
     price_current: String(price) || '0',
     price_lower: String(minPrice) || '0',

@@ -64,8 +64,8 @@ export function UniswapCreatePosition() {
   });
 
   const { data: liquidityRatio } = useUniswapLiquidityRatio({
-    tokenA: token0?.address || '',
-    tokenB: token1?.address || '',
+    tokenA: replaceNativeAddressUseBackend(token0?.address || ''),
+    tokenB: replaceNativeAddressUseBackend(token1?.address || ''),
     fee: 3000,
     price_current: String(initPrice) || '0',
     price_lower: String(priceRangeMin) || '0',
