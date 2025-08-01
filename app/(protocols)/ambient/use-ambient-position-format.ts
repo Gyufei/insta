@@ -1,9 +1,10 @@
-import { divide, utils } from 'safebase';
+import { divide } from 'safebase';
 
 import { useMemo } from 'react';
 
 import { useAmbientCalcImpact } from '@/lib/data/use-ambient-calc-impact';
 import { IAmbientPosition } from '@/lib/data/use-ambient-position';
+import { truncateNumber } from '@/lib/utils/number';
 
 import { UNISWAP_TOKENS } from '../uniswap/use-uniswap-token';
 
@@ -132,13 +133,13 @@ export function useAmbientPositionFormat(position: IAmbientPosition) {
   const minPrice = useMemo(() => {
     const tick0 = Math.pow(TICK_BASE, Number(askTick || 0));
     const prc = (1 / tick0) * decimalsRate;
-    return utils.roundResult(String(prc), token1?.decimals);
+    return truncateNumber(String(prc), token1?.decimals || 18);
   }, [askTick, decimalsRate, token1?.decimals]);
 
   const maxPrice = useMemo(() => {
     const tick1 = Math.pow(TICK_BASE, Number(bidTick || 0));
     const prc = (1 / tick1) * decimalsRate;
-    return utils.roundResult(String(prc), token1?.decimals);
+    return truncateNumber(String(prc), token1?.decimals || 18);
   }, [bidTick, decimalsRate, token1?.decimals]);
 
   const amountObj = useMemo(() => {

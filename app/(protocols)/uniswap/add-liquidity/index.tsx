@@ -1,4 +1,4 @@
-import { divide, multiply, utils } from 'safebase';
+import { divide, multiply } from 'safebase';
 
 import { useState } from 'react';
 
@@ -11,6 +11,7 @@ import { useUniswapLiquidityRatio } from '@/lib/data/use-uniswap-liquidity-ratio
 import { IUniswapPosition } from '@/lib/data/use-uniswap-position';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { truncateNumber } from '@/lib/utils/number';
 
 import { TokenPairAndStatus } from '../uni-common/token-pair-and-status';
 import { TwoTokenAmount } from '../uni-common/two-token-amount';
@@ -57,7 +58,7 @@ export function UniswapAddLiquidity() {
     if (liquidityRatio?.ratio && value) {
       const ratio = liquidityRatio.ratio;
       if (ratio) {
-        const newAmount1 = utils.roundResult(multiply(value, ratio), token1?.decimals);
+        const newAmount1 = truncateNumber(multiply(value, ratio), token1?.decimals || 18);
         setAmount1(newAmount1);
       }
     }
@@ -69,7 +70,7 @@ export function UniswapAddLiquidity() {
       const ratio = liquidityRatio.ratio;
 
       if (ratio) {
-        const newAmount0 = utils.roundResult(divide(value, ratio), token0?.decimals);
+        const newAmount0 = truncateNumber(divide(value, ratio), token0?.decimals || 18);
         setAmount0(newAmount0);
       }
     }

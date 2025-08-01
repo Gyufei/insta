@@ -1,8 +1,7 @@
-import { utils } from 'safebase';
-
 import { DEFAULT_NATIVE_ADDRESS } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
+import { truncateNumber } from '../utils/number';
 import { useAddressBalance } from './use-address-balance';
 import { useAddressTokenBalance } from './use-address-token-balance';
 
@@ -34,9 +33,7 @@ export function useGetAddressBalance(
     isPending: isTokenBalancePending,
   } = useAddressTokenBalance(chainId, address, tokenAddress, tokens, !isNative && enableQuery);
 
-  const balance = isNative
-    ? utils.roundResult(nativeBalance, 4)
-    : utils.roundResult(tokenBalance, 4);
+  const balance = isNative ? truncateNumber(nativeBalance, 4) : truncateNumber(tokenBalance, 4);
 
   const balanceBig = isNative ? nativeBalanceBig : tokenBalanceBig;
   const isBalancePending = Boolean(isNative) ? isNativeBalancePending : isTokenBalancePending;

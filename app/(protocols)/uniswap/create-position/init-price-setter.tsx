@@ -1,17 +1,19 @@
 'use client';
 
-import { divide, utils } from 'safebase';
+import { divide } from 'safebase';
 
 import type React from 'react';
 import { useState } from 'react';
+
+import { IToken } from '@/config/tokens';
 
 import { BadgeHelpTooltip } from '@/components/common/badge-help';
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 import { NumberInput } from '@/components/common/number-input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import { IToken } from '@/config/tokens';
 import { cn } from '@/lib/utils';
+import { truncateNumber } from '@/lib/utils/number';
 
 import { PairTokenSelected } from '../uni-common/use-token-selector';
 
@@ -37,7 +39,7 @@ export default function InitialPriceSetter({
     if (currentCheckToken === String(PairTokenSelected.Token0)) {
       setPrice(newPrice);
       if (newPrice) {
-        const reciprocal = utils.roundResult(divide(String(1), newPrice), 8);
+        const reciprocal = truncateNumber(divide(String(1), newPrice), 8);
         setPrice2(reciprocal);
       } else {
         setPrice2('');
@@ -46,7 +48,7 @@ export default function InitialPriceSetter({
     } else {
       setPrice2(newPrice);
       if (newPrice) {
-        const reciprocal = utils.roundResult(divide(String(1), newPrice), 8);
+        const reciprocal = truncateNumber(divide(String(1), newPrice), 8);
         setPrice(reciprocal);
         onPriceChange(reciprocal);
       } else {

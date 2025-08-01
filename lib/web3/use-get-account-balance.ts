@@ -1,9 +1,9 @@
-import { utils } from 'safebase';
-
 import { DEFAULT_NATIVE_ADDRESS, NetworkConfigs } from '@/config/network-config';
 
 import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 import { useAccountTokenBalance } from '@/lib/web3/use-account-token-balance';
+
+import { truncateNumber } from '../utils/number';
 
 interface BalanceResult {
   balance: string;
@@ -31,9 +31,7 @@ export function useGetAccountBalance(tokenAddress: string, enableQuery = true): 
     !isNative && enableQuery
   );
 
-  const balance = isNative
-    ? utils.roundResult(nativeBalance, 4)
-    : utils.roundResult(tokenBalance, 4);
+  const balance = isNative ? truncateNumber(nativeBalance, 4) : truncateNumber(tokenBalance, 4);
 
   const balanceBig = isNative ? nativeBalanceBig : tokenBalanceBig;
   const isBalancePending = isNative ? isNativeBalancePending : isTokenBalancePending;

@@ -1,4 +1,4 @@
-import { divide, utils } from 'safebase';
+import { divide } from 'safebase';
 
 import { useMemo } from 'react';
 
@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress';
 
 import { IBadgeNft } from '@/lib/data/use-badge-nfts';
 import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
-import { formatNumber } from '@/lib/utils/number';
+import { formatNumber, truncateNumber } from '@/lib/utils/number';
 
 export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
   const { data: userBadgeData } = useBadgeWalletNfts();
@@ -18,7 +18,7 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
   const remainCount = isUserNft ? Number(userBadgeData?.remainingClaims) : total;
 
   const claimed = isUserNft
-    ? utils.roundResult(
+    ? truncateNumber(
         divide(
           String(userBadgeData?.claimInfo.total_claim_amount || 0),
           String(10 ** MONAD.decimals)
@@ -63,7 +63,7 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
 
   // 进度条百分比
   const progress = isUserNft
-    ? utils.roundResult(divide(String(Number(remainCount)), String(total)), 2)
+    ? truncateNumber(divide(String(Number(remainCount)), String(total)), 2)
     : 1;
 
   return (
@@ -75,7 +75,7 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
         </span>
       </div>
 
-      <Progress className="" value={progress * 100} />
+      <Progress className="" value={Number(progress) * 100} />
 
       <div className="flex flex-col gap-4 mt-5">
         <div className="flex justify-between">

@@ -2,7 +2,7 @@
 
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { Loader } from 'lucide-react';
-import { add, divide, multiply, subtract, utils } from 'safebase';
+import { add, divide, multiply, subtract } from 'safebase';
 import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
@@ -34,7 +34,7 @@ import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useTokenStationSwapBridge } from '@/lib/data/use-token-station-swap-bridge';
 import { useTokenStationSwapCCIP } from '@/lib/data/use-token-station-swap-ccip';
 import { cn, formatAddress } from '@/lib/utils';
-import { formatNumber } from '@/lib/utils/number';
+import { formatNumber, truncateNumber } from '@/lib/utils/number';
 import { useIsMobile } from '@/lib/utils/use-mobile';
 import { useGetAddressBalance } from '@/lib/web3/use-get-address-balance';
 
@@ -264,7 +264,7 @@ export function TokenStation() {
     }
 
     const amount = divide(swapFromExcludeFee, String(tPrice));
-    const withSlippage = utils.roundResult(multiply(amount, String(0.9)), 8);
+    const withSlippage = truncateNumber(multiply(amount, String(0.9)), 8);
     return withSlippage;
   }
 
@@ -308,7 +308,7 @@ export function TokenStation() {
       swapFromReal = withFee;
     }
 
-    const withSlippage = utils.roundResult(divide(swapFromReal, String(fPrice)), 8);
+    const withSlippage = truncateNumber(divide(swapFromReal, String(fPrice)), 8);
     return withSlippage;
   }
 

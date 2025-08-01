@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { divide, multiply, utils } from 'safebase';
+import { divide, multiply } from 'safebase';
 import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
@@ -16,6 +16,7 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 
 import { useAmbientCreatePosition } from '@/lib/data/use-ambient-create-position';
 import { ErrorVO } from '@/lib/model/error-vo';
+import { truncateNumber } from '@/lib/utils/number';
 
 import { INFINITY_PRICE } from '../../uniswap/create-position/price-range-selector';
 import { SelectToken } from './select-token';
@@ -56,7 +57,7 @@ export function AmbientCreatePosition() {
   function handleAmount0Change(value: string) {
     setAmount0(value);
     if (value && initPrice) {
-      const reciprocal = utils.roundResult(multiply(String(value), initPrice), token0?.decimals);
+      const reciprocal = truncateNumber(multiply(String(value), initPrice), token0?.decimals || 18);
       setAmount1(reciprocal);
     }
   }
@@ -64,7 +65,7 @@ export function AmbientCreatePosition() {
   function handleAmount1Change(value: string) {
     setAmount1(value);
     if (value && initPrice) {
-      const reciprocal = utils.roundResult(divide(String(value), initPrice), token1?.decimals);
+      const reciprocal = truncateNumber(divide(String(value), initPrice), token1?.decimals || 18);
       setAmount0(reciprocal);
     }
   }
@@ -72,7 +73,7 @@ export function AmbientCreatePosition() {
   function handleInitPriceChange(value: string) {
     setInitPrice(value);
     if (value && amount0) {
-      const reciprocal = utils.roundResult(divide(String(amount0), value), token0?.decimals);
+      const reciprocal = truncateNumber(divide(String(amount0), value), token0?.decimals || 18);
       setAmount1(reciprocal);
     }
   }

@@ -1,6 +1,6 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { LoaderCircle } from 'lucide-react';
-import { divide, utils } from 'safebase';
+import { divide } from 'safebase';
 import { useAccount } from 'wagmi';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -12,12 +12,13 @@ import { ButtonWithCheck } from '@/components/common/button-with-check';
 import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { Button } from '@/components/ui/button';
 
+import { useApiWalletBalance } from '@/lib/data/use-api-wallet-balance';
 import { IBadgeNft } from '@/lib/data/use-badge-nfts';
 import { useBadgePurchase } from '@/lib/data/use-badge-purchase';
 import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
 import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
-import { useApiWalletBalance } from '@/lib/data/use-api-wallet-balance';
+import { truncateNumber } from '@/lib/utils/number';
 
 import { BUY_TOKEN_CONFIG_BASE } from './buy-token-config';
 
@@ -69,7 +70,7 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
     if (isPriceLoading || !priceData) return '-';
 
     if (payToken === 'ETH') {
-      return utils.roundResult(divide(String(price), String(ETHPrice)), 4);
+      return truncateNumber(divide(String(price), String(ETHPrice)), 4);
     }
     return price;
   }, [price, ETHPrice, payToken, isPriceLoading, priceData]);

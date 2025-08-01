@@ -1,4 +1,4 @@
-import { multiply, utils } from 'safebase';
+import { multiply } from 'safebase';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -13,7 +13,7 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { useNadFunSell } from '@/lib/data/use-nadfun-sell';
 import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { formatBig, parseBig } from '@/lib/utils/number';
+import { formatBig, parseBig, truncateNumber } from '@/lib/utils/number';
 
 import { TokenHeader } from '../common/token-header';
 import { TokenInputSection } from '../common/token-input-section';
@@ -24,7 +24,7 @@ export function NadFunSellToken() {
   const { currentComponent, setIsOpen } = useSideDrawerStore();
   const { token } = currentComponent?.props || { token: null };
 
-  const balance = token?.balance ? formatBig(token.balance) : '0';
+  const balance = token?.balance ? formatBig(token.balance, token.decimals || 18) : '0';
 
   const { inputValue, btnDisabled, errorData, setErrorData, handleInputChange } =
     useTokenInput(balance);
@@ -37,7 +37,7 @@ export function NadFunSellToken() {
   const [tokenOut, setTokenOut] = useState<bigint>(BigInt(0));
 
   const tokenOutDisplay = useMemo(() => {
-    return utils.roundResult(formatBig(tokenOut.toString()), 6);
+    return truncateNumber(formatBig(tokenOut.toString()), 6);
   }, [tokenOut]);
 
   function handleInput(value: string) {
@@ -79,7 +79,7 @@ export function NadFunSellToken() {
 
   function handlePercentage(percentage: number) {
     const amount = multiply(balance, String(percentage));
-    const roundedAmount = utils.roundResult(amount, 10);
+    const roundedAmount = truncateNumber(amount, 10);
     handleInput(roundedAmount);
   }
 

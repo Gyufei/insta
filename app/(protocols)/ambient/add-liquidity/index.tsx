@@ -1,4 +1,4 @@
-import { divide, multiply, utils } from 'safebase';
+import { divide, multiply } from 'safebase';
 
 import { useState } from 'react';
 
@@ -14,6 +14,7 @@ import { useAmbientLiquidityRatio } from '@/lib/data/use-ambient-liquidity-ratio
 import { IAmbientPosition } from '@/lib/data/use-ambient-position';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { truncateNumber } from '@/lib/utils/number';
 
 import { TokenPairAndStatus } from '../am-common/token-pair-and-status';
 import { useAmbientPositionFormat } from '../use-ambient-position-format';
@@ -42,9 +43,9 @@ export function AmbientAddLiquidity() {
     tokenA: token0?.address || '',
     tokenB: token1?.address || '',
     fee: 3000,
-    price_current: price || 0,
-    price_lower: price_lower || 0,
-    price_upper: price_upper || 0,
+    price_current: String(price),
+    price_lower: String(price_lower),
+    price_upper: String(price_upper),
     decimals_a: token0?.decimals || 18,
     decimals_b: token1?.decimals || 18,
   });
@@ -54,7 +55,7 @@ export function AmbientAddLiquidity() {
     if (liquidityRatio?.ratio && value) {
       const ratio = liquidityRatio.ratio;
       if (ratio) {
-        const newAmount1 = utils.roundResult(multiply(value, ratio), token1?.decimals);
+        const newAmount1 = truncateNumber(multiply(value, ratio), token1?.decimals || 18);
         setAmount1(newAmount1);
       }
     }
@@ -65,7 +66,7 @@ export function AmbientAddLiquidity() {
     if (liquidityRatio?.ratio && value) {
       const ratio = liquidityRatio.ratio;
       if (ratio) {
-        const newAmount0 = utils.roundResult(divide(value, ratio), token0?.decimals);
+        const newAmount0 = truncateNumber(divide(value, ratio), token0?.decimals || 18);
         setAmount0(newAmount0);
       }
     }

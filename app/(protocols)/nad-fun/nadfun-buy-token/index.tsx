@@ -1,19 +1,18 @@
-import { utils } from 'safebase';
-
 import { useEffect, useMemo, useState } from 'react';
 
+import { MONAD } from '@/config/tokens';
+
+import { TokenDisplayCard } from '@/components/common/token-display-card';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { TokenDisplayCard } from '@/components/common/token-display-card';
 
-import { MONAD } from '@/config/tokens';
+import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 import { useNadFunBuy } from '@/lib/data/use-nadfun-buy';
 import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { formatBig, parseBig } from '@/lib/utils/number';
-import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
+import { formatBig, parseBig, truncateNumber } from '@/lib/utils/number';
 
 import { TokenHeader } from '../common/token-header';
 import { TokenInputSection } from '../common/token-input-section';
@@ -36,7 +35,7 @@ export function NadFunBuyToken() {
   const [tokenOut, setTokenOut] = useState<bigint>(BigInt(0));
 
   const tokenOutDisplay = useMemo(() => {
-    return utils.roundResult(formatBig(tokenOut.toString()), 6);
+    return truncateNumber(formatBig(tokenOut.toString()), 6);
   }, [tokenOut]);
 
   function handleInput(value: string) {

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { divide, multiply, utils } from 'safebase';
+import { divide, multiply } from 'safebase';
 import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
@@ -14,6 +14,7 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
 import { ErrorVO } from '@/lib/model/error-vo';
+import { truncateNumber } from '@/lib/utils/number';
 
 import TokenSelector from '../uni-common/token-selector';
 import { SelectTokenAndFeeTier } from './select-token-and-fee-tier';
@@ -60,7 +61,7 @@ export function UniswapCreatePosition() {
   function handleAmount0Change(value: string) {
     setAmount0(value);
     if (value && initPrice) {
-      const reciprocal = utils.roundResult(multiply(String(value), initPrice), token1?.decimals);
+      const reciprocal = truncateNumber(multiply(String(value), initPrice), token1?.decimals || 18);
       setAmount1(reciprocal);
     }
   }
@@ -68,7 +69,7 @@ export function UniswapCreatePosition() {
   function handleAmount1Change(value: string) {
     setAmount1(value);
     if (value && initPrice) {
-      const reciprocal = utils.roundResult(divide(String(value), initPrice), token0?.decimals);
+      const reciprocal = truncateNumber(divide(String(value), initPrice), token0?.decimals || 18);
       setAmount0(reciprocal);
     }
   }
@@ -76,7 +77,7 @@ export function UniswapCreatePosition() {
   function handleInitPriceChange(value: string) {
     setInitPrice(value);
     if (value && amount0) {
-      const reciprocal = utils.roundResult(divide(String(amount0), value), token1?.decimals);
+      const reciprocal = truncateNumber(divide(String(amount0), value), token1?.decimals || 18);
       setAmount1(reciprocal);
     }
   }
