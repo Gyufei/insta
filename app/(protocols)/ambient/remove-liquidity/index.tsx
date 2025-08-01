@@ -43,7 +43,7 @@ export function AmbientRemoveLiquidity() {
       return '0';
 
     const a0 = divide(
-      multiply(String(token0Amount) || '0', String(percent)),
+      multiply(String(token0Amount) || '0', String(Number(percent) - 1)),
       String(100)
     ).toString();
 
@@ -63,7 +63,7 @@ export function AmbientRemoveLiquidity() {
       return '0';
 
     const a1 = divide(
-      multiply(String(token1Amount) || '0', String(percent)),
+      multiply(String(token1Amount) || '0', String(Number(percent) - 1)),
       String(100)
     ).toString();
     return a1;
@@ -77,23 +77,15 @@ export function AmbientRemoveLiquidity() {
     if (!ambientPosition || !percent || parseFloat(percent) <= 0 || parseFloat(percent) > 100)
       return;
 
-    const askTick = Math.floor(
-      divide(multiply(String(ambientPosition.askTick), String(percent)), String(100))
-    ).toString();
-
-    const bidTick = Math.floor(
-      divide(multiply(String(ambientPosition.bidTick), String(percent)), String(100))
-    ).toString();
-
     const liquidity = Math.floor(
-      divide(multiply(String(ambientPosition.concLiq), String(percent)), String(100))
+      divide(multiply(String(ambientPosition.concLiq), String(Number(percent) - 1)), String(100))
     ).toString();
 
     removeLiquidity({
       base_token: ambientPosition.base,
       quote_token: ambientPosition.quote,
-      bid_tick: bidTick,
-      ask_tick: askTick,
+      bid_tick: ambientPosition.bidTick,
+      ask_tick: ambientPosition.askTick,
       liquidity,
     });
   };

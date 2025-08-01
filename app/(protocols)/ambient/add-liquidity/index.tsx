@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { TwoTokenAmount } from '@/app/(protocols)/uniswap/uni-common/two-token-amount';
 import UniswapTokenInput from '@/app/(protocols)/uniswap/uni-common/uniswap-token-input';
 
+import { replaceNativeAddressUseBackend } from '@/config/network-config';
+
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
@@ -80,8 +82,8 @@ export function AmbientAddLiquidity() {
     if (!ambientPosition) return;
 
     addLiquidity({
-      token_a: token0?.address,
-      token_b: token1?.address,
+      token_a: replaceNativeAddressUseBackend(token0?.address),
+      token_b: replaceNativeAddressUseBackend(token1?.address),
       price_current: price,
       price_lower: price_lower,
       price_upper: price_upper,
