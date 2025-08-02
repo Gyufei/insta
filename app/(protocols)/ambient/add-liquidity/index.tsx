@@ -44,7 +44,6 @@ export function AmbientAddLiquidity() {
   const { data: liquidityRatio } = useAmbientLiquidityRatio({
     tokenA: token0?.address || '',
     tokenB: token1?.address || '',
-    fee: 3000,
     price_current: String(price),
     price_lower: String(price_lower),
     price_upper: String(price_upper),
