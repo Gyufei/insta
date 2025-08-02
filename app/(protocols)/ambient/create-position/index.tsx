@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { divide, multiply } from 'safebase';
 import { toast } from 'sonner';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import TokenSelector from '@/app/(protocols)/uniswap/uni-common/token-selector';
 import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
@@ -15,6 +15,8 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
 import { useAmbientCreatePosition } from '@/lib/data/use-ambient-create-position';
+import { useAmbientLiquidityRatio } from '@/lib/data/use-ambient-liquidity-ratio';
+import { useAmbientPositionInfo } from '@/lib/data/use-ambient-position-info';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { truncateNumber } from '@/lib/utils/number';
 
@@ -52,6 +54,39 @@ export function AmbientCreatePosition() {
   const { showTokenSelector, setShowTokenSelector, handleTokenSelect, handleBack } =
     useTokenSelector();
 
+  const { data: liquidityRatio } = useAmbientLiquidityRatio({
+    tokenA: replaceNativeAddressUseBackend(token0?.address || ''),
+    tokenB: replaceNativeAddressUseBackend(token1?.address || ''),
+    price_current: String(initPrice) || '0',
+    price_lower: String(Number(priceRangeMin)) || '0',
+    price_upper: String(Number(priceRangeMax)) || INFINITY_PRICE,
+    decimals_a: token0?.decimals || 18,
+    decimals_b: token1?.decimals || 18,
+  });
+
+  const { data: positionInfo } = useAmbientPositionInfo({
+    token_a_address: replaceNativeAddressUseBackend(token0?.address || ''),
+    token_b_address: replaceNativeAddressUseBackend(token1?.address || ''),
+    decimals_a: token0?.decimals.toString() || '',
+    decimals_b: token1?.decimals.toString() || '',
+  });
+
+  const ratio = liquidityRatio?.ratio
+    ? ['Infinity', 'NaN', INFINITY_PRICE].includes(liquidityRatio?.ratio || '')
+      ? initPrice
+      : liquidityRatio?.ratio
+    : initPrice;
+
+  const isNewPool = useMemo(() => {
+    return (
+      !positionInfo ||
+      positionInfo.pool_addr === '0x0000000000000000000000000000000000000000' ||
+      positionInfo.price === '0'
+    );
+  }, [positionInfo]);
+
+  const initPriceRequired = !isNewPool || (isNewPool && initPrice);
+
   const { mutate: createPosition, isPending } = useAmbientCreatePosition();
 
   function handleAmount0Change(value: string) {
@@ -65,17 +100,13 @@ export function AmbientCreatePosition() {
   function handleAmount1Change(value: string) {
     setAmount1(value);
     if (value && initPrice) {
-      const reciprocal = truncateNumber(divide(String(value), initPrice), token1?.decimals || 18);
+      const reciprocal = truncateNumber(divide(String(value), ratio), token1?.decimals || 18);
       setAmount0(reciprocal);
     }
   }
 
   function handleInitPriceChange(value: string) {
     setInitPrice(value);
-    if (value && amount0) {
-      const reciprocal = truncateNumber(divide(String(amount0), value), token0?.decimals || 18);
-      setAmount1(reciprocal);
-    }
   }
 
   const handleTokenSelectWrapper = (token: IToken) => {
@@ -110,15 +141,12 @@ export function AmbientCreatePosition() {
     const tokenA = replaceNativeAddressUseBackend(token0.address);
     const tokenB = replaceNativeAddressUseBackend(token1.address);
 
-    const priceMin = Number(priceRangeMin) === 0 ? '0.00001' : priceRangeMin;
-    const priceMax = priceRangeMax === INFINITY_PRICE ? '99999' : priceRangeMax;
-
     const args = {
       token_a: tokenA,
       token_b: tokenB,
       price_current: initPrice || '0',
-      price_lower: priceMin,
-      price_upper: priceMax,
+      price_lower: priceRangeMin,
+      price_upper: priceRangeMax,
       token_a_amount: amount0,
       token_a_decimals: token0.decimals.toString(),
       token_b_decimals: token1.decimals.toString(),
@@ -132,6 +160,19 @@ export function AmbientCreatePosition() {
       setStep(CreatePositionStep.SetPriceAndMount);
     }
   }
+
+  useEffect(() => {
+    if (ratio && amount0) {
+      const reciprocal = truncateNumber(multiply(String(amount0), ratio), token1?.decimals || 18);
+      setAmount1(reciprocal);
+    }
+  }, [ratio, amount0, token1]);
+
+  useEffect(() => {
+    if (positionInfo && positionInfo.price && positionInfo.price !== '0') {
+      setInitPrice(positionInfo.price);
+    }
+  }, [positionInfo]);
 
   useEffect(() => {
     if (Number(priceRangeMin) > Number(priceRangeMax)) {
@@ -174,7 +215,7 @@ export function AmbientCreatePosition() {
             ) : step === CreatePositionStep.SelectToken ? (
               <>
                 <SelectToken
-                  isNewPool={true}
+                  isNewPool={isNewPool}
                   token0={token0}
                   token1={token1}
                   setShowTokenSelector={setShowTokenSelector}
@@ -191,7 +232,7 @@ export function AmbientCreatePosition() {
             ) : (
               <>
                 <SetPriceAndAmount
-                  isNewPool={true}
+                  isNewPool={isNewPool}
                   token0={token0!}
                   token1={token1!}
                   setInitPrice={handleInitPriceChange}
@@ -206,7 +247,7 @@ export function AmbientCreatePosition() {
                   onSetError={setErrorData}
                 />
                 <ActionButton
-                  disabled={!amount0 || !amount1 || errorData.showError}
+                  disabled={!amount0 || !amount1 || !initPriceRequired || errorData.showError}
                   isPending={isPending}
                   onClick={handleNewPosition}
                   error={errorData}

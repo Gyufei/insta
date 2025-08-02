@@ -3,35 +3,33 @@ import { NetworkConfigs } from '@/config/network-config';
 import { ApiPath } from './api-path';
 import { createQueryHook } from './helpers';
 
-export interface IUniswapPositionInfo {
+export interface IAmbientPositionInfo {
   pool_addr: string;
   price: string;
 }
 
-export interface IUniswapPositionInfoParams {
+export interface IAmbientPositionInfoParams {
   token_a_address: string;
   token_b_address: string;
   decimals_a: string;
   decimals_b: string;
-  fee: string;
 }
 
-export function useUniswapPositionInfo(params?: IUniswapPositionInfoParams) {
+export function useAmbientPositionInfo(params?: IAmbientPositionInfoParams) {
   const chainId = NetworkConfigs.monadTestnet.id.toString();
 
-  return createQueryHook<IUniswapPositionInfo>(
-    ApiPath.uniswapPositionInfo,
+  return createQueryHook<IAmbientPositionInfo>(
+    ApiPath.ambientPositionInfo,
     () => [
-      'uniswap',
+      'ambient',
       'position',
       'info',
       chainId,
       params?.token_a_address || '',
       params?.token_b_address || '',
-      params?.fee || '',
     ],
     (url) => {
-      if (!params || !params.token_a_address || !params.token_b_address || !params.fee) {
+      if (!params || !params.token_a_address || !params.token_b_address) {
         return null;
       }
 
@@ -39,11 +37,10 @@ export function useUniswapPositionInfo(params?: IUniswapPositionInfoParams) {
       url.searchParams.set('token_b_address', params.token_b_address);
       url.searchParams.set('decimals_a', params.decimals_a);
       url.searchParams.set('decimals_b', params.decimals_b);
-      url.searchParams.set('fee', params.fee);
       return url;
     },
     {
       withAccount: false,
     }
   )();
-}
+} 

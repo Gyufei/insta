@@ -65,10 +65,10 @@ export const ApiPath = {
   magmaDeposit: `${ApiHost}/magma/deposit`,
   magmaWithdraw: `${ApiHost}/magma/withdraw`,
 
-  uniswapPosition: `${ApiHost}/uniswap_v3_position/position_info`,
+  uniswapV3Position: `${ApiHost}/uniswap_v3_position/all_positions`,
+  uniswapPositionInfo: `${ApiHost}/uniswap_v3_position/position_info`,
   uniswapQuote: `${ApiHost}/uniswap_router02/quote`,
   uniswapSwap: `${ApiHost}/uniswap_router02/buy`,
-  uniswapV3Position: `${ApiHost}/uniswap_v3_position/all_positions`,
   uniswapCreatePoolAndMintPosition: `${ApiHost}/uniswap_v3_position/create_and_mint_pool`,
   uniswapMintPosition: `${ApiHost}/uniswap_v3_position/mint_pool`,
   uniswapAddLiquidity: `${ApiHost}/uniswap_v3_position/deposit`,
@@ -76,6 +76,7 @@ export const ApiPath = {
   uniswapLiquidityRatio: `${ApiHost}/uniswap_v3_position/liquidity_ratio`,
 
   ambientPosition: `${ApiHost}/ambient_finance/positions`,
+  ambientPositionInfo: `${ApiHost}/ambient_finance/position_info`,
   ambientCreatePosition: `${ApiHost}/ambient_finance/create_pool_and_add_liquidity`,
   ambientAddLiquidity: `${ApiHost}/ambient_finance/add_liquidity`,
   ambientRemoveLiquidity: `${ApiHost}/ambient_finance/remove_liquidity`,

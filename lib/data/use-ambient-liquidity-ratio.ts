@@ -8,7 +8,6 @@ export interface ILiquidityRatio {
 interface ILiquidityRatioParams {
   tokenA: string;
   tokenB: string;
-  fee: number;
   price_current: string;
   price_lower: string;
   price_upper: string;
@@ -21,9 +20,12 @@ export function useAmbientLiquidityRatio(params: ILiquidityRatioParams) {
     ApiPath.ambientLiquidityRatio,
     () => ['ambient', 'liquidity-ratio', JSON.stringify(params)],
     (url) => {
+      if (!params.tokenA || !params.tokenB) {
+        return null;
+      }
+
       url.searchParams.set('tokenA', params.tokenA);
       url.searchParams.set('tokenB', params.tokenB);
-      url.searchParams.set('fee', params.fee.toString());
       url.searchParams.set('price_current', params.price_current.toString());
       url.searchParams.set('price_lower', params.price_lower.toString());
       url.searchParams.set('price_upper', params.price_upper.toString());

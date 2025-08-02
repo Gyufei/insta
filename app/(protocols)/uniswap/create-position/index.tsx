@@ -63,8 +63,6 @@ export function UniswapCreatePosition() {
     fee: multiply(feeTier, String(10_000)),
   });
 
-  console.log('fee', feeTier);
-
   const { data: liquidityRatio } = useUniswapLiquidityRatio({
     tokenA: replaceNativeAddressUseBackend(token0?.address || ''),
     tokenB: replaceNativeAddressUseBackend(token1?.address || ''),
@@ -118,10 +116,6 @@ export function UniswapCreatePosition() {
 
   function handleInitPriceChange(value: string) {
     setInitPrice(value);
-    if (value && amount0) {
-      const reciprocal = truncateNumber(divide(String(amount0), value), token1?.decimals || 18);
-      setAmount1(reciprocal);
-    }
   }
 
   const handleTokenSelectWrapper = (token: IToken) => {
