@@ -82,7 +82,7 @@ export function AmbientRemoveLiquidity() {
       quote_token: ambientPosition.quote,
       bid_tick: ambientPosition.bidTick,
       ask_tick: ambientPosition.askTick,
-      liquidity: ambientPosition.concLiq,
+      liquidity: String(ambientPosition.concLiq),
     });
   };
 
