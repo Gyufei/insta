@@ -40,16 +40,26 @@ export default function TokenList() {
   const EthPrice = priceData?.eth_price;
   const monPrice = priceData?.mon_price;
 
+  function withMonUsdFirst(tokens: IToken[]) {
+    return tokens.sort((a: IToken, _b) => {
+      if (a.symbol === 'monUSD') {
+        return -1;
+      }
+      return 1;
+    });
+  }
+
   useEffect(() => {
     if (searchQuery) {
       const monTokens = filterTokenByQuery(MonadTokenData, searchQuery);
       const baseTokens = filterTokenByQuery(BaseTokenData, searchQuery);
       const ethTokens = filterTokenByQuery(EthTokenData, searchQuery);
-      setMonadTokens(monTokens);
+
+      setMonadTokens(withMonUsdFirst(monTokens));
       setBaseTokens(baseTokens);
       setEthTokens(ethTokens);
     } else {
-      setMonadTokens(MonadTokenData);
+      setMonadTokens(withMonUsdFirst(MonadTokenData));
       setBaseTokens(BaseTokenData);
       setEthTokens(EthTokenData);
     }

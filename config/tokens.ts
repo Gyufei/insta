@@ -38,7 +38,7 @@ export const MonUSD = {
   address: '0x57c914e3240C837EBE87F096e0B4d9A06E3F489B',
   name: 'monUSD',
   symbol: 'monUSD',
-  logo: '/icons/usdt.svg',
+  logo: '/icons/monUSD.svg',
   decimals: 18,
 };
 
