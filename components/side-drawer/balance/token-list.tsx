@@ -20,6 +20,14 @@ const MonadTokenData = [MONAD, APR_MONAD, G_MONAD, MonUSD];
 const BaseTokenData = STATION_FROM_TOKENS_BASE;
 const EthTokenData = STATION_FROM_TOKENS_ETH;
 
+function filterTokenByQuery(tokens: IToken[], query: string) {
+  return tokens.filter(
+    (token) =>
+      token.name.toLowerCase().includes(query.toLowerCase()) ||
+      token.symbol.toLowerCase().includes(query.toLowerCase())
+  );
+}
+
 export default function TokenList() {
   const { data: balanceData } = useApiAccountTokenBalance(true);
 
@@ -34,15 +42,9 @@ export default function TokenList() {
 
   useEffect(() => {
     if (searchQuery) {
-      const monTokens = MonadTokenData.filter((token) =>
-        token.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      const baseTokens = BaseTokenData.filter((token) =>
-        token.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      const ethTokens = EthTokenData.filter((token) =>
-        token.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      const monTokens = filterTokenByQuery(MonadTokenData, searchQuery);
+      const baseTokens = filterTokenByQuery(BaseTokenData, searchQuery);
+      const ethTokens = filterTokenByQuery(EthTokenData, searchQuery);
       setMonadTokens(monTokens);
       setBaseTokens(baseTokens);
       setEthTokens(ethTokens);
@@ -64,7 +66,10 @@ export default function TokenList() {
       </div>
       <div className="mt-2 flex flex-grow flex-col sm:mt-4">
         <div className="pb-6 flex flex-col gap-2">
-          {searchQuery && MonadTokens.length === 0 ? (
+          {searchQuery &&
+          MonadTokens.length === 0 &&
+          BaseTokens.length === 0 &&
+          EthTokens.length === 0 ? (
             <NoSearchResult searchQuery={searchQuery} />
           ) : (
             <>
