@@ -95,14 +95,22 @@ export default function NetworkSelect() {
   };
 
   async function handleSelectNetwork(net: INetworkConfig) {
-    if (
-      !isBaseNet &&
-      BaseNetIds.includes(String(net.id) as unknown as (typeof BaseNetIds)[number])
-    ) {
+    const isBasePath = BaseNetUrlPath.includes(pathname);
+
+    console.log('handleSelectNetwork', chainId, net.id, pathname, isBasePath);
+
+    if (net.id !== NetworkConfigs.monadTestnet.id && !isBasePath) {
       localStorage.setItem('monad-before-page-url', pathname);
       setCurrentComponent({
         name: 'Balance',
       });
+
+      router.replace(
+        `/token-station${net ? `?chain=${NETWORK_TO_URL_PARAM[String(net.id)]}` : ''}`
+      );
+    } else if (net.id === NetworkConfigs.monadTestnet.id && isBasePath) {
+      const beforePageUrl = localStorage.getItem('monad-before-page-url');
+      router.replace(beforePageUrl + '?chain=monad' || '/?chain=monad');
     }
 
     if (String(chainId) !== String(net.id)) {
@@ -127,10 +135,14 @@ export default function NetworkSelect() {
         setSelectedNetwork(
           NETWORKS.find((n) => String(n.id) === String(urlNetwork.id)) || NETWORKS[0]
         );
-        setTimeout(() => {
-          setPageInit(true);
-        }, 1000);
+      } else {
+        updateUrlChainParam(String(chainId));
+        handleSelectNetwork(NETWORKS.find((n) => String(n.id) === String(chainId)) || NETWORKS[0]);
       }
+
+      setTimeout(() => {
+        setPageInit(true);
+      }, 1000);
     }
   }, [pageInit, chainId]);
 
@@ -142,31 +154,11 @@ export default function NetworkSelect() {
     if (chainId) {
       const shouldChain = NETWORKS.find((n) => String(n.id) === String(chainId));
       if (shouldChain) {
-        setSelectedNetwork(shouldChain);
         updateUrlChainParam(String(chainId));
+        handleSelectNetwork(shouldChain);
       }
     }
   }, [chainId, pageInit]);
-
-  useEffect(() => {
-    const urlNetwork = getNetworkFromUrl();
-    const isBasePath = BaseNetUrlPath.includes(pathname);
-
-    if (isBaseNet) {
-      if (!isBasePath) {
-        router.replace(
-          `/token-station${urlNetwork ? `?chain=${NETWORK_TO_URL_PARAM[String(urlNetwork.id)]}` : ''}`
-        );
-      }
-    } else {
-      const beforePageUrl = localStorage.getItem('monad-before-page-url');
-
-      if (isBasePath) {
-        console.log('gogo');
-        router.replace(beforePageUrl || '/');
-      }
-    }
-  }, [, router, pathname, isBaseNet]);
 
   return (
     <Select
