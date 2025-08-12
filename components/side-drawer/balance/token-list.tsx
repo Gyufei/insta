@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { useOddsClaim } from '@/app/odds/common/use-odds-claim';
 import {
   STATION_FROM_TOKENS_BASE,
   STATION_FROM_TOKENS_ETH,
@@ -7,9 +8,7 @@ import {
 
 import { APR_MONAD, G_MONAD, IToken, MONAD, MonUSD } from '@/config/tokens';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
 import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
-import { useFaucetAirdrop } from '@/lib/data/use-faucet-airdrop';
 
 import { AprMONTokenCard } from './apr-mon-token-card';
 import { BaseTokenCard } from './base-token-card';
@@ -30,10 +29,9 @@ function filterTokenByQuery(tokens: IToken[], query: string) {
 }
 
 export default function TokenList() {
-  const { data: accountInfo } = useSelectedAccount();
   const { data: balanceData } = useApiAccountTokenBalance(true);
 
-  const { mutate: faucetAirdrop, isPending } = useFaucetAirdrop();
+  const { mutate: claimMonUsd, isPending: isProcessingClaim } = useOddsClaim();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [MonadTokens, setMonadTokens] = useState<IToken[]>(MonadTokenData);
@@ -54,10 +52,7 @@ export default function TokenList() {
       return;
     }
 
-    faucetAirdrop({
-      token_address: token.address,
-      sandbox_account: accountInfo?.sandbox_account || '',
-    });
+    claimMonUsd(undefined);
   }
 
   useEffect(() => {
@@ -114,7 +109,7 @@ export default function TokenList() {
                         )?.formattedBalance || '0'
                       }
                       key={index}
-                      isClaiming={isPending}
+                      isClaiming={isProcessingClaim}
                       onClaim={token.symbol === 'monUSD' ? monUsdClaim : undefined}
                     />
                   );
