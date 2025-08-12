@@ -1,4 +1,5 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
+import { useSwitchChain } from 'wagmi';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -118,18 +119,20 @@ export default function NetworkSelect() {
       return;
     }
 
-    const urlNetwork = getNetworkFromUrl();
+    if (chainId) {
+      const urlNetwork = getNetworkFromUrl();
 
-    if (urlNetwork) {
-      switchNetwork(urlNetwork);
-      setSelectedNetwork(
-        NETWORKS.find((n) => String(n.id) === String(urlNetwork.id)) || NETWORKS[0]
-      );
-      setTimeout(() => {
-        setPageInit(true);
-      }, 1000);
+      if (urlNetwork) {
+        switchNetwork(urlNetwork);
+        setSelectedNetwork(
+          NETWORKS.find((n) => String(n.id) === String(urlNetwork.id)) || NETWORKS[0]
+        );
+        setTimeout(() => {
+          setPageInit(true);
+        }, 1000);
+      }
     }
-  }, [pageInit]);
+  }, [pageInit, chainId]);
 
   useEffect(() => {
     if (!pageInit) {
