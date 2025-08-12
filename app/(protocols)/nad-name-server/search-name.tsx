@@ -44,7 +44,8 @@ export function SearchName() {
   // 处理输入变化
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchTerm(value);
+    const noWhitespace = value.replace(/\s/g, '');
+    setSearchTerm(noWhitespace);
     setIsTyping(true);
 
     if (value) {
