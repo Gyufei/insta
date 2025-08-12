@@ -3,7 +3,7 @@ import { useAppKitNetwork } from '@reown/appkit/react';
 import { useEffect, useMemo, useState } from 'react';
 
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import {
   BaseNetIds,
@@ -36,6 +36,20 @@ const NETWORKS = [
   },
 ] as const;
 
+// 网络ID到URL参数的映射
+const NETWORK_TO_URL_PARAM: Record<string, string> = {
+  [String(NetworkConfigs.monadTestnet.id)]: 'monad',
+  [String(NetworkConfigs.base.id)]: 'base',
+  [String(NetworkConfigs.eth.id)]: 'eth',
+};
+
+// URL参数到网络ID的映射
+const URL_PARAM_TO_NETWORK: Record<string, string> = {
+  monad: String(NetworkConfigs.monadTestnet.id),
+  base: String(NetworkConfigs.base.id),
+  eth: String(NetworkConfigs.eth.id),
+};
+
 const BaseNetUrlPath = ['/token-station', '/badge-gallery'];
 
 export default function NetworkSelect() {
@@ -45,6 +59,7 @@ export default function NetworkSelect() {
   );
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const { setCurrentComponent } = useSideDrawerStore();
 
@@ -52,7 +67,33 @@ export default function NetworkSelect() {
 
   const isMobile = useIsMobile();
 
-  function handleSelectNetwork(net: INetworkConfig) {
+  // 更新URL参数
+  const updateUrlChainParam = (networkId: string) => {
+    const params = new URLSearchParams(searchParams);
+    const chainParam = NETWORK_TO_URL_PARAM[networkId];
+
+    if (chainParam) {
+      params.set('chain', chainParam);
+    } else {
+      params.delete('chain');
+    }
+
+    const newUrl = `${pathname}${params.toString() ? `?${params.toString()}` : ''}`;
+    router.replace(newUrl, { scroll: false });
+  };
+
+  // 从URL参数获取网络
+  const getNetworkFromUrl = () => {
+    const chainParam = searchParams.get('chain');
+    if (chainParam && URL_PARAM_TO_NETWORK[chainParam]) {
+      const networkId = URL_PARAM_TO_NETWORK[chainParam];
+      const network = NETWORKS.find((n) => String(n.id) === networkId);
+      return network;
+    }
+    return null;
+  };
+
+  async function handleSelectNetwork(net: INetworkConfig) {
     if (
       !isBaseNet &&
       BaseNetIds.includes(String(net.id) as unknown as (typeof BaseNetIds)[number])
@@ -64,35 +105,65 @@ export default function NetworkSelect() {
     }
 
     if (String(chainId) !== String(net.id)) {
+      updateUrlChainParam(String(net.id));
       setSelectedNetwork(net);
       switchNetwork(net);
     }
   }
 
+  const [pageInit, setPageInit] = useState(false);
+
   useEffect(() => {
-    if (chainId && selectedNetwork.id !== chainId) {
+    if (pageInit) {
+      return;
+    }
+
+    const urlNetwork = getNetworkFromUrl();
+
+    if (urlNetwork) {
+      switchNetwork(urlNetwork);
+      setSelectedNetwork(
+        NETWORKS.find((n) => String(n.id) === String(urlNetwork.id)) || NETWORKS[0]
+      );
+      setTimeout(() => {
+        setPageInit(true);
+      }, 1000);
+    }
+  }, [pageInit]);
+
+  useEffect(() => {
+    if (!pageInit) {
+      return;
+    }
+
+    if (chainId) {
       const shouldChain = NETWORKS.find((n) => String(n.id) === String(chainId));
       if (shouldChain) {
         setSelectedNetwork(shouldChain);
+        updateUrlChainParam(String(chainId));
       }
     }
-  }, [chainId]);
+  }, [chainId, pageInit]);
 
   useEffect(() => {
+    const urlNetwork = getNetworkFromUrl();
     const isBasePath = BaseNetUrlPath.includes(pathname);
 
     if (isBaseNet) {
       if (!isBasePath) {
-        router.replace('/token-station');
+        router.replace(
+          `/token-station${urlNetwork ? `?chain=${NETWORK_TO_URL_PARAM[String(urlNetwork.id)]}` : ''}`
+        );
       }
     } else {
       const beforePageUrl = localStorage.getItem('monad-before-page-url');
 
       if (isBasePath) {
+        console.log('gogo');
         router.replace(beforePageUrl || '/');
       }
     }
-  }, [router, pathname, isBaseNet]);
+  }, [, router, pathname, isBaseNet]);
 
   return (
     <Select
