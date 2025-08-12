@@ -1,17 +1,11 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
-import { useSwitchChain } from 'wagmi';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import {
-  BaseNetIds,
-  INetworkConfig,
-  MONAD_TESTNET_NAME,
-  NetworkConfigs,
-} from '@/config/network-config';
+import { INetworkConfig, MONAD_TESTNET_NAME, NetworkConfigs } from '@/config/network-config';
 
 import {
   Select,
@@ -64,8 +58,6 @@ export default function NetworkSelect() {
 
   const { setCurrentComponent } = useSideDrawerStore();
 
-  const isBaseNet = useMemo(() => BaseNetIds.includes(String(chainId)), [chainId]);
-
   const isMobile = useIsMobile();
 
   // 更新URL参数
@@ -96,8 +88,6 @@ export default function NetworkSelect() {
 
   async function handleSelectNetwork(net: INetworkConfig) {
     const isBasePath = BaseNetUrlPath.includes(pathname);
-
-    console.log('handleSelectNetwork', chainId, net.id, pathname, isBasePath);
 
     if (net.id !== NetworkConfigs.monadTestnet.id && !isBasePath) {
       localStorage.setItem('monad-before-page-url', pathname);
