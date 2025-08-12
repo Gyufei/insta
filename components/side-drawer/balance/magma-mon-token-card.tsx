@@ -1,4 +1,4 @@
-import { G_MONAD, TokenPriceMap } from '@/config/tokens';
+import { G_MONAD } from '@/config/tokens';
 
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { formatBig } from '@/lib/utils/number';
@@ -10,15 +10,5 @@ export function MagmaMonTokenCard({ className }: { className?: string }) {
   const { data: magmaBalance } = useMagmaBalance();
   const balance = formatBig(magmaBalance?.balance || '0');
 
-  const price = TokenPriceMap[magmaToken.symbol];
-
-  return (
-    <BaseTokenCard
-      chain="mon"
-      price={String(price)}
-      token={magmaToken}
-      balance={balance}
-      className={className}
-    />
-  );
+  return <BaseTokenCard chain="mon" token={magmaToken} balance={balance} className={className} />;
 }

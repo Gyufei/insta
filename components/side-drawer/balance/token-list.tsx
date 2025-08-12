@@ -7,8 +7,9 @@ import {
 
 import { APR_MONAD, G_MONAD, IToken, MONAD, MonUSD } from '@/config/tokens';
 
+import { useSelectedAccount } from '@/lib/data/use-account';
 import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
-import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
+import { useFaucetAirdrop } from '@/lib/data/use-faucet-airdrop';
 
 import { AprMONTokenCard } from './apr-mon-token-card';
 import { BaseTokenCard } from './base-token-card';
@@ -29,16 +30,15 @@ function filterTokenByQuery(tokens: IToken[], query: string) {
 }
 
 export default function TokenList() {
+  const { data: accountInfo } = useSelectedAccount();
   const { data: balanceData } = useApiAccountTokenBalance(true);
+
+  const { mutate: faucetAirdrop, isPending } = useFaucetAirdrop();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [MonadTokens, setMonadTokens] = useState<IToken[]>(MonadTokenData);
   const [BaseTokens, setBaseTokens] = useState<IToken[]>(BaseTokenData);
   const [EthTokens, setEthTokens] = useState<IToken[]>(EthTokenData);
-
-  const { data: priceData } = useTokenStationPrice();
-  const EthPrice = priceData?.eth_price;
-  const monPrice = priceData?.mon_price;
 
   function withMonUsdFirst(tokens: IToken[]) {
     return tokens.sort((a: IToken, _b) => {
@@ -46,6 +46,17 @@ export default function TokenList() {
         return -1;
       }
       return 1;
+    });
+  }
+
+  function monUsdClaim(token: IToken) {
+    if (token.symbol !== 'monUSD') {
+      return;
+    }
+
+    faucetAirdrop({
+      token_address: token.address,
+      sandbox_account: accountInfo?.sandbox_account || '',
     });
   }
 
@@ -85,9 +96,6 @@ export default function TokenList() {
             <>
               <>
                 {MonadTokens.map((token, index) => {
-                  if (token.symbol === 'MON') {
-                  }
-
                   if (token.symbol === 'aprMON') {
                     return <AprMONTokenCard key={index} />;
                   }
@@ -98,7 +106,6 @@ export default function TokenList() {
 
                   return (
                     <BaseTokenCard
-                      price={String(monPrice)}
                       token={token}
                       chain="mon"
                       balance={
@@ -107,6 +114,8 @@ export default function TokenList() {
                         )?.formattedBalance || '0'
                       }
                       key={index}
+                      isClaiming={isPending}
+                      onClaim={token.symbol === 'monUSD' ? monUsdClaim : undefined}
                     />
                   );
                 })}
@@ -116,7 +125,6 @@ export default function TokenList() {
                   return (
                     <BaseTokenCard
                       showTrade={false}
-                      price={token.symbol === 'ETH' ? String(EthPrice) : '1'}
                       token={token}
                       chain="eth"
                       balance={
@@ -134,7 +142,6 @@ export default function TokenList() {
                   return (
                     <BaseTokenCard
                       showTrade={false}
-                      price={token.symbol === 'ETH' ? String(EthPrice) : '1'}
                       token={token}
                       chain="base"
                       balance={

@@ -270,6 +270,13 @@ export default function AppSidebar() {
 
   const protocolItems = [
     {
+      href: '/uniswap',
+      label: 'Uniswap V3',
+      icon: (
+        <Image src="/icons/uniswap.svg" alt="uniswap" width={12} height={12} className="h-3 w-3" />
+      ),
+    },
+    {
       href: '/apriori',
       label: 'Apriori',
       icon: (
@@ -287,13 +294,6 @@ export default function AppSidebar() {
           height={12}
           className="h-3 w-3 rounded-full"
         />
-      ),
-    },
-    {
-      href: '/uniswap',
-      label: 'Uniswap V3',
-      icon: (
-        <Image src="/icons/uniswap.svg" alt="uniswap" width={12} height={12} className="h-3 w-3" />
       ),
     },
     {

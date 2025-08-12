@@ -1,4 +1,4 @@
-import { multiply } from 'safebase';
+import { Loader2 } from 'lucide-react';
 
 import Image from 'next/image';
 
@@ -14,32 +14,36 @@ import { formatNumber } from '@/lib/utils/number';
 interface BaseTokenCardProps {
   token: IToken;
   balance: string;
-  price: string;
   chain: string;
   showTrade?: boolean;
   className?: string;
+  isClaiming?: boolean;
+  onClaim?: (_t: IToken) => void;
 }
 
 export function BaseTokenCard({
   token,
   balance,
-  price,
   showTrade = true,
   chain,
   className,
+  isClaiming,
+  onClaim,
 }: BaseTokenCardProps) {
   const { setCurrentComponent } = useSideDrawerStore();
-
-  const priceValue = multiply(balance, String(price || 0));
 
   function handleTrade() {
     setCurrentComponent({ name: 'UniswapSwap', props: { token } });
   }
 
+  function handleClaim() {
+    onClaim?.(token);
+  }
+
   return (
     <Card className={cn('p-4 shadow-none bg-white rounded-md border-none', className)}>
       <CardContent className="flex justify-between items-center px-0">
-        <div className="flex items-center">
+        <div className="flex items-center w-full">
           <div className="flex h-10 w-10 items-center justify-center dark:opacity-90">
             <div className="flex relative max-w-full flex-shrink-0 flex-grow overflow-visible rounded-full">
               {token.logo ? (
@@ -61,26 +65,39 @@ export function BaseTokenCard({
             </div>
           </div>
 
-          <div className="flex flex-col px-3">
-            <div className="text-primary mb-1 flex items-center text-sm font-semibold whitespace-nowrap">
-              {formatNumber(balance)} {token.symbol}
+          <div className="flex flex-col pl-3 w-full">
+            <div className="flex items-center justify-between">
+              <div className="text-primary mb-1 flex items-center text-sm font-semibold whitespace-nowrap">
+                {formatNumber(balance)} {token.symbol}
+              </div>
+              <div className="flex items-center gap-2">
+                {!!onClaim && (
+                  <Button
+                    onClick={handleClaim}
+                    variant="outline"
+                    size="sm"
+                    className="h-5 w-12 hover:border-pro-blue/20 cursor-pointer hover:bg-pro-blue/20 hover:text-pro-blue text-xs px-[10px]"
+                  >
+                    {isClaiming ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Claim'}
+                  </Button>
+                )}
+                {showTrade && (
+                  <Button
+                    onClick={handleTrade}
+                    variant="outline"
+                    size="sm"
+                    className="h-5 hover:border-pro-blue/20 cursor-pointer hover:bg-pro-blue/20 hover:text-pro-blue text-xs px-[10px]"
+                  >
+                    Trade
+                  </Button>
+                )}
+              </div>
             </div>
             <div className="text-xs font-medium whitespace-nowrap text-gray-300">
-              ${formatNumber(priceValue)}
+              {token.description}
             </div>
           </div>
         </div>
-
-        {showTrade && (
-          <Button
-            onClick={handleTrade}
-            variant="outline"
-            size="sm"
-            className="hover:border-pro-blue/20 cursor-pointer hover:bg-pro-blue/20 hover:text-pro-blue text-xs px-3 h-6"
-          >
-            Trade
-          </Button>
-        )}
       </CardContent>
     </Card>
   );

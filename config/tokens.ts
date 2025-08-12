@@ -8,6 +8,7 @@ export interface IToken {
   logo: string;
   decimals: number;
   address: string;
+  description?: string;
 }
 
 export const MONAD = {
@@ -16,6 +17,7 @@ export const MONAD = {
   logo: '/icons/mon.svg',
   decimals: 18,
   address: DEFAULT_NATIVE_ADDRESS,
+  description: 'Monad Testnet Gas',
 };
 
 export const APR_MONAD = {
@@ -24,6 +26,7 @@ export const APR_MONAD = {
   logo: '/icons/aprmon.svg',
   decimals: 18,
   address: '0xb2f82D0f38dc453D596Ad40A37799446Cc89274A',
+  description: 'Staking Token on Monad Apriori',
 };
 
 export const G_MONAD = {
@@ -32,6 +35,7 @@ export const G_MONAD = {
   symbol: 'gMON',
   logo: '/icons/gmon.svg',
   decimals: 18,
+  description: 'Staking Token on Monad Magma',
 };
 
 export const MonUSD = {
@@ -40,6 +44,7 @@ export const MonUSD = {
   symbol: 'monUSD',
   logo: '/icons/monUSD.svg',
   decimals: 18,
+  description: 'Tadle Stablecoin on Monad',
 };
 
 export const TokenPriceMap: Record<string, number> = {

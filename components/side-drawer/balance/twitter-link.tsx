@@ -10,6 +10,8 @@ export function TwitterLink() {
     setIsLink(true);
   }
 
+  return null;
+
   return (
     <div className="flex items-end gap-2">
       {isLink ? (
