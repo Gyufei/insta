@@ -9,9 +9,9 @@ export const metadata: Metadata = {
   title: 'nadNameService | tadle',
 };
 
-export default function NadNameServer() {
+export default function NadNameService() {
   return (
-    <CommonPageLayout title="Nad Name Server" iconSrc="/icons/nad-name-server.svg">
+    <CommonPageLayout title="Nad Name Service" iconSrc="/icons/nad-name-service.svg">
       <SearchName />
       <MyNames />
     </CommonPageLayout>

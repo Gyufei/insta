@@ -310,12 +310,12 @@ export default function AppSidebar() {
       ),
     },
     {
-      href: '/nad-name-server',
-      label: 'Nad Name Server',
+      href: '/nad-name-service',
+      label: 'Nad Name Service',
       icon: (
         <Image
-          src="/icons/nad-name-server.svg"
-          alt="nad-name-server"
+          src="/icons/nad-name-service.svg"
+          alt="nad-name-service"
           width={12}
           height={12}
           className="h-3 w-3"

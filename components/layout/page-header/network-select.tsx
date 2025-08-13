@@ -100,7 +100,10 @@ export default function NetworkSelect() {
       );
     } else if (net.id === NetworkConfigs.monadTestnet.id && isBasePath) {
       const beforePageUrl = localStorage.getItem('monad-before-page-url');
-      router.replace(beforePageUrl + '?chain=monad' || '/?chain=monad');
+      const goUrl = ['null', 'undefined'].includes(beforePageUrl || '')
+        ? '/uniswap'
+        : beforePageUrl;
+      router.replace(goUrl + '?chain=monad' || '/?chain=monad');
     }
 
     if (String(chainId) !== String(net.id)) {
