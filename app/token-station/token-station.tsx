@@ -173,9 +173,8 @@ export function TokenStation() {
     return STATION_FROM_TOKENS_BASE;
   }, [mode]);
 
-  const [init, setInit] = useState(false);
   useEffect(() => {
-    if (init) {
+    if (!chainId) {
       return;
     }
 
@@ -187,9 +186,7 @@ export function TokenStation() {
       switchNetwork(NetworkConfigs.eth);
       setMode('CCIP');
     }
-
-    setInit(true);
-  }, [init, chainId]);
+  }, [chainId]);
 
   function handleFromMax() {
     setFromAmount(fromBalance);
