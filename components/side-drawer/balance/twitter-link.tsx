@@ -1,16 +1,58 @@
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { useAccount } from 'wagmi';
+
+import { useEffect } from 'react';
 
 import Image from 'next/image';
 
-export function TwitterLink() {
-  const [isLink, setIsLink] = useState(false);
-  const twitterName = 'test';
+import { useSelectedAccount } from '@/lib/data/use-account';
+import { useSaveXBind } from '@/lib/data/use-save-x-bind';
+import { useTwitterSign } from '@/lib/utils/use-twitter-sign';
 
-  function handleLink() {
-    setIsLink(true);
+export function TwitterLink() {
+  const { address } = useAccount();
+  const { data: selectedAccount } = useSelectedAccount();
+  const isLink = !!selectedAccount?.twitter_info?.id;
+  const twitterName = selectedAccount?.twitter_info?.username || '';
+
+  const { code, error, goTwitter, removeXVerifyCode } = useTwitterSign();
+  const { mutate: saveXBind, isPending: isSavingXBind } = useSaveXBind();
+
+  function getCallbackUrl() {
+    return window.location.origin + window.location.pathname + window.location.search;
   }
 
-  return null;
+  useQuery({
+    queryKey: code ? ['save-twitter', code] : [],
+    queryFn: () =>
+      saveXBind({
+        code: code!,
+        redirect_uri: getCallbackUrl(),
+      }),
+    enabled: !!code,
+  });
+
+  useEffect(() => {
+    if (error) {
+      removeXVerifyCode();
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error as string);
+      removeXVerifyCode();
+    }
+  }, [error]);
+
+  function handleGoTwitter() {
+    if (isSavingXBind) return;
+    const url = new URL(window.location.href);
+    goTwitter(url.toString());
+  }
+
+  if (!address) return null;
 
   return (
     <div className="flex items-end gap-2">
@@ -21,7 +63,7 @@ export function TwitterLink() {
         </div>
       ) : (
         <Image
-          onClick={handleLink}
+          onClick={handleGoTwitter}
           className="cursor-pointer"
           src="/icons/twitter-unlink.svg"
           alt="twitter-link"

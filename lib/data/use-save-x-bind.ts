@@ -1,8 +1,10 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { useAccount } from 'wagmi';
 
 import { Fetcher } from '@/lib/fetcher';
 
-import { useWalletAndAccountCheck } from './helpers';
+import { ApiPath } from './api-path';
 
 interface SaveXBindRequest {
   code: string;
@@ -16,21 +18,17 @@ interface SaveXBindResponse {
 }
 
 export function useSaveXBind() {
-  const { address, account, checkWalletAndAccount } = useWalletAndAccountCheck();
+  const queryClient = useQueryClient();
+  const { address } = useAccount();
 
   async function saveXBind(data: SaveXBindRequest) {
-    if (!checkWalletAndAccount(true, true)) {
-      return undefined;
-    }
-
-    const response = await Fetcher<SaveXBindResponse>('/api/x/bind', {
+    const response = await Fetcher<SaveXBindResponse>(ApiPath.twitterBind, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         wallet: address!,
-        sandbox_account: account!,
         code: data.code,
         redirect_uri: data.redirect_uri,
       }),
@@ -40,5 +38,11 @@ export function useSaveXBind() {
 
   return useMutation<SaveXBindResponse | undefined, Error, SaveXBindRequest>({
     mutationFn: saveXBind,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+    },
+    onError: () => {
+      toast.error('Failed to link Twitter');
+    },
   });
 }
