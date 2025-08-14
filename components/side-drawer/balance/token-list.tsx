@@ -1,3 +1,5 @@
+import { toast } from 'sonner';
+
 import { useEffect, useState } from 'react';
 
 import { useOddsClaim } from '@/app/odds/common/use-odds-claim';
@@ -9,6 +11,7 @@ import {
 import { APR_MONAD, G_MONAD, IToken, MONAD, MonUSD } from '@/config/tokens';
 
 import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
+import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 
 import { AprMONTokenCard } from './apr-mon-token-card';
 import { BaseTokenCard } from './base-token-card';
@@ -28,9 +31,12 @@ function filterTokenByQuery(tokens: IToken[], query: string) {
   );
 }
 
+const GAS_LIMIT_FOR_CLAIM_MONUSD = 0.008849256;
+
 export default function TokenList() {
   const { data: balanceData } = useApiAccountTokenBalance(true);
 
+  const { balance: monadBalance } = useApiMonadBalance();
   const { mutate: claimMonUsd, isPending: isProcessingClaim } = useOddsClaim();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,6 +55,11 @@ export default function TokenList() {
 
   function monUsdClaim(token: IToken) {
     if (token.symbol !== 'monUSD') {
+      return;
+    }
+
+    if (Number(monadBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD) {
+      toast.error('Insufficient gas for claim monUSD');
       return;
     }
 
