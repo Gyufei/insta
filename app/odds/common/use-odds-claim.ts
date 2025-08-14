@@ -10,6 +10,8 @@ export interface IOddsClaimParams {
   [key: string]: string;
 }
 
+export const GAS_LIMIT_FOR_CLAIM_MONUSD = 0.008849256;
+
 export function useOddsClaim() {
   return createMutationHook<IOddsClaimParams>(
     ApiPath.faucetAirdrop,

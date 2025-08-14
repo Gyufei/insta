@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
-import { useOddsClaim } from '@/app/odds/common/use-odds-claim';
+import { GAS_LIMIT_FOR_CLAIM_MONUSD, useOddsClaim } from '@/app/odds/common/use-odds-claim';
 import {
   STATION_FROM_TOKENS_BASE,
   STATION_FROM_TOKENS_ETH,
@@ -30,8 +30,6 @@ function filterTokenByQuery(tokens: IToken[], query: string) {
       token.symbol.toLowerCase().includes(query.toLowerCase())
   );
 }
-
-const GAS_LIMIT_FOR_CLAIM_MONUSD = 0.008849256;
 
 export default function TokenList() {
   const { data: balanceData } = useApiAccountTokenBalance(true);

@@ -13,6 +13,7 @@ import { useAccount } from 'wagmi';
 
 import { useState } from 'react';
 
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -21,16 +22,16 @@ import { NetworkConfigs } from '@/config/network-config';
 import { MonUSD } from '@/config/tokens';
 
 import { useSelectedAccount } from '@/lib/data/use-account';
+import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 import { useAccountTokenBalance } from '@/lib/web3/use-account-token-balance';
 
-import { useOddsClaim } from '../../common/use-odds-claim';
+import { GAS_LIMIT_FOR_CLAIM_MONUSD, useOddsClaim } from '../../common/use-odds-claim';
 import { useOddsDeposit } from '../../common/use-odds-deposit';
 import { useOddsWithdraw } from '../../common/use-odds-withdraw';
 import { useTradingBalance } from '../../common/use-trading-balance';
 import { useUserMarkets } from '../../common/use-user-markets';
 import SwapModal from '../../components/SwapModal';
 import TransferConfirmModal from '../../components/TransferConfirmModal';
-import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Odds Market  - Portfolio',
@@ -54,6 +55,7 @@ export default function Portfolio() {
   const { data: marketsData, isLoading: isLoadingMarkets, error: marketsError } = useUserMarkets();
   const markets = marketsData?.market_list;
 
+  const { balance: monadBalance } = useApiMonadBalance();
   const { mutate: deposit, isPending: isTransferringToTrading } = useOddsDeposit();
   const { mutate: withdraw, isPending: isTransferringToFunding } = useOddsWithdraw();
   const { mutate: claim, isPending: isProcessingClaim } = useOddsClaim();
@@ -71,6 +73,11 @@ export default function Portfolio() {
 
     if (!accountInfo) {
       toast.error('Please create an account first');
+      return;
+    }
+
+    if (Number(monadBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD) {
+      toast.error('Insufficient gas for claim monUSD');
       return;
     }
 
