@@ -21,11 +21,13 @@ export function TwitterLink() {
   const { code, error, from, goTwitter, removeXVerifyCode } = useTwitterSign();
   const { mutate: saveXBind, isPending: isSavingXBind } = useSaveXBind();
 
+  const Host = isProduction
+    ? 'https://v3.tadle.com/uniswap'
+    : 'https://preview-v3.tadle.com/uniswap';
+
   function getCallbackUrl() {
     const init = window.location.origin + window.location.pathname + window.location.search;
-    return isProduction
-      ? 'https://v3.tadle.com/uniswap'
-      : 'https://preview-v3.tadle.com/uniswap?from=' + init;
+    return isProduction ? Host : Host + '?from=' + init;
   }
 
   useQuery({
@@ -33,7 +35,7 @@ export function TwitterLink() {
     queryFn: () => {
       saveXBind({
         code: code!,
-        redirect_uri: getCallbackUrl(),
+        redirect_uri: Host,
       });
 
       if (from) {
