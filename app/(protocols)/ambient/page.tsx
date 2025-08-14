@@ -5,7 +5,7 @@ import { CommonPageLayout } from '@/components/layout/common-page-layout';
 import { AmbientPositionsSection } from './ambient-position-section';
 
 export const metadata: Metadata = {
-  title: 'Ambient Finance | tadle',
+  title: 'Ambient',
 };
 
 export default function AmbientPage() {

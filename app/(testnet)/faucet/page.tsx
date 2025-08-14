@@ -5,7 +5,7 @@ import { CommonPageLayout } from '@/components/layout/common-page-layout';
 import { FaucetContainer } from './faucet-container';
 
 export const metadata: Metadata = {
-  title: 'Faucet | tadle',
+  title: 'Faucet',
 };
 
 export default function Faucet() {

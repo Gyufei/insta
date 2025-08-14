@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -20,6 +21,10 @@ interface WatchlistMarket {
     probability: string;
   };
 }
+
+export const metadata: Metadata = {
+  title: 'Odds Market  - Watchlist',
+};
 
 export default function Watchlist() {
   const { favorites } = useFavorites();

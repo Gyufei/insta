@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -9,6 +10,10 @@ import { useCancelOrder } from '../../common/use-order';
 import { useOddsUserInfo } from '../../common/use-user-info';
 import { useUserOrders } from '../../common/use-user-orders';
 import { useUserPositions } from '../../common/use-user-positions';
+
+export const metadata: Metadata = {
+  title: 'Odds Market  - Trade',
+};
 
 export default function Trade() {
   const [activeTab, setActiveTab] = useState<'position' | 'open-orders'>('position');

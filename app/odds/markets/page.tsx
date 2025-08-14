@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import MarketList from './market-list';
 
 export const metadata: Metadata = {
-  title: 'Markets | Tadle Odds',
+  title: 'Odds Markets',
 };
 
 export default function MarketsPage() {

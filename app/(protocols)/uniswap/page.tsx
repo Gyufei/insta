@@ -6,7 +6,7 @@ import { UniswapCreateCoin } from './uniswap-create-coin';
 import { UniswapPositionsSection } from './uniswap-position-section';
 
 export const metadata: Metadata = {
-  title: 'Uniswap V3 | tadle',
+  title: 'Uniswap',
 };
 
 export default function UniswapPage() {

@@ -6,7 +6,7 @@ import { MyNames } from './my-names';
 import { SearchName } from './search-name';
 
 export const metadata: Metadata = {
-  title: 'nadNameService | tadle',
+  title: 'Nad Name Service',
 };
 
 export default function NadNameService() {

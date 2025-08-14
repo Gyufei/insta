@@ -3,7 +3,7 @@ import { CommonPageLayout } from '@/components/layout/common-page-layout';
 import FullAccountDisplay from './full-account-display';
 
 export const metadata: Metadata = {
-  title: 'authority | tadle',
+  title: 'Authority',
 };
 
 export default function Authority() {

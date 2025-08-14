@@ -7,7 +7,7 @@ import { MagmaMonStake } from './magma-mon-stake';
 import { MagmaStats } from './magma-stats';
 
 export const metadata: Metadata = {
-  title: 'magma | tadle',
+  title: 'Magma',
 };
 
 export default function Apriori() {

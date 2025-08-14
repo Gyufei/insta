@@ -30,6 +30,11 @@ import { useTradingBalance } from '../../common/use-trading-balance';
 import { useUserMarkets } from '../../common/use-user-markets';
 import SwapModal from '../../components/SwapModal';
 import TransferConfirmModal from '../../components/TransferConfirmModal';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Odds Market  - Portfolio',
+};
 
 export default function Portfolio() {
   const router = useRouter();

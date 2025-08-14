@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { ApiPath } from '@/lib/data/api-path';
+import { Fetcher } from '@/lib/fetcher';
 
 import MarketMain from './market-detail';
 
@@ -13,15 +14,17 @@ export async function generateMetadata({
   try {
     // 获取市场数据
     const { marketId } = await params;
-    const marketData = await fetch(ApiPath.oddsMarketDetail.replace('{marketId}', marketId));
-    const market = await marketData.json();
+    const market = await Fetcher<Record<string, string>>(
+      ApiPath.oddsMarketDetail.replace('{marketId}', marketId)
+    );
+    console.log('marketData', market);
 
     if (!market) {
       return {};
     }
 
     return {
-      title: `${market.title || 'Market'} | Tadle Odds`,
+      title: `Odds Market - ${market.title || ''}`,
       description: market.description,
       openGraph: {
         title: `${market.title || 'Market'} | Tadle Odds`,

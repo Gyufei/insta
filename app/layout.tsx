@@ -14,7 +14,10 @@ import './globals.css';
 const ImageBase = isProduction ? 'https://v3.tadle.com/images' : 'https://sb.tadle.com/images';
 
 export const metadata: Metadata = {
-  title: 'Tadle',
+  title: {
+    template: '%s | Tadle',
+    default: 'Tadle',
+  },
   description: 'Tadle - Ship the only Parallel Sandbox for accessing dApps on the globe.',
   metadataBase: new URL(`https://${process.env.VERCEL_DOMAIN}`),
   openGraph: {

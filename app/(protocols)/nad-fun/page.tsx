@@ -4,7 +4,7 @@ import { NadFunMyTokens } from './nadfun-my-tokens';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'nad.fun | tadle',
+  title: 'Nad.Fun',
 };
 
 export default function NadFun() {

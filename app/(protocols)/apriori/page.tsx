@@ -7,7 +7,7 @@ import { AprMonStake } from './apr-mon-stake';
 import { AprioriStats } from './apriori-stats';
 
 export const metadata: Metadata = {
-  title: 'apriori | tadle',
+  title: 'Apriori',
 };
 
 export default function Apriori() {
