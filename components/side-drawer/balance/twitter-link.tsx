@@ -21,7 +21,8 @@ export function TwitterLink() {
   const { mutate: saveXBind, isPending: isSavingXBind } = useSaveXBind();
 
   function getCallbackUrl() {
-    return window.location.origin + window.location.pathname + window.location.search;
+    // return window.location.origin + window.location.pathname + window.location.search;
+    return 'https://preview-v3.tadle.com/';
   }
 
   useQuery({

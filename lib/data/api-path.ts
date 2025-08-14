@@ -38,6 +38,7 @@ export const ApiPath = {
   saveXBind: `${ApiHost}/x/bind`,
   accountBalance: `${ApiHost}/account/token_balance`,
   claimedAirdrop: `${ApiHost}/account/airdrop/amount`,
+  imageUpload: `${ApiHost}/account/upload`,
 
   aprioriInfo: `https://stake-api.apr.io/info`,
   aprioriBalance: `${ApiHost}/aprior/balance`,
@@ -71,6 +72,7 @@ export const ApiPath = {
   uniswapSwap: `${ApiHost}/uniswap_router02/buy`,
   uniswapCreatePoolAndMintPosition: `${ApiHost}/uniswap_v3_position/create_and_mint_pool`,
   uniswapMintPosition: `${ApiHost}/uniswap_v3_position/mint_pool`,
+  uniswapCreateToken: `${ApiHost}/uniswap_v3_position/create_token`,
   uniswapAddLiquidity: `${ApiHost}/uniswap_v3_position/deposit`,
   uniswapRemoveLiquidity: `${ApiHost}/uniswap_v3_position/withdraw`,
   uniswapLiquidityRatio: `${ApiHost}/uniswap_v3_position/liquidity_ratio`,

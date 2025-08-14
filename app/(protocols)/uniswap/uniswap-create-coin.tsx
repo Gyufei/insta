@@ -2,7 +2,7 @@
 
 import { toast } from 'sonner';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 
+import { useImageUpload } from '@/lib/data/use-image-upload';
+import { useUniswapCreateCoin } from '@/lib/data/use-uniswap-create-coin';
 import { cn } from '@/lib/utils';
 
 interface CreateCoinFormData {
@@ -48,6 +50,17 @@ export function UniswapCreateCoin() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [showErrors, setShowErrors] = useState(false);
 
+  const { uploadImage, isPending: isUploading } = useImageUpload((data) => {
+    // 上传成功后，将返回的 URL 设置为表单的图片值
+    setFormData((prev) => ({ ...prev, thumbnail: data.url }));
+  });
+
+  const {
+    mutate: createCoin,
+    isPending: isCreating,
+    isSuccess: isCreated,
+  } = useUniswapCreateCoin();
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -81,8 +94,8 @@ export function UniswapCreateCoin() {
             return;
           }
 
-          // 验证通过，设置图片
-          setFormData((prev) => ({ ...prev, thumbnail: reader.result as string }));
+          // 验证通过，上传图片到服务器
+          uploadImage(file);
           // 清除该字段的错误
           setErrors((prev) => ({ ...prev, thumbnail: undefined }));
         };
@@ -149,12 +162,38 @@ export function UniswapCreateCoin() {
       return;
     }
 
-    // TODO: 实现创建代币的逻辑
-    console.log('Creating coin with data:', formData);
+    createCoin({
+      token_name: formData.tokenName,
+      token_symbol: formData.tickerName,
+      token_url: formData.thumbnail || '',
+      token_description: formData.description,
+      telegram_link: formData.tgLink || '',
+      website: formData.websiteLink || '',
+      initial_supply: formData.totalSupply,
+    });
   };
 
   const hasErrors =
     showErrors && Object.keys(errors).some((key) => errors[key as keyof FormErrors]);
+
+  function resetForm() {
+    setFormData({
+      thumbnail: null,
+      tokenName: '',
+      tickerName: '',
+      totalSupply: '',
+      description: '',
+    });
+    setErrors({});
+    setShowErrors(false);
+    setShowMoreOptions(false);
+  }
+
+  useEffect(() => {
+    if (isCreated) {
+      resetForm();
+    }
+  }, [isCreated]);
 
   return (
     <div className="flex w-full flex-grow flex-col px-4 2xl:px-12">
@@ -199,8 +238,18 @@ export function UniswapCreateCoin() {
                 accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
                 className="absolute inset-0 z-10 w-full h-full cursor-pointer opacity-0 p-[14px]"
                 onChange={handleImageUpload}
+                disabled={isUploading}
               />
-              {formData.thumbnail ? (
+              {isUploading ? (
+                <div className="flex flex-col items-center justify-center w-full h-full">
+                  <div className="flex items-center justify-center w-[72px] h-[72px] rounded-full bg-muted mb-3">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                  <p className="text-sm font-medium leading-[140%] text-center text-[#131E40]">
+                    Uploading...
+                  </p>
+                </div>
+              ) : formData.thumbnail ? (
                 <div className="relative h-full w-full p-2">
                   <Image
                     src={formData.thumbnail}
@@ -366,10 +415,11 @@ export function UniswapCreateCoin() {
       <div className="mt-5 flex items-center gap-4">
         <Button
           onClick={handleCreate}
+          disabled={isCreating}
           variant="ghost"
           className="bg-[#6E75F9] flex items-center text-[#fff] hover:bg-[#6E75F9]/90 hover:text-[#fff] px-8 h-10 text-base font-medium"
         >
-          Create
+          {isCreating ? 'Creating...' : 'Create'}
           <span className="text-xs text-[#ffffff50] mt-1">Cost to deploy: ~0.02 MON</span>
         </Button>
         {hasErrors && (
