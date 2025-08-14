@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 
 import TwitterLinkIcon from '@/components/icon/twitter-link-icon';
 
+import { isProduction } from '@/lib/data/api-path';
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { useSaveXBind } from '@/lib/data/use-save-x-bind';
 import { cn } from '@/lib/utils';
@@ -17,29 +18,30 @@ export function TwitterLink() {
   const isLink = !!selectedAccount?.twitter_info?.id;
   const twitterName = selectedAccount?.twitter_info?.username || '';
 
-  const { code, error, goTwitter, removeXVerifyCode } = useTwitterSign();
+  const { code, error, from, goTwitter, removeXVerifyCode } = useTwitterSign();
   const { mutate: saveXBind, isPending: isSavingXBind } = useSaveXBind();
 
   function getCallbackUrl() {
-    // return window.location.origin + window.location.pathname + window.location.search;
-    return 'https://preview-v3.tadle.com/';
+    const init = window.location.origin + window.location.pathname + window.location.search;
+    return isProduction
+      ? 'https://v3.tadle.com/uniswap'
+      : 'https://preview-v3.tadle.com/uniswap?from=' + init;
   }
 
   useQuery({
     queryKey: code ? ['save-twitter', code] : [],
-    queryFn: () =>
+    queryFn: () => {
       saveXBind({
         code: code!,
         redirect_uri: getCallbackUrl(),
-      }),
+      });
+
+      if (from) {
+        window.location.href = from;
+      }
+    },
     enabled: !!code,
   });
-
-  useEffect(() => {
-    if (error) {
-      removeXVerifyCode();
-    }
-  }, [error]);
 
   useEffect(() => {
     if (error) {
