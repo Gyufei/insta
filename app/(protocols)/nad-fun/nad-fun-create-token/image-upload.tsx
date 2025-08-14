@@ -1,6 +1,7 @@
 import { Upload } from 'lucide-react';
 
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 // 上传组件
 interface ImageUploadProps {
@@ -12,10 +13,49 @@ export function ImageUpload({ value, onChange }: ImageUploadProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // 检查文件大小 (5MB = 5 * 1024 * 1024 bytes)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        toast.error('File size must be less than 5MB');
+        return;
+      }
+
+      // 检查文件类型
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp', 'image/bmp', 'image/tiff', 'image/heic', 'image/heif', 'image/avif'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('Please upload a valid image file');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        onChange(reader.result as string);
+        const img = new window.Image();
+        img.onload = () => {
+          // 检查图片尺寸
+          if (img.width < 130 || img.height < 130) {
+            toast.error('Image must be at least 130x130 pixels');
+            return;
+          }
+
+          // 检查宽高比是否为 1:1
+          if (img.width !== img.height) {
+            toast.error('Image must have a 1:1 aspect ratio (square)');
+            return;
+          }
+
+          // 验证通过，设置图片
+          onChange(reader.result as string);
+        };
+        img.onerror = () => {
+          toast.error('Failed to load image. Please try again.');
+        };
+        img.src = reader.result as string;
       };
+
+      reader.onerror = () => {
+        toast.error('Failed to read file. Please try again.');
+      };
+
       reader.readAsDataURL(file);
     }
   };

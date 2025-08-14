@@ -4,10 +4,11 @@ import { useAccount } from 'wagmi';
 
 import { useEffect } from 'react';
 
-import Image from 'next/image';
+import TwitterLinkIcon from '@/components/icon/twitter-link-icon';
 
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { useSaveXBind } from '@/lib/data/use-save-x-bind';
+import { cn } from '@/lib/utils';
 import { useTwitterSign } from '@/lib/utils/use-twitter-sign';
 
 export function TwitterLink() {
@@ -47,7 +48,7 @@ export function TwitterLink() {
   }, [error]);
 
   function handleGoTwitter() {
-    if (isSavingXBind) return;
+    if (isSavingXBind || isLink) return;
     const url = new URL(window.location.href);
     goTwitter(url.toString());
   }
@@ -56,21 +57,24 @@ export function TwitterLink() {
 
   return (
     <div className="flex items-end gap-2">
-      {isLink ? (
+      <div
+        className={cn(
+          'flex items-center gap-1 px-2 py-1 rounded-[6px] border border-[#E0E0E0]',
+          isLink ? 'border-[#32C34A]' : 'border-[#F3C024] cursor-pointer'
+        )}
+        onClick={handleGoTwitter}
+      >
+        <TwitterLinkIcon className={cn('w-5 h-5', isLink ? 'text-[#32C34A]' : 'text-[#F3C024]')} />
         <div className="flex items-center gap-1">
-          <Image src="/icons/twitter-link.svg" alt="twitter-link" width={20} height={20} />
-          <span className="text-[#A5ADC6] text-sm leading-[140%] font-medium">@{twitterName}</span>
+          {isLink ? (
+            <span className="max-w-[50px] truncate text-[#32C34A] text-xs leading-[140%] font-medium">
+              @{twitterName}
+            </span>
+          ) : (
+            <span className="text-[#F3C024] text-xs leading-[140%] font-medium">Connect</span>
+          )}
         </div>
-      ) : (
-        <Image
-          onClick={handleGoTwitter}
-          className="cursor-pointer"
-          src="/icons/twitter-unlink.svg"
-          alt="twitter-link"
-          width={20}
-          height={20}
-        />
-      )}
+      </div>
     </div>
   );
 }

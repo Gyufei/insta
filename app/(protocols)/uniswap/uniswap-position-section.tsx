@@ -67,7 +67,7 @@ export function UniswapPositionsSection() {
   }
 
   return (
-    <div className="flex w-full flex-grow flex-col px-4 2xl:px-12">
+    <div className="flex w-full flex-grow flex-col px-4 2xl:px-12 mt-[50px]">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <TitleH2>Your Positions</TitleH2>
         <div className="mt-3 md:mt-4 flex items-center sm:mt-0">

@@ -13,6 +13,7 @@ import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-bala
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
+import { cn } from '@/lib/utils';
 import { formatBig, formatNumber } from '@/lib/utils/number';
 
 import { TwitterLink } from './twitter-link';
@@ -96,7 +97,12 @@ export default function BalanceSection() {
         </TooltipProvider>
       </h3>
       <div className="mt-4 flex justify-between items-stretch w-full">
-        <div className="text-[32px] h-10 font-medium text-primary">
+        <div
+          className={cn(
+            'h-10 font-medium text-primary flex items-end',
+            String(priceValue).length > 8 ? 'text-[28px] leading-[120%]' : 'text-[32px] leading-[140%]'
+          )}
+        >
           <WithLoading isLoading={isPending} className="h-8 w-8 mt-[5px]">
             <span>${Number(priceValue) > 0 ? formatNumber(priceValue) : '0.00'}</span>
           </WithLoading>

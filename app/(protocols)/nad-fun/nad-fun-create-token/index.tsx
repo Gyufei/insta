@@ -1,6 +1,9 @@
+'use client';
+
 import { useAccount } from 'wagmi';
 
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 
 import { ERROR_MESSAGES } from '@/config/const-msg';
@@ -60,18 +63,12 @@ export function NadFunCreateToken() {
 
   function onSubmit(values: FormValues) {
     if (!logoPreview) {
-      setErrorData({
-        showError: true,
-        errorMessage: 'Please upload a token logo',
-      });
+      toast.error('Please upload a token logo');
       return;
     }
 
     if (!isValid) {
-      setErrorData({
-        showError: true,
-        errorMessage: 'Please fill in required fields',
-      });
+      toast.error('Please fill in required fields');
       return;
     }
 
