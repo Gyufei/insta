@@ -205,6 +205,16 @@ export default function AppSidebar() {
 
   const monadModulesItems = [
     {
+      href: '/trade',
+      label: 'Trade',
+      icon: (
+        <Image src="/icons/odds-gray.svg" alt="odds" width={12} height={12} className="h-3 w-3" />
+      ),
+      hoverIcon: (
+        <Image src="/icons/odds.svg" alt="odds" width={12} height={12} className="h-3 w-3" />
+      ),
+    },
+    {
       href: '/odds',
       label: 'Odds',
       icon: (

@@ -50,8 +50,7 @@ export function TwitterLink() {
 
   function handleGoTwitter() {
     if (isSavingXBind || isLink) return;
-    const url = new URL(window.location.href);
-    goTwitter(url.toString());
+    goTwitter(getCallbackUrl());
   }
 
   if (!address) return null;
