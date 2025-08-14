@@ -13,7 +13,6 @@ import { useAccount } from 'wagmi';
 
 import { useState } from 'react';
 
-import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -32,10 +31,6 @@ import { useTradingBalance } from '../../common/use-trading-balance';
 import { useUserMarkets } from '../../common/use-user-markets';
 import SwapModal from '../../components/SwapModal';
 import TransferConfirmModal from '../../components/TransferConfirmModal';
-
-export const metadata: Metadata = {
-  title: 'Odds Market  - Portfolio',
-};
 
 export default function Portfolio() {
   const router = useRouter();
