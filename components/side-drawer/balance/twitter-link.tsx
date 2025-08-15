@@ -81,7 +81,13 @@ export function TwitterLink() {
         <TwitterLinkIcon className={cn('w-5 h-5', isLink ? 'text-[#32C34A]' : 'text-[#F3C024]')} />
         <div className="flex items-center gap-1">
           {isLink ? (
-            <span className="max-w-[50px] truncate text-[#32C34A] mt-[-2px] text-xs leading-[140%] font-medium">
+            <span
+              title={twitterName}
+              className={cn(
+                'truncate max-w-[165px] text-xs text-[#32C34A] mt-[-2px] leading-[140%] font-medium',
+                isLink ? 'text-[#32C34A]' : 'text-[#F3C024]'
+              )}
+            >
               @{twitterName}
             </span>
           ) : (
