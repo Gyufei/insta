@@ -53,8 +53,6 @@ export default function NetworkSelect() {
     NETWORKS.find((n) => n.name === sessionStorage.getItem('current-network')) || NETWORKS[0]
   );
 
-  console.log('====chainId', chainId);
-
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();

@@ -18,13 +18,6 @@ function calculateTokenAmounts(
   token1Decimals: number,
   liq: string
 ) {
-  console.log('lowerPrice', lowerPrice);
-  console.log('upperPrice', upperPrice);
-  console.log('currentPrice', currentPrice);
-  console.log('token0Decimals', token0Decimals);
-  console.log('token1Decimals', token1Decimals);
-  console.log('liq', liq);
-
   // 输入验证
   if (
     Number(lowerPrice) >= Number(upperPrice) ||

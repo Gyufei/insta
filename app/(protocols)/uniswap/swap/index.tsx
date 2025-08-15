@@ -120,8 +120,6 @@ export function UniswapSwap() {
       errorMessage: '',
     });
 
-    console.log('quoteData', quoteData);
-
     swap({
       token_in_is_eth: isSellTokenEth,
       token_out_is_eth: isBuyTokenEth,

@@ -17,7 +17,6 @@ export async function generateMetadata({
     const market = await Fetcher<Record<string, string>>(
       ApiPath.oddsMarketDetail.replace('{marketId}', marketId)
     );
-    console.log('marketData', market);
 
     if (!market) {
       return {};
