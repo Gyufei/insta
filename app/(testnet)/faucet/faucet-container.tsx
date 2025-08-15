@@ -1,6 +1,5 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import { Wallet } from 'lucide-react';
 import { useAccount } from 'wagmi';
 
@@ -11,7 +10,6 @@ import Image from 'next/image';
 import { ERROR_MESSAGES } from '@/config/const-msg';
 import { MONAD, MonUSD } from '@/config/tokens';
 
-import { WithLoading } from '@/components/common/with-loading';
 import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,14 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 
 import { useAccounts, useSelectedAccount } from '@/lib/data/use-account';
 import { useFaucetAirdrop } from '@/lib/data/use-faucet-airdrop';
-import { useSaveXBind } from '@/lib/data/use-save-x-bind';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { cn, formatAddress } from '@/lib/utils';
-import { useTwitterSign } from '@/lib/utils/use-twitter-sign';
 
 export function FaucetContainer() {
   const { address } = useAccount();
@@ -54,44 +49,12 @@ export function FaucetContainer() {
     }
   }, [currentAccount, isInit]);
 
-  const { code, error, goTwitter, removeXVerifyCode } = useTwitterSign();
-  const {
-    mutate: saveXBind,
-    isSuccess: isSaveXBindSuccess,
-    isPending: isSavingXBind,
-  } = useSaveXBind();
-
   const [selectedToken, setSelectedToken] = useState(MONAD.address);
-
-  useQuery({
-    queryKey: code ? ['save-twitter', code] : [],
-    queryFn: () =>
-      saveXBind({
-        code: code!,
-        redirect_uri: 'http://localhost:3000/faucet',
-      }),
-    enabled: !!code,
-  });
 
   const [errorData, setErrorData] = useState<ErrorVO>({
     showError: false,
     errorMessage: '',
   });
-
-  useEffect(() => {
-    if (isSaveXBindSuccess) {
-      removeXVerifyCode();
-    }
-  }, [isSaveXBindSuccess, removeXVerifyCode]);
-
-  useEffect(() => {
-    if (error) {
-      setErrorData({
-        showError: true,
-        errorMessage: error as string,
-      });
-    }
-  }, [error]);
 
   useEffect(() => {
     if (!address) {
@@ -130,11 +93,6 @@ export function FaucetContainer() {
       sandbox_account: selectedAccount || '',
     });
   };
-
-  function handleGoTwitter() {
-    const url = new URL(window.location.href);
-    goTwitter(url.toString());
-  }
 
   return (
     <div className={cn('border-[#ebebeb] w-full md:w-fit border rounded-[8px] px-5 py-4 mt-5')}>
@@ -208,28 +166,6 @@ export function FaucetContainer() {
         <br />
         they do not have real value.
       </p>
-
-      <div className="hidden">
-        <Separator className="my-4" />
-        <div className="text-primary font-normal">
-          Connect your X account to get more testnet tokens!
-        </div>
-        <Button
-          disabled={isSavingXBind}
-          variant="outline"
-          className="w-full flex items-center gap-2 mt-2 text-primary"
-          onClick={handleGoTwitter}
-        >
-          {isSavingXBind ? (
-            <WithLoading isLoading={isSavingXBind} />
-          ) : (
-            <>
-              <Image src="/icons/x.svg" alt="Twitter" width={16} height={16} />
-            </>
-          )}
-          <span>Connect X</span>
-        </Button>
-      </div>
     </div>
   );
 }

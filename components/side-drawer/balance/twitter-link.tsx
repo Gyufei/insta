@@ -23,7 +23,8 @@ export function TwitterLink() {
 
   const Host = isProduction
     ? 'https://v3.tadle.com/uniswap'
-    : 'https://preview-v3.tadle.com/uniswap';
+    : // : 'https://preview-v3.tadle.com/uniswap';
+      'http://localhost:3000/uniswap';
 
   function getCallbackUrl() {
     const init = window.location.origin + window.location.pathname + window.location.search;
@@ -31,16 +32,15 @@ export function TwitterLink() {
   }
 
   useQuery({
-    queryKey: code ? ['save-twitter', code] : [],
+    queryKey: !from && code ? ['save-twitter', code] : [],
     queryFn: () => {
-      saveXBind({
-        code: code!,
-        redirect_uri: Host,
-      });
-
-      if (from) {
-        window.location.href = from;
-      }
+      // saveXBind({
+      //   code: code!,
+      //   redirect_uri: Host,
+      // });
+      // if (from) {
+      //   window.location.href = from;
+      // }
     },
     enabled: !!code,
   });

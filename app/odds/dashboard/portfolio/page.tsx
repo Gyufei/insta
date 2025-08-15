@@ -148,7 +148,9 @@ export default function Portfolio() {
               </div>
             ) : (
               <>
-                <div className="text-3xl font-medium">${fundingBalance}</div>
+                <div className="text-3xl font-medium">
+                  ${Number(fundingBalance) === 10 ** -18 ? '0' : fundingBalance}
+                </div>
                 <button
                   onClick={() => refetchFundingBalance()}
                   disabled={isLoadingFundingBalance}

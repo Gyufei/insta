@@ -88,9 +88,13 @@ export function UniswapSwap() {
 
   useEffect(() => {
     if (quoteError) {
+      let errorMsg = quoteError.message;
+      if (quoteError.message.includes(`Cannot read properties of undefined (reading 'quote')`)) {
+        errorMsg = 'Insufficient liquidity, please try again later';
+      }
       setErrorData({
         showError: true,
-        errorMessage: quoteError.message,
+        errorMessage: errorMsg,
       });
     }
   }, [quoteError]);
