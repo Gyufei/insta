@@ -24,8 +24,8 @@ export function TwitterLink() {
 
   const Host = isProduction
     ? 'https://v3.tadle.com/uniswap'
-    : // : 'https://preview-v3.tadle.com/uniswap';
-      'http://localhost:3000/uniswap';
+    : 'https://preview-v3.tadle.com/uniswap';
+  // 'http://localhost:3000/uniswap';
 
   function getCallbackUrl() {
     const current = window.location.origin + window.location.pathname + window.location.search;
