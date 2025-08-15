@@ -53,6 +53,8 @@ export default function NetworkSelect() {
     NETWORKS.find((n) => n.name === sessionStorage.getItem('current-network')) || NETWORKS[0]
   );
 
+  console.log('====chainId', chainId);
+
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -119,6 +121,10 @@ export default function NetworkSelect() {
       setSelectedNetwork(net);
       switchNetwork(net);
       router.replace(goUrl + '?chain=monad' || '/?chain=monad');
+    } else {
+      setSelectedNetwork(net);
+      switchNetwork(net);
+      updateUrlChainParam(String(net.id));
     }
   }
 
@@ -144,8 +150,20 @@ export default function NetworkSelect() {
           );
         }
       } else {
-        updateUrlChainParam(String(chainId));
-        handleSelectNetwork(NETWORKS.find((n) => String(n.id) === String(chainId)) || NETWORKS[0]);
+        const isBasePath = BaseNetUrlPath.includes(pathname);
+
+        if (!isBasePath) {
+          updateUrlChainParam(String(NetworkConfigs.monadTestnet.id));
+          setSelectedNetwork(
+            NETWORKS.find((n) => String(n.id) === String(NetworkConfigs.monadTestnet.id)) ||
+              NETWORKS[0]
+          );
+        } else {
+          updateUrlChainParam(String(chainId));
+          handleSelectNetwork(
+            NETWORKS.find((n) => String(n.id) === String(chainId)) || NETWORKS[0]
+          );
+        }
       }
 
       setTimeout(() => {

@@ -206,7 +206,9 @@ export default function AppSidebar() {
     {
       href: '/trade',
       label: 'Trade',
-      icon: <Image src="/icons/trade.svg" alt="trade" width={12} height={12} className="h-3 w-3" />,
+      icon: (
+        <Image src="/icons/trade-gray.svg" alt="trade" width={12} height={12} className="h-3 w-3" />
+      ),
       hoverIcon: (
         <Image src="/icons/trade.svg" alt="trade" width={12} height={12} className="h-3 w-3" />
       ),
