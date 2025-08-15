@@ -7,17 +7,10 @@ import { Fetcher } from '../fetcher';
 import { useAccountStore } from '../state/account';
 import { ApiPath } from './api-path';
 
-interface TwitterInfo {
-  id: string;
-  name: string;
-  username: string;
-}
-
 export type IAccountInfo = {
   id: string;
   sandbox_account: string;
   managers: string[];
-  twitter_info: TwitterInfo;
 };
 
 export function useAccounts() {

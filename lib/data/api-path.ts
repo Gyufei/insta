@@ -129,4 +129,5 @@ export const ApiPath = {
   c2cSalesVolume: `${ApiHost}/c2c/market_place/sales_volume_history`,
 
   twitterBind: `${ApiHost}/account/twitter`,
+  twitterInfo: `${ApiHost}/account/twitter_info`,
 };

@@ -7,16 +7,17 @@ import { useEffect } from 'react';
 import TwitterLinkIcon from '@/components/icon/twitter-link-icon';
 
 import { isProduction } from '@/lib/data/api-path';
-import { useSelectedAccount } from '@/lib/data/use-account';
 import { useSaveXBind } from '@/lib/data/use-save-x-bind';
+import { useTwitterInfo } from '@/lib/data/use-twitter-info';
 import { cn } from '@/lib/utils';
 import { useTwitterSign } from '@/lib/utils/use-twitter-sign';
 
 export function TwitterLink() {
   const { address } = useAccount();
-  const { data: selectedAccount } = useSelectedAccount();
-  const isLink = !!selectedAccount?.twitter_info?.id;
-  const twitterName = selectedAccount?.twitter_info?.username || '';
+  const { data: twitterInfo } = useTwitterInfo();
+
+  const isLink = !!twitterInfo?.id;
+  const twitterName = twitterInfo?.username || '';
 
   const { code, error, from, goTwitter, removeXVerifyCode } = useTwitterSign();
   const { mutate: saveXBind, isPending: isSavingXBind } = useSaveXBind();
@@ -27,20 +28,27 @@ export function TwitterLink() {
       'http://localhost:3000/uniswap';
 
   function getCallbackUrl() {
-    const init = window.location.origin + window.location.pathname + window.location.search;
-    return isProduction ? Host : Host + '?from=' + init;
+    const current = window.location.origin + window.location.pathname + window.location.search;
+    if (current?.includes('uniswap')) {
+      return Host;
+    }
+
+    return Host + '?from=' + current;
   }
 
   useQuery({
     queryKey: !from && code ? ['save-twitter', code] : [],
     queryFn: () => {
-      // saveXBind({
-      //   code: code!,
-      //   redirect_uri: Host,
-      // });
-      // if (from) {
-      //   window.location.href = from;
-      // }
+      const callbackUrl = sessionStorage.getItem('twitter-callbackUrl');
+
+      saveXBind({
+        code: code!,
+        redirect_uri: callbackUrl || Host,
+      });
+
+      if (from) {
+        window.location.href = from;
+      }
     },
     enabled: !!code,
   });
@@ -54,7 +62,9 @@ export function TwitterLink() {
 
   function handleGoTwitter() {
     if (isSavingXBind || isLink) return;
-    goTwitter(getCallbackUrl());
+    const cbUrl = getCallbackUrl();
+    sessionStorage.setItem('twitter-callbackUrl', cbUrl);
+    goTwitter(cbUrl);
   }
 
   if (!address) return null;
@@ -71,7 +81,7 @@ export function TwitterLink() {
         <TwitterLinkIcon className={cn('w-5 h-5', isLink ? 'text-[#32C34A]' : 'text-[#F3C024]')} />
         <div className="flex items-center gap-1">
           {isLink ? (
-            <span className="max-w-[50px] truncate text-[#32C34A] text-xs leading-[140%] font-medium">
+            <span className="max-w-[50px] truncate text-[#32C34A] mt-[-2px] text-xs leading-[140%] font-medium">
               @{twitterName}
             </span>
           ) : (
