@@ -23,6 +23,7 @@ import { MonUSD } from '@/config/tokens';
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 import { useAccountTokenBalance } from '@/lib/web3/use-account-token-balance';
+import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
 
 import { GAS_LIMIT_FOR_CLAIM_MONUSD, useOddsClaim } from '../../common/use-odds-claim';
 import { useOddsDeposit } from '../../common/use-odds-deposit';
@@ -50,6 +51,7 @@ export default function Portfolio() {
   const { data: marketsData, isLoading: isLoadingMarkets, error: marketsError } = useUserMarkets();
   const markets = marketsData?.market_list;
 
+  const { balance: walletBalance } = useWalletBalance(NetworkConfigs.monadTestnet.id);
   const { balance: monadBalance } = useApiMonadBalance();
   const { mutate: deposit, isPending: isTransferringToTrading } = useOddsDeposit();
   const { mutate: withdraw, isPending: isTransferringToFunding } = useOddsWithdraw();
@@ -71,7 +73,10 @@ export default function Portfolio() {
       return;
     }
 
-    if (Number(monadBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD) {
+    if (
+      Number(monadBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD &&
+      Number(walletBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD
+    ) {
       toast.error('Insufficient gas for claim monUSD');
       return;
     }

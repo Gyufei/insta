@@ -8,10 +8,12 @@ import {
   STATION_FROM_TOKENS_ETH,
 } from '@/app/token-station/station-config';
 
+import { NetworkConfigs } from '@/config/network-config';
 import { APR_MONAD, G_MONAD, IToken, MONAD, MonUSD } from '@/config/tokens';
 
 import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
 import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
+import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
 
 import { AprMONTokenCard } from './apr-mon-token-card';
 import { BaseTokenCard } from './base-token-card';
@@ -34,6 +36,7 @@ function filterTokenByQuery(tokens: IToken[], query: string) {
 export default function TokenList() {
   const { data: balanceData } = useApiAccountTokenBalance(true);
 
+  const { balance: walletBalance } = useWalletBalance(NetworkConfigs.monadTestnet.id);
   const { balance: monadBalance } = useApiMonadBalance();
   const { mutate: claimMonUsd, isPending: isProcessingClaim } = useOddsClaim();
 
@@ -56,7 +59,10 @@ export default function TokenList() {
       return;
     }
 
-    if (Number(monadBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD) {
+    if (
+      Number(monadBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD &&
+      Number(walletBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD
+    ) {
       toast.error('Insufficient gas for claim monUSD');
       return;
     }

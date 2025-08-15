@@ -73,12 +73,14 @@ export function TwitterLink() {
     <div className="flex items-end gap-2">
       <div
         className={cn(
-          'flex items-center gap-1 px-2 py-1 rounded-[6px] border border-[#E0E0E0]',
+          'flex items-center gap-1 px-[6px] h-6 rounded-[6px] border border-[#E0E0E0]',
           isLink ? 'border-[#32C34A]' : 'border-[#F3C024] cursor-pointer'
         )}
         onClick={handleGoTwitter}
       >
-        <TwitterLinkIcon className={cn('w-5 h-5', isLink ? 'text-[#32C34A]' : 'text-[#F3C024]')} />
+        <TwitterLinkIcon
+          className={cn('w-5 h-5 scale-75', isLink ? 'text-[#32C34A]' : 'text-[#F3C024]')}
+        />
         <div className="flex items-center gap-1">
           {isLink ? (
             <span
