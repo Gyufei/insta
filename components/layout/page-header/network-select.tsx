@@ -48,10 +48,11 @@ const URL_PARAM_TO_NETWORK: Record<string, string> = {
 const BaseNetUrlPath = ['/token-station', '/badge-gallery'];
 
 export default function NetworkSelect() {
-  const { chainId, switchNetwork } = useAppKitNetwork();
+  const { switchNetwork, chainId } = useAppKitNetwork();
   const [selectedNetwork, setSelectedNetwork] = useState<INetworkConfig>(
-    NETWORKS.find((n) => String(n.id) === String(chainId)) || NETWORKS[0]
+    NETWORKS.find((n) => n.name === sessionStorage.getItem('current-network')) || NETWORKS[0]
   );
+
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -59,6 +60,8 @@ export default function NetworkSelect() {
   const { setCurrentComponent } = useSideDrawerStore();
 
   const isMobile = useIsMobile();
+
+  const [pageInit, setPageInit] = useState(false);
 
   // 更新URL参数
   const updateUrlChainParam = (networkId: string) => {
@@ -88,32 +91,36 @@ export default function NetworkSelect() {
 
   async function handleSelectNetwork(net: INetworkConfig) {
     const isBasePath = BaseNetUrlPath.includes(pathname);
+    sessionStorage.setItem('current-network', net.name);
 
-    if (net.id !== NetworkConfigs.monadTestnet.id && !isBasePath) {
-      localStorage.setItem('monad-before-page-url', pathname);
-      setCurrentComponent({
-        name: 'Balance',
-      });
+    if (net.id !== NetworkConfigs.monadTestnet.id) {
+      if (!isBasePath) {
+        localStorage.setItem('monad-before-page-url', pathname);
+        setCurrentComponent({
+          name: 'Balance',
+        });
 
-      router.replace(
-        `/token-station${net ? `?chain=${NETWORK_TO_URL_PARAM[String(net.id)]}` : ''}`
-      );
+        setSelectedNetwork(net);
+        switchNetwork(net);
+        router.replace(
+          `/token-station${net ? `?chain=${NETWORK_TO_URL_PARAM[String(net.id)]}` : ''}`
+        );
+      } else {
+        setSelectedNetwork(net);
+        switchNetwork(net);
+        updateUrlChainParam(String(net.id));
+      }
     } else if (net.id === NetworkConfigs.monadTestnet.id && isBasePath) {
       const beforePageUrl = localStorage.getItem('monad-before-page-url');
       const goUrl = ['null', 'undefined'].includes(beforePageUrl || '')
         ? '/uniswap'
         : beforePageUrl;
-      router.replace(goUrl + '?chain=monad' || '/?chain=monad');
-    }
 
-    if (String(chainId) !== String(net.id)) {
-      updateUrlChainParam(String(net.id));
       setSelectedNetwork(net);
       switchNetwork(net);
+      router.replace(goUrl + '?chain=monad' || '/?chain=monad');
     }
   }
-
-  const [pageInit, setPageInit] = useState(false);
 
   useEffect(() => {
     if (pageInit) {
@@ -124,10 +131,18 @@ export default function NetworkSelect() {
       const urlNetwork = getNetworkFromUrl();
 
       if (urlNetwork) {
-        switchNetwork(urlNetwork);
-        setSelectedNetwork(
-          NETWORKS.find((n) => String(n.id) === String(urlNetwork.id)) || NETWORKS[0]
+        const isBaseNet = ([NetworkConfigs.base.id, NetworkConfigs.eth.id] as number[]).includes(
+          urlNetwork?.id || 0
         );
+
+        const isBasePath = BaseNetUrlPath.includes(pathname);
+
+        if (isBaseNet && isBasePath) {
+          switchNetwork(urlNetwork);
+          setSelectedNetwork(
+            NETWORKS.find((n) => String(n.id) === String(urlNetwork.id)) || NETWORKS[0]
+          );
+        }
       } else {
         updateUrlChainParam(String(chainId));
         handleSelectNetwork(NETWORKS.find((n) => String(n.id) === String(chainId)) || NETWORKS[0]);
@@ -138,20 +153,6 @@ export default function NetworkSelect() {
       }, 1000);
     }
   }, [pageInit, chainId]);
-
-  useEffect(() => {
-    if (!pageInit) {
-      return;
-    }
-
-    if (chainId) {
-      const shouldChain = NETWORKS.find((n) => String(n.id) === String(chainId));
-      if (shouldChain) {
-        updateUrlChainParam(String(chainId));
-        handleSelectNetwork(shouldChain);
-      }
-    }
-  }, [chainId, pageInit]);
 
   return (
     <Select

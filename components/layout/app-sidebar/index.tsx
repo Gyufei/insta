@@ -1,6 +1,5 @@
 'use client';
 
-import { useAppKitNetwork } from '@reown/appkit/react';
 import { CircleUserRound, Codesandbox, Minus, Plus, X } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
@@ -8,8 +7,6 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
-import { NetworkConfigs } from '@/config/network-config';
 
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -58,6 +55,8 @@ type MenuGroup = {
   hoverIcon?: React.ReactNode;
   items: MenuItem[];
 };
+
+const BaseNetUrlPath = ['/token-station', '/badge-gallery'];
 
 // 组件定义
 function MenuItemLink({ item, isActive }: { item: MenuItem; isActive: boolean }) {
@@ -177,9 +176,9 @@ let prevPath = '';
 
 export default function AppSidebar() {
   const { data: accountInfo } = useSelectedAccount();
-  const { chainId } = useAppKitNetwork();
 
   const pathname = usePathname();
+  const isBasePath = BaseNetUrlPath.includes(pathname);
 
   const { open, toggleSidebar } = useSidebar();
   const isMobile = useIsMobile();
@@ -428,10 +427,7 @@ export default function AppSidebar() {
 
   useEffect(() => {
     let groups: MenuGroup[] = [];
-    if (
-      String(chainId) === String(NetworkConfigs.base.id) ||
-      String(chainId) === String(NetworkConfigs.eth.id)
-    ) {
+    if (isBasePath) {
       groups = [
         {
           id: 'modules',
@@ -471,7 +467,7 @@ export default function AppSidebar() {
     }
 
     setMenuGroup(groups);
-  }, [chainId, accountInfo?.sandbox_account]);
+  }, [isBasePath, accountInfo?.sandbox_account]);
 
   function MobileCloseBtn() {
     return (
