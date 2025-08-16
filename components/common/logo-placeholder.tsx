@@ -30,7 +30,7 @@ export function LogoWithPlaceholder({
   return (
     <div
       className={cn(
-        'flex items-center justify-center bg-gray-300 font-medium uppercase shrink-0 text-primary',
+        'flex items-center justify-center bg-gray-300 font-medium uppercase shrink-0 text-primary rounded-full',
         className
       )}
       style={{ width, height }}

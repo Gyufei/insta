@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader } from 'lucide-react';
+import { CircleX, Loader } from 'lucide-react';
 import { divide } from 'safebase';
 
 import { useEffect, useState } from 'react';
@@ -29,7 +29,7 @@ import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings'
 import { UNISWAP_TOKENS } from '../(protocols)/uniswap/use-uniswap-token';
 
 export function TokenContent() {
-  const tokens = UNISWAP_TOKENS;
+  const [tokens, setTokens] = useState(UNISWAP_TOKENS);
 
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -90,6 +90,16 @@ export function TokenContent() {
         showError: true,
         errorMessage: errorMsg,
       });
+    } else {
+      if (
+        errorData.showError &&
+        errorData.errorMessage === 'Insufficient liquidity, please try again later'
+      ) {
+        setErrorData({
+          showError: false,
+          errorMessage: '',
+        });
+      }
     }
   }, [quoteError]);
 
@@ -146,6 +156,16 @@ export function TokenContent() {
     }
   };
 
+  const handleTokenAdded = (token: IToken) => {
+    // 检查代币是否已经存在于列表中
+    const existingToken = tokens.find(
+      (t) => t.address.toLowerCase() === token.address.toLowerCase()
+    );
+    if (!existingToken) {
+      setTokens((prevTokens) => [...prevTokens, token]);
+    }
+  };
+
   return (
     <>
       <div className="px-4 2xl:px-12">
@@ -163,6 +183,7 @@ export function TokenContent() {
               label="You pay"
               showMaxButton={true}
               onMaxClick={handleMaxClick}
+              onTokenAdded={handleTokenAdded}
             />
           </Card>
 
@@ -199,6 +220,7 @@ export function TokenContent() {
               isBalancePending={isToBalancePending}
               label="You receive"
               disabled={true}
+              onTokenAdded={handleTokenAdded}
             />
           </Card>
         </div>
@@ -206,8 +228,23 @@ export function TokenContent() {
         <div className="flex md:flex-row flex-col md:justify-between md:items-center mt-5 gap-2 md:gap-0">
           <SlippageSettings onSlippageChange={setSlippage} />
 
-          <div className="flex justify-end gap-1">
-            <ErrorMessage show={errorData.showError} message={errorData.errorMessage} />
+          <div className="flex flex-col md:items-center md:flex-row gap-2 md:gap-1 justify-end">
+            {errorData.showError && (
+              <div className={cn('rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2 mt-0')}>
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <CircleX className="h-5 w-5 text-red-500 dark:text-red-400" />
+                  </div>
+                  <div className="ml-2">
+                    <div className="mb-1 text-xs leading-5 font-medium text-red-700 dark:text-red-300 last:mb-0">
+                      <ul className="list-disc px-4">
+                        <li>{errorData.errorMessage}</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             <Button
               className="min-w-40 h-12 text-xl font-medium flex leading-[24px] items-center justify-center rounded-md bg-[#6E75F9] text-white hover:bg-[#6E75F990]"
               onClick={handleSwap}

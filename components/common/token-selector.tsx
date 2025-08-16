@@ -1,5 +1,7 @@
 'use client';
 
+import { isAddress } from 'viem';
+
 import { useMemo, useState } from 'react';
 
 import { IToken } from '@/config/tokens';
@@ -17,8 +19,20 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { ITokenInfo, useTokenInfo } from '@/lib/data/use-token-info';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/utils/number';
+
+// 将 ITokenInfo 转换为 IToken
+function convertTokenInfoToToken(tokenInfo: ITokenInfo, address: string): IToken {
+  return {
+    name: tokenInfo.name,
+    symbol: tokenInfo.symbol,
+    logo: '', // 默认空logo，因为没有logo信息
+    decimals: parseInt(tokenInfo.decimals),
+    address: address,
+  };
+}
 
 interface TokenSelectorProps {
   tokens: IToken[];
@@ -34,6 +48,7 @@ interface TokenSelectorProps {
   showMaxButton?: boolean;
   onMaxClick?: () => void;
   className?: string;
+  onTokenAdded?: (token: IToken) => void; // 新增：当通过地址搜索选择代币时的回调
 }
 
 export function TokenSelector({
@@ -50,8 +65,17 @@ export function TokenSelector({
   showMaxButton = false,
   onMaxClick,
   className,
+  onTokenAdded,
 }: TokenSelectorProps) {
   const [searchQuery, setSearchQuery] = useState('');
+
+  // 检查搜索查询是否为有效的合约地址
+  const isSearchingAddress = isAddress(searchQuery.trim());
+
+  // 如果是搜索地址，调用 useTokenInfo
+  const { data: tokenInfo, isLoading: isTokenInfoLoading } = useTokenInfo(
+    isSearchingAddress ? searchQuery.trim() : ''
+  );
 
   const filteredTokens = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -59,13 +83,29 @@ export function TokenSelector({
     }
 
     const query = searchQuery.toLowerCase();
-    return tokens.filter(
+    let filtered = tokens.filter(
       (token) =>
         token.symbol.toLowerCase().includes(query) ||
         token.name.toLowerCase().includes(query) ||
         token.address.toLowerCase().includes(query)
     );
-  }, [tokens, searchQuery]);
+
+    // 如果搜索的是合约地址且获取到了代币信息，添加到结果中
+    if (isSearchingAddress && tokenInfo && !isTokenInfoLoading) {
+      const searchedToken = convertTokenInfoToToken(tokenInfo, searchQuery.trim());
+
+      // 检查是否已经存在于过滤结果中
+      const existingToken = filtered.find(
+        (token) => token.address.toLowerCase() === searchedToken.address.toLowerCase()
+      );
+
+      if (!existingToken) {
+        filtered = [searchedToken, ...filtered];
+      }
+    }
+
+    return filtered;
+  }, [tokens, searchQuery, tokenInfo, isTokenInfoLoading, isSearchingAddress]);
 
   return (
     <div className={cn('flex flex-col gap-[10px]', className)}>
@@ -73,11 +113,32 @@ export function TokenSelector({
         <div className="flex-1 flex flex-col gap-[10px]">
           <div className="text-sm text-[#A5ADC6] font-normal">Token</div>
           <Select
-            value={selectedToken?.symbol}
+            value={
+              selectedToken
+                ? selectedToken.logo === ''
+                  ? `${selectedToken.symbol}-${selectedToken.address}`
+                  : selectedToken.symbol
+                : undefined
+            }
             onValueChange={(value) => {
-              const selectedToken = tokens.find((token) => token.symbol === value);
-              if (selectedToken) {
-                onTokenChange(selectedToken);
+              // 检查是否是包含地址的唯一标识符
+              if (value.includes('-') && value.includes('0x')) {
+                // 从唯一标识符中提取地址
+                const address = value.split('-').slice(-1)[0];
+                const selectedToken = filteredTokens.find((token) => token.address === address);
+                if (selectedToken) {
+                  onTokenChange(selectedToken);
+                  // 如果是通过地址搜索找到的代币，通知父组件添加到代币列表
+                  if (onTokenAdded && isSearchingAddress) {
+                    onTokenAdded(selectedToken);
+                  }
+                }
+              } else {
+                // 普通的 symbol 选择
+                const selectedToken = filteredTokens.find((token) => token.symbol === value);
+                if (selectedToken) {
+                  onTokenChange(selectedToken);
+                }
               }
             }}
           >
@@ -101,7 +162,7 @@ export function TokenSelector({
               {/* 搜索输入框 */}
               <div className="p-3 border-b border-gray-100">
                 <Input
-                  placeholder="Search token name or symbol"
+                  placeholder="Search token name, symbol or address"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full text-sm"
@@ -114,26 +175,42 @@ export function TokenSelector({
 
               {/* Token列表 */}
               <div className="max-h-[200px] overflow-y-auto">
-                {filteredTokens.length === 0 ? (
-                  <div className="p-3 text-center text-sm text-gray-500">未找到匹配的代币</div>
+                {isSearchingAddress && isTokenInfoLoading ? (
+                  <div className="p-3 text-center text-sm text-gray-500">
+                    <Skeleton className="w-full h-8 mb-2" />
+                    <span>Loading...</span>
+                  </div>
+                ) : filteredTokens.length === 0 ? (
+                  <div className="p-3 text-center text-sm text-gray-500">
+                    {isSearchingAddress ? 'No token found' : 'No token found'}
+                  </div>
                 ) : (
-                  filteredTokens.map((token) => (
-                    <SelectItem key={token.symbol} value={token.symbol}>
-                      <div className="flex items-center gap-2">
-                        <LogoWithPlaceholder
-                          src={token.logo}
-                          className="w-6 h-6"
-                          width={20}
-                          height={20}
-                          name={token.symbol}
-                        />
-                        <div className="flex flex-col">
-                          <span className="font-medium">{token.symbol}</span>
-                          <span className="text-xs text-gray-500">{token.name}</span>
+                  filteredTokens.map((token) => {
+                    // 为通过地址搜索找到的代币创建唯一标识符
+                    const isFromAddressSearch =
+                      isSearchingAddress && token.address === searchQuery.trim();
+                    const uniqueValue = isFromAddressSearch
+                      ? `${token.symbol}-${token.address}`
+                      : token.symbol;
+
+                    return (
+                      <SelectItem key={`${token.symbol}-${token.address}`} value={uniqueValue}>
+                        <div className="flex items-center gap-2">
+                          <LogoWithPlaceholder
+                            src={token.logo}
+                            className="w-6 h-6"
+                            width={20}
+                            height={20}
+                            name={token.symbol}
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-medium">{token.symbol}</span>
+                            <span className="text-xs text-gray-500">{token.name}</span>
+                          </div>
                         </div>
-                      </div>
-                    </SelectItem>
-                  ))
+                      </SelectItem>
+                    );
+                  })
                 )}
               </div>
             </SelectContent>
