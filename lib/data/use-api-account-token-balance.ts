@@ -12,27 +12,24 @@ export interface IAccountTokenBalance {
   formattedBalance: string;
 }
 
-export function useApiAccountTokenBalance(withAccount = false) {
+export function useApiAccountTokenBalance() {
   const { address: wallet } = useAccount();
 
   return createQueryHook<IAccountTokenBalance[]>(
     ApiPath.accountBalance,
     (account) => ['account', 'token_balance', wallet ?? '' + account ?? ''],
     (url, account) => {
-      if (!wallet) {
+      if (!wallet || !account) {
         return null;
       }
 
       url.searchParams.set('wallet', wallet);
-
-      if (account) {
-        url.searchParams.set('sandbox_account', account);
-      }
+      url.searchParams.set('sandbox_account', account);
 
       return url;
     },
     {
-      withAccount,
+      withAccount: true,
     }
   )();
 }

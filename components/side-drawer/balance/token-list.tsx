@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { GAS_LIMIT_FOR_CLAIM_MONUSD, useOddsClaim } from '@/app/odds/common/use-odds-claim';
 import {
@@ -12,6 +12,7 @@ import { NetworkConfigs } from '@/config/network-config';
 import { APR_MONAD, G_MONAD, IToken, MONAD, MonUSD } from '@/config/tokens';
 
 import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
+import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 // import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
 
@@ -34,16 +35,32 @@ function filterTokenByQuery(tokens: IToken[], query: string) {
 }
 
 export default function TokenList() {
-  const { data: balanceData } = useApiAccountTokenBalance(true);
+  const { data: balanceData } = useApiAccountTokenBalance();
 
   const { balance: walletBalance } = useWalletBalance(NetworkConfigs.monadTestnet.id);
-  // const { balance: monadBalance } = useApiMonadBalance();
   const { mutate: claimMonUsd, isPending: isProcessingClaim } = useOddsClaim();
+  const { data: uniswapTokensData } = useUniswapTokens();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [MonadTokens, setMonadTokens] = useState<IToken[]>(MonadTokenData);
   const [BaseTokens, setBaseTokens] = useState<IToken[]>(BaseTokenData);
   const [EthTokens, setEthTokens] = useState<IToken[]>(EthTokenData);
+
+  const allMonTokens = useMemo(() => {
+    const uniswapTokens = uniswapTokensData?.map((token) => ({
+      ...token,
+      logo: token.logoURI,
+      description: token.tokenDescription,
+    }));
+
+    const monBalanceTokens = balanceData?.filter((token) => token.network === 'MON');
+
+    const hasBalanceTokens = uniswapTokens?.filter((token) =>
+      monBalanceTokens?.some((bToken) => bToken.address === token.address)
+    );
+
+    return [...MonadTokenData, ...(hasBalanceTokens || [])];
+  }, [uniswapTokensData, balanceData]);
 
   function withMonUsdFirst(tokens: IToken[]) {
     return tokens.sort((a: IToken, _b) => {
@@ -72,7 +89,7 @@ export default function TokenList() {
 
   useEffect(() => {
     if (searchQuery) {
-      const monTokens = filterTokenByQuery(MonadTokenData, searchQuery);
+      const monTokens = filterTokenByQuery(allMonTokens, searchQuery);
       const baseTokens = filterTokenByQuery(BaseTokenData, searchQuery);
       const ethTokens = filterTokenByQuery(EthTokenData, searchQuery);
 
@@ -80,11 +97,11 @@ export default function TokenList() {
       setBaseTokens(baseTokens);
       setEthTokens(ethTokens);
     } else {
-      setMonadTokens(withMonUsdFirst(MonadTokenData));
+      setMonadTokens(withMonUsdFirst(withMonUsdFirst(allMonTokens)));
       setBaseTokens(BaseTokenData);
       setEthTokens(EthTokenData);
     }
-  }, [searchQuery]);
+  }, [searchQuery, allMonTokens]);
 
   return (
     <div className="mt-2 flex flex-grow flex-col sm:mt-4 relative z-1 bg-bg-gray">

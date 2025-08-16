@@ -15,13 +15,13 @@ import {
 import { IToken } from '@/config/tokens';
 
 import { TokenSelector } from '@/components/common/token-selector';
-import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
 import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
 import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
 import { ErrorVO } from '@/lib/model/error-vo';
+import { eventBus } from '@/lib/state/eventBus';
 import { cn } from '@/lib/utils';
 import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
 
@@ -101,7 +101,7 @@ export function TokenContent() {
         });
       }
     }
-  }, [quoteError]);
+  }, [errorData, quoteError]);
 
   useEffect(() => {
     if (swapError) {
@@ -109,8 +109,40 @@ export function TokenContent() {
         showError: true,
         errorMessage: swapError.message,
       });
+    } else {
+      if (!swapError && !quoteError) {
+        setErrorData({
+          showError: false,
+          errorMessage: '',
+        });
+      }
     }
-  }, [swapError]);
+  }, [swapError, quoteError]);
+
+  const [init, setInit] = useState(false);
+  useEffect(() => {
+    if (!init) {
+      const token = sessionStorage.getItem('token');
+      if (token) {
+        setSellToken(JSON.parse(token));
+        sessionStorage.removeItem('token');
+      }
+      setInit(true);
+    }
+  }, [init]);
+
+  useEffect(() => {
+    const unsubscribe = eventBus.subscribe(
+      'trade-token',
+      (data: { name: string; props: { token: IToken } }) => {
+        if (data.name === 'TradeToken') {
+          setSellToken(data.props.token);
+          setInit(true);
+        }
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
   function handleSwap() {
     if (!quoteData || !sellToken || !buyToken) return;

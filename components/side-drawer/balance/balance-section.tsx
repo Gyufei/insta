@@ -22,7 +22,7 @@ export default function BalanceSection() {
   const { data: accountInfo } = useSelectedAccount();
   const account = accountInfo?.sandbox_account;
 
-  const { data: balanceData, isPending: isPendingBalance } = useApiAccountTokenBalance(true);
+  const { data: balanceData, isPending: isPendingBalance } = useApiAccountTokenBalance();
   const { data: priceData, isPending: isPendingPrice } = useTokenStationPrice();
 
   const { data: aprioriBalance, isPending: isPendingApr } = useAprioriBalance();

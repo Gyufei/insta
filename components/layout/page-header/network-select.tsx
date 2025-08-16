@@ -49,9 +49,7 @@ const BaseNetUrlPath = ['/token-station', '/badge-gallery'];
 
 export default function NetworkSelect() {
   const { switchNetwork, chainId } = useAppKitNetwork();
-  const [selectedNetwork, setSelectedNetwork] = useState<INetworkConfig>(
-    NETWORKS.find((n) => n.name === sessionStorage.getItem('current-network')) || NETWORKS[0]
-  );
+  const [selectedNetwork, setSelectedNetwork] = useState<INetworkConfig>(NETWORKS[0]);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -61,7 +59,7 @@ export default function NetworkSelect() {
 
   const isMobile = useIsMobile();
 
-  const [pageInit, setPageInit] = useState(false);
+  const [pageHasInit, setPageInit] = useState(false);
 
   // 更新URL参数
   const updateUrlChainParam = (networkId: string) => {
@@ -127,8 +125,13 @@ export default function NetworkSelect() {
   }
 
   useEffect(() => {
-    if (pageInit) {
+    if (pageHasInit) {
       return;
+    }
+
+    const network = sessionStorage.getItem('current-network');
+    if (network) {
+      setSelectedNetwork(NETWORKS.find((n) => n.name === network) || NETWORKS[0]);
     }
 
     if (chainId) {
@@ -168,7 +171,7 @@ export default function NetworkSelect() {
         setPageInit(true);
       }, 1000);
     }
-  }, [pageInit, chainId]);
+  }, [pageHasInit, chainId]);
 
   return (
     <Select

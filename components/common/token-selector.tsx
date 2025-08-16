@@ -19,20 +19,10 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { ITokenInfo, useTokenInfo } from '@/lib/data/use-token-info';
+import { useTokenInfo } from '@/lib/data/use-token-info';
+import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/utils/number';
-
-// 将 ITokenInfo 转换为 IToken
-function convertTokenInfoToToken(tokenInfo: ITokenInfo, address: string): IToken {
-  return {
-    name: tokenInfo.name,
-    symbol: tokenInfo.symbol,
-    logo: '', // 默认空logo，因为没有logo信息
-    decimals: parseInt(tokenInfo.decimals),
-    address: address,
-  };
-}
 
 interface TokenSelectorProps {
   tokens: IToken[];
@@ -72,18 +62,29 @@ export function TokenSelector({
   // 检查搜索查询是否为有效的合约地址
   const isSearchingAddress = isAddress(searchQuery.trim());
 
-  // 如果是搜索地址，调用 useTokenInfo
   const { data: tokenInfo, isLoading: isTokenInfoLoading } = useTokenInfo(
     isSearchingAddress ? searchQuery.trim() : ''
   );
 
+  const { data: uniswapTokensData, isLoading: isUniswapTokensLoading } = useUniswapTokens();
+
+  const allTokens = useMemo(() => {
+    const uniswapTokens = uniswapTokensData?.map((token) => ({
+      ...token,
+      logo: token.logoURI,
+      description: token.tokenDescription,
+    }));
+
+    return [...tokens, ...(uniswapTokens || [])];
+  }, [tokens, uniswapTokensData]);
+
   const filteredTokens = useMemo(() => {
     if (!searchQuery.trim()) {
-      return tokens;
+      return allTokens;
     }
 
     const query = searchQuery.toLowerCase();
-    let filtered = tokens.filter(
+    let filtered = allTokens.filter(
       (token) =>
         token.symbol.toLowerCase().includes(query) ||
         token.name.toLowerCase().includes(query) ||
@@ -91,21 +92,26 @@ export function TokenSelector({
     );
 
     // 如果搜索的是合约地址且获取到了代币信息，添加到结果中
-    if (isSearchingAddress && tokenInfo && !isTokenInfoLoading) {
-      const searchedToken = convertTokenInfoToToken(tokenInfo, searchQuery.trim());
-
+    if (isSearchingAddress && tokenInfo && !isTokenInfoLoading && !isUniswapTokensLoading) {
       // 检查是否已经存在于过滤结果中
       const existingToken = filtered.find(
-        (token) => token.address.toLowerCase() === searchedToken.address.toLowerCase()
+        (token) => token.address.toLowerCase() === tokenInfo?.address?.toLowerCase()
       );
 
       if (!existingToken) {
-        filtered = [searchedToken, ...filtered];
+        filtered = [tokenInfo as unknown as IToken, ...filtered];
       }
     }
 
     return filtered;
-  }, [tokens, searchQuery, tokenInfo, isTokenInfoLoading, isSearchingAddress]);
+  }, [
+    allTokens,
+    searchQuery,
+    tokenInfo,
+    isTokenInfoLoading,
+    isUniswapTokensLoading,
+    isSearchingAddress,
+  ]);
 
   return (
     <div className={cn('flex flex-col gap-[10px]', className)}>
@@ -175,7 +181,7 @@ export function TokenSelector({
 
               {/* Token列表 */}
               <div className="max-h-[200px] overflow-y-auto">
-                {isSearchingAddress && isTokenInfoLoading ? (
+                {isSearchingAddress && (isTokenInfoLoading || isUniswapTokensLoading) ? (
                   <div className="p-3 text-center text-sm text-gray-500">
                     <Skeleton className="w-full h-8 mb-2" />
                     <span>Loading...</span>

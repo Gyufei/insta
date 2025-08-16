@@ -96,8 +96,18 @@ export function UniswapSwap() {
         showError: true,
         errorMessage: errorMsg,
       });
+    } else {
+      if (
+        errorData.showError &&
+        errorData.errorMessage === 'Insufficient liquidity, please try again later'
+      ) {
+        setErrorData({
+          showError: false,
+          errorMessage: '',
+        });
+      }
     }
-  }, [quoteError]);
+  }, [errorData, quoteError]);
 
   useEffect(() => {
     if (swapError) {
@@ -105,8 +115,15 @@ export function UniswapSwap() {
         showError: true,
         errorMessage: swapError.message,
       });
+    } else {
+      if (!swapError && !quoteError) {
+        setErrorData({
+          showError: false,
+          errorMessage: '',
+        });
+      }
     }
-  }, [swapError]);
+  }, [swapError, quoteError]);
 
   function handleSwap() {
     if (!quoteData || !sellToken || !buyToken) return;

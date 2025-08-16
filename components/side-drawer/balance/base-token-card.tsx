@@ -1,13 +1,15 @@
 import { Loader2 } from 'lucide-react';
 
 import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { IToken } from '@/config/tokens';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { eventBus } from '@/lib/state/eventBus';
+// import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/utils/number';
 
@@ -30,10 +32,17 @@ export function BaseTokenCard({
   isClaiming,
   onClaim,
 }: BaseTokenCardProps) {
-  const { setCurrentComponent } = useSideDrawerStore();
+  const pathname = usePathname();
+  const router = useRouter();
 
   function handleTrade() {
-    setCurrentComponent({ name: 'UniswapSwap', props: { token } });
+    if (pathname.includes('/trade')) {
+      eventBus.publish('trade-token', { name: 'TradeToken', props: { token } });
+    } else {
+      sessionStorage.setItem('token', JSON.stringify(token));
+      router.push(`/trade`);
+    }
+    // setCurrentComponent({ name: 'UniswapSwap', props: { token } });
   }
 
   function handleClaim() {

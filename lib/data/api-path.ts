@@ -77,6 +77,8 @@ export const ApiPath = {
   uniswapRemoveLiquidity: `${ApiHost}/uniswap_v3_position/withdraw`,
   uniswapLiquidityRatio: `${ApiHost}/uniswap_v3_position/liquidity_ratio`,
   uniswapTokenInfo: `${ApiHost}/uniswap_v3_position/token_info`,
+  uniswapTokens: `${ApiHost}/uniswap_v3_position/tokens`,
+  uniswapTokenBalance: `${ApiHost}/uniswap_v3_position/token_balance`,
 
   ambientPosition: `${ApiHost}/ambient_finance/positions`,
   ambientPositionInfo: `${ApiHost}/ambient_finance/position_info`,
