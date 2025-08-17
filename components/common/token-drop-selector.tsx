@@ -141,13 +141,13 @@ export function TokenDropSelector({
               <div className="flex items-center gap-2">
                 {selectedToken && (
                   <>
-                    <LogoWithPlaceholder
+                    {/* <LogoWithPlaceholder
                       src={selectedToken.logo}
                       className="w-6 h-6"
                       width={20}
                       height={20}
                       name={selectedToken.symbol}
-                    />
+                    /> */}
                     <SelectValue>{selectedToken.symbol}</SelectValue>
                   </>
                 )}
@@ -183,13 +183,13 @@ export function TokenDropSelector({
                   filteredTokens.map((token) => (
                     <SelectItem key={`${token.symbol}-${token.address}`} value={token.address}>
                       <div className="flex items-center gap-2">
-                        <LogoWithPlaceholder
+                        {/* <LogoWithPlaceholder
                           src={token.logo}
                           className="w-6 h-6"
                           width={20}
                           height={20}
                           name={token.symbol}
-                        />
+                        /> */}
                         <div className="flex flex-col">
                           <span className="font-medium">{token.symbol}</span>
                           <span className="text-xs text-gray-500">{token.name}</span>

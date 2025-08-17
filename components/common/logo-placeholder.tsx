@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import Image from 'next/image';
+
 import { cn } from '@/lib/utils';
 
 export function LogoWithPlaceholder({
@@ -28,7 +30,7 @@ export function LogoWithPlaceholder({
   if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img
+      <Image
         src={src}
         alt={name}
         className={cn('object-contain rounded-full', className)}
