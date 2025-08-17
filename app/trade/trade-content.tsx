@@ -69,11 +69,13 @@ export function TokenContent() {
 
   const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
 
-  if (quoteData?.output) {
-    setBuyValue(
-      divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
-    );
-  }
+  useEffect(() => {
+    if (quoteData?.output) {
+      setBuyValue(
+        divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
+      );
+    }
+  }, [quoteData?.output, buyToken?.decimals]);
 
   useEffect(() => {
     if (quoteError) {
