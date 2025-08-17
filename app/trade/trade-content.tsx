@@ -1,10 +1,9 @@
 'use client';
 
 // import { CircleX, Loader } from 'lucide-react';
-
 // import { divide } from 'safebase';
-
 // import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import Image from 'next/image';
 
@@ -13,7 +12,7 @@ import Image from 'next/image';
 //   DEFAULT_TOKEN_DECIMALS,
 //   replaceNativeAddressUseBackend,
 // } from '@/config/network-config';
-// import { IToken } from '@/config/tokens';
+import { IToken } from '@/config/tokens';
 
 // import { TokenDropSelector } from '@/components/common/token-drop-selector';
 import { Button } from '@/components/ui/button';
@@ -30,128 +29,127 @@ import { cn } from '@/lib/utils';
 // import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings';
 
 export function TokenContent() {
-  /*
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
   const [sellValue, setSellValue] = useState('');
   const [buyValue, setBuyValue] = useState('');
-  const [slippage, setSlippage] = useState('1');
+  // const [slippage, setSlippage] = useState('1');
 
-  const [errorData, setErrorData] = useState<ErrorVO>({
-    showError: false,
-    errorMessage: '',
-  });
+  // const [errorData, setErrorData] = useState<ErrorVO>({
+  //   showError: false,
+  //   errorMessage: '',
+  // });
 
   const [rotateTimes, setRotateTimes] = useState(0);
 
-  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
-    sellToken?.address || '',
-    true
-  );
+  // const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
+  //   sellToken?.address || '',
+  //   true
+  // );
 
-  const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
-    buyToken?.address || '',
-    true
-  );
+  // const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
+  //   buyToken?.address || '',
+  //   true
+  // );
 
-  const quoteParams =
-    sellToken && buyToken && sellValue
-      ? {
-          tokenIn: replaceNativeAddressUseBackend(sellToken.address),
-          tokenOut: replaceNativeAddressUseBackend(buyToken.address),
-          amountIn: sellValue,
-          amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
-        }
-      : undefined;
+  // const quoteParams =
+  //   sellToken && buyToken && sellValue
+  //     ? {
+  //         tokenIn: replaceNativeAddressUseBackend(sellToken.address),
+  //         tokenOut: replaceNativeAddressUseBackend(buyToken.address),
+  //         amountIn: sellValue,
+  //         amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
+  //       }
+  //     : undefined;
 
-  const {
-    data: quoteData,
-    isLoading: isQuoteLoading,
-    error: quoteError,
-  } = useUniswapQuote(quoteParams);
+  // const {
+  //   data: quoteData,
+  //   isLoading: isQuoteLoading,
+  //   error: quoteError,
+  // } = useUniswapQuote(quoteParams);
 
-  const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
+  // const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
 
-  useEffect(() => {
-    if (quoteData?.output) {
-      setBuyValue(
-        divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
-      );
-    }
-  }, [quoteData?.output, buyToken?.decimals]);
+  // useEffect(() => {
+  //   if (quoteData?.output) {
+  //     setBuyValue(
+  //       divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
+  //     );
+  //   }
+  // }, [quoteData?.output, buyToken?.decimals]);
 
-  useEffect(() => {
-    if (quoteError) {
-      let errorMsg = quoteError.message;
-      if (quoteError.message.includes(`Cannot read properties of undefined (reading 'quote')`)) {
-        errorMsg = 'Insufficient liquidity, please try again later';
-      }
-      setErrorData({
-        showError: true,
-        errorMessage: errorMsg,
-      });
-    }
+  // useEffect(() => {
+  //   if (quoteError) {
+  //     let errorMsg = quoteError.message;
+  //     if (quoteError.message.includes(`Cannot read properties of undefined (reading 'quote')`)) {
+  //       errorMsg = 'Insufficient liquidity, please try again later';
+  //     }
+  //     setErrorData({
+  //       showError: true,
+  //       errorMessage: errorMsg,
+  //     });
+  //   }
 
-    if (swapError) {
-      setErrorData({
-        showError: true,
-        errorMessage: swapError.message,
-      });
-    }
+  //   if (swapError) {
+  //     setErrorData({
+  //       showError: true,
+  //       errorMessage: swapError.message,
+  //     });
+  //   }
 
-    if (!swapError && !quoteError) {
-      setErrorData({
-        showError: false,
-        errorMessage: '',
-      });
-    }
-  }, [swapError, quoteError]);
+  //   if (!swapError && !quoteError) {
+  //     setErrorData({
+  //       showError: false,
+  //       errorMessage: '',
+  //     });
+  //   }
+  // }, [swapError, quoteError]);
 
-  const [init, setInit] = useState(false);
-  useEffect(() => {
-    if (!init) {
-      const token = sessionStorage.getItem('token');
-      if (token) {
-        setSellToken(JSON.parse(token));
-        sessionStorage.removeItem('token');
-      }
-      setInit(true);
-    }
-  }, [init]);
+  // const [init, setInit] = useState(false);
+  // useEffect(() => {
+  //   if (!init) {
+  //     const token = sessionStorage.getItem('token');
+  //     if (token) {
+  //       setSellToken(JSON.parse(token));
+  //       sessionStorage.removeItem('token');
+  //     }
+  //     setInit(true);
+  //   }
+  // }, [init]);
 
-  useEffect(() => {
-    const unsubscribe = eventBus.subscribe(
-      'trade-token',
-      (data: { name: string; props: { token: IToken } }) => {
-        console.log('data', data);
-        if (data.name === 'TradeToken') {
-          setSellToken(data.props.token);
-          setInit(true);
-        }
-      }
-    );
-    return () => unsubscribe();
-  }, []);
+  // useEffect(() => {
+  //   const unsubscribe = eventBus.subscribe(
+  //     'trade-token',
+  //     (data: { name: string; props: { token: IToken } }) => {
+  //       console.log('data', data);
+  //       if (data.name === 'TradeToken') {
+  //         setSellToken(data.props.token);
+  //         setInit(true);
+  //       }
+  //     }
+  //   );
+  //   return () => unsubscribe();
+  // }, []);
 
-  function handleSwap() {
-    if (!quoteData || !sellToken || !buyToken) return;
+  // function handleSwap() {
+  //   if (!quoteData || !sellToken || !buyToken) return;
 
-    const isSellTokenEth = sellToken.address === DEFAULT_NATIVE_ADDRESS;
-    const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
+  //   const isSellTokenEth = sellToken.address === DEFAULT_NATIVE_ADDRESS;
+  //   const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
 
-    // 清除之前的错误
-    setErrorData({
-      showError: false,
-      errorMessage: '',
-    });
+  //   // 清除之前的错误
+  //   setErrorData({
+  //     showError: false,
+  //     errorMessage: '',
+  //   });
 
-    swap({
-      token_in_is_eth: isSellTokenEth,
-      token_out_is_eth: isBuyTokenEth,
-      slippage: (Number(slippage) * 1e16).toString(),
-      route: quoteData.route[0],
-    });
-  }
+  //   swap({
+  //     token_in_is_eth: isSellTokenEth,
+  //     token_out_is_eth: isBuyTokenEth,
+  //     slippage: (Number(slippage) * 1e16).toString(),
+  //     route: quoteData.route[0],
+  //   });
+  // }
 
   const handleSwapTokens = () => {
     setRotateTimes((rotateTimes % 2) + 1);
@@ -165,18 +163,17 @@ export function TokenContent() {
     setBuyValue(tempValue);
 
     // 清除错误
-    setErrorData({
-      showError: false,
-      errorMessage: '',
-    });
+    // setErrorData({
+    //   showError: false,
+    //   errorMessage: '',
+    // });
   };
 
   const handleMaxClick = () => {
     if (sellToken) {
-      setSellValue(fromBalance);
+      // setSellValue(fromBalance);
     }
   };
-  */
 
   return (
     <>
@@ -202,14 +199,14 @@ export function TokenContent() {
               'flex justify-center items-center md:px-2 px-0 py-2 md:py-0 md:-mx-[20px] mx-0 -my-[20px] md:my-0 z-10'
             )}
             onClick={() => {
-              // handleSwapTokens();
+              handleSwapTokens();
             }}
           >
             <div className="border border-[#ebebeb] rounded-md h-10 w-10 flex items-center justify-center bg-white md:rotate-0 rotate-90">
               <Image
                 className={cn(
-                  'transition-transform duration-500'
-                  // rotateTimes === 1 ? 'rotate-360' : 'rotate-0'
+                  'transition-transform duration-500',
+                  rotateTimes === 1 ? 'rotate-360' : 'rotate-0'
                 )}
                 src="/icons/switch.svg"
                 alt="switch"
