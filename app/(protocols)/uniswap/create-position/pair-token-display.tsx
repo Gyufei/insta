@@ -12,6 +12,7 @@ interface TokenDisplayProps {
 }
 
 export const PairTokenDisplay = ({ token, onClick }: TokenDisplayProps) => {
+  console.log('token', token);
   return (
     <div
       className={cn(

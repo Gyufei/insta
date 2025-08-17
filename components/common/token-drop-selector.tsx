@@ -41,7 +41,7 @@ interface TokenSelectorProps {
   onTokenAdded?: (token: IToken) => void; // 新增：当通过地址搜索选择代币时的回调
 }
 
-export function TokenSelector({
+export function TokenDropSelector({
   tokens,
   selectedToken,
   onTokenChange,

@@ -14,7 +14,7 @@ import {
 } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
-import { TokenSelector } from '@/components/common/token-selector';
+import { TokenDropSelector } from '@/components/common/token-drop-selector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -191,7 +191,7 @@ export function TokenContent() {
         <div className="flex md:flex-row flex-col justify-between flex-1 gap-0 shadow-none">
           {/* 左侧：From */}
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
-            <TokenSelector
+            <TokenDropSelector
               tokens={tokens}
               selectedToken={sellToken}
               onTokenChange={setSellToken}
@@ -229,7 +229,7 @@ export function TokenContent() {
           </div>
 
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
-            <TokenSelector
+            <TokenDropSelector
               tokens={tokens}
               selectedToken={buyToken}
               onTokenChange={setBuyToken}
