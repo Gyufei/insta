@@ -171,7 +171,7 @@ export default function NetworkSelect() {
         setPageInit(true);
       }, 1000);
     }
-  }, [pageHasInit, chainId]);
+  }, [pageHasInit, chainId, pathname]);
 
   return (
     <Select
