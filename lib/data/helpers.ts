@@ -154,6 +154,7 @@ export function createQueryHook<TResponse>(
   buildUrl: (url: URL, account: string | undefined) => URL | null,
   extraArgs: {
     withAccount: boolean;
+    retry?: boolean;
   }
 ) {
   return function useCustomQuery() {
@@ -173,6 +174,7 @@ export function createQueryHook<TResponse>(
       queryKey: buildQueryKey(extraArgs.withAccount ? account : undefined),
       queryFn: () => executeQuery(),
       enabled: !extraArgs.withAccount || (extraArgs.withAccount && !!account),
+      retry: extraArgs.retry !== undefined ? extraArgs.retry : 3,
     });
 
     return queryResult;

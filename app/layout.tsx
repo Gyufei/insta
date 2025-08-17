@@ -11,19 +11,20 @@ import { isProduction } from '@/lib/data/api-path';
 import { aeonik } from './font';
 import './globals.css';
 
-const ImageBase = isProduction ? 'https://v3.tadle.com/images' : 'https://sb.tadle.com/images';
+const BaseHost = isProduction ? 'https://v3.tadle.com' : 'https://preview-v3.tadle.com';
+const ImageBase = `${BaseHost}/images`;
 
 export const metadata: Metadata = {
   title: {
     template: '%s | Tadle',
     default: 'Tadle',
   },
-  description: 'Tadle - Ship the only Parallel Sandbox for accessing dApps on the globe.',
-  metadataBase: new URL(`https://${process.env.VERCEL_DOMAIN}`),
+  description: 'Tadle - The Parallel Sandbox opening a new dimension of accessing dApps.',
+  metadataBase: new URL(BaseHost),
   openGraph: {
     title: 'Tadle',
-    description: 'Tadle - Ship the only Parallel Sandbox for accessing dApps on the globe.',
-    url: `https://${process.env.VERCEL_DOMAIN}`,
+    description: 'Tadle - The Parallel Sandbox opening a new dimension of accessing dApps.',
+    url: BaseHost,
     siteName: 'Tadle Market',
     images: `${ImageBase}/UjXLk9pSW552Wq3jVMIQU.png`,
     locale: 'en_US',
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Tadle',
-    description: 'Tadle - Ship the only Parallel Sandbox for accessing dApps on the globe.',
+    description: 'Tadle - The Parallel Sandbox opening a new dimension of accessing dApps.',
     creator: '@tadle_com',
     images: [`${ImageBase}/UjXLk9pSW552Wq3jVMIQU.png`],
   },

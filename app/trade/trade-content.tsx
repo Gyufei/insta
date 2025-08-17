@@ -72,13 +72,11 @@ export function TokenContent() {
 
   const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
 
-  useEffect(() => {
-    if (quoteData?.output) {
-      setBuyValue(
-        divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
-      );
-    }
-  }, [quoteData]);
+  if (quoteData?.output) {
+    setBuyValue(
+      divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
+    );
+  }
 
   useEffect(() => {
     if (quoteError) {
@@ -90,32 +88,20 @@ export function TokenContent() {
         showError: true,
         errorMessage: errorMsg,
       });
-    } else {
-      if (
-        errorData.showError &&
-        errorData.errorMessage === 'Insufficient liquidity, please try again later'
-      ) {
-        setErrorData({
-          showError: false,
-          errorMessage: '',
-        });
-      }
     }
-  }, [errorData, quoteError]);
 
-  useEffect(() => {
     if (swapError) {
       setErrorData({
         showError: true,
         errorMessage: swapError.message,
       });
-    } else {
-      if (!swapError && !quoteError) {
-        setErrorData({
-          showError: false,
-          errorMessage: '',
-        });
-      }
+    }
+
+    if (!swapError && !quoteError) {
+      setErrorData({
+        showError: false,
+        errorMessage: '',
+      });
     }
   }, [swapError, quoteError]);
 
@@ -135,6 +121,7 @@ export function TokenContent() {
     const unsubscribe = eventBus.subscribe(
       'trade-token',
       (data: { name: string; props: { token: IToken } }) => {
+        console.log('data', data);
         if (data.name === 'TradeToken') {
           setSellToken(data.props.token);
           setInit(true);

@@ -65,6 +65,7 @@ export function useUniswapQuote(params?: IUniswapQuoteParams) {
     },
     {
       withAccount: false,
+      retry: false,
     }
   )();
 }

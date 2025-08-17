@@ -2,7 +2,7 @@
 
 import { isAddress } from 'viem';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { IToken } from '@/config/tokens';
 
@@ -58,6 +58,13 @@ export function TokenSelector({
   onTokenAdded,
 }: TokenSelectorProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const processedTokensRef = useRef<Set<string>>(new Set());
+  const tokensRef = useRef(tokens);
+
+  // 更新ref以保持最新值
+  useEffect(() => {
+    tokensRef.current = tokens;
+  }, [tokens]);
 
   // 检查搜索查询是否为有效的合约地址
   const isSearchingAddress = isAddress(searchQuery.trim());
@@ -65,6 +72,26 @@ export function TokenSelector({
   const { data: tokenInfo, isLoading: isTokenInfoLoading } = useTokenInfo(
     isSearchingAddress ? searchQuery.trim() : ''
   );
+
+  // 当搜索查询改变时，重置已处理的代币记录
+  useEffect(() => {
+    processedTokensRef.current.clear();
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (isSearchingAddress && tokenInfo) {
+      const tokenAddress = tokenInfo.address.toLowerCase();
+      const isExist = tokensRef.current.find(
+        (token) => token.address.toLowerCase() === tokenAddress
+      );
+      const hasBeenProcessed = processedTokensRef.current.has(tokenAddress);
+
+      if (!isExist && !hasBeenProcessed) {
+        processedTokensRef.current.add(tokenAddress);
+        onTokenAdded?.(tokenInfo as unknown as IToken);
+      }
+    }
+  }, [tokenInfo, isSearchingAddress, onTokenAdded]);
 
   const { data: uniswapTokensData, isLoading: isUniswapTokensLoading } = useUniswapTokens();
 
@@ -119,32 +146,11 @@ export function TokenSelector({
         <div className="flex-1 flex flex-col gap-[10px]">
           <div className="text-sm text-[#A5ADC6] font-normal">Token</div>
           <Select
-            value={
-              selectedToken
-                ? selectedToken.logo === ''
-                  ? `${selectedToken.symbol}-${selectedToken.address}`
-                  : selectedToken.symbol
-                : undefined
-            }
+            value={selectedToken?.address}
             onValueChange={(value) => {
-              // 检查是否是包含地址的唯一标识符
-              if (value.includes('-') && value.includes('0x')) {
-                // 从唯一标识符中提取地址
-                const address = value.split('-').slice(-1)[0];
-                const selectedToken = filteredTokens.find((token) => token.address === address);
-                if (selectedToken) {
-                  onTokenChange(selectedToken);
-                  // 如果是通过地址搜索找到的代币，通知父组件添加到代币列表
-                  if (onTokenAdded && isSearchingAddress) {
-                    onTokenAdded(selectedToken);
-                  }
-                }
-              } else {
-                // 普通的 symbol 选择
-                const selectedToken = filteredTokens.find((token) => token.symbol === value);
-                if (selectedToken) {
-                  onTokenChange(selectedToken);
-                }
+              const selectedToken = filteredTokens.find((token) => token.address === value);
+              if (selectedToken) {
+                onTokenChange(selectedToken);
               }
             }}
           >
@@ -191,32 +197,23 @@ export function TokenSelector({
                     {isSearchingAddress ? 'No token found' : 'No token found'}
                   </div>
                 ) : (
-                  filteredTokens.map((token) => {
-                    // 为通过地址搜索找到的代币创建唯一标识符
-                    const isFromAddressSearch =
-                      isSearchingAddress && token.address === searchQuery.trim();
-                    const uniqueValue = isFromAddressSearch
-                      ? `${token.symbol}-${token.address}`
-                      : token.symbol;
-
-                    return (
-                      <SelectItem key={`${token.symbol}-${token.address}`} value={uniqueValue}>
-                        <div className="flex items-center gap-2">
-                          <LogoWithPlaceholder
-                            src={token.logo}
-                            className="w-6 h-6"
-                            width={20}
-                            height={20}
-                            name={token.symbol}
-                          />
-                          <div className="flex flex-col">
-                            <span className="font-medium">{token.symbol}</span>
-                            <span className="text-xs text-gray-500">{token.name}</span>
-                          </div>
+                  filteredTokens.map((token) => (
+                    <SelectItem key={`${token.symbol}-${token.address}`} value={token.address}>
+                      <div className="flex items-center gap-2">
+                        <LogoWithPlaceholder
+                          src={token.logo}
+                          className="w-6 h-6"
+                          width={20}
+                          height={20}
+                          name={token.symbol}
+                        />
+                        <div className="flex flex-col">
+                          <span className="font-medium">{token.symbol}</span>
+                          <span className="text-xs text-gray-500">{token.name}</span>
                         </div>
-                      </SelectItem>
-                    );
-                  })
+                      </div>
+                    </SelectItem>
+                  ))
                 )}
               </div>
             </SelectContent>
