@@ -174,6 +174,8 @@ export function TokenContent() {
     }
   };
 
+  return null;
+
   return (
     <>
       <div className="px-4 2xl:px-12">
