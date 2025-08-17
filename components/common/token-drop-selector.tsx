@@ -8,7 +8,7 @@ import { UNISWAP_TOKENS } from '@/app/(protocols)/uniswap/use-uniswap-token';
 
 import { IToken } from '@/config/tokens';
 
-import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
+// import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 import { NumberInput } from '@/components/common/number-input';
 import { Input } from '@/components/ui/input';
 import {
