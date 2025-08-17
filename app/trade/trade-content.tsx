@@ -169,11 +169,11 @@ export function TokenContent() {
     // });
   };
 
-  const handleMaxClick = () => {
-    if (sellToken) {
-      // setSellValue(fromBalance);
-    }
-  };
+  // const handleMaxClick = () => {
+  //   if (sellToken) {
+  //     // setSellValue(fromBalance);
+  //   }
+  // };
 
   return (
     <>
