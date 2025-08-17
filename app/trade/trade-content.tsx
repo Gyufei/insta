@@ -1,33 +1,36 @@
 'use client';
 
 import { CircleX, Loader } from 'lucide-react';
-import { divide } from 'safebase';
 
-import { useEffect, useState } from 'react';
+// import { divide } from 'safebase';
+
+// import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
 
-import {
-  DEFAULT_NATIVE_ADDRESS,
-  DEFAULT_TOKEN_DECIMALS,
-  replaceNativeAddressUseBackend,
-} from '@/config/network-config';
-import { IToken } from '@/config/tokens';
+// import {
+//   DEFAULT_NATIVE_ADDRESS,
+//   DEFAULT_TOKEN_DECIMALS,
+//   replaceNativeAddressUseBackend,
+// } from '@/config/network-config';
+// import { IToken } from '@/config/tokens';
 
-import { TokenDropSelector } from '@/components/common/token-drop-selector';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+// import { TokenDropSelector } from '@/components/common/token-drop-selector';
+// import { Button } from '@/components/ui/button';
+// import { Card } from '@/components/ui/card';
 
-import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
-import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
-import { ErrorVO } from '@/lib/model/error-vo';
-import { eventBus } from '@/lib/state/eventBus';
+// import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
+// import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
+// import { ErrorVO } from '@/lib/model/error-vo';
+// import { eventBus } from '@/lib/state/eventBus';
 import { cn } from '@/lib/utils';
-import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
+
+// import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
 
 import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings';
 
 export function TokenContent() {
+  /*
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
   const [sellValue, setSellValue] = useState('');
@@ -173,6 +176,7 @@ export function TokenContent() {
       setSellValue(fromBalance);
     }
   };
+  */
 
   return null;
 
