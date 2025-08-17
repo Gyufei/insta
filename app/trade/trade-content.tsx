@@ -14,7 +14,7 @@ import {
 } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
-// import { TokenDropSelector } from '@/components/common/token-drop-selector';
+import { TokenDropSelector } from '@/components/common/token-drop-selector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -23,7 +23,7 @@ import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn } from '@/lib/utils';
-// import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
+import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
 
 import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings';
 
@@ -41,15 +41,15 @@ export function TokenContent() {
 
   const [rotateTimes, setRotateTimes] = useState(0);
 
-  // const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
-  //   sellToken?.address || '',
-  //   true
-  // );
+  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
+    sellToken?.address || '',
+    true
+  );
 
-  // const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
-  //   buyToken?.address || '',
-  //   true
-  // );
+  const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
+    buyToken?.address || '',
+    true
+  );
 
   const quoteParams =
     sellToken && buyToken && sellValue
@@ -168,11 +168,11 @@ export function TokenContent() {
     });
   };
 
-  // const handleMaxClick = () => {
-  //   if (sellToken) {
-  //     setSellValue(fromBalance);
-  //   }
-  // };
+  const handleMaxClick = () => {
+    if (sellToken) {
+      setSellValue(fromBalance);
+    }
+  };
 
   return (
     <>
@@ -180,7 +180,7 @@ export function TokenContent() {
         <div className="flex md:flex-row flex-col justify-between flex-1 gap-0 shadow-none">
           {/* 左侧：From */}
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
-            {/* <TokenDropSelector
+            <TokenDropSelector
               selectedToken={sellToken}
               onTokenChange={setSellToken}
               value={sellValue}
@@ -190,7 +190,7 @@ export function TokenContent() {
               label="You pay"
               showMaxButton={true}
               onMaxClick={handleMaxClick}
-            /> */}
+            />
           </Card>
 
           <div
@@ -216,7 +216,7 @@ export function TokenContent() {
           </div>
 
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
-            {/* <TokenDropSelector
+            <TokenDropSelector
               selectedToken={buyToken}
               onTokenChange={setBuyToken}
               value={buyValue}
@@ -225,7 +225,7 @@ export function TokenContent() {
               isBalancePending={isToBalancePending}
               label="You receive"
               disabled={true}
-            /> */}
+            />
           </Card>
         </div>
 

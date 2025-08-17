@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { cn } from '@/lib/utils';
 
 export function LogoWithPlaceholder({
@@ -13,6 +15,16 @@ export function LogoWithPlaceholder({
   width?: number;
   height?: number;
 }) {
+  const [isShow, setIsShow] = useState(false);
+
+  useEffect(() => {
+    setIsShow(true);
+  }, [src]);
+
+  if (!isShow) {
+    return null;
+  }
+
   if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
