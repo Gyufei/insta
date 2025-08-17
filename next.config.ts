@@ -24,6 +24,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'https://arweave.net',
       },
+      {
+        protocol: 'https',
+        hostname: 'img-bucket.tadle.com',
+      },
     ],
   },
   /* config options here */

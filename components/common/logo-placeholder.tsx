@@ -18,6 +18,7 @@ export function LogoWithPlaceholder({
   if (src) {
     return (
       <Image
+        priority
         src={src}
         alt={name}
         className={cn('object-contain rounded-full', className)}

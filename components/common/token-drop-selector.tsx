@@ -2,7 +2,9 @@
 
 import { isAddress } from 'viem';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+import { UNISWAP_TOKENS } from '@/app/(protocols)/uniswap/use-uniswap-token';
 
 import { IToken } from '@/config/tokens';
 
@@ -25,7 +27,6 @@ import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/utils/number';
 
 interface TokenSelectorProps {
-  tokens: IToken[];
   selectedToken?: IToken;
   onTokenChange: (token: IToken) => void;
   value: string;
@@ -38,11 +39,9 @@ interface TokenSelectorProps {
   showMaxButton?: boolean;
   onMaxClick?: () => void;
   className?: string;
-  onTokenAdded?: (token: IToken) => void; // 新增：当通过地址搜索选择代币时的回调
 }
 
 export function TokenDropSelector({
-  tokens,
   selectedToken,
   onTokenChange,
   value,
@@ -55,16 +54,9 @@ export function TokenDropSelector({
   showMaxButton = false,
   onMaxClick,
   className,
-  onTokenAdded,
 }: TokenSelectorProps) {
+  const [tokens, setTokens] = useState(UNISWAP_TOKENS);
   const [searchQuery, setSearchQuery] = useState('');
-  const processedTokensRef = useRef<Set<string>>(new Set());
-  const tokensRef = useRef(tokens);
-
-  // 更新ref以保持最新值
-  useEffect(() => {
-    tokensRef.current = tokens;
-  }, [tokens]);
 
   // 检查搜索查询是否为有效的合约地址
   const isSearchingAddress = isAddress(searchQuery.trim());
@@ -73,25 +65,16 @@ export function TokenDropSelector({
     isSearchingAddress ? searchQuery.trim() : ''
   );
 
-  // 当搜索查询改变时，重置已处理的代币记录
-  useEffect(() => {
-    processedTokensRef.current.clear();
-  }, [searchQuery]);
-
   useEffect(() => {
     if (isSearchingAddress && tokenInfo) {
       const tokenAddress = tokenInfo.address.toLowerCase();
-      const isExist = tokensRef.current.find(
-        (token) => token.address.toLowerCase() === tokenAddress
-      );
-      const hasBeenProcessed = processedTokensRef.current.has(tokenAddress);
+      const isExist = tokens.find((token) => token.address.toLowerCase() === tokenAddress);
 
-      if (!isExist && !hasBeenProcessed) {
-        processedTokensRef.current.add(tokenAddress);
-        onTokenAdded?.(tokenInfo as unknown as IToken);
+      if (!isExist) {
+        setTokens((prevTokens) => [...prevTokens, tokenInfo as unknown as IToken]);
       }
     }
-  }, [tokenInfo, isSearchingAddress, onTokenAdded]);
+  }, [tokenInfo, isSearchingAddress]);
 
   const { data: uniswapTokensData, isLoading: isUniswapTokensLoading } = useUniswapTokens();
 

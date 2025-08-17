@@ -26,11 +26,8 @@ import { cn } from '@/lib/utils';
 import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
 
 import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings';
-import { UNISWAP_TOKENS } from '../(protocols)/uniswap/use-uniswap-token';
 
 export function TokenContent() {
-  const [tokens, setTokens] = useState(UNISWAP_TOKENS);
-
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
   const [sellValue, setSellValue] = useState('');
@@ -175,16 +172,6 @@ export function TokenContent() {
     }
   };
 
-  const handleTokenAdded = (token: IToken) => {
-    // 检查代币是否已经存在于列表中
-    const existingToken = tokens.find(
-      (t) => t.address.toLowerCase() === token.address.toLowerCase()
-    );
-    if (!existingToken) {
-      setTokens((prevTokens) => [...prevTokens, token]);
-    }
-  };
-
   return (
     <>
       <div className="px-4 2xl:px-12">
@@ -192,7 +179,6 @@ export function TokenContent() {
           {/* 左侧：From */}
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
             <TokenDropSelector
-              tokens={tokens}
               selectedToken={sellToken}
               onTokenChange={setSellToken}
               value={sellValue}
@@ -202,7 +188,6 @@ export function TokenContent() {
               label="You pay"
               showMaxButton={true}
               onMaxClick={handleMaxClick}
-              onTokenAdded={handleTokenAdded}
             />
           </Card>
 
@@ -230,7 +215,6 @@ export function TokenContent() {
 
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
             <TokenDropSelector
-              tokens={tokens}
               selectedToken={buyToken}
               onTokenChange={setBuyToken}
               value={buyValue}
@@ -239,7 +223,6 @@ export function TokenContent() {
               isBalancePending={isToBalancePending}
               label="You receive"
               disabled={true}
-              onTokenAdded={handleTokenAdded}
             />
           </Card>
         </div>
