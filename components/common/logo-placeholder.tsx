@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 import { cn } from '@/lib/utils';
 
 export function LogoWithPlaceholder({
@@ -17,8 +15,8 @@ export function LogoWithPlaceholder({
 }) {
   if (src) {
     return (
-      <Image
-        priority
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
         src={src}
         alt={name}
         className={cn('object-contain rounded-full', className)}
