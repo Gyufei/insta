@@ -28,6 +28,10 @@ import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
 
 import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 export function TokenContent() {
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -181,17 +185,18 @@ export function TokenContent() {
         <div className="flex md:flex-row flex-col justify-between flex-1 gap-0 shadow-none">
           {/* 左侧：From */}
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
-            <TokenDropSelector
-              // selectedToken={sellToken}
-              // onTokenChange={setSellToken}
-              // value={sellValue}
-              // onValueChange={setSellValue}
-              // balance={fromBalance}
-              // isBalancePending={isFromBalancePending}
-              // label="You pay"
-              // showMaxButton={true}
-              // onMaxClick={handleMaxClick}
-            />
+            <div>1234</div>
+            {/* <TokenDropSelector
+              selectedToken={sellToken}
+              onTokenChange={setSellToken}
+              value={sellValue}
+              onValueChange={setSellValue}
+              balance={fromBalance}
+              isBalancePending={isFromBalancePending}
+              label="You pay"
+              showMaxButton={true}
+              onMaxClick={handleMaxClick}
+            /> */}
           </Card>
 
           <div
@@ -217,16 +222,17 @@ export function TokenContent() {
           </div>
 
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
-            <TokenDropSelector
-              // selectedToken={buyToken}
-              // onTokenChange={setBuyToken}
-              // value={buyValue}
-              // onValueChange={setBuyValue}
-              // balance={toBalance}
-              // isBalancePending={isToBalancePending}
-              // label="You receive"
-              // disabled={true}
-            />
+            <div>1234</div>
+            {/* <TokenDropSelector
+            selectedToken={buyToken}
+            onTokenChange={setBuyToken}
+            value={buyValue}
+            onValueChange={setBuyValue}
+            balance={toBalance}
+            isBalancePending={isToBalancePending}
+            label="You receive"
+            disabled={true}
+            /> */}
           </Card>
         </div>
 
