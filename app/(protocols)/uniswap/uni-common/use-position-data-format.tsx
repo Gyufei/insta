@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { IToken } from '@/config/tokens';
 
 import { IUniswapPosition, PositionStatus } from '@/lib/data/use-uniswap-position';
+import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 import { formatBig } from '@/lib/utils/number';
 
 import { UNISWAP_TOKENS } from '../use-uniswap-token';
@@ -70,7 +71,19 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
       },
     };
   }
-  const tokens = UNISWAP_TOKENS;
+
+  const { data: uniswapTokensData } = useUniswapTokens();
+
+  const tokens = useMemo(() => {
+    const uniswapTokens = uniswapTokensData?.map((t) => ({
+      ...t,
+      logo: t.logoURI || '',
+      description: t.tokenDescription || '',
+    }));
+
+    return [...UNISWAP_TOKENS, ...(uniswapTokens || [])];
+  }, [uniswapTokensData]);
+
   const { protocolVersion, v3Position } = pos || {};
   const {
     token0,
@@ -125,7 +138,8 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
   }, [wrapToken0.decimals, wrapToken1.decimals]);
 
   const price = useMemo(() => {
-    return sqrtPriceX96ToPrice(currentPrice) * decimalsRate;
+    return '123';
+    // return sqrtPriceX96ToPrice(currentPrice) * decimalsRate;
   }, [currentPrice, decimalsRate]);
 
   const isFullRange = useMemo(() => {

@@ -137,7 +137,9 @@ export default function TokenList() {
                       chain="mon"
                       balance={
                         balanceData?.find(
-                          (bRes) => bRes.network === 'MON' && token.symbol === bRes.token
+                          (bRes) =>
+                            bRes.network === 'MON' &&
+                            (token.symbol === bRes.token || token.address === bRes.address)
                         )?.formattedBalance || '0'
                       }
                       key={index}
@@ -156,7 +158,9 @@ export default function TokenList() {
                       chain="eth"
                       balance={
                         balanceData?.find(
-                          (bRes) => bRes.network === 'ETH' && token.symbol === bRes.token
+                          (bRes) =>
+                            bRes.network === 'ETH' &&
+                            (token.symbol === bRes.token || token.address === bRes.address)
                         )?.formattedBalance || '0'
                       }
                       key={index}
@@ -173,7 +177,9 @@ export default function TokenList() {
                       chain="base"
                       balance={
                         balanceData?.find(
-                          (bRes) => bRes.network === 'BASE' && token.symbol === bRes.token
+                          (bRes) =>
+                            bRes.network === 'BASE' &&
+                            (token.symbol === bRes.token || token.address === bRes.address)
                         )?.formattedBalance || '0'
                       }
                       key={index}

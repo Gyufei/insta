@@ -3,6 +3,7 @@
 
 import { CircleX, Loader } from 'lucide-react';
 import { divide } from 'safebase';
+import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
@@ -28,6 +29,7 @@ import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
 
 import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings';
 
+
 export function TokenContent() {
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -35,7 +37,7 @@ export function TokenContent() {
   const [buyValue, setBuyValue] = useState('');
   const [slippage, setSlippage] = useState('1');
 
-  const [errorData, setErrorData] = useState<ErrorVO>({
+  const [liquidityError, setLiquidityError] = useState<ErrorVO>({
     showError: false,
     errorMessage: '',
   });
@@ -68,7 +70,7 @@ export function TokenContent() {
     error: quoteError,
   } = useUniswapQuote(quoteParams);
 
-  const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
+  const { mutate: swap, isPending: isSwapPending } = useUniswapSwap();
 
   useEffect(() => {
     if (quoteData?.output) {
@@ -83,27 +85,22 @@ export function TokenContent() {
       let errorMsg = quoteError.message;
       if (quoteError.message.includes(`Cannot read properties of undefined (reading 'quote')`)) {
         errorMsg = 'Insufficient liquidity, please try again later';
+        setLiquidityError({
+          showError: true,
+          errorMessage: errorMsg,
+        });
+      } else {
+        toast.error(errorMsg);
       }
-      setErrorData({
-        showError: true,
-        errorMessage: errorMsg,
-      });
     }
 
-    if (swapError) {
-      setErrorData({
-        showError: true,
-        errorMessage: swapError.message,
-      });
-    }
-
-    if (!swapError && !quoteError) {
-      setErrorData({
+    if (!quoteError) {
+      setLiquidityError({
         showError: false,
         errorMessage: '',
       });
     }
-  }, [swapError, quoteError]);
+  }, [quoteError]);
 
   const [init, setInit] = useState(false);
   useEffect(() => {
@@ -138,7 +135,7 @@ export function TokenContent() {
     const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
 
     // 清除之前的错误
-    setErrorData({
+    setLiquidityError({
       showError: false,
       errorMessage: '',
     });
@@ -161,12 +158,6 @@ export function TokenContent() {
     const tempValue = sellValue;
     setSellValue(buyValue);
     setBuyValue(tempValue);
-
-    // 清除错误;
-    setErrorData({
-      showError: false,
-      errorMessage: '',
-    });
   };
 
   const handleMaxClick = () => {
@@ -233,7 +224,7 @@ export function TokenContent() {
           <SlippageSettings onSlippageChange={setSlippage} />
 
           <div className="flex flex-col md:items-center md:flex-row gap-2 md:gap-1 justify-end">
-            {errorData.showError && (
+            {liquidityError.showError && (
               <div className={cn('rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2 mt-0')}>
                 <div className="flex">
                   <div className="flex-shrink-0">
@@ -242,7 +233,7 @@ export function TokenContent() {
                   <div className="ml-2">
                     <div className="mb-1 text-xs leading-5 font-medium text-red-700 dark:text-red-300 last:mb-0">
                       <ul className="list-disc px-4">
-                        <li>{errorData.errorMessage}</li>
+                        <li>{liquidityError.errorMessage}</li>
                       </ul>
                     </div>
                   </div>
