@@ -52,33 +52,33 @@ export function TokenContent() {
 
   const [rotateTimes, setRotateTimes] = useState(0);
 
-  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
-    sellToken?.address || '',
-    true
-  );
+  // const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
+  //   sellToken?.address || '',
+  //   true
+  // );
 
-  const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
-    buyToken?.address || '',
-    true
-  );
+  // const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
+  //   buyToken?.address || '',
+  //   true
+  // );
 
-  const quoteParams =
-    sellToken && buyToken && sellValue
-      ? {
-          tokenIn: replaceNativeAddressUseBackend(sellToken.address),
-          tokenOut: replaceNativeAddressUseBackend(buyToken.address),
-          amountIn: sellValue,
-          amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
-        }
-      : undefined;
+  // const quoteParams =
+  //   sellToken && buyToken && sellValue
+  //     ? {
+  //         tokenIn: replaceNativeAddressUseBackend(sellToken.address),
+  //         tokenOut: replaceNativeAddressUseBackend(buyToken.address),
+  //         amountIn: sellValue,
+  //         amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
+  //       }
+  //     : undefined;
 
-  const {
-    data: quoteData,
-    isLoading: isQuoteLoading,
-    error: quoteError,
-  } = useUniswapQuote(quoteParams);
+  // const {
+  //   data: quoteData,
+  //   isLoading: isQuoteLoading,
+  //   error: quoteError,
+  // } = useUniswapQuote(quoteParams);
 
-  const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
+  // const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
 
   // useEffect(() => {
   //   if (quoteData?.output) {
