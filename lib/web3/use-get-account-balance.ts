@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { DEFAULT_NATIVE_ADDRESS, NetworkConfigs } from '@/config/network-config';
 
 import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
@@ -15,31 +16,31 @@ interface BalanceResult {
 export function useGetAccountBalance(tokenAddress: string, enableQuery = true): BalanceResult {
   const isNative = tokenAddress === DEFAULT_NATIVE_ADDRESS;
 
-  const {
-    balance: nativeBalance,
-    balanceBig: nativeBalanceBig,
-    isPending: isNativeBalancePending,
-  } = useApiMonadBalance();
+  // const {
+  //   balance: nativeBalance,
+  //   balanceBig: nativeBalanceBig,
+  //   isPending: isNativeBalancePending,
+  // } = useApiMonadBalance();
 
-  const {
-    balance: tokenBalance,
-    balanceBig: tokenBalanceBig,
-    isPending: isTokenBalancePending,
-  } = useAccountTokenBalance(
-    NetworkConfigs.monadTestnet.id,
-    tokenAddress,
-    !isNative && enableQuery
-  );
+  // const {
+  //   balance: tokenBalance,
+  //   balanceBig: tokenBalanceBig,
+  //   isPending: isTokenBalancePending,
+  // } = useAccountTokenBalance(
+  //   NetworkConfigs.monadTestnet.id,
+  //   tokenAddress,
+  //   !isNative && enableQuery
+  // );
 
-  const balance = isNative ? truncateNumber(nativeBalance, 4) : truncateNumber(tokenBalance, 4);
+  // const balance = isNative ? truncateNumber(nativeBalance, 4) : truncateNumber(tokenBalance, 4);
 
-  const balanceBig = isNative ? nativeBalanceBig : tokenBalanceBig;
-  const isBalancePending = isNative ? isNativeBalancePending : isTokenBalancePending;
+  // const balanceBig = isNative ? nativeBalanceBig : tokenBalanceBig;
+  // const isBalancePending = isNative ? isNativeBalancePending : isTokenBalancePending;
 
   return {
-    balance,
-    balanceBig,
-    isBalancePending,
+    balance: '123',
+    balanceBig: '123',
+    isBalancePending: false,
     isNative,
   };
 }

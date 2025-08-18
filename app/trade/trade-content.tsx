@@ -28,20 +28,6 @@ import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
 
 import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 export function TokenContent() {
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -66,90 +52,90 @@ export function TokenContent() {
     true
   );
 
-  // const quoteParams =
-  //   sellToken && buyToken && sellValue
-  //     ? {
-  //         tokenIn: replaceNativeAddressUseBackend(sellToken.address),
-  //         tokenOut: replaceNativeAddressUseBackend(buyToken.address),
-  //         amountIn: sellValue,
-  //         amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
-  //       }
-  //     : undefined;
+  const quoteParams =
+    sellToken && buyToken && sellValue
+      ? {
+          tokenIn: replaceNativeAddressUseBackend(sellToken.address),
+          tokenOut: replaceNativeAddressUseBackend(buyToken.address),
+          amountIn: sellValue,
+          amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
+        }
+      : undefined;
 
-  // const {
-  //   data: quoteData,
-  //   isLoading: isQuoteLoading,
-  //   error: quoteError,
-  // } = useUniswapQuote(quoteParams);
+  const {
+    data: quoteData,
+    isLoading: isQuoteLoading,
+    error: quoteError,
+  } = useUniswapQuote(quoteParams);
 
-  // const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
+  const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
 
-  // useEffect(() => {
-  //   if (quoteData?.output) {
-  //     setBuyValue(
-  //       divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
-  //     );
-  //   }
-  // }, [quoteData?.output, buyToken?.decimals]);
+  useEffect(() => {
+    if (quoteData?.output) {
+      setBuyValue(
+        divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
+      );
+    }
+  }, [quoteData?.output, buyToken?.decimals]);
 
-  // useEffect(() => {
-  //   if (quoteError) {
-  //     let errorMsg = quoteError.message;
-  //     if (quoteError.message.includes(`Cannot read properties of undefined (reading 'quote')`)) {
-  //       errorMsg = 'Insufficient liquidity, please try again later';
-  //     }
-  //     setErrorData({
-  //       showError: true,
-  //       errorMessage: errorMsg,
-  //     });
-  //   }
+  useEffect(() => {
+    if (quoteError) {
+      let errorMsg = quoteError.message;
+      if (quoteError.message.includes(`Cannot read properties of undefined (reading 'quote')`)) {
+        errorMsg = 'Insufficient liquidity, please try again later';
+      }
+      setErrorData({
+        showError: true,
+        errorMessage: errorMsg,
+      });
+    }
 
-  //   if (swapError) {
-  //     setErrorData({
-  //       showError: true,
-  //       errorMessage: swapError.message,
-  //     });
-  //   }
+    if (swapError) {
+      setErrorData({
+        showError: true,
+        errorMessage: swapError.message,
+      });
+    }
 
-  //   if (!swapError && !quoteError) {
-  //     setErrorData({
-  //       showError: false,
-  //       errorMessage: '',
-  //     });
-  //   }
-  // }, [swapError, quoteError]);
+    if (!swapError && !quoteError) {
+      setErrorData({
+        showError: false,
+        errorMessage: '',
+      });
+    }
+  }, [swapError, quoteError]);
 
-  // const [init, setInit] = useState(false);
-  // useEffect(() => {
-  //   if (!init) {
-  //     const token = sessionStorage.getItem('token');
-  //     if (token) {
-  //       setSellToken(JSON.parse(token));
-  //       sessionStorage.removeItem('token');
-  //     }
-  //     setInit(true);
-  //   }
-  // }, [init]);
+  const [init, setInit] = useState(false);
+  useEffect(() => {
+    if (!init) {
+      const token = sessionStorage.getItem('token');
+      if (token) {
+        setSellToken(JSON.parse(token));
+        sessionStorage.removeItem('token');
+      }
+      setInit(true);
+    }
+  }, [init]);
 
-  // useEffect(() => {
-  //   const unsubscribe = eventBus.subscribe(
-  //     'trade-token',
-  //     (data: { name: string; props: { token: IToken } }) => {
-  //       console.log('data', data);
-  //       if (data.name === 'TradeToken') {
-  //         setSellToken(data.props.token);
-  //         setInit(true);
-  //       }
-  //     }
-  //   );
-  //   return () => unsubscribe();
-  // }, []);
+  useEffect(() => {
+    const unsubscribe = eventBus.subscribe(
+      'trade-token',
+      (data: { name: string; props: { token: IToken } }) => {
+        console.log('data', data);
+        if (data.name === 'TradeToken') {
+          setSellToken(data.props.token);
+          setInit(true);
+        }
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
   function handleSwap() {
-    // if (!quoteData || !sellToken || !buyToken) return;
+    if (!quoteData || !sellToken || !buyToken) return;
 
-    // const isSellTokenEth = sellToken.address === DEFAULT_NATIVE_ADDRESS;
-    // const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
+    const isSellTokenEth = sellToken.address === DEFAULT_NATIVE_ADDRESS;
+    const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
 
     // 清除之前的错误
     setErrorData({
@@ -157,12 +143,12 @@ export function TokenContent() {
       errorMessage: '',
     });
 
-    // swap({
-    //   token_in_is_eth: isSellTokenEth,
-    //   token_out_is_eth: isBuyTokenEth,
-    //   slippage: (Number(slippage) * 1e16).toString(),
-    //   route: quoteData.route[0],
-    // });
+    swap({
+      token_in_is_eth: isSellTokenEth,
+      token_out_is_eth: isBuyTokenEth,
+      slippage: (Number(slippage) * 1e16).toString(),
+      route: quoteData.route[0],
+    });
   }
 
   const handleSwapTokens = () => {
@@ -185,14 +171,13 @@ export function TokenContent() {
 
   const handleMaxClick = () => {
     if (sellToken) {
-      // setSellValue(fromBalance);
+      setSellValue(fromBalance);
     }
   };
 
   return (
     <>
-      test for test token2
-      {/* <div className="px-4 2xl:px-12">
+      <div className="px-4 2xl:px-12">
         <div className="flex md:flex-row flex-col justify-between flex-1 gap-0 shadow-none">
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
             <TokenDropSelector
@@ -282,7 +267,7 @@ export function TokenContent() {
             </Button>
           </div>
         </div>
-      </div> */}
+      </div>
     </>
   );
 }
