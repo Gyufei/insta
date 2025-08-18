@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   twitter: {
+    card: 'summary_large_image',
     title: 'Odds Market - Watchlist',
     creator: '@tadle_com',
   },

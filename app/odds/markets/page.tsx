@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   twitter: {
+    card: 'summary_large_image',
     title: 'Odds Markets',
     creator: '@tadle_com',
   },

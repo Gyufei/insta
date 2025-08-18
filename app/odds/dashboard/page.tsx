@@ -1,6 +1,7 @@
-import { MateImageBase, MetaBaseHost } from '@/config/env-url';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+
+import { MateImageBase, MetaBaseHost } from '@/config/env-url';
 
 export const metadata: Metadata = {
   title: 'Odds Dashboard',
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   twitter: {
+    card: 'summary_large_image',
     title: 'Odds Dashboard',
     creator: '@tadle_com',
   },

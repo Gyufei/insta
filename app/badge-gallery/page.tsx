@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 
+import { MateImageBase, MetaBaseHost } from '@/config/env-url';
+
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
 import { BadgeContent } from './badge-content';
-import { MateImageBase, MetaBaseHost } from '@/config/env-url';
 
 export const metadata: Metadata = {
   title: 'Badge Gallery',
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   twitter: {
+    card: 'summary_large_image',
     title: 'Badge Gallery',
     creator: '@tadle_com',
   },

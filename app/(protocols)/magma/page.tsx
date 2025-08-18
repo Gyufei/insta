@@ -1,11 +1,12 @@
 import { Metadata } from 'next';
 
+import { MateImageBase, MetaBaseHost } from '@/config/env-url';
+
 import { TitleH2 } from '@/components/common/title-h2';
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
 import { MagmaMonStake } from './magma-mon-stake';
 import { MagmaStats } from './magma-stats';
-import { MateImageBase, MetaBaseHost } from '@/config/env-url';
 
 export const metadata: Metadata = {
   title: 'Magma',
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   twitter: {
+    card: 'summary_large_image',
     title: 'Magma',
     creator: '@tadle_com',
   },

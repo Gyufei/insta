@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   twitter: {
+    card: 'summary_large_image',
     title: 'Apriori',
     creator: '@tadle_com',
   },
