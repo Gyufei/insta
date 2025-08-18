@@ -56,73 +56,73 @@ export function TokenDropSelector({
   onMaxClick,
   className,
 }: TokenSelectorProps) {
-  const [tokens, setTokens] = useState(UNISWAP_TOKENS);
-  const [searchQuery, setSearchQuery] = useState('');
+  // const [tokens, setTokens] = useState(UNISWAP_TOKENS);
+  // const [searchQuery, setSearchQuery] = useState('');
 
-  // 检查搜索查询是否为有效的合约地址
-  const isSearchingAddress = isAddress(searchQuery.trim());
+  // // 检查搜索查询是否为有效的合约地址
+  // const isSearchingAddress = isAddress(searchQuery.trim());
 
-  const { data: tokenInfo, isLoading: isTokenInfoLoading } = useTokenInfo(
-    isSearchingAddress ? searchQuery.trim() : ''
-  );
+  // const { data: tokenInfo, isLoading: isTokenInfoLoading } = useTokenInfo(
+  //   isSearchingAddress ? searchQuery.trim() : ''
+  // );
 
-  useEffect(() => {
-    if (isSearchingAddress && tokenInfo) {
-      const tokenAddress = tokenInfo.address.toLowerCase();
-      const isExist = tokens.find((token) => token.address.toLowerCase() === tokenAddress);
+  // useEffect(() => {
+  //   if (isSearchingAddress && tokenInfo) {
+  //     const tokenAddress = tokenInfo.address.toLowerCase();
+  //     const isExist = tokens.find((token) => token.address.toLowerCase() === tokenAddress);
 
-      if (!isExist) {
-        setTokens((prevTokens) => [...prevTokens, tokenInfo as unknown as IToken]);
-      }
-    }
-  }, [tokenInfo, isSearchingAddress]);
+  //     if (!isExist) {
+  //       setTokens((prevTokens) => [...prevTokens, tokenInfo as unknown as IToken]);
+  //     }
+  //   }
+  // }, [tokenInfo, isSearchingAddress]);
 
-  const { data: uniswapTokensData, isLoading: isUniswapTokensLoading } = useUniswapTokens();
+  // const { data: uniswapTokensData, isLoading: isUniswapTokensLoading } = useUniswapTokens();
 
-  const allTokens = useMemo(() => {
-    const uniswapTokens = uniswapTokensData?.map((token) => ({
-      ...token,
-      logo: token.logoURI,
-      description: token.tokenDescription,
-    }));
+  // const allTokens = useMemo(() => {
+  //   const uniswapTokens = uniswapTokensData?.map((token) => ({
+  //     ...token,
+  //     logo: token.logoURI,
+  //     description: token.tokenDescription,
+  //   }));
 
-    return [...tokens, ...(uniswapTokens || [])];
-  }, [tokens, uniswapTokensData]);
+  //   return [...tokens, ...(uniswapTokens || [])];
+  // }, [tokens, uniswapTokensData]);
 
-  const filteredTokens = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return allTokens;
-    }
+  // const filteredTokens = useMemo(() => {
+  //   if (!searchQuery.trim()) {
+  //     return allTokens;
+  //   }
 
-    const query = searchQuery.toLowerCase();
-    let filtered = allTokens.filter(
-      (token) =>
-        token.symbol.toLowerCase().includes(query) ||
-        token.name.toLowerCase().includes(query) ||
-        token.address.toLowerCase().includes(query)
-    );
+  //   const query = searchQuery.toLowerCase();
+  //   let filtered = allTokens.filter(
+  //     (token) =>
+  //       token.symbol.toLowerCase().includes(query) ||
+  //       token.name.toLowerCase().includes(query) ||
+  //       token.address.toLowerCase().includes(query)
+  //   );
 
-    // 如果搜索的是合约地址且获取到了代币信息，添加到结果中
-    if (isSearchingAddress && tokenInfo && !isTokenInfoLoading && !isUniswapTokensLoading) {
-      // 检查是否已经存在于过滤结果中
-      const existingToken = filtered.find(
-        (token) => token.address.toLowerCase() === tokenInfo?.address?.toLowerCase()
-      );
+  //   // 如果搜索的是合约地址且获取到了代币信息，添加到结果中
+  //   if (isSearchingAddress && tokenInfo && !isTokenInfoLoading && !isUniswapTokensLoading) {
+  //     // 检查是否已经存在于过滤结果中
+  //     const existingToken = filtered.find(
+  //       (token) => token.address.toLowerCase() === tokenInfo?.address?.toLowerCase()
+  //     );
 
-      if (!existingToken) {
-        filtered = [tokenInfo as unknown as IToken, ...filtered];
-      }
-    }
+  //     if (!existingToken) {
+  //       filtered = [tokenInfo as unknown as IToken, ...filtered];
+  //     }
+  //   }
 
-    return filtered;
-  }, [
-    allTokens,
-    searchQuery,
-    tokenInfo,
-    isTokenInfoLoading,
-    isUniswapTokensLoading,
-    isSearchingAddress,
-  ]);
+  //   return filtered;
+  // }, [
+  //   allTokens,
+  //   searchQuery,
+  //   tokenInfo,
+  //   isTokenInfoLoading,
+  //   isUniswapTokensLoading,
+  //   isSearchingAddress,
+  // ]);
   
   return null;
 
