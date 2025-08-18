@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { DEFAULT_NATIVE_ADDRESS, NetworkConfigs } from '@/config/network-config';
+import {
+  BACKEND_NATIVE_ADDRESS,
+  DEFAULT_NATIVE_ADDRESS,
+  NetworkConfigs,
+} from '@/config/network-config';
 
 import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 import { useAccountTokenBalance } from '@/lib/web3/use-account-token-balance';
@@ -14,33 +18,39 @@ interface BalanceResult {
 }
 
 export function useGetAccountBalance(tokenAddress: string, enableQuery = true): BalanceResult {
-  const isNative = tokenAddress === DEFAULT_NATIVE_ADDRESS;
+  const isNative =
+    tokenAddress === DEFAULT_NATIVE_ADDRESS || tokenAddress === BACKEND_NATIVE_ADDRESS;
 
-  // const {
-  //   balance: nativeBalance,
-  //   balanceBig: nativeBalanceBig,
-  //   isPending: isNativeBalancePending,
-  // } = useApiMonadBalance();
-
-  // const {
-  //   balance: tokenBalance,
-  //   balanceBig: tokenBalanceBig,
-  //   isPending: isTokenBalancePending,
-  // } = useAccountTokenBalance(
-  //   NetworkConfigs.monadTestnet.id,
-  //   tokenAddress,
-  //   !isNative && enableQuery
-  // );
-
-  // const balance = isNative ? truncateNumber(nativeBalance, 4) : truncateNumber(tokenBalance, 4);
-
-  // const balanceBig = isNative ? nativeBalanceBig : tokenBalanceBig;
-  // const isBalancePending = isNative ? isNativeBalancePending : isTokenBalancePending;
-
-  return {
+  const {
+    balance: nativeBalance,
+    balanceBig: nativeBalanceBig,
+    isPending: isNativeBalancePending,
+  } = {
     balance: '123',
     balanceBig: '123',
-    isBalancePending: false,
+    isPending: false,
+  };
+  // = useApiMonadBalance();
+
+  const {
+    balance: tokenBalance,
+    balanceBig: tokenBalanceBig,
+    isPending: isTokenBalancePending,
+  } = useAccountTokenBalance(
+    NetworkConfigs.monadTestnet.id,
+    tokenAddress,
+    !isNative && enableQuery
+  );
+
+  const balance = isNative ? truncateNumber(nativeBalance, 4) : truncateNumber(tokenBalance, 4);
+
+  const balanceBig = isNative ? nativeBalanceBig : tokenBalanceBig;
+  const isBalancePending = isNative ? isNativeBalancePending : isTokenBalancePending;
+
+  return {
+    balance,
+    balanceBig,
+    isBalancePending,
     isNative,
   };
 }

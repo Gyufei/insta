@@ -180,7 +180,7 @@ export function TokenContent() {
       <div className="px-4 2xl:px-12">
         <div className="flex md:flex-row flex-col justify-between flex-1 gap-0 shadow-none">
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
-            <div>123</div>
+            <div>1234</div>
             <TokenDropSelector
               selectedToken={sellToken}
               onTokenChange={setSellToken}
