@@ -1,10 +1,18 @@
-import { CommonPageLayout } from '@/components/layout/common-page-layout';
-import { NadFunTokens } from './nadfun-tokens';
-import { NadFunMyTokens } from './nadfun-my-tokens';
 import { Metadata } from 'next';
+
+import { CommonPageLayout } from '@/components/layout/common-page-layout';
+
+import { NadFunMyTokens } from './nadfun-my-tokens';
+import { NadFunTokens } from './nadfun-tokens';
 
 export const metadata: Metadata = {
   title: 'Nad.Fun',
+  openGraph: {
+    title: 'Nad.Fun',
+  },
+  twitter: {
+    title: 'Nad.Fun',
+  },
 };
 
 export default function NadFun() {

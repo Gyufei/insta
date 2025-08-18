@@ -7,6 +7,12 @@ import { SearchName } from './search-name';
 
 export const metadata: Metadata = {
   title: 'Nad Name Service',
+  openGraph: {
+    title: 'Nad Name Service',
+  },
+  twitter: {
+    title: 'Nad Name Service',
+  },
 };
 
 export default function NadNameService() {

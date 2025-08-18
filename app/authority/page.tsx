@@ -4,6 +4,12 @@ import FullAccountDisplay from './full-account-display';
 
 export const metadata: Metadata = {
   title: 'Authority',
+  openGraph: {
+    title: 'Authority',
+  },
+  twitter: {
+    title: 'Authority',
+  },
 };
 
 export default function Authority() {

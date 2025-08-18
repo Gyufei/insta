@@ -6,6 +6,12 @@ import { TokenStation } from './token-station';
 
 export const metadata: Metadata = {
   title: 'Token Station',
+  openGraph: {
+    title: 'Token Station',
+  },
+  twitter: {
+    title: 'Token Station',
+  },
 };
 
 export default function TokenStationPage() {

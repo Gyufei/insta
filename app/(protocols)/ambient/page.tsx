@@ -6,6 +6,12 @@ import { AmbientPositionsSection } from './ambient-position-section';
 
 export const metadata: Metadata = {
   title: 'Ambient',
+  openGraph: {
+    title: 'Ambient',
+  },
+  twitter: {
+    title: 'Ambient',
+  },
 };
 
 export default function AmbientPage() {

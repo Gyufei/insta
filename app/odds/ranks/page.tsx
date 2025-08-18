@@ -4,14 +4,11 @@ import RanksMain from './ranks-main';
 
 export const metadata: Metadata = {
   title: 'Odds Ranks',
-  description: 'View top traders and market makers ranked by volume and profit on Tadle Odds.',
   openGraph: {
-    title: 'Odds Ranks | Tadle',
-    description: 'View top traders and market makers ranked by volume and profit on Tadle Odds.',
+    title: 'Odds Ranks',
   },
   twitter: {
-    title: 'Odds Ranks | Tadle',
-    description: 'View top traders and market makers ranked by volume and profit on Tadle Odds.',
+    title: 'Odds Ranks',
   },
 };
 

@@ -6,6 +6,12 @@ import { TokenContent } from './trade-content';
 
 export const metadata: Metadata = {
   title: 'Trade',
+  openGraph: {
+    title: 'Trade',
+  },
+  twitter: {
+    title: 'Trade',
+  },
 };
 
 export default function TradePage() {

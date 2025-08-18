@@ -3,17 +3,11 @@ import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Odds Dashboard',
-  description:
-    'Manage your portfolio, track your trades, and monitor your performance on Tadle Odds.',
   openGraph: {
-    title: 'Dashboard | Tadle Odds',
-    description:
-      'Manage your portfolio, track your trades, and monitor your performance on Tadle Odds.',
+    title: 'Odds Dashboard',
   },
   twitter: {
-    title: 'Dashboard | Tadle Odds',
-    description:
-      'Manage your portfolio, track your trades, and monitor your performance on Tadle Odds.',
+    title: 'Odds Dashboard',
   },
 };
 

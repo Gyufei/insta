@@ -22,10 +22,13 @@ export const metadata: Metadata = {
   description: 'Tadle - The Parallel Sandbox opening a new dimension of accessing dApps.',
   metadataBase: new URL(BaseHost),
   openGraph: {
-    title: 'Tadle',
+    title: {
+      template: '%s | Tadle',
+      default: 'Tadle',
+    },
     description: 'Tadle - The Parallel Sandbox opening a new dimension of accessing dApps.',
     url: BaseHost,
-    siteName: 'Tadle Market',
+    siteName: 'Tadle',
     images: `${ImageBase}/UjXLk9pSW552Wq3jVMIQU.png`,
     locale: 'en_US',
     type: 'website',
@@ -54,7 +57,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tadle',
+    title: {
+      template: '%s | Tadle',
+      default: 'Tadle',
+    },
     description: 'Tadle - The Parallel Sandbox opening a new dimension of accessing dApps.',
     creator: '@tadle_com',
     images: [`${ImageBase}/UjXLk9pSW552Wq3jVMIQU.png`],

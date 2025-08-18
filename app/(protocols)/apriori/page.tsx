@@ -8,6 +8,12 @@ import { AprioriStats } from './apriori-stats';
 
 export const metadata: Metadata = {
   title: 'Apriori',
+  openGraph: {
+    title: 'Apriori',
+  },
+  twitter: {
+    title: 'Apriori',
+  },
 };
 
 export default function Apriori() {

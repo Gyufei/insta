@@ -7,6 +7,12 @@ import { UniswapPositionsSection } from './uniswap-position-section';
 
 export const metadata: Metadata = {
   title: 'Uniswap',
+  openGraph: {
+    title: 'Uniswap',
+  },
+  twitter: {
+    title: 'Uniswap',
+  },
 };
 
 export default function UniswapPage() {

@@ -6,6 +6,12 @@ import { FaucetContainer } from './faucet-container';
 
 export const metadata: Metadata = {
   title: 'Faucet',
+  openGraph: {
+    title: 'Faucet',
+  },
+  twitter: {
+    title: 'Faucet',
+  },
 };
 
 export default function Faucet() {

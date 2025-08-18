@@ -6,6 +6,12 @@ import { BadgeContent } from './badge-content';
 
 export const metadata: Metadata = {
   title: 'Badge Gallery',
+  openGraph: {
+    title: 'Badge Gallery',
+  },
+  twitter: {
+    title: 'Badge Gallery',
+  },
 };
 
 export default function TokenStationPage() {

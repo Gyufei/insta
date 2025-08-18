@@ -8,6 +8,12 @@ import { MagmaStats } from './magma-stats';
 
 export const metadata: Metadata = {
   title: 'Magma',
+  openGraph: {
+    title: 'Magma',
+  },
+  twitter: {
+    title: 'Magma',
+  },
 };
 
 export default function Apriori() {
