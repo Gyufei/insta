@@ -80,7 +80,7 @@ export function UniswapCreatePosition() {
   });
 
   const ratio = liquidityRatio?.ratio
-    ? ['Infinity', 'NaN'].includes(liquidityRatio?.ratio || '')
+    ? ['Infinity', 'NaN', '∞'].includes(liquidityRatio?.ratio || '')
       ? initPrice
       : liquidityRatio?.ratio
     : initPrice;
@@ -209,11 +209,19 @@ export function UniswapCreatePosition() {
       return;
     }
 
+    if (liquidityRatio && ['Infinity', 'NaN', '∞'].includes(liquidityRatio?.ratio || '')) {
+      setErrorData({
+        showError: true,
+        errorMessage: 'Current price range is out of price curve, creation will fail',
+      });
+      return;
+    }
+
     setErrorData({
       showError: false,
       errorMessage: '',
     });
-  }, [priceRangeMin, priceRangeMax]);
+  }, [priceRangeMin, priceRangeMax, ratio]);
 
   useEffect(() => {
     if (ratio && amount0) {

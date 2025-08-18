@@ -21,12 +21,14 @@ interface InitialPriceSetterProps {
   token0: IToken | undefined;
   token1: IToken | undefined;
   onPriceChange: (price: string) => void;
+  onTokenMainIsToken0Change: (isToken0: boolean) => void;
 }
 
 export default function InitialPriceSetter({
   token0,
   token1,
   onPriceChange,
+  onTokenMainIsToken0Change,
 }: InitialPriceSetterProps) {
   const [price, setPrice] = useState('');
   const [price2, setPrice2] = useState('');
@@ -60,6 +62,7 @@ export default function InitialPriceSetter({
 
   const handleTabChange = (value: string) => {
     setCurrentCheckToken(value);
+    onTokenMainIsToken0Change(value === String(PairTokenSelected.Token0));
   };
 
   const displayToken = currentCheckToken === String(PairTokenSelected.Token0) ? token0 : token1;

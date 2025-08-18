@@ -1,7 +1,6 @@
 'use client';
 
 import type React from 'react';
-import { useState } from 'react';
 
 import { BadgeHelpTooltip } from '@/components/common/badge-help';
 import { NumberInput } from '@/components/common/number-input';
@@ -12,15 +11,21 @@ import { cn } from '@/lib/utils';
 export const INFINITY_PRICE = '∞';
 
 interface PriceRangeSelectorProps {
+  rangeType: 'FULL' | 'CUSTOM';
+  setRangeType: (type: 'FULL' | 'CUSTOM') => void;
   token0Symbol: string;
   token1Symbol: string;
   priceRangeMin: string;
   priceRangeMax: string;
   onMinPriceChange: (minPrice: string) => void;
   onMaxPriceChange: (maxPrice: string) => void;
+  mainTokenIsToken0: boolean;
 }
 
 export default function PriceRangeSelector({
+  mainTokenIsToken0,
+  rangeType,
+  setRangeType,
   token0Symbol,
   token1Symbol,
   priceRangeMin,
@@ -28,8 +33,6 @@ export default function PriceRangeSelector({
   onMinPriceChange,
   onMaxPriceChange,
 }: PriceRangeSelectorProps) {
-  const [rangeType, setRangeType] = useState<'FULL' | 'CUSTOM'>('CUSTOM');
-
   const handleRangeTypeChange = (value: string) => {
     const newRangeType = value as 'FULL' | 'CUSTOM';
     setRangeType(newRangeType);
@@ -93,7 +96,9 @@ export default function PriceRangeSelector({
             />
             {token0Symbol && token1Symbol && (
               <span className="text-xs text-gray-500">
-                {token1Symbol} = 1 {token0Symbol}
+                {mainTokenIsToken0
+                  ? `${token1Symbol} = 1 ${token0Symbol}`
+                  : `${token0Symbol} = 1 ${token1Symbol}`}
               </span>
             )}
           </div>
@@ -112,7 +117,9 @@ export default function PriceRangeSelector({
             />
             {token0Symbol && token1Symbol && (
               <span className="text-xs text-gray-500">
-                {token1Symbol} = 1 {token0Symbol}
+                {mainTokenIsToken0
+                  ? `${token1Symbol} = 1 ${token0Symbol}`
+                  : `${token0Symbol} = 1 ${token1Symbol}`}
               </span>
             )}
           </div>
