@@ -32,6 +32,10 @@ import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings'
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 export function TokenContent() {
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -181,12 +185,11 @@ export function TokenContent() {
 
   return (
     <>
-      <div className="px-4 2xl:px-12">
+      test for test token
+      {/* <div className="px-4 2xl:px-12">
         <div className="flex md:flex-row flex-col justify-between flex-1 gap-0 shadow-none">
-          {/* 左侧：From */}
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
-            <div>1234</div>
-            {/* <TokenDropSelector
+            <TokenDropSelector
               selectedToken={sellToken}
               onTokenChange={setSellToken}
               value={sellValue}
@@ -196,7 +199,7 @@ export function TokenContent() {
               label="You pay"
               showMaxButton={true}
               onMaxClick={handleMaxClick}
-            /> */}
+            />
           </Card>
 
           <div
@@ -222,17 +225,16 @@ export function TokenContent() {
           </div>
 
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
-            <div>1234</div>
-            {/* <TokenDropSelector
-            selectedToken={buyToken}
-            onTokenChange={setBuyToken}
-            value={buyValue}
-            onValueChange={setBuyValue}
-            balance={toBalance}
-            isBalancePending={isToBalancePending}
-            label="You receive"
-            disabled={true}
-            /> */}
+            <TokenDropSelector
+              selectedToken={buyToken}
+              onTokenChange={setBuyToken}
+              value={buyValue}
+              onValueChange={setBuyValue}
+              balance={toBalance}
+              isBalancePending={isToBalancePending}
+              label="You receive"
+              disabled={true}
+            />
           </Card>
         </div>
 
@@ -274,7 +276,7 @@ export function TokenContent() {
             </Button>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 }
