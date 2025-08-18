@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import Image from 'next/image';
 
 import { cn } from '@/lib/utils';
@@ -17,19 +15,8 @@ export function LogoWithPlaceholder({
   width?: number;
   height?: number;
 }) {
-  const [isShow, setIsShow] = useState(false);
-
-  useEffect(() => {
-    setIsShow(true);
-  }, [src]);
-
-  if (!isShow) {
-    return null;
-  }
-
   if (src) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
       <Image
         src={src}
         alt={name}
