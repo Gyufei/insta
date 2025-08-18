@@ -8,7 +8,7 @@ import TokenSelector from '@/app/(protocols)/uniswap/uni-common/token-selector';
 import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 
 import { replaceNativeAddressUseBackend } from '@/config/network-config';
-import { IToken } from '@/config/tokens';
+import { IToken, MONAD } from '@/config/tokens';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
@@ -21,6 +21,7 @@ import { ErrorVO } from '@/lib/model/error-vo';
 import { truncateNumber } from '@/lib/utils/number';
 
 import { INFINITY_PRICE } from '../../uniswap/create-position/price-range-selector';
+import { WMONAD_TOKEN } from '../../uniswap/use-uniswap-token';
 import { SelectToken } from './select-token';
 import { SetPriceAndAmount } from './set-price-and-amount';
 
@@ -183,11 +184,19 @@ export function AmbientCreatePosition() {
       return;
     }
 
+    if (liquidityRatio && ['Infinity', 'NaN', '∞'].includes(liquidityRatio?.ratio || '')) {
+      setErrorData({
+        showError: true,
+        errorMessage: 'Current price range is out of price curve, creation will fail',
+      });
+      return;
+    }
+
     setErrorData({
       showError: false,
       errorMessage: '',
     });
-  }, [priceRangeMin, priceRangeMax]);
+  }, [priceRangeMin, priceRangeMax, liquidityRatio]);
 
   return (
     <>
@@ -211,6 +220,7 @@ export function AmbientCreatePosition() {
               <TokenSelector
                 onSelect={handleTokenSelectWrapper}
                 onClose={() => setShowTokenSelector(null)}
+                excludeTokens={[MONAD.address, WMONAD_TOKEN.address]}
               />
             ) : step === CreatePositionStep.SelectToken ? (
               <>

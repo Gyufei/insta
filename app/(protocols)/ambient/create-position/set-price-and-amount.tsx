@@ -1,12 +1,18 @@
+import { divide } from 'safebase';
+
+import { useState } from 'react';
+
 import { CreatePoolTip } from '@/app/(protocols)/uniswap/create-position/create-pool-tip';
 import InitPriceSetter from '@/app/(protocols)/uniswap/create-position/init-price-setter';
 import PriceRangeSelector from '@/app/(protocols)/uniswap/create-position/price-range-selector';
 import UniswapTokenInput from '@/app/(protocols)/uniswap/uni-common/uniswap-token-input';
 
+import { IToken } from '@/config/tokens';
+
 import { BadgeHelpTooltip } from '@/components/common/badge-help';
 
-import { IToken } from '@/config/tokens';
 import { ErrorVO } from '@/lib/model/error-vo';
+import { truncateNumber } from '@/lib/utils/number';
 
 export function SetPriceAndAmount({
   isNewPool,
@@ -37,6 +43,58 @@ export function SetPriceAndAmount({
   setAmount1: (amount: string) => void;
   onSetError: (error: ErrorVO) => void;
 }) {
+  const [mainTokenIsToken0, setMainTokenIsToken0] = useState(true);
+  const [rangeType, setRangeType] = useState<'FULL' | 'CUSTOM'>('CUSTOM');
+
+  const [displayPriceRangeMin, setDisplayPriceRangeMin] = useState(priceRangeMin);
+  const [displayPriceRangeMax, setDisplayPriceRangeMax] = useState(priceRangeMax);
+
+  function handleMainTokenChange(isToken0: boolean) {
+    setMainTokenIsToken0(isToken0);
+
+    if (rangeType === 'FULL') {
+      return;
+    }
+
+    if (!priceRangeMin && !priceRangeMax) {
+      return;
+    }
+
+    if (isToken0) {
+      if (priceRangeMax) {
+        setDisplayPriceRangeMin(priceRangeMin);
+      }
+      if (priceRangeMin) {
+        setDisplayPriceRangeMax(priceRangeMax);
+      }
+    } else {
+      if (priceRangeMin) {
+        setDisplayPriceRangeMin(truncateNumber(divide(String(1), priceRangeMax), 4));
+      }
+      if (priceRangeMax) {
+        setDisplayPriceRangeMax(truncateNumber(divide(String(1), priceRangeMin), 4));
+      }
+    }
+  }
+
+  function handlePriceRangeMinChange(min: string) {
+    setDisplayPriceRangeMin(min);
+    if (mainTokenIsToken0) {
+      setPriceRangeMin(min);
+    } else {
+      setPriceRangeMin(truncateNumber(divide(String(1), min), 4));
+    }
+  }
+
+  function handlePriceRangeMaxChange(max: string) {
+    setDisplayPriceRangeMax(max);
+    if (mainTokenIsToken0) {
+      setPriceRangeMax(max);
+    } else {
+      setPriceRangeMax(truncateNumber(divide(String(1), max), 4));
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4 px-[1px]">
       <div className="flex flex-col gap-2">
@@ -49,16 +107,24 @@ export function SetPriceAndAmount({
       </div>
 
       {isNewPool && (
-        <InitPriceSetter token0={token0} token1={token1} onPriceChange={setInitPrice} />
+        <InitPriceSetter
+          token0={token0}
+          token1={token1}
+          onPriceChange={setInitPrice}
+          onTokenMainIsToken0Change={handleMainTokenChange}
+        />
       )}
 
       <PriceRangeSelector
+        mainTokenIsToken0={mainTokenIsToken0}
+        rangeType={rangeType}
+        setRangeType={setRangeType}
         token0Symbol={token0?.symbol ?? ''}
         token1Symbol={token1?.symbol ?? ''}
-        priceRangeMin={priceRangeMin}
-        priceRangeMax={priceRangeMax}
-        onMinPriceChange={setPriceRangeMin}
-        onMaxPriceChange={setPriceRangeMax}
+        priceRangeMin={displayPriceRangeMin}
+        priceRangeMax={displayPriceRangeMax}
+        onMinPriceChange={handlePriceRangeMinChange}
+        onMaxPriceChange={handlePriceRangeMaxChange}
       />
       <div className="flex flex-col gap-2 pointer-events-auto">
         <div className="text-lg font-medium text-primary flex items-center gap-2">

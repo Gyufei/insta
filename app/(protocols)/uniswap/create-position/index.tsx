@@ -221,7 +221,7 @@ export function UniswapCreatePosition() {
       showError: false,
       errorMessage: '',
     });
-  }, [priceRangeMin, priceRangeMax, ratio]);
+  }, [priceRangeMin, priceRangeMax, liquidityRatio]);
 
   useEffect(() => {
     if (ratio && amount0) {
