@@ -50,138 +50,138 @@ export function TokenContent() {
 
   const [rotateTimes, setRotateTimes] = useState(0);
 
-  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
-    sellToken?.address || '',
-    true
-  );
+  // const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
+  //   sellToken?.address || '',
+  //   true
+  // );
 
-  const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
-    buyToken?.address || '',
-    true
-  );
+  // const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
+  //   buyToken?.address || '',
+  //   true
+  // );
 
-  const quoteParams =
-    sellToken && buyToken && sellValue
-      ? {
-          tokenIn: replaceNativeAddressUseBackend(sellToken.address),
-          tokenOut: replaceNativeAddressUseBackend(buyToken.address),
-          amountIn: sellValue,
-          amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
-        }
-      : undefined;
+  // const quoteParams =
+  //   sellToken && buyToken && sellValue
+  //     ? {
+  //         tokenIn: replaceNativeAddressUseBackend(sellToken.address),
+  //         tokenOut: replaceNativeAddressUseBackend(buyToken.address),
+  //         amountIn: sellValue,
+  //         amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
+  //       }
+  //     : undefined;
 
-  const {
-    data: quoteData,
-    isLoading: isQuoteLoading,
-    error: quoteError,
-  } = useUniswapQuote(quoteParams);
+  // const {
+  //   data: quoteData,
+  //   isLoading: isQuoteLoading,
+  //   error: quoteError,
+  // } = useUniswapQuote(quoteParams);
 
-  const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
+  // const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
 
-  useEffect(() => {
-    if (quoteData?.output) {
-      setBuyValue(
-        divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
-      );
-    }
-  }, [quoteData?.output, buyToken?.decimals]);
+  // useEffect(() => {
+  //   if (quoteData?.output) {
+  //     setBuyValue(
+  //       divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
+  //     );
+  //   }
+  // }, [quoteData?.output, buyToken?.decimals]);
 
-  useEffect(() => {
-    if (quoteError) {
-      let errorMsg = quoteError.message;
-      if (quoteError.message.includes(`Cannot read properties of undefined (reading 'quote')`)) {
-        errorMsg = 'Insufficient liquidity, please try again later';
-      }
-      setErrorData({
-        showError: true,
-        errorMessage: errorMsg,
-      });
-    }
+  // useEffect(() => {
+  //   if (quoteError) {
+  //     let errorMsg = quoteError.message;
+  //     if (quoteError.message.includes(`Cannot read properties of undefined (reading 'quote')`)) {
+  //       errorMsg = 'Insufficient liquidity, please try again later';
+  //     }
+  //     setErrorData({
+  //       showError: true,
+  //       errorMessage: errorMsg,
+  //     });
+  //   }
 
-    if (swapError) {
-      setErrorData({
-        showError: true,
-        errorMessage: swapError.message,
-      });
-    }
+  //   if (swapError) {
+  //     setErrorData({
+  //       showError: true,
+  //       errorMessage: swapError.message,
+  //     });
+  //   }
 
-    if (!swapError && !quoteError) {
-      setErrorData({
-        showError: false,
-        errorMessage: '',
-      });
-    }
-  }, [swapError, quoteError]);
+  //   if (!swapError && !quoteError) {
+  //     setErrorData({
+  //       showError: false,
+  //       errorMessage: '',
+  //     });
+  //   }
+  // }, [swapError, quoteError]);
 
-  const [init, setInit] = useState(false);
-  useEffect(() => {
-    if (!init) {
-      const token = sessionStorage.getItem('token');
-      if (token) {
-        setSellToken(JSON.parse(token));
-        sessionStorage.removeItem('token');
-      }
-      setInit(true);
-    }
-  }, [init]);
+  // const [init, setInit] = useState(false);
+  // useEffect(() => {
+  //   if (!init) {
+  //     const token = sessionStorage.getItem('token');
+  //     if (token) {
+  //       setSellToken(JSON.parse(token));
+  //       sessionStorage.removeItem('token');
+  //     }
+  //     setInit(true);
+  //   }
+  // }, [init]);
 
-  useEffect(() => {
-    const unsubscribe = eventBus.subscribe(
-      'trade-token',
-      (data: { name: string; props: { token: IToken } }) => {
-        console.log('data', data);
-        if (data.name === 'TradeToken') {
-          setSellToken(data.props.token);
-          setInit(true);
-        }
-      }
-    );
-    return () => unsubscribe();
-  }, []);
+  // useEffect(() => {
+  //   const unsubscribe = eventBus.subscribe(
+  //     'trade-token',
+  //     (data: { name: string; props: { token: IToken } }) => {
+  //       console.log('data', data);
+  //       if (data.name === 'TradeToken') {
+  //         setSellToken(data.props.token);
+  //         setInit(true);
+  //       }
+  //     }
+  //   );
+  //   return () => unsubscribe();
+  // }, []);
 
-  function handleSwap() {
-    if (!quoteData || !sellToken || !buyToken) return;
+  // function handleSwap() {
+  //   if (!quoteData || !sellToken || !buyToken) return;
 
-    const isSellTokenEth = sellToken.address === DEFAULT_NATIVE_ADDRESS;
-    const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
+  //   const isSellTokenEth = sellToken.address === DEFAULT_NATIVE_ADDRESS;
+  //   const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
 
-    // 清除之前的错误
-    setErrorData({
-      showError: false,
-      errorMessage: '',
-    });
+  //   // 清除之前的错误
+  //   setErrorData({
+  //     showError: false,
+  //     errorMessage: '',
+  //   });
 
-    swap({
-      token_in_is_eth: isSellTokenEth,
-      token_out_is_eth: isBuyTokenEth,
-      slippage: (Number(slippage) * 1e16).toString(),
-      route: quoteData.route[0],
-    });
-  }
+  //   swap({
+  //     token_in_is_eth: isSellTokenEth,
+  //     token_out_is_eth: isBuyTokenEth,
+  //     slippage: (Number(slippage) * 1e16).toString(),
+  //     route: quoteData.route[0],
+  //   });
+  // }
 
-  const handleSwapTokens = () => {
-    setRotateTimes((rotateTimes % 2) + 1);
+  // const handleSwapTokens = () => {
+  //   setRotateTimes((rotateTimes % 2) + 1);
 
-    const tempToken = sellToken;
-    setSellToken(buyToken);
-    setBuyToken(tempToken);
+  //   const tempToken = sellToken;
+  //   setSellToken(buyToken);
+  //   setBuyToken(tempToken);
 
-    const tempValue = sellValue;
-    setSellValue(buyValue);
-    setBuyValue(tempValue);
+  //   const tempValue = sellValue;
+  //   setSellValue(buyValue);
+  //   setBuyValue(tempValue);
 
-    // 清除错误;
-    setErrorData({
-      showError: false,
-      errorMessage: '',
-    });
-  };
+  //   // 清除错误;
+  //   setErrorData({
+  //     showError: false,
+  //     errorMessage: '',
+  //   });
+  // };
 
-  const handleMaxClick = () => {
-    if (sellToken) {
-      setSellValue(fromBalance);
-    }
-  };
+  // const handleMaxClick = () => {
+  //   if (sellToken) {
+  //     setSellValue(fromBalance);
+  //   }
+  // };
 
   return (
     <>
