@@ -181,15 +181,15 @@ export function TokenContent() {
           {/* 左侧：From */}
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
             <TokenDropSelector
-              selectedToken={sellToken}
-              onTokenChange={setSellToken}
-              value={sellValue}
-              onValueChange={setSellValue}
-              balance={fromBalance}
-              isBalancePending={isFromBalancePending}
-              label="You pay"
-              showMaxButton={true}
-              onMaxClick={handleMaxClick}
+              // selectedToken={sellToken}
+              // onTokenChange={setSellToken}
+              // value={sellValue}
+              // onValueChange={setSellValue}
+              // balance={fromBalance}
+              // isBalancePending={isFromBalancePending}
+              // label="You pay"
+              // showMaxButton={true}
+              // onMaxClick={handleMaxClick}
             />
           </Card>
 
@@ -217,14 +217,14 @@ export function TokenContent() {
 
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
             <TokenDropSelector
-              selectedToken={buyToken}
-              onTokenChange={setBuyToken}
-              value={buyValue}
-              onValueChange={setBuyValue}
-              balance={toBalance}
-              isBalancePending={isToBalancePending}
-              label="You receive"
-              disabled={true}
+              // selectedToken={buyToken}
+              // onTokenChange={setBuyToken}
+              // value={buyValue}
+              // onValueChange={setBuyValue}
+              // balance={toBalance}
+              // isBalancePending={isToBalancePending}
+              // label="You receive"
+              // disabled={true}
             />
           </Card>
         </div>
