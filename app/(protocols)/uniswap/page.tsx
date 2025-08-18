@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 
+import { MateImageBase, MetaBaseHost } from '@/config/env-url';
+
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
 import { UniswapCreateCoin } from './uniswap-create-coin';
@@ -9,9 +11,15 @@ export const metadata: Metadata = {
   title: 'Uniswap',
   openGraph: {
     title: 'Uniswap',
+    url: MetaBaseHost,
+    siteName: 'Tadle',
+    images: `${MateImageBase}/UjXLk9pSW552Wq3jVMIQU.png`,
+    locale: 'en_US',
+    type: 'website',
   },
   twitter: {
     title: 'Uniswap',
+    creator: '@tadle_com',
   },
 };
 

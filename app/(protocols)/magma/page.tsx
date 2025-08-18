@@ -5,14 +5,21 @@ import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
 import { MagmaMonStake } from './magma-mon-stake';
 import { MagmaStats } from './magma-stats';
+import { MateImageBase, MetaBaseHost } from '@/config/env-url';
 
 export const metadata: Metadata = {
   title: 'Magma',
   openGraph: {
     title: 'Magma',
+    url: MetaBaseHost,
+    siteName: 'Tadle',
+    images: `${MateImageBase}/UjXLk9pSW552Wq3jVMIQU.png`,
+    locale: 'en_US',
+    type: 'website',
   },
   twitter: {
     title: 'Magma',
+    creator: '@tadle_com',
   },
 };
 

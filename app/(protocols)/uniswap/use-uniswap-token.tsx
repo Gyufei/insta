@@ -8,15 +8,17 @@ export const USDT_TOKEN: IToken = {
   decimals: 6,
 };
 
+export const WMONAD_TOKEN: IToken = {
+  address: '0x760AfE86e5de5fa0Ee542fc7B7B713e1c5425701',
+  name: 'Wrapped Monad',
+  symbol: 'wMON',
+  logo: '/icons/wmon.svg',
+  decimals: 18,
+};
+
 export const UNISWAP_TOKENS: Array<IToken> = [
   MONAD,
-  {
-    address: '0x760AfE86e5de5fa0Ee542fc7B7B713e1c5425701',
-    name: 'Wrapped Monad',
-    symbol: 'wMON',
-    logo: '/icons/wmon.svg',
-    decimals: 18,
-  },
+  WMONAD_TOKEN,
   USDT_TOKEN,
   MonUSD,
   APR_MONAD,

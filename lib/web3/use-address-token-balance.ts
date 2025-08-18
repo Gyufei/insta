@@ -3,7 +3,7 @@ import { useReadContract } from 'wagmi';
 
 import { useMemo } from 'react';
 
-import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
+import { DEFAULT_TOKEN_DECIMALS, TOKEN_DECIMALS } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
 import { formatBig } from '@/lib/utils/number';
@@ -38,7 +38,13 @@ export function useAddressTokenBalance(
 
   const balance = useMemo(() => {
     if (!address || !tokenAddress) return '0';
-    return formatBig(String(balanceBig), currentToken?.decimals || DEFAULT_TOKEN_DECIMALS); // ERC20 代币通常使用 18 位小数
+
+    const decimals = TOKEN_DECIMALS[String(chainId)][tokenAddress];
+
+    return formatBig(
+      String(balanceBig),
+      currentToken?.decimals || decimals || DEFAULT_TOKEN_DECIMALS
+    ); // ERC20 代币通常使用 18 位小数
   }, [balanceBig, address, tokenAddress, currentToken]);
 
   return {

@@ -38,7 +38,6 @@ export function useGetAccountBalance(tokenAddress: string, enableQuery = true): 
   );
 
   const balance = isNative ? truncateNumber(nativeBalance, 4) : truncateNumber(tokenBalance, 4);
-
   const balanceBig = isNative ? nativeBalanceBig : tokenBalanceBig;
   const isBalancePending = isNative ? isNativeBalancePending : isTokenBalancePending;
 

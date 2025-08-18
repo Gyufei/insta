@@ -67,17 +67,6 @@ export function TokenDropSelector({
     isSearchingAddress ? searchQuery.trim() : ''
   );
 
-  useEffect(() => {
-    if (isSearchingAddress && tokenInfo) {
-      const tokenAddress = tokenInfo.address.toLowerCase();
-      const isExist = tokens.find((token) => token.address.toLowerCase() === tokenAddress);
-
-      if (!isExist) {
-        setTokens((prevTokens) => [...prevTokens, tokenInfo as unknown as IToken]);
-      }
-    }
-  }, [tokenInfo, isSearchingAddress]);
-
   const { data: uniswapTokensData, isLoading: isUniswapTokensLoading } = useUniswapTokens();
 
   const allTokens = useMemo(() => {
@@ -98,6 +87,10 @@ export function TokenDropSelector({
 
   const filteredTokens = useMemo(() => {
     if (!searchQuery.trim()) {
+      if (noMonUSD) {
+        return allTokens.filter((token) => token.symbol !== 'monUSD');
+      }
+
       return allTokens;
     }
 
@@ -135,6 +128,17 @@ export function TokenDropSelector({
     isSearchingAddress,
     noMonUSD,
   ]);
+
+  useEffect(() => {
+    if (isSearchingAddress && tokenInfo) {
+      const tokenAddress = tokenInfo.address.toLowerCase();
+      const isExist = allTokens.find((token) => token.address.toLowerCase() === tokenAddress);
+
+      if (!isExist) {
+        setTokens((prevTokens) => [...prevTokens, tokenInfo as unknown as IToken]);
+      }
+    }
+  }, [tokenInfo, isSearchingAddress, allTokens]);
 
   return (
     <div className={cn('flex flex-col gap-[10px]', className)}>

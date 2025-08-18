@@ -11,7 +11,7 @@ import {
   DEFAULT_NATIVE_ADDRESS,
   replaceNativeAddressUseBackend,
 } from '@/config/network-config';
-import { IToken, MonUSD } from '@/config/tokens';
+import { IToken, MONAD, MonUSD } from '@/config/tokens';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
@@ -23,6 +23,7 @@ import { ErrorVO } from '@/lib/model/error-vo';
 import { truncateNumber } from '@/lib/utils/number';
 
 import TokenSelector from '../uni-common/token-selector';
+import { WMONAD_TOKEN } from '../use-uniswap-token';
 import { INFINITY_PRICE } from './price-range-selector';
 import { SelectTokenAndFeeTier } from './select-token-and-fee-tier';
 import { SetPriceAndAmount } from './set-price-and-amount';
@@ -243,6 +244,7 @@ export function UniswapCreatePosition() {
               <TokenSelector
                 onSelect={handleTokenSelectWrapper}
                 onClose={() => setShowTokenSelector(null)}
+                excludeTokens={[MONAD.address, WMONAD_TOKEN.address]}
               />
             ) : step === CreatePositionStep.SelectTokenAndFeeTier ? (
               <>

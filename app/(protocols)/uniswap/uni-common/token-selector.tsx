@@ -20,10 +20,19 @@ interface TokenSelectorProps {
   onSelect: (token: IToken) => void;
   onClose: () => void;
   onTokenAdded?: (token: IToken) => void; // 新增：当通过地址搜索选择代币时的回调
+  excludeTokens?: string[];
 }
 
-export default function TokenSelector({ onSelect, onClose, onTokenAdded }: TokenSelectorProps) {
-  const tokens = UNISWAP_TOKENS;
+export default function TokenSelector({
+  onSelect,
+  onClose,
+  onTokenAdded,
+  excludeTokens = [],
+}: TokenSelectorProps) {
+  const tokens = UNISWAP_TOKENS.filter(
+    (token) => !excludeTokens.map((t) => t.toLowerCase()).includes(token.address.toLowerCase())
+  );
+
   const [searchQuery, setSearchQuery] = useState('');
   const processedTokensRef = useRef<Set<string>>(new Set());
   const tokensRef = useRef(tokens);
