@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Token Station',
-    creator: '@tadle_com',
+    site: '@tadle_com',
   },
 };
 

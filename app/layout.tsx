@@ -59,7 +59,7 @@ export const metadata: Metadata = {
       default: 'Tadle',
     },
     description: 'Tadle - The Parallel Sandbox opening a new dimension of accessing dApps.',
-    creator: '@tadle_com',
+    site: '@tadle_com',
     images: [`${MateImageBase}/UjXLk9pSW552Wq3jVMIQU.png`],
   },
 };

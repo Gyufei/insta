@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Odds Ranks',
-    creator: '@tadle_com',
+    site: '@tadle_com',
   },
 };
 
