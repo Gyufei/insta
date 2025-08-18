@@ -25,12 +25,7 @@ export function useGetAccountBalance(tokenAddress: string, enableQuery = true): 
     balance: nativeBalance,
     balanceBig: nativeBalanceBig,
     isPending: isNativeBalancePending,
-  } = {
-    balance: '123',
-    balanceBig: '123',
-    isPending: false,
-  };
-  // = useApiMonadBalance();
+  } = useApiMonadBalance();
 
   const {
     balance: tokenBalance,

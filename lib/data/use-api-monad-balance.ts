@@ -12,11 +12,19 @@ export function useApiMonadBalance() {
   );
 
   const balanceBig = useMemo(() => {
+    if (!monadBalanceRes) {
+      return '0';
+    }
+
     return monadBalanceRes?.balance;
   }, [monadBalanceRes]);
 
   const balance = useMemo(() => {
-    return divide(String(balanceBig), String(10 ** (monadBalanceRes?.decimals || 18)));
+    if (!balanceBig) {
+      return '0';
+    }
+
+    return divide(String(balanceBig || '0'), String(10 ** (monadBalanceRes?.decimals || 18)));
   }, [balanceBig, monadBalanceRes?.decimals]);
 
   return {
