@@ -36,6 +36,8 @@ import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings'
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 export function TokenContent() {
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -50,33 +52,33 @@ export function TokenContent() {
 
   const [rotateTimes, setRotateTimes] = useState(0);
 
-  // const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
-  //   sellToken?.address || '',
-  //   true
-  // );
+  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
+    sellToken?.address || '',
+    true
+  );
 
-  // const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
-  //   buyToken?.address || '',
-  //   true
-  // );
+  const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
+    buyToken?.address || '',
+    true
+  );
 
-  // const quoteParams =
-  //   sellToken && buyToken && sellValue
-  //     ? {
-  //         tokenIn: replaceNativeAddressUseBackend(sellToken.address),
-  //         tokenOut: replaceNativeAddressUseBackend(buyToken.address),
-  //         amountIn: sellValue,
-  //         amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
-  //       }
-  //     : undefined;
+  const quoteParams =
+    sellToken && buyToken && sellValue
+      ? {
+          tokenIn: replaceNativeAddressUseBackend(sellToken.address),
+          tokenOut: replaceNativeAddressUseBackend(buyToken.address),
+          amountIn: sellValue,
+          amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
+        }
+      : undefined;
 
-  // const {
-  //   data: quoteData,
-  //   isLoading: isQuoteLoading,
-  //   error: quoteError,
-  // } = useUniswapQuote(quoteParams);
+  const {
+    data: quoteData,
+    isLoading: isQuoteLoading,
+    error: quoteError,
+  } = useUniswapQuote(quoteParams);
 
-  // const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
+  const { mutate: swap, isPending: isSwapPending, error: swapError } = useUniswapSwap();
 
   // useEffect(() => {
   //   if (quoteData?.output) {
@@ -139,53 +141,53 @@ export function TokenContent() {
   //   return () => unsubscribe();
   // }, []);
 
-  // function handleSwap() {
-  //   if (!quoteData || !sellToken || !buyToken) return;
+  function handleSwap() {
+    // if (!quoteData || !sellToken || !buyToken) return;
 
-  //   const isSellTokenEth = sellToken.address === DEFAULT_NATIVE_ADDRESS;
-  //   const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
+    // const isSellTokenEth = sellToken.address === DEFAULT_NATIVE_ADDRESS;
+    // const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
 
-  //   // 清除之前的错误
-  //   setErrorData({
-  //     showError: false,
-  //     errorMessage: '',
-  //   });
+    // 清除之前的错误
+    setErrorData({
+      showError: false,
+      errorMessage: '',
+    });
 
-  //   swap({
-  //     token_in_is_eth: isSellTokenEth,
-  //     token_out_is_eth: isBuyTokenEth,
-  //     slippage: (Number(slippage) * 1e16).toString(),
-  //     route: quoteData.route[0],
-  //   });
-  // }
+    // swap({
+    //   token_in_is_eth: isSellTokenEth,
+    //   token_out_is_eth: isBuyTokenEth,
+    //   slippage: (Number(slippage) * 1e16).toString(),
+    //   route: quoteData.route[0],
+    // });
+  }
 
-  // const handleSwapTokens = () => {
-  //   setRotateTimes((rotateTimes % 2) + 1);
+  const handleSwapTokens = () => {
+    setRotateTimes((rotateTimes % 2) + 1);
 
-  //   const tempToken = sellToken;
-  //   setSellToken(buyToken);
-  //   setBuyToken(tempToken);
+    const tempToken = sellToken;
+    setSellToken(buyToken);
+    setBuyToken(tempToken);
 
-  //   const tempValue = sellValue;
-  //   setSellValue(buyValue);
-  //   setBuyValue(tempValue);
+    const tempValue = sellValue;
+    setSellValue(buyValue);
+    setBuyValue(tempValue);
 
-  //   // 清除错误;
-  //   setErrorData({
-  //     showError: false,
-  //     errorMessage: '',
-  //   });
-  // };
+    // 清除错误;
+    setErrorData({
+      showError: false,
+      errorMessage: '',
+    });
+  };
 
-  // const handleMaxClick = () => {
-  //   if (sellToken) {
-  //     setSellValue(fromBalance);
-  //   }
-  // };
+  const handleMaxClick = () => {
+    if (sellToken) {
+      // setSellValue(fromBalance);
+    }
+  };
 
   return (
     <>
-      test for test token
+      test for test token1
       {/* <div className="px-4 2xl:px-12">
         <div className="flex md:flex-row flex-col justify-between flex-1 gap-0 shadow-none">
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
