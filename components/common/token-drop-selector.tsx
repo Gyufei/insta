@@ -39,6 +39,7 @@ interface TokenSelectorProps {
   showMaxButton?: boolean;
   onMaxClick?: () => void;
   className?: string;
+  noMonUSD?: boolean;
 }
 
 export function TokenDropSelector({
@@ -54,6 +55,7 @@ export function TokenDropSelector({
   showMaxButton = false,
   onMaxClick,
   className,
+  noMonUSD = false,
 }: TokenSelectorProps) {
   const [tokens, setTokens] = useState(UNISWAP_TOKENS);
   const [searchQuery, setSearchQuery] = useState('');
@@ -85,8 +87,14 @@ export function TokenDropSelector({
       description: token.tokenDescription,
     }));
 
-    return [...tokens, ...(uniswapTokens || [])];
-  }, [tokens, uniswapTokensData]);
+    const all = [...tokens, ...(uniswapTokens || [])];
+
+    if (noMonUSD) {
+      return all.filter((token) => token.symbol !== 'monUSD');
+    }
+
+    return all;
+  }, [tokens, uniswapTokensData, noMonUSD]);
 
   const filteredTokens = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -113,6 +121,10 @@ export function TokenDropSelector({
       }
     }
 
+    if (noMonUSD) {
+      return filtered.filter((token) => token.symbol !== 'monUSD');
+    }
+
     return filtered;
   }, [
     allTokens,
@@ -121,6 +133,7 @@ export function TokenDropSelector({
     isTokenInfoLoading,
     isUniswapTokensLoading,
     isSearchingAddress,
+    noMonUSD,
   ]);
 
   return (

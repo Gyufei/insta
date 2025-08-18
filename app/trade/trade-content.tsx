@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { CircleX, Loader } from 'lucide-react';
@@ -28,7 +27,6 @@ import { cn } from '@/lib/utils';
 import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
 
 import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings';
-
 
 export function TokenContent() {
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
@@ -118,7 +116,6 @@ export function TokenContent() {
     const unsubscribe = eventBus.subscribe(
       'trade-token',
       (data: { name: string; props: { token: IToken } }) => {
-        console.log('data', data);
         if (data.name === 'TradeToken') {
           setSellToken(data.props.token);
           setInit(true);
@@ -181,6 +178,7 @@ export function TokenContent() {
               label="You pay"
               showMaxButton={true}
               onMaxClick={handleMaxClick}
+              noMonUSD={true}
             />
           </Card>
 

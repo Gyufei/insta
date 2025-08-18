@@ -6,8 +6,12 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 
-import { replaceNativeAddressUseBackend } from '@/config/network-config';
-import { IToken } from '@/config/tokens';
+import {
+  BACKEND_NATIVE_ADDRESS,
+  DEFAULT_NATIVE_ADDRESS,
+  replaceNativeAddressUseBackend,
+} from '@/config/network-config';
+import { IToken, MonUSD } from '@/config/tokens';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
@@ -176,6 +180,20 @@ export function UniswapCreatePosition() {
   }
 
   function handleNextStep() {
+    const isToken0MonUSD = token0?.address === MonUSD.address;
+    const isToken1MonUSD = token1?.address === MonUSD.address;
+    const isToken0Mon = [DEFAULT_NATIVE_ADDRESS, BACKEND_NATIVE_ADDRESS].includes(
+      token0?.address || ''
+    );
+    const isToken1Mon = [DEFAULT_NATIVE_ADDRESS, BACKEND_NATIVE_ADDRESS].includes(
+      token1?.address || ''
+    );
+
+    if ((isToken0MonUSD && isToken1Mon) || (isToken0Mon && isToken1MonUSD)) {
+      toast.error("Can't create pool of monUSD/MON");
+      return;
+    }
+
     if (step === CreatePositionStep.SelectTokenAndFeeTier) {
       setStep(CreatePositionStep.SetPriceAndMount);
     }

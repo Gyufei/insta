@@ -41,8 +41,12 @@ export function useSaveXBind() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
     },
-    onError: () => {
-      toast.error('Failed to link Twitter');
+    onError: (e: Error) => {
+      if (e.message.includes('already exists')) {
+        toast.error('Twitter account already linked');
+      } else {
+        toast.error(e.message || 'Failed to link Twitter account');
+      }
     },
   });
 }
