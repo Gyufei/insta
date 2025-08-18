@@ -16,7 +16,7 @@ export type IAccountInfo = {
 export function useAccounts() {
   const { address } = useAccount();
   // console.log('fake', fake);
-  // const address = '0xBd2813c8477D569423fa9002c8BF546167FCcD52';
+  // const address = '0x28d919c2EEb49481D9b7B3e87F728aBd40D9404E';
 
   async function getAccounts(): Promise<IAccountInfo[]> {
     if (!address) {

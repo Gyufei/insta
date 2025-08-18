@@ -21,6 +21,7 @@ import { NetworkConfigs } from '@/config/network-config';
 import { MonUSD } from '@/config/tokens';
 
 import { useSelectedAccount } from '@/lib/data/use-account';
+import { formatNumber } from '@/lib/utils/number';
 // import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 import { useAccountTokenBalance } from '@/lib/web3/use-account-token-balance';
 import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
@@ -154,7 +155,7 @@ export default function Portfolio() {
             ) : (
               <>
                 <div className="text-3xl font-medium">
-                  ${Number(fundingBalance) === 10 ** -18 ? '0' : fundingBalance}
+                  ${Number(fundingBalance) === 10 ** -18 ? '0' : formatNumber(fundingBalance)}
                 </div>
                 <button
                   onClick={() => refetchFundingBalance()}
@@ -231,7 +232,7 @@ export default function Portfolio() {
           </div>
           <div className="flex items-center gap-2 mb-[10px]">
             <div className="text-3xl font-medium min-h-[48px] flex items-center">
-              ${tradingBalance}
+              ${tradingBalance ? formatNumber(tradingBalance || '') : ''}
             </div>
             <button
               id="btnSwap"
