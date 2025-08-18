@@ -38,6 +38,10 @@ import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings'
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 export function TokenContent() {
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -52,15 +56,15 @@ export function TokenContent() {
 
   const [rotateTimes, setRotateTimes] = useState(0);
 
-  // const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
-  //   sellToken?.address || '',
-  //   true
-  // );
+  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
+    sellToken?.address || '',
+    true
+  );
 
-  // const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
-  //   buyToken?.address || '',
-  //   true
-  // );
+  const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
+    buyToken?.address || '',
+    true
+  );
 
   // const quoteParams =
   //   sellToken && buyToken && sellValue
@@ -187,7 +191,7 @@ export function TokenContent() {
 
   return (
     <>
-      test for test token1
+      test for test token2
       {/* <div className="px-4 2xl:px-12">
         <div className="flex md:flex-row flex-col justify-between flex-1 gap-0 shadow-none">
           <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
