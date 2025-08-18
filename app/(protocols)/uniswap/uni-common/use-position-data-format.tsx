@@ -138,8 +138,7 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
   }, [wrapToken0.decimals, wrapToken1.decimals]);
 
   const price = useMemo(() => {
-    return '123';
-    // return sqrtPriceX96ToPrice(currentPrice) * decimalsRate;
+    return sqrtPriceX96ToPrice(currentPrice) * decimalsRate;
   }, [currentPrice, decimalsRate]);
 
   const isFullRange = useMemo(() => {
