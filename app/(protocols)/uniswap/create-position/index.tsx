@@ -201,9 +201,6 @@ export function UniswapCreatePosition() {
   }
 
   useEffect(() => {
-    console.log('priceRangeMin', priceRangeMin);
-    console.log('priceRangeMax', priceRangeMax);
-
     if (Number(priceRangeMin) > Number(priceRangeMax)) {
       setErrorData({
         showError: true,

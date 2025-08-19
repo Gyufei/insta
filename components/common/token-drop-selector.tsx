@@ -99,7 +99,7 @@ export function TokenDropSelector({
       (token) =>
         token.symbol.toLowerCase().includes(query) ||
         token.name.toLowerCase().includes(query) ||
-        token.address.toLowerCase().includes(query)
+        (isAddress(query) && token.address.toLowerCase().includes(query.toLowerCase()))
     );
 
     // 如果搜索的是合约地址且获取到了代币信息，添加到结果中
