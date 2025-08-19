@@ -201,6 +201,9 @@ export function UniswapCreatePosition() {
   }
 
   useEffect(() => {
+    console.log('priceRangeMin', priceRangeMin);
+    console.log('priceRangeMax', priceRangeMax);
+
     if (Number(priceRangeMin) > Number(priceRangeMax)) {
       setErrorData({
         showError: true,
@@ -209,7 +212,12 @@ export function UniswapCreatePosition() {
       return;
     }
 
-    if (liquidityRatio && ['Infinity', 'NaN', '∞'].includes(liquidityRatio?.ratio || '')) {
+    if (
+      step === CreatePositionStep.SetPriceAndMount &&
+      priceRangeMax !== INFINITY_PRICE &&
+      liquidityRatio &&
+      ['Infinity', 'NaN', '∞'].includes(liquidityRatio?.ratio)
+    ) {
       setErrorData({
         showError: true,
         errorMessage: 'Current price range is out of price curve, creation will fail',
@@ -221,7 +229,7 @@ export function UniswapCreatePosition() {
       showError: false,
       errorMessage: '',
     });
-  }, [priceRangeMin, priceRangeMax, liquidityRatio]);
+  }, [priceRangeMin, priceRangeMax, liquidityRatio, step]);
 
   useEffect(() => {
     if (ratio && amount0) {

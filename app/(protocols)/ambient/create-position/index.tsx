@@ -184,7 +184,13 @@ export function AmbientCreatePosition() {
       return;
     }
 
-    if (liquidityRatio && ['Infinity', 'NaN', '∞'].includes(liquidityRatio?.ratio || '')) {
+    if (
+      step === CreatePositionStep.SetPriceAndMount &&
+      priceRangeMin !== '0' &&
+      priceRangeMax !== INFINITY_PRICE &&
+      liquidityRatio &&
+      ['Infinity', 'NaN', '∞'].includes(liquidityRatio?.ratio || '')
+    ) {
       setErrorData({
         showError: true,
         errorMessage: 'Current price range is out of price curve, creation will fail',
@@ -196,7 +202,7 @@ export function AmbientCreatePosition() {
       showError: false,
       errorMessage: '',
     });
-  }, [priceRangeMin, priceRangeMax, liquidityRatio]);
+  }, [priceRangeMin, priceRangeMax, liquidityRatio, step]);
 
   return (
     <>
