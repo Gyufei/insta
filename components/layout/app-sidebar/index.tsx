@@ -425,7 +425,7 @@ export default function AppSidebar() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [open]);
+  }, []);
 
   useEffect(() => {
     let groups: MenuGroup[] = [];
