@@ -4,7 +4,7 @@ import { CircleX, Loader } from 'lucide-react';
 import { divide } from 'safebase';
 import { toast } from 'sonner';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -13,7 +13,7 @@ import {
   DEFAULT_TOKEN_DECIMALS,
   replaceNativeAddressUseBackend,
 } from '@/config/network-config';
-import { IToken } from '@/config/tokens';
+import { IToken, MONAD, MonUSD } from '@/config/tokens';
 
 import { TokenDropSelector } from '@/components/common/token-drop-selector';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
 import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { eventBus } from '@/lib/state/eventBus';
-import { cn } from '@/lib/utils';
+import { cn, isSameAddress } from '@/lib/utils';
 import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
 
 import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings';
@@ -52,8 +52,14 @@ export function TokenContent() {
     true
   );
 
+  const isCanBuyPair = useMemo(() => {
+    const isMonUsdSell = isSameAddress(sellToken?.address || '', MonUSD.address);
+    const isMonBuy = isSameAddress(buyToken?.address || '', MONAD.address);
+    return isMonUsdSell && isMonBuy;
+  }, [sellToken, buyToken]);
+
   const quoteParams =
-    sellToken && buyToken && sellValue
+    sellToken && buyToken && sellValue && !isCanBuyPair
       ? {
           tokenIn: replaceNativeAddressUseBackend(sellToken.address),
           tokenOut: replaceNativeAddressUseBackend(buyToken.address),
@@ -79,26 +85,32 @@ export function TokenContent() {
   }, [quoteData?.output, buyToken?.decimals]);
 
   useEffect(() => {
+    const errorMsg = 'Insufficient liquidity, please try again later';
     if (quoteError) {
-      let errorMsg = quoteError.message;
       if (quoteError.message.includes(`Cannot read properties of undefined (reading 'quote')`)) {
-        errorMsg = 'Insufficient liquidity, please try again later';
         setLiquidityError({
           showError: true,
           errorMessage: errorMsg,
         });
       } else {
-        toast.error(errorMsg);
+        toast.error(quoteError.message);
       }
     }
 
-    if (!quoteError) {
+    if (isCanBuyPair) {
+      setLiquidityError({
+        showError: true,
+        errorMessage: 'Insufficient liquidity, please try again later',
+      });
+    }
+
+    if (!quoteError && !isCanBuyPair) {
       setLiquidityError({
         showError: false,
         errorMessage: '',
       });
     }
-  }, [quoteError]);
+  }, [quoteError, isCanBuyPair]);
 
   const [init, setInit] = useState(false);
   useEffect(() => {
@@ -178,7 +190,6 @@ export function TokenContent() {
               label="You pay"
               showMaxButton={true}
               onMaxClick={handleMaxClick}
-              noMonUSD={true}
             />
           </Card>
 
