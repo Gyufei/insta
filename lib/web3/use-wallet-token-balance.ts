@@ -7,6 +7,8 @@ import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
 
 import { formatBig } from '@/lib/utils/number';
 
+import { isSameAddress } from '../utils';
+
 // current wallet address's token balance query use rpc
 // deprecated, use api query
 // but token use api query must be in list, so reserve this for future other token
@@ -17,7 +19,7 @@ export function useWalletTokenBalance(
   enableQuery = true
 ) {
   const { address } = useAccount();
-  const currentToken = tokens.find((token) => token.address === tokenAddress);
+  const currentToken = tokens.find((token) => isSameAddress(token.address, tokenAddress));
 
   const res = useReadContract({
     address: tokenAddress as `0x${string}`,

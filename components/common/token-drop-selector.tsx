@@ -23,7 +23,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 import { useTokenInfo } from '@/lib/data/use-token-info';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
-import { cn } from '@/lib/utils';
+import { cn, isSameAddress } from '@/lib/utils';
 import { formatNumber } from '@/lib/utils/number';
 
 interface TokenSelectorProps {
@@ -79,7 +79,7 @@ export function TokenDropSelector({
     const all = [...tokens, ...(uniswapTokens || [])];
 
     if (noMonUSD) {
-      return all.filter((token) => token.address !== MonUSD.address);
+      return all.filter((token) => !isSameAddress(token.address, MonUSD.address));
     }
 
     return all;
@@ -88,7 +88,7 @@ export function TokenDropSelector({
   const filteredTokens = useMemo(() => {
     if (!searchQuery.trim()) {
       if (noMonUSD) {
-        return allTokens.filter((token) => token.address !== MonUSD.address);
+        return allTokens.filter((token) => !isSameAddress(token.address, MonUSD.address));
       }
 
       return allTokens;
@@ -99,14 +99,14 @@ export function TokenDropSelector({
       (token) =>
         token.symbol.toLowerCase().includes(query) ||
         token.name.toLowerCase().includes(query) ||
-        (isAddress(query) && token.address.toLowerCase().includes(query.toLowerCase()))
+        (isAddress(query) && isSameAddress(token.address, query))
     );
 
     // 如果搜索的是合约地址且获取到了代币信息，添加到结果中
     if (isSearchingAddress && tokenInfo && !isTokenInfoLoading && !isUniswapTokensLoading) {
       // 检查是否已经存在于过滤结果中
-      const existingToken = filtered.find(
-        (token) => token.address.toLowerCase() === tokenInfo?.address?.toLowerCase()
+      const existingToken = filtered.find((token) =>
+        isSameAddress(token.address, tokenInfo?.address)
       );
 
       if (!existingToken) {
@@ -115,7 +115,7 @@ export function TokenDropSelector({
     }
 
     if (noMonUSD) {
-      return filtered.filter((token) => token.address !== MonUSD.address);
+      return filtered.filter((token) => !isSameAddress(token.address, MonUSD.address));
     }
 
     return filtered;
@@ -148,7 +148,9 @@ export function TokenDropSelector({
           <Select
             value={selectedToken?.address}
             onValueChange={(value) => {
-              const selectedToken = filteredTokens.find((token) => token.address === value);
+              const selectedToken = filteredTokens.find((token) =>
+                isSameAddress(token.address, value)
+              );
               if (selectedToken) {
                 onTokenChange(selectedToken);
               }

@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 
 import { useAmbientPosition } from '@/lib/data/use-ambient-position';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { isSameAddress } from '@/lib/utils';
 
 import { UNISWAP_TOKENS } from '../uniswap/use-uniswap-token';
 import { PositionItem } from './ambient-position-item';
@@ -27,8 +28,8 @@ export function AmbientPositionsSection() {
 
   const filteredPositions = positions?.filter((position) => {
     if (searchQuery) {
-      const token0 = tokens.find((token) => token.address === position.base);
-      const token1 = tokens.find((token) => token.address === position.quote);
+      const token0 = tokens.find((token) => isSameAddress(token.address, position.base));
+      const token1 = tokens.find((token) => isSameAddress(token.address, position.quote));
 
       const searchLower = searchQuery.toLowerCase();
       return (

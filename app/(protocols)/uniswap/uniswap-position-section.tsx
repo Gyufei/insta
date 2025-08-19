@@ -15,12 +15,13 @@ import { Switch } from '@/components/ui/switch';
 
 import { PositionStatus, useUniswapPosition } from '@/lib/data/use-uniswap-position';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { isSameAddress } from '@/lib/utils';
 
 import { PositionItem } from './uniswap-position-item';
 import { UNISWAP_TOKENS } from './use-uniswap-token';
 
 function getToken(token: Omit<IToken, 'logo'>, tokens: IToken[]): IToken {
-  const t = tokens.find((t) => t.address === token.address);
+  const t = tokens.find((t) => isSameAddress(t.address, token.address));
   if (!t) {
     return {
       ...token,

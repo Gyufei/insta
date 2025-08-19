@@ -22,6 +22,10 @@ export function formatAddress(
   return `${address.slice(0, prefix)}...${address.slice(-suffix)}`;
 }
 
+export function isSameAddress(address1: string, address2: string) {
+  return address1.toLowerCase() === address2.toLowerCase() || address1 === address2;
+}
+
 // Format date to user's timezone
 export function formatDate(dateString: string | number): string {
   const date = new Date(String(dateString));

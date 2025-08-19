@@ -19,6 +19,7 @@ import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-bala
 import { useClaimedAirdrop } from '@/lib/data/use-claimed-airdrop';
 import { useWithdraw } from '@/lib/data/use-withdraw';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { isSameAddress } from '@/lib/utils';
 import { parseBig } from '@/lib/utils/number';
 
 import { ActionButton } from '../common/action-button';
@@ -35,7 +36,7 @@ export function WithdrawToken() {
   const { setIsOpen } = useSideDrawerStore();
   const [selectedToken, setSelectedToken] = useState(MONAD.address);
 
-  const token = TOKENS.find((t) => t.address === selectedToken) || MONAD;
+  const token = TOKENS.find((t) => isSameAddress(t.address, selectedToken)) || MONAD;
 
   const { data: balanceData } = useApiAccountTokenBalance();
 

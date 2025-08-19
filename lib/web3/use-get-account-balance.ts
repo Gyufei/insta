@@ -8,6 +8,7 @@ import {
 import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 import { useAccountTokenBalance } from '@/lib/web3/use-account-token-balance';
 
+import { isSameAddress } from '../utils';
 import { truncateNumber } from '../utils/number';
 
 interface BalanceResult {
@@ -19,7 +20,8 @@ interface BalanceResult {
 
 export function useGetAccountBalance(tokenAddress: string, enableQuery = true): BalanceResult {
   const isNative =
-    tokenAddress === DEFAULT_NATIVE_ADDRESS || tokenAddress === BACKEND_NATIVE_ADDRESS;
+    isSameAddress(tokenAddress, DEFAULT_NATIVE_ADDRESS) ||
+    isSameAddress(tokenAddress, BACKEND_NATIVE_ADDRESS);
 
   const {
     balance: nativeBalance,

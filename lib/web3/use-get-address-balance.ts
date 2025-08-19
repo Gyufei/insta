@@ -1,6 +1,7 @@
 import { BACKEND_NATIVE_ADDRESS, DEFAULT_NATIVE_ADDRESS } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
+import { isSameAddress } from '../utils';
 import { truncateNumber } from '../utils/number';
 import { useAddressBalance } from './use-address-balance';
 import { useAddressTokenBalance } from './use-address-token-balance';
@@ -20,7 +21,8 @@ export function useGetAddressBalance(
   enableQuery = true
 ): BalanceResult {
   const isNative =
-    tokenAddress === DEFAULT_NATIVE_ADDRESS || tokenAddress === BACKEND_NATIVE_ADDRESS;
+    isSameAddress(tokenAddress, DEFAULT_NATIVE_ADDRESS) ||
+    isSameAddress(tokenAddress, BACKEND_NATIVE_ADDRESS);
 
   const {
     balance: nativeBalance,
