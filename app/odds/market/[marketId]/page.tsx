@@ -23,17 +23,17 @@ export async function generateMetadata({
     }
 
     return {
-      title: `Tadle Odds | ${market.title || ''}`,
+      title: `Tadle Odds | ${market.title}`,
       description: market.description,
       openGraph: {
-        title: `Tadle Odds | ${market.title || ''}`,
+        title: `Tadle Odds | ${market.title}`,
         description: `Tadle Odds - ${market.description}`,
         images: [market.image_url],
         url: `https://tadle.com/odds/market/${marketId}`,
       },
       twitter: {
         card: 'summary_large_image',
-        title: `Tadle Odds | ${market.title || ''}`,
+        title: `Tadle Odds | ${market.title}`,
         description: `Tadle Odds - ${market.description}`,
         images: [market.image_url],
       },
