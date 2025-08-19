@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { IUniswapPosition } from '@/lib/data/use-uniswap-position';
 import { useUniswapRemoveLiquidity } from '@/lib/data/use-uniswap-remove-liquidity';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { truncateNumber } from '@/lib/utils/number';
 
 import { TokenPairAndStatus } from '../uni-common/token-pair-and-status';
 import { TwoTokenAmount } from '../uni-common/two-token-amount';
@@ -74,7 +75,7 @@ export function UniswapRemoveLiquidity() {
     setPercent(val);
 
     const liq = divide(multiply(uniswapPosition!.v3Position.liquidity, val), String(100));
-    const liqNum = Math.floor(Number(liq));
+    const liqNum = truncateNumber(liq, 0);
     setLiquidity(liqNum.toString());
     setAmount0(divide(multiply(token0Amount, String(Number(val) - 1)), String(100)));
     setAmount1(divide(multiply(token1Amount, String(Number(val) - 1)), String(100)));
