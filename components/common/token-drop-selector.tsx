@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { UNISWAP_TOKENS } from '@/app/(protocols)/uniswap/use-uniswap-token';
 
-import { IToken } from '@/config/tokens';
+import { IToken, MonUSD } from '@/config/tokens';
 
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 import { NumberInput } from '@/components/common/number-input';
@@ -79,7 +79,7 @@ export function TokenDropSelector({
     const all = [...tokens, ...(uniswapTokens || [])];
 
     if (noMonUSD) {
-      return all.filter((token) => token.symbol !== 'monUSD');
+      return all.filter((token) => token.address !== MonUSD.address);
     }
 
     return all;
@@ -88,7 +88,7 @@ export function TokenDropSelector({
   const filteredTokens = useMemo(() => {
     if (!searchQuery.trim()) {
       if (noMonUSD) {
-        return allTokens.filter((token) => token.symbol !== 'monUSD');
+        return allTokens.filter((token) => token.address !== MonUSD.address);
       }
 
       return allTokens;
@@ -115,7 +115,7 @@ export function TokenDropSelector({
     }
 
     if (noMonUSD) {
-      return filtered.filter((token) => token.symbol !== 'monUSD');
+      return filtered.filter((token) => token.address !== MonUSD.address);
     }
 
     return filtered;
