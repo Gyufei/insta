@@ -1,9 +1,9 @@
 'use client';
 
+import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 
 import { ERROR_MESSAGES } from '@/config/const-msg';
@@ -25,7 +25,7 @@ import { Input } from '@/components/ui/input';
 import { useSelectedAccount } from '@/lib/data/use-account';
 import { useNadFunCreateToken } from '@/lib/data/use-nadfun-create-token';
 import { ErrorVO } from '@/lib/model/error-vo';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { parseBig } from '@/lib/utils/number';
 
 import { ImageUpload } from './image-upload';
@@ -40,7 +40,7 @@ export function NadFunCreateToken() {
   const { address } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
 
-  const { setIsOpen } = useSideDrawerStore();
+  const { handleBack } = useUrlPathDrawerChange('/nad-fun');
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
   const [btnDisabled, setBtnDisabled] = useState(true);
@@ -112,7 +112,7 @@ export function NadFunCreateToken() {
 
   return (
     <>
-      <SideDrawerBackHeader title="Create Coin" onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title="Create Coin" onClick={handleBack} />
       <SideDrawerLayout>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

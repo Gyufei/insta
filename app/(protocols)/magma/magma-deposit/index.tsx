@@ -10,21 +10,22 @@ import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
-import { useMagmaDeposit } from '@/lib/data/use-magma-deposit';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { parseBig } from '@/lib/utils/number';
 import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
+import { useMagmaDeposit } from '@/lib/data/use-magma-deposit';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
+import { parseBig } from '@/lib/utils/number';
 
 export function MagmaDeposit() {
   const monToken = MONAD;
   const gMonToken = G_MONAD;
 
-  const { setIsOpen } = useSideDrawerStore();
   const { mutate: deposit, isPending } = useMagmaDeposit();
 
   const { balance, isPending: isBalancePending } = useApiMonadBalance();
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
   const { isMax, handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
+
+  const { handleBack } = useUrlPathDrawerChange('/magma');
 
   const receiveAmount = inputValue || '0';
 
@@ -36,7 +37,7 @@ export function MagmaDeposit() {
 
   return (
     <>
-      <SideDrawerBackHeader title="Deposit" onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title="Deposit" onClick={handleBack} />
       <SideDrawerLayout>
         <div className="pt-2 pb-10 sm:pt-4">
           <TokenDisplay

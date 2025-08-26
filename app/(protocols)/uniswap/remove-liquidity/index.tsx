@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { IUniswapPosition } from '@/lib/data/use-uniswap-position';
 import { useUniswapRemoveLiquidity } from '@/lib/data/use-uniswap-remove-liquidity';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateNumber } from '@/lib/utils/number';
 
 import { TokenPairAndStatus } from '../uni-common/token-pair-and-status';
@@ -18,8 +19,9 @@ import { TwoTokenAmount } from '../uni-common/two-token-amount';
 import { usePositionDataFormat } from '../uni-common/use-position-data-format';
 
 export function UniswapRemoveLiquidity() {
-  const { currentComponent, setIsOpen } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
   const { mutate: removeLiquidity, isPending } = useUniswapRemoveLiquidity();
+  const { handleBack } = useUrlPathDrawerChange('/uniswap');
 
   const { uniswapPosition } =
     (currentComponent?.props as {
@@ -34,10 +36,6 @@ export function UniswapRemoveLiquidity() {
   const [amount0, setAmount0] = useState('');
   const [amount1, setAmount1] = useState('');
   const [liquidity, setLiquidity] = useState('');
-
-  function handleBack() {
-    setIsOpen(false);
-  }
 
   const handleConfirm = () => {
     if (!uniswapPosition) return;

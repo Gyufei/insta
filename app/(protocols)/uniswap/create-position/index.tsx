@@ -20,6 +20,7 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { useUniswapLiquidityRatio } from '@/lib/data/use-uniswap-liquidity-ratio';
 import { useUniswapPositionInfo } from '@/lib/data/use-uniswap-position-info';
 import { ErrorVO } from '@/lib/model/error-vo';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateNumber } from '@/lib/utils/number';
 
 import TokenSelector from '../uni-common/token-selector';
@@ -57,8 +58,9 @@ export function UniswapCreatePosition() {
   });
 
   const [step, setStep] = useState<CreatePositionStep>(CreatePositionStep.SelectTokenAndFeeTier);
-  const { showTokenSelector, setShowTokenSelector, handleTokenSelect, handleBack } =
-    useTokenSelector();
+  const { showTokenSelector, setShowTokenSelector, handleTokenSelect } = useTokenSelector();
+
+  const { handleBack } = useUrlPathDrawerChange('/uniswap');
 
   const { data: positionInfo } = useUniswapPositionInfo({
     token_a_address: replaceNativeAddressUseBackend(token0?.address || ''),

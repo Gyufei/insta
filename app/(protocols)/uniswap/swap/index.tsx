@@ -24,6 +24,7 @@ import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
 import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
 import TokenSelector from '../uni-common/token-selector';
 import UniswapTokenInput from '../uni-common/uniswap-token-input';
@@ -39,6 +40,7 @@ const ANIMATION_CONFIG = {
 export function UniswapSwap() {
   const { currentComponent } = useSideDrawerStore();
   const { token } = currentComponent?.props || { token: null };
+  useUrlPathDrawerChange('/uniswap');
 
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);

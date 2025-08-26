@@ -5,18 +5,19 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
 import { Claim } from './claim';
 import { Withdraw } from './withdraw';
 
 export function AprioriWithdraw() {
-  const { setIsOpen } = useSideDrawerStore();
   const [activeTab, setActiveTab] = useState('withdraw');
+
+  const { handleBack } = useUrlPathDrawerChange('/apriori');
 
   return (
     <>
-      <SideDrawerBackHeader title="Withdraw" onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title="Withdraw" onClick={handleBack} />
       <SideDrawerLayout>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full py-0">
           <div className="mx-auto grid w-full grid-cols-2 gap-2 whitespace-nowrap">

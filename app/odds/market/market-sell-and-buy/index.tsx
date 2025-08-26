@@ -2,11 +2,13 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
 import TradingBox from '../../components/TradingBox';
 
 export function OddsMarketSellAndBuy() {
-  const { currentComponent, setIsOpen } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
+  const { handleBack } = useUrlPathDrawerChange('/odds');
   const { oddsMarket } = currentComponent?.props || {};
 
   if (!oddsMarket) {
@@ -15,7 +17,7 @@ export function OddsMarketSellAndBuy() {
 
   return (
     <>
-      <SideDrawerBackHeader title="Odds Market Trade" onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title="Odds Market Trade" onClick={handleBack} />
       <SideDrawerLayout>
         <TradingBox market={oddsMarket} />
       </SideDrawerLayout>

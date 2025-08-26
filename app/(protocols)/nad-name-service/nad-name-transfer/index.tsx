@@ -1,8 +1,9 @@
-import { ERROR_MESSAGES } from '@/config/const-msg';
 import { SendHorizontal } from 'lucide-react';
 import { isAddress } from 'viem';
 
 import { useEffect, useState } from 'react';
+
+import { ERROR_MESSAGES } from '@/config/const-msg';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
@@ -11,11 +12,13 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { useNadNameTransfer } from '@/lib/data/use-nadname-transfer';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
 export function NadNameTransfer() {
-  const { currentComponent, setIsOpen } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
   const registerName = currentComponent?.props?.registerName;
   const { mutate: transferName, isPending } = useNadNameTransfer();
+  const { handleBack } = useUrlPathDrawerChange('/nad-name-service');
 
   const [receiver, setReceiver] = useState('');
   const [error, setError] = useState<ErrorVO>({
@@ -52,7 +55,7 @@ export function NadNameTransfer() {
       { name: registerName, receiver },
       {
         onSuccess: () => {
-          setIsOpen(false);
+          handleBack();
         },
       }
     );
@@ -60,7 +63,7 @@ export function NadNameTransfer() {
 
   return (
     <>
-      <SideDrawerBackHeader title={`Transfer name`} onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title={`Transfer name`} onClick={handleBack} />
       <SideDrawerLayout>
         <div className="flex flex-col items-center content-between">
           <SendHorizontal className="w-20 h-20" />

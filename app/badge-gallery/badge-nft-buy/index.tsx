@@ -5,11 +5,13 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 
 import { eventBus } from '@/lib/state/eventBus';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
 import { BadgeNftBuyContent } from './badge-nft-buy-content';
 
 export function BadgeNftBuy() {
-  const { setIsOpen, currentComponent } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
+  const { handleBack } = useUrlPathDrawerChange('/badge-gallery');
 
   const { selectedNftName } = currentComponent?.props || {};
 
@@ -33,7 +35,7 @@ export function BadgeNftBuy() {
 
   return (
     <>
-      <SideDrawerBackHeader title="Buy Badge NFT" onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title="Buy Badge NFT" onClick={handleBack} />
       <SideDrawerLayout>
         <BadgeNftBuyContent
           nftName={drawerSelectedNftName as string}

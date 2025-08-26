@@ -12,6 +12,7 @@ import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 import { useNadFunBuy } from '@/lib/data/use-nadfun-buy';
 import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { formatBig, parseBig, truncateNumber } from '@/lib/utils/number';
 
 import { TokenHeader } from '../common/token-header';
@@ -20,7 +21,8 @@ import { useNadFunReceiveAmount } from '../common/use-nadfun-receive-amount';
 
 export function NadFunBuyToken() {
   const monToken = MONAD;
-  const { currentComponent, setIsOpen } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
+  const { handleBack } = useUrlPathDrawerChange('/nad-fun');
   const { token } = currentComponent?.props || { token: null };
 
   const { balance } = useApiMonadBalance();
@@ -106,7 +108,7 @@ export function NadFunBuyToken() {
 
   return (
     <>
-      <SideDrawerBackHeader title={`Buy ${token?.symbol}`} onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title={`Buy ${token?.symbol}`} onClick={handleBack} />
       <SideDrawerLayout>
         <TokenHeader token={token} />
         <TokenInputSection

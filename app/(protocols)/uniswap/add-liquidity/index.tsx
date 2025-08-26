@@ -13,6 +13,7 @@ import { useUniswapLiquidityRatio } from '@/lib/data/use-uniswap-liquidity-ratio
 import { IUniswapPosition } from '@/lib/data/use-uniswap-position';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateNumber } from '@/lib/utils/number';
 
 import { INFINITY_PRICE } from '../create-position/price-range-selector';
@@ -22,8 +23,9 @@ import UniswapTokenInput from '../uni-common/uniswap-token-input';
 import { usePositionDataFormat } from '../uni-common/use-position-data-format';
 
 export function UniswapAddLiquidity() {
-  const { currentComponent, setIsOpen } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
   const { mutate: addLiquidity, isPending } = useUniswapAddLiquidity();
+  const { handleBack } = useUrlPathDrawerChange('/uniswap');
 
   const { uniswapPosition } =
     (currentComponent?.props as {
@@ -50,10 +52,6 @@ export function UniswapAddLiquidity() {
     showError: false,
     errorMessage: '',
   });
-
-  function handleBack() {
-    setIsOpen(false);
-  }
 
   const { data: liquidityRatio } = useUniswapLiquidityRatio({
     tokenA: replaceNativeAddressUseBackend(token0?.address || ''),

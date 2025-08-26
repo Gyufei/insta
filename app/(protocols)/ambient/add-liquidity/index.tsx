@@ -16,14 +16,16 @@ import { useAmbientLiquidityRatio } from '@/lib/data/use-ambient-liquidity-ratio
 import { IAmbientPosition } from '@/lib/data/use-ambient-position';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateNumber } from '@/lib/utils/number';
 
 import { TokenPairAndStatus } from '../am-common/token-pair-and-status';
 import { useAmbientPositionFormat } from '../use-ambient-position-format';
 
 export function AmbientAddLiquidity() {
-  const { currentComponent, setIsOpen } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
   const { mutate: addLiquidity, isPending } = useAmbientAddLiquidity();
+  const { handleBack } = useUrlPathDrawerChange('/ambient');
 
   const { ambientPosition } =
     (currentComponent?.props as {
@@ -72,10 +74,6 @@ export function AmbientAddLiquidity() {
       }
     }
   };
-
-  function handleBack() {
-    setIsOpen(false);
-  }
 
   const handleConfirm = () => {
     if (!ambientPosition) return;

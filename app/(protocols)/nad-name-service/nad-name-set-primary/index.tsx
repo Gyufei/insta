@@ -6,11 +6,14 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 
 import { useNadNameSetPrimary } from '@/lib/data/use-nadname-set-primary';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
 export function NadNameSetPrimary() {
   const { currentComponent, setIsOpen } = useSideDrawerStore();
   const registerName = currentComponent?.props?.registerName;
   const { mutate: setPrimaryName, isPending } = useNadNameSetPrimary();
+
+  const { handleBack } = useUrlPathDrawerChange('/nad-name-service');
 
   if (!registerName) return null;
 
@@ -27,7 +30,7 @@ export function NadNameSetPrimary() {
 
   return (
     <>
-      <SideDrawerBackHeader title={`Set primary name`} onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title={`Set primary name`} onClick={handleBack} />
       <SideDrawerLayout>
         <div className="flex flex-col items-center content-between">
           <BookCopy className="w-20 h-20" />

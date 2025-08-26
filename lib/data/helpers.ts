@@ -99,7 +99,7 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
 
       const url = new URL(apiPath);
       const params = buildParams(args, address!, account!);
-      
+
       try {
         const txRes = await sendApiRequest<ITxResponse>(url.toString(), params);
         await handleTransaction(txRes, send, errorMessage);
@@ -135,7 +135,13 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
       mutationFn: executeMutation,
       onSuccess: () => {
         if (extraArgs?.refreshQueryKey?.length > 0) {
-          queryClient.invalidateQueries({ queryKey: extraArgs.refreshQueryKey });
+          if (Array.isArray(extraArgs.refreshQueryKey[0])) {
+            extraArgs.refreshQueryKey.forEach((key) => {
+              queryClient.invalidateQueries({ queryKey: key as readonly unknown[] });
+            });
+          } else {
+            queryClient.invalidateQueries({ queryKey: extraArgs.refreshQueryKey });
+          }
         }
       },
     });

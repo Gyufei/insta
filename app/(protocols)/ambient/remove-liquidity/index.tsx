@@ -13,12 +13,13 @@ import { Button } from '@/components/ui/button';
 import { IAmbientPosition } from '@/lib/data/use-ambient-position';
 import { useAmbientRemoveLiquidity } from '@/lib/data/use-ambient-remove-liquidity';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
 import { TokenPairAndStatus } from '../am-common/token-pair-and-status';
 import { useAmbientPositionFormat } from '../use-ambient-position-format';
 
 export function AmbientRemoveLiquidity() {
-  const { currentComponent, setIsOpen } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
   const { mutate: removeLiquidity, isPending } = useAmbientRemoveLiquidity();
 
   const { ambientPosition } =
@@ -27,6 +28,8 @@ export function AmbientRemoveLiquidity() {
     }) || {};
 
   const { token0, token1, token0Amount, token1Amount } = useAmbientPositionFormat(ambientPosition!);
+
+  const { handleBack } = useUrlPathDrawerChange('/ambient');
 
   const [percent, setPercent] = useState('100');
 
@@ -68,10 +71,6 @@ export function AmbientRemoveLiquidity() {
     ).toString();
     return a1;
   }, [percent, token1Amount]);
-
-  function handleBack() {
-    setIsOpen(false);
-  }
 
   const handleConfirm = () => {
     if (!ambientPosition || !percent || parseFloat(percent) <= 0 || parseFloat(percent) > 100)

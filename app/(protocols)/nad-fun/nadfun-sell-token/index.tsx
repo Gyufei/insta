@@ -13,6 +13,7 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { useNadFunSell } from '@/lib/data/use-nadfun-sell';
 import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { formatBig, parseBig, truncateNumber } from '@/lib/utils/number';
 
 import { TokenHeader } from '../common/token-header';
@@ -21,7 +22,8 @@ import { useNadFunReceiveAmount } from '../common/use-nadfun-receive-amount';
 
 export function NadFunSellToken() {
   const monToken = MONAD;
-  const { currentComponent, setIsOpen } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
+  const { handleBack } = useUrlPathDrawerChange('/nad-fun');
   const { token } = currentComponent?.props || { token: null };
 
   const balance = token?.balance ? formatBig(token.balance, token.decimals || 18) : '0';
@@ -115,7 +117,7 @@ export function NadFunSellToken() {
 
   return (
     <>
-      <SideDrawerBackHeader title={`Sell ${token?.symbol}`} onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title={`Sell ${token?.symbol}`} onClick={handleBack} />
       <SideDrawerLayout>
         <TokenHeader token={token} />
         <TokenInputSection

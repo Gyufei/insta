@@ -9,6 +9,7 @@ import { useNadNamePrice } from '@/lib/data/use-nadname-price';
 import { useNadNameRegister } from '@/lib/data/use-nadname-register';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
 import { CurrentGWei } from './current-gwei';
 import { NameAvatar } from './name-avatar';
@@ -17,8 +18,9 @@ import { RegisterSuccess } from './register-success';
 import { UseAsPrimaryName } from './use-as-primary-name';
 
 export function NadNameRegister() {
-  const { currentComponent, setIsOpen } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
   const registerName = currentComponent?.props?.registerName;
+  const { handleBack } = useUrlPathDrawerChange('/nad-name-service');
 
   const {
     data: priceData,
@@ -67,10 +69,7 @@ export function NadNameRegister() {
 
   return (
     <>
-      <SideDrawerBackHeader
-        title={`Register ${registerName}.nad`}
-        onClick={() => setIsOpen(false)}
-      />
+      <SideDrawerBackHeader title={`Register ${registerName}.nad`} onClick={handleBack} />
       <SideDrawerLayout>
         <div className="flex flex-col items-center gap-2">
           <NameAvatar name={registerName ?? ''} />
@@ -78,7 +77,7 @@ export function NadNameRegister() {
         {isRegisterSuccess ? (
           <>
             <RegisterSuccess name={registerName ?? ''} />
-            <Button className="w-full" size="sm" onClick={() => setIsOpen(false)}>
+            <Button className="w-full" size="sm" onClick={handleBack}>
               Close
             </Button>
           </>

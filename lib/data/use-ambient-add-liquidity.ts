@@ -48,6 +48,13 @@ export function useAmbientAddLiquidity() {
     },
     SUCCESS_MESSAGES.CREATE_POSITION_SUCCESS,
     ERROR_MESSAGES.CREATE_POSITION_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: [] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [
+        ['account', 'balance'],
+        ['ambient', 'position'],
+      ],
+    }
   )();
-} 
+}

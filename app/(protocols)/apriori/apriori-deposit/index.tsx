@@ -1,3 +1,6 @@
+import { APR_MONAD, MONAD } from '@/config/tokens';
+
+import { TokenDisplayCard } from '@/components/common/token-display-card';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SetMax } from '@/components/side-drawer/common/set-max';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
@@ -6,24 +9,23 @@ import { TokenInput } from '@/components/side-drawer/common/token-input';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { TokenDisplayCard } from '@/components/common/token-display-card';
 
-import { APR_MONAD, MONAD } from '@/config/tokens';
-import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { parseBig } from '@/lib/utils/number';
 import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
+import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
+import { parseBig } from '@/lib/utils/number';
 
 export function AprioriDeposit() {
   const monToken = MONAD;
   const aprMonToken = APR_MONAD;
 
-  const { setIsOpen } = useSideDrawerStore();
   const { mutate: deposit, isPending } = useAprioriDeposit();
 
   const { balance, isPending: isBalancePending } = useApiMonadBalance();
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
   const { isMax, handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
+
+  const { handleBack } = useUrlPathDrawerChange('/apriori');
 
   const receiveAmount = inputValue || '0';
 
@@ -35,7 +37,7 @@ export function AprioriDeposit() {
 
   return (
     <>
-      <SideDrawerBackHeader title="Deposit" onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title="Deposit" onClick={handleBack} />
       <SideDrawerLayout>
         <div className="pt-2 pb-10 sm:pt-4">
           <TokenDisplay

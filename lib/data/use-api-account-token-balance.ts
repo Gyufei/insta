@@ -17,7 +17,7 @@ export function useApiAccountTokenBalance() {
 
   return createQueryHook<IAccountTokenBalance[]>(
     ApiPath.accountBalance,
-    (account) => ['account', 'token_balance', wallet ?? '' + account ?? ''],
+    (account) => ['account', 'balance', wallet ?? '' + account ?? ''],
     (url, account) => {
       if (!wallet || !account) {
         return null;

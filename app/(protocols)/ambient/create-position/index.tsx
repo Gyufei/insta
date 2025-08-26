@@ -18,6 +18,7 @@ import { useAmbientCreatePosition } from '@/lib/data/use-ambient-create-position
 import { useAmbientLiquidityRatio } from '@/lib/data/use-ambient-liquidity-ratio';
 import { useAmbientPositionInfo } from '@/lib/data/use-ambient-position-info';
 import { ErrorVO } from '@/lib/model/error-vo';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateNumber } from '@/lib/utils/number';
 
 import { INFINITY_PRICE } from '../../uniswap/create-position/price-range-selector';
@@ -64,6 +65,8 @@ export function AmbientCreatePosition() {
     decimals_a: token0?.decimals || 18,
     decimals_b: token1?.decimals || 18,
   });
+
+  useUrlPathDrawerChange('/ambient');
 
   const { data: positionInfo } = useAmbientPositionInfo({
     token_a_address: replaceNativeAddressUseBackend(token0?.address || ''),

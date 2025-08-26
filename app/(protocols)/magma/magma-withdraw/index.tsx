@@ -1,3 +1,6 @@
+import { G_MONAD, MONAD } from '@/config/tokens';
+
+import { TokenDisplayCard } from '@/components/common/token-display-card';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SetMax } from '@/components/side-drawer/common/set-max';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
@@ -6,17 +9,15 @@ import { TokenInput } from '@/components/side-drawer/common/token-input';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { TokenDisplayCard } from '@/components/common/token-display-card';
 import { Separator } from '@/components/ui/separator';
 
-import { G_MONAD, MONAD } from '@/config/tokens';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useMagmaWithdraw } from '@/lib/data/use-magma-withdraw';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { formatBig, parseBig } from '@/lib/utils/number';
 
 export function MagmaWithdraw() {
-  const { setIsOpen } = useSideDrawerStore();
+  const { handleBack } = useUrlPathDrawerChange('/magma');
 
   const monToken = MONAD;
   const gMonToken = G_MONAD;
@@ -38,7 +39,7 @@ export function MagmaWithdraw() {
 
   return (
     <>
-      <SideDrawerBackHeader title="Withdraw" onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title="Withdraw" onClick={handleBack} />
       <SideDrawerLayout>
         <TokenDisplay
           isPending={isBalancePending}
