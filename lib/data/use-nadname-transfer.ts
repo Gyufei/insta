@@ -25,6 +25,13 @@ export function useNadNameTransfer() {
     },
     SUCCESS_MESSAGES.TRANSFER_NAME_SUCCESS,
     ERROR_MESSAGES.TRANSFER_NAME_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['nadname', 'my-names'] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [
+        ['nadname', 'my-names'],
+        ['account', 'balance'],
+      ],
+    }
   )();
-} 
+}

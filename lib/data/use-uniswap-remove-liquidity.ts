@@ -42,6 +42,13 @@ export function useUniswapRemoveLiquidity() {
     },
     SUCCESS_MESSAGES.REMOVE_LIQUIDITY_SUCCESS,
     ERROR_MESSAGES.REMOVE_LIQUIDITY_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: [] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [
+        ['uniswap', 'position'],
+        ['account', 'balance'],
+      ],
+    }
   )();
-} 
+}

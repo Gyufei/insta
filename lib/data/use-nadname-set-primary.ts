@@ -23,6 +23,13 @@ export function useNadNameSetPrimary() {
     },
     SUCCESS_MESSAGES.SET_PRIMARY_NAME_SUCCESS,
     ERROR_MESSAGES.SET_PRIMARY_NAME_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['nadname', 'my-names'] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [
+        ['nadname', 'my-names'],
+        ['account', 'balance'],
+      ],
+    }
   )();
 }

@@ -40,14 +40,21 @@ export function UniswapRemoveLiquidity() {
   const handleConfirm = () => {
     if (!uniswapPosition) return;
 
-    removeLiquidity({
-      token_id: uniswapPosition.v3Position.tokenId,
-      liquidity: liquidity,
-      token0_amount_min: amount0,
-      token1_amount_min: amount1,
-      token0_decimals: token0.decimals,
-      token1_decimals: token1.decimals,
-    });
+    removeLiquidity(
+      {
+        token_id: uniswapPosition.v3Position.tokenId,
+        liquidity: liquidity,
+        token0_amount_min: amount0,
+        token1_amount_min: amount1,
+        token0_decimals: token0.decimals,
+        token1_decimals: token1.decimals,
+      },
+      {
+        onSuccess: () => {
+          handleBack();
+        },
+      }
+    );
   };
 
   // 百分比变化时自动计算 token0 和 token1 的移除数量

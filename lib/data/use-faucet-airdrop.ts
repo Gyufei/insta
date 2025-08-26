@@ -26,6 +26,10 @@ export function useFaucetAirdrop() {
     },
     SUCCESS_MESSAGES.FAUCET_AIRDROP_SUCCESS,
     ERROR_MESSAGES.FAUCET_AIRDROP_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['balance'] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: ['account', 'balance'],
+    }
   )();
 }

@@ -1,5 +1,6 @@
-import { ApiPath } from './api-path';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+
+import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
 
 interface NadFunCreateTokenParams {
@@ -33,6 +34,13 @@ export function useNadFunCreateToken() {
     },
     SUCCESS_MESSAGES.CREATE_TOKEN_SUCCESS,
     ERROR_MESSAGES.CREATE_TOKEN_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['nadfun', 'my-tokens'] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [
+        ['nadfun', 'my-tokens'],
+        ['account', 'balance'],
+      ],
+    }
   )();
-} 
+}

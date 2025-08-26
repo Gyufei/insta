@@ -38,7 +38,7 @@ export function AprioriWithdraw() {
             <Withdraw />
           </TabsContent>
           <TabsContent value="claim" className="mt-2">
-            <Claim />
+            <Claim handleBack={handleBack} />
           </TabsContent>
         </Tabs>
       </SideDrawerLayout>

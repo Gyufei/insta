@@ -1,5 +1,6 @@
-import { ApiPath } from './api-path';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+
+import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
 
 interface AprioriClaimParams {
@@ -22,6 +23,13 @@ export function useAprioriClaim() {
     },
     SUCCESS_MESSAGES.CLAIM_SUCCESS,
     ERROR_MESSAGES.WITHDRAW_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['aprior', 'balance'] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [
+        ['apriori', 'balance'],
+        ['account', 'balance'],
+      ],
+    }
   )();
 }

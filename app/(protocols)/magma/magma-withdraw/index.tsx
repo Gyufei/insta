@@ -34,7 +34,11 @@ export function MagmaWithdraw() {
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, gMonToken?.decimals);
-    withdraw(amount.toString());
+    withdraw(amount.toString(), {
+      onSuccess: () => {
+        handleBack();
+      },
+    });
   };
 
   return (

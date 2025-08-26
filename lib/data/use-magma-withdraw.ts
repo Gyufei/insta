@@ -1,5 +1,6 @@
-import { ApiPath } from './api-path';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+
+import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
 
 interface MagmaWithdrawParams {
@@ -22,6 +23,13 @@ export function useMagmaWithdraw() {
     },
     SUCCESS_MESSAGES.WITHDRAW_SUCCESS,
     ERROR_MESSAGES.WITHDRAW_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['magma', 'balance'] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [
+        ['magma', 'balance'],
+        ['account', 'balance'],
+      ],
+    }
   )();
 }

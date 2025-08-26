@@ -8,7 +8,7 @@ export interface IApriorBalance {
 export function useAprioriBalance() {
   return createQueryHook<IApriorBalance>(
     ApiPath.aprioriBalance,
-    (account) => ['aprior', 'balance', account ?? ''],
+    (account) => ['apriori', 'balance', account ?? ''],
     (url, account) => {
       if (!account) {
         return null;

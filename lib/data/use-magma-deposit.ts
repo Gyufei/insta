@@ -1,5 +1,6 @@
-import { ApiPath } from './api-path';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+
+import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
 
 interface MagmaDepositParams {
@@ -22,6 +23,13 @@ export function useMagmaDeposit() {
     },
     SUCCESS_MESSAGES.DEPOSIT_SUCCESS,
     ERROR_MESSAGES.DEPOSIT_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['magma', 'balance'] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [
+        ['magma', 'balance'],
+        ['account', 'balance'],
+      ],
+    }
   )();
 }

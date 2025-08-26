@@ -38,6 +38,10 @@ export function useUniswapSwap() {
     SUCCESS_MESSAGES.SWAP_SUCCESS,
     ERROR_MESSAGES.SWAP_FAILED,
     //TODO: need update swap token balance
-    { checkAddress: true, checkAccount: true, refreshQueryKey: [] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [['account', 'balance']],
+    }
   )();
 }

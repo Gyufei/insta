@@ -11,7 +11,7 @@ import { formatBig, formatNumber } from '@/lib/utils/number';
 
 import { ClaimCard } from './claim-card';
 
-export function Claim() {
+export function Claim({ handleBack }: { handleBack: () => void }) {
   const aprMonToken = APR_MONAD;
   const { data: claimRecords, isLoading: isClaimRecordsPending } = useGetAprioriClaim();
   const { mutate: claim, isPending: isClaiming, error: claimError } = useAprioriClaim();
@@ -52,7 +52,11 @@ export function Claim() {
 
   const handleClaim = () => {
     if (selectedRequestId) {
-      claim(selectedRequestId);
+      claim(selectedRequestId, {
+        onSuccess: () => {
+          handleBack();
+        },
+      });
     }
   };
 

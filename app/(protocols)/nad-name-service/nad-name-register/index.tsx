@@ -59,10 +59,17 @@ export function NadNameRegister() {
   const handleRegister = () => {
     if (!registerName) return;
 
-    register({
-      name: registerName,
-      set_as_primary_name: isPrimary,
-    });
+    register(
+      {
+        name: registerName,
+        set_as_primary_name: isPrimary,
+      },
+      {
+        onSuccess: () => {
+          handleBack();
+        },
+      }
+    );
   };
 
   if (!registerName) return null;

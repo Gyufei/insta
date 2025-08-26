@@ -90,14 +90,21 @@ export function UniswapAddLiquidity() {
   const handleConfirm = () => {
     if (!uniswapPosition) return;
 
-    addLiquidity({
-      token_id: uniswapPosition.v3Position.tokenId,
-      token_0_amount: amount0,
-      token_1_amount: amount1,
-      slippage: '10000000000000000', // 1%
-      token0_decimals: token0.decimals,
-      token1_decimals: token1.decimals,
-    });
+    addLiquidity(
+      {
+        token_id: uniswapPosition.v3Position.tokenId,
+        token_0_amount: amount0,
+        token_1_amount: amount1,
+        slippage: '10000000000000000', // 1%
+        token0_decimals: token0.decimals,
+        token1_decimals: token1.decimals,
+      },
+      {
+        onSuccess: () => {
+          handleBack();
+        },
+      }
+    );
   };
 
   if (!uniswapPosition) {

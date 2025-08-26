@@ -74,12 +74,19 @@ export function NadFunCreateToken() {
 
     const amountIn = parseBig(values.initialBuy);
 
-    createToken({
-      token_name: values.name,
-      token_symbol: values.symbol,
-      token_logo: logoPreview,
-      amount_in: amountIn,
-    });
+    createToken(
+      {
+        token_name: values.name,
+        token_symbol: values.symbol,
+        token_logo: logoPreview,
+        amount_in: amountIn,
+      },
+      {
+        onSuccess: () => {
+          handleBack();
+        },
+      }
+    );
   }
 
   useEffect(() => {

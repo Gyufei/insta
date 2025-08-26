@@ -25,6 +25,13 @@ export function useNadNameRegister() {
     },
     SUCCESS_MESSAGES.REGISTER_SUCCESS,
     ERROR_MESSAGES.REGISTER_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['nadname', 'my-names'] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [
+        ['nadname', 'my-names'],
+        ['account', 'balance'],
+      ],
+    }
   )();
 }

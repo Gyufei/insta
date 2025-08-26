@@ -176,10 +176,17 @@ export function UniswapCreatePosition() {
         }
       : {};
 
-    createPosition({
-      ...args,
-      ...extraArgs,
-    });
+    createPosition(
+      {
+        ...args,
+        ...extraArgs,
+      },
+      {
+        onSuccess: () => {
+          handleBack();
+        },
+      }
+    );
   }
 
   function handleNextStep() {

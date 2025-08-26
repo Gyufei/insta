@@ -70,11 +70,18 @@ export function NadFunSellToken() {
     const amountIn = parseBig(inputValue);
 
     try {
-      await sellToken({
-        amount_in: amountIn.toString(),
-        amount_out_min: tokenOut.toString(),
-        token: token.address,
-      });
+      await sellToken(
+        {
+          amount_in: amountIn.toString(),
+          amount_out_min: tokenOut.toString(),
+          token: token.address,
+        },
+        {
+          onSuccess: () => {
+            handleBack();
+          },
+        }
+      );
     } catch (error) {
       // Error is already handled in the hook
     }

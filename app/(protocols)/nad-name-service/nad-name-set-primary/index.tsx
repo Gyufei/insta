@@ -9,7 +9,7 @@ import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
 export function NadNameSetPrimary() {
-  const { currentComponent, setIsOpen } = useSideDrawerStore();
+  const { currentComponent } = useSideDrawerStore();
   const registerName = currentComponent?.props?.registerName;
   const { mutate: setPrimaryName, isPending } = useNadNameSetPrimary();
 
@@ -22,7 +22,7 @@ export function NadNameSetPrimary() {
       { name: registerName },
       {
         onSuccess: () => {
-          setIsOpen(false);
+          handleBack();
         },
       }
     );

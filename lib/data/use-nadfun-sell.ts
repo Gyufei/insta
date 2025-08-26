@@ -31,6 +31,13 @@ export function useNadFunSell() {
     },
     SUCCESS_MESSAGES.SELL_TOKEN_SUCCESS,
     ERROR_MESSAGES.SELL_TOKEN_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['nadfun', 'my-tokens'] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [
+        ['nadfun', 'my-tokens'],
+        ['account', 'balance'],
+      ],
+    }
   )();
 }
