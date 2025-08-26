@@ -4,7 +4,6 @@ import { MONAD } from '@/config/tokens';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
 import { useDeposit } from '@/lib/data/use-deposit';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { parseBig } from '@/lib/utils/number';
 import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
 
@@ -13,11 +12,12 @@ import { SideDrawerLayout } from '../common/side-drawer-layout';
 import { TokenDisplay } from '../common/token-display';
 import { TokenInput } from '../common/token-input';
 import { SideDrawerBackHeader } from '../side-drawer-back-header';
+import { usePathChangeBack } from '../use-path-change-back';
 
 export function DepositToken() {
   const token = MONAD;
 
-  const { setIsOpen } = useSideDrawerStore();
+  const { handleBack } = usePathChangeBack();
   const { mutate: deposit, isPending } = useDeposit();
 
   const { balance, isPending: isBalancePending } = useWalletBalance(NetworkConfigs.monadTestnet.id);
@@ -31,7 +31,7 @@ export function DepositToken() {
 
   return (
     <>
-      <SideDrawerBackHeader title="Deposit" onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title="Deposit" onClick={handleBack} />
       <SideDrawerLayout>
         <TokenDisplay
           isPending={isBalancePending}

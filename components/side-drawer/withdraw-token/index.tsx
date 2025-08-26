@@ -18,7 +18,6 @@ import {
 import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
 import { useClaimedAirdrop } from '@/lib/data/use-claimed-airdrop';
 import { useWithdraw } from '@/lib/data/use-withdraw';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { isSameAddress } from '@/lib/utils';
 import { parseBig } from '@/lib/utils/number';
 
@@ -29,14 +28,16 @@ import { TokenDisplay } from '../common/token-display';
 import { TokenInput } from '../common/token-input';
 import { useSetMax } from '../common/use-set-max';
 import { SideDrawerBackHeader } from '../side-drawer-back-header';
+import { usePathChangeBack } from '../use-path-change-back';
 
 const TOKENS = [MONAD, MonUSD];
 
 export function WithdrawToken() {
-  const { setIsOpen } = useSideDrawerStore();
   const [selectedToken, setSelectedToken] = useState(MONAD.address);
 
   const token = TOKENS.find((t) => isSameAddress(t.address, selectedToken)) || MONAD;
+
+  const { handleBack } = usePathChangeBack();
 
   const { data: balanceData } = useApiAccountTokenBalance();
 
@@ -79,7 +80,7 @@ export function WithdrawToken() {
 
   return (
     <>
-      <SideDrawerBackHeader title="Withdraw" onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title="Withdraw" onClick={handleBack} />
       <SideDrawerLayout>
         <div className="mb-4">
           <h1 className="text-xl text-primary font-medium mb-3">Select Token</h1>

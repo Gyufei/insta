@@ -1,24 +1,28 @@
 import { useAccount } from 'wagmi';
-import { ConnectWalletButton } from './connect-wallet-button';
-import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
-import { formatAddress } from '@/lib/utils';
-import { Disconnect } from './disconnect';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { useSelectedAccount } from '@/lib/data/use-account';
-import { NoAccountDisplay } from './no-account-display';
-import { AccountDisplay } from './account-display';
+
 import Link from 'next/link';
+
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
+
+import { useSelectedAccount } from '@/lib/data/use-account';
+import { formatAddress } from '@/lib/utils';
+
 import { SideDrawerLayout } from '../common/side-drawer-layout';
+import { usePathChangeBack } from '../use-path-change-back';
+import { AccountDisplay } from './account-display';
+import { ConnectWalletButton } from './connect-wallet-button';
+import { Disconnect } from './disconnect';
+import { NoAccountDisplay } from './no-account-display';
 
 export function AccountSetting() {
   const { address } = useAccount();
-  const { setIsOpen } = useSideDrawerStore();
+  const { handleBack } = usePathChangeBack();
   const { data: accountInfo } = useSelectedAccount();
   const account = accountInfo?.sandbox_account;
 
   return (
     <>
-      <SideDrawerBackHeader title="Account Settings" onClick={() => setIsOpen(false)} />
+      <SideDrawerBackHeader title="Account Settings" onClick={handleBack} />
 
       <SideDrawerLayout>
         <div className="mb-10 flex flex-col gap-2">
