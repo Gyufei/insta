@@ -27,7 +27,6 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { isProduction } from '@/lib/data/api-path';
 import { useApiWalletBalance } from '@/lib/data/use-api-wallet-balance';
 import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
@@ -44,8 +43,25 @@ import {
   STATION_TO_TOKENS,
 } from './station-config';
 
-const MIN_SWAP_FEE = isProduction ? 3 : 1;
-const PROCESSING_FEE = isProduction ? 0.02 : 0.01;
+const MIN_TRANSACTION_AMOUNT = 2;
+
+function calculateProcessingFee(amount: number): number {
+  if (amount < 10) return 0.01;
+  if (amount < 100) return 0.02;
+  return 0.03;
+}
+
+function calculateProcessingRate(amount: number): number {
+  if (amount > 87.3) {
+    return 0.03;
+  }
+
+  if (amount > 9.8) {
+    return 0.02;
+  }
+
+  return 0.01;
+}
 
 export function TokenStation() {
   const { chainId, switchNetwork } = useAppKitNetwork();
@@ -155,10 +171,10 @@ export function TokenStation() {
     return multiply(fromAmount, String(fromPrice));
   }, [fromAmount, fromPrice]);
 
-  const toValue = useMemo(() => {
-    if (!toAmount) return '0';
-    return multiply(toAmount, String(toPrice));
-  }, [toAmount, toPrice]);
+  // const toValue = useMemo(() => {
+  //   if (!toAmount) return '0';
+  //   return multiply(toAmount, String(toPrice));
+  // }, [toAmount, toPrice]);
 
   const shouldApprove = useMemo(() => {
     if (!fromAllowance) return true;
@@ -190,7 +206,14 @@ export function TokenStation() {
 
   function handleFromMax() {
     setFromAmount(fromBalance);
-    return;
+
+    if (fromBalance === '0') {
+      setToAmount('0');
+      return;
+    }
+
+    const withSlippage = calculateToAmount(fromBalance, fromPrice, toPrice);
+    setToAmount(withSlippage);
   }
 
   function handleChangeMode(mode: 'CCIP' | 'BRIDGE') {
@@ -246,19 +269,14 @@ export function TokenStation() {
   function calculateToAmount(value: string, fPrice: number | string, tPrice: number | string) {
     const fromAmountPrice = multiply(value, String(fPrice));
 
-    // less than 1, return 0
-    if (Number(fromAmountPrice) < MIN_SWAP_FEE) {
+    // less than 2 USD, return 0
+    if (Number(fromAmountPrice) < MIN_TRANSACTION_AMOUNT) {
       return '0';
     }
 
-    const processingFee = multiply(fromAmountPrice, String(PROCESSING_FEE));
-
-    let swapFromExcludeFee;
-    if (Number(processingFee) < MIN_SWAP_FEE) {
-      swapFromExcludeFee = subtract(String(fromAmountPrice), String(MIN_SWAP_FEE));
-    } else {
-      swapFromExcludeFee = subtract(String(fromAmountPrice), String(processingFee));
-    }
+    const feeRate = calculateProcessingFee(Number(fromAmountPrice));
+    const processingFee = multiply(fromAmountPrice, String(feeRate));
+    const swapFromExcludeFee = subtract(String(fromAmountPrice), String(processingFee));
 
     const amount = divide(swapFromExcludeFee, String(tPrice));
     const withSlippage = truncateNumber(multiply(amount, String(0.9)), 8);
@@ -295,18 +313,13 @@ export function TokenStation() {
     }
 
     const toAmountPrice = multiply(value, String(tPrice));
-    const shouldFromExcludeFee = multiply(toAmountPrice, String(1.1));
+    const withSlippage = divide(toAmountPrice, String(0.9));
 
-    let swapFromReal;
-    const withFee = divide(shouldFromExcludeFee, String(1 - PROCESSING_FEE));
-    if (Number(withFee) < MIN_SWAP_FEE) {
-      swapFromReal = add(shouldFromExcludeFee, String(MIN_SWAP_FEE));
-    } else {
-      swapFromReal = withFee;
-    }
+    const feeRate = calculateProcessingRate(Number(withSlippage));
+    const swapFromReal = divide(withSlippage, String(1 - feeRate));
 
-    const withSlippage = truncateNumber(divide(swapFromReal, String(fPrice)), 8);
-    return withSlippage;
+    const fromAmount = truncateNumber(divide(swapFromReal, String(fPrice)), 8);
+    return fromAmount;
   }
 
   function handleConfirm() {
@@ -318,6 +331,11 @@ export function TokenStation() {
   }
 
   function handleSwap() {
+    if (Number(fromAmount) < MIN_TRANSACTION_AMOUNT) {
+      toast.error('The minimum transaction amount is 2 USD');
+      return;
+    }
+
     if (Number(toAmount) === 0) {
       toast.error('There is not enough handling fee to swap');
       return;
@@ -456,7 +474,7 @@ export function TokenStation() {
                   value={fromAmount}
                   onChange={handleFromChange}
                 />
-                <span className="text-[#A5ADC6] text-sm font-normal">~${fromValue}</span>
+                {/* <span className="text-[#A5ADC6] text-sm font-normal">~${fromValue}</span> */}
               </div>
             </div>
           </Card>
@@ -539,7 +557,7 @@ export function TokenStation() {
                   value={toAmount}
                   onChange={handleToChange}
                 />
-                <span className="text-[#A5ADC6] text-sm font-normal">~${toValue}</span>
+                {/* <span className="text-[#A5ADC6] text-sm font-normal">~${toValue}</span> */}
               </div>
             </div>
           </Card>
