@@ -2,7 +2,7 @@
 
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { Loader } from 'lucide-react';
-import { add, divide, multiply, subtract } from 'safebase';
+import { divide, multiply, subtract } from 'safebase';
 import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';

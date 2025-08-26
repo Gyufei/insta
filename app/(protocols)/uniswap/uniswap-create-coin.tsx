@@ -10,7 +10,7 @@ import { TitleH2 } from '@/components/common/title-h2';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 import { useImageUpload } from '@/lib/data/use-image-upload';
 import { useUniswapCreateCoin } from '@/lib/data/use-uniswap-create-coin';
@@ -46,9 +46,18 @@ export function UniswapCreateCoin() {
     tgLink: '',
     websiteLink: '',
   });
-  const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [showErrors, setShowErrors] = useState(false);
+
+  // Popover 状态管理
+  const [twitterPopoverOpen, setTwitterPopoverOpen] = useState(false);
+  const [websitePopoverOpen, setWebsitePopoverOpen] = useState(false);
+  const [twitterInput, setTwitterInput] = useState('');
+  const [websiteInput, setWebsiteInput] = useState('');
+  
+  // 链接验证错误状态
+  const [twitterInputError, setTwitterInputError] = useState('');
+  const [websiteInputError, setWebsiteInputError] = useState('');
 
   const { uploadImage, isPending: isUploading } = useImageUpload((data) => {
     // 上传成功后，将返回的 URL 设置为表单的图片值
@@ -60,6 +69,68 @@ export function UniswapCreateCoin() {
     isPending: isCreating,
     isSuccess: isCreated,
   } = useUniswapCreateCoin();
+
+  // URL 验证函数
+  const isValidUrl = (url: string): boolean => {
+    if (!url.trim()) return true; // 空值允许通过
+    
+    try {
+      // 检查是否包含协议，如果没有则添加 https://
+      let urlToCheck = url;
+      if (!urlToCheck.match(/^https?:\/\//)) {
+        urlToCheck = 'https://' + urlToCheck;
+      }
+      
+      const urlObj = new URL(urlToCheck);
+      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
+  // 处理 Twitter 链接确认
+  const handleTwitterConfirm = () => {
+    if (!isValidUrl(twitterInput)) {
+      setTwitterInputError('请输入有效的网址链接');
+      return;
+    }
+    
+    setTwitterInputError('');
+    setFormData((prev) => ({ ...prev, xLink: twitterInput }));
+    setTwitterPopoverOpen(false);
+    setTwitterInput('');
+  };
+
+  // 处理 Website 链接确认
+  const handleWebsiteConfirm = () => {
+    if (!isValidUrl(websiteInput)) {
+      setWebsiteInputError('请输入有效的网址链接');
+      return;
+    }
+    
+    setWebsiteInputError('');
+    setFormData((prev) => ({ ...prev, websiteLink: websiteInput }));
+    setWebsitePopoverOpen(false);
+    setWebsiteInput('');
+  };
+
+  // 打开 Twitter Popover 时初始化输入值
+  const handleTwitterPopoverOpen = (open: boolean) => {
+    setTwitterPopoverOpen(open);
+    if (open) {
+      setTwitterInput(formData.xLink || '');
+      setTwitterInputError(''); // 清除之前的错误
+    }
+  };
+
+  // 打开 Website Popover 时初始化输入值
+  const handleWebsitePopoverOpen = (open: boolean) => {
+    setWebsitePopoverOpen(open);
+    if (open) {
+      setWebsiteInput(formData.websiteLink || '');
+      setWebsiteInputError(''); // 清除之前的错误
+    }
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -167,6 +238,7 @@ export function UniswapCreateCoin() {
       token_symbol: formData.tickerName,
       token_url: formData.thumbnail || '',
       token_description: formData.description,
+      x_link: formData.xLink || '',
       telegram_link: formData.tgLink || '',
       website: formData.websiteLink || '',
       initial_supply: formData.totalSupply,
@@ -183,10 +255,12 @@ export function UniswapCreateCoin() {
       tickerName: '',
       totalSupply: '',
       description: '',
+      xLink: '',
+      tgLink: '',
+      websiteLink: '',
     });
     setErrors({});
     setShowErrors(false);
-    setShowMoreOptions(false);
   }
 
   useEffect(() => {
@@ -205,24 +279,10 @@ export function UniswapCreateCoin() {
             Data cannot be changed after creation
           </span>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Label
-            htmlFor="show-more-options"
-            className="text-sm leading-[140%] text-[#A5ADC6] font-normal"
-          >
-            Show more options
-          </Label>
-          <Switch
-            id="show-more-options"
-            checked={showMoreOptions}
-            onCheckedChange={setShowMoreOptions}
-          />
-        </div>
       </div>
 
       <div className="flex justify-between gap-4">
-        <div>
+        <div className="flex-col">
           <Label className="text-sm font-medium text-[#131E40]">
             Thumbnail Image <RedStart />
           </Label>
@@ -276,10 +336,189 @@ export function UniswapCreateCoin() {
               <p className="text-red-500 text-xs mt-1">{errors.thumbnail}</p>
             )}
           </div>
+
+          <div className="flex items-center gap-2 mt-4">
+            <Popover open={twitterPopoverOpen} onOpenChange={handleTwitterPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    'relative flex items-center flex-1 h-10 border-[#EBEBEB]',
+                    formData.xLink && 'border-[#6E75F9]'
+                  )}
+                >
+                  <Image
+                    src={formData.xLink ? '/icons/twitter-main.svg' : '/icons/twitter.svg'}
+                    alt="Upload"
+                    width={20}
+                    height={20}
+                  />
+                  {formData.xLink && (
+                    <Image
+                      alt="check"
+                      src="/icons/check.svg"
+                      width="16"
+                      height="16"
+                      className="absolute -top-[6px] -right-[6px]"
+                    />
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[300px] p-4">
+                <div className="space-y-3">
+                  <div>
+                    <Label className="text-sm font-medium text-foreground">X Link</Label>
+                    <Input
+                      placeholder="Enter X link"
+                      value={twitterInput}
+                      onChange={(e) => {
+                        setTwitterInput(e.target.value);
+                        if (twitterInputError) {
+                          setTwitterInputError('');
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleTwitterConfirm();
+                        }
+                      }}
+                      className={cn("mt-1", twitterInputError && "border-red-500")}
+                    />
+                    {twitterInputError && (
+                      <p className="text-red-500 text-xs mt-1">{twitterInputError}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleTwitterConfirm}
+                      className="flex-1 bg-[#6E75F9] hover:bg-[#6E75F9]/90"
+                    >
+                      Confirm
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setTwitterPopoverOpen(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+            <Popover open={websitePopoverOpen} onOpenChange={handleWebsitePopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    'relative flex items-center flex-1 h-10 border-[#EBEBEB]',
+                    formData.websiteLink && 'border-[#6E75F9]'
+                  )}
+                >
+                  <Image
+                    src={formData.websiteLink ? '/icons/website-main.svg' : '/icons/website.svg'}
+                    alt="website"
+                    width={20}
+                    height={20}
+                  />
+                  {formData.websiteLink && (
+                    <Image
+                      alt="check"
+                      src="/icons/check.svg"
+                      width="16"
+                      height="16"
+                      className="absolute -top-[6px] -right-[6px]"
+                    />
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[300px] p-4">
+                <div className="space-y-3">
+                  <div>
+                    <Label className="text-sm font-medium text-foreground">Website Link</Label>
+                    <Input
+                      placeholder="Enter website link"
+                      value={websiteInput}
+                      onChange={(e) => {
+                        setWebsiteInput(e.target.value);
+                        if (websiteInputError) {
+                          setWebsiteInputError('');
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleWebsiteConfirm();
+                        }
+                      }}
+                      className={cn("mt-1", websiteInputError && "border-red-500")}
+                    />
+                    {websiteInputError && (
+                      <p className="text-red-500 text-xs mt-1">{websiteInputError}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleWebsiteConfirm}
+                      className="flex-1 bg-[#6E75F9] hover:bg-[#6E75F9]/90"
+                    >
+                      Confirm
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setWebsitePopoverOpen(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
 
         {/* Right Column */}
         <div className="space-y-6 flex-1">
+          <div className="flex justify-between gap-4">
+            {/* Ticker Name */}
+            <div className="flex-1">
+              <Label className="text-sm font-medium text-[#131E40]">
+                Ticker Name <RedStart />
+              </Label>
+              <div className="mt-2">
+                <Input
+                  type="text"
+                  placeholder="Enter the ticker name"
+                  value={formData.tickerName}
+                  onChange={handleInputChange('tickerName')}
+                  className={cn('w-full', showErrors && errors.tickerName && 'border-red-500')}
+                />
+                {showErrors && errors.tickerName && (
+                  <p className="text-red-500 text-xs mt-1">{errors.tickerName}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Total Supply */}
+            <div className="flex-1">
+              <Label className="text-sm font-medium text-[#131E40]">
+                Total Supply <RedStart />
+              </Label>
+              <div className="mt-2">
+                <Input
+                  type="text"
+                  placeholder="Enter the total supply"
+                  value={formData.totalSupply}
+                  onChange={handleInputChange('totalSupply')}
+                  className={cn('w-full', showErrors && errors.totalSupply && 'border-red-500')}
+                />
+                {showErrors && errors.totalSupply && (
+                  <p className="text-red-500 text-xs mt-1">{errors.totalSupply}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Token Name */}
           <div>
             <Label className="text-sm font-medium text-[#131E40]">
@@ -299,132 +538,45 @@ export function UniswapCreateCoin() {
             </div>
           </div>
 
-          {/* Ticker Name */}
           <div>
             <Label className="text-sm font-medium text-[#131E40]">
-              Ticker Name <RedStart />
+              Token Description <RedStart />
             </Label>
             <div className="mt-2">
-              <Input
-                type="text"
-                placeholder="Enter the ticker name"
-                value={formData.tickerName}
-                onChange={handleInputChange('tickerName')}
-                className={cn('w-full', showErrors && errors.tickerName && 'border-red-500')}
+              <textarea
+                placeholder="Enter the description"
+                value={formData.description}
+                onChange={handleInputChange('description')}
+                rows={4}
+                className={cn(
+                  'w-full px-3 py-2 border border-input rounded-md bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 resize-none',
+                  showErrors && errors.description && 'border-red-500'
+                )}
               />
-              {showErrors && errors.tickerName && (
-                <p className="text-red-500 text-xs mt-1">{errors.tickerName}</p>
+              {showErrors && errors.description && (
+                <p className="text-red-500 text-xs mt-1">{errors.description}</p>
               )}
             </div>
           </div>
 
-          {/* Total Supply */}
-          <div>
-            <Label className="text-sm font-medium text-[#131E40]">
-              Total Supply <RedStart />
-            </Label>
-            <div className="mt-2">
-              <Input
-                type="text"
-                placeholder="Enter the total supply"
-                value={formData.totalSupply}
-                onChange={handleInputChange('totalSupply')}
-                className={cn('w-full', showErrors && errors.totalSupply && 'border-red-500')}
-              />
-              {showErrors && errors.totalSupply && (
-                <p className="text-red-500 text-xs mt-1">{errors.totalSupply}</p>
-              )}
+          {/* Bottom Section */}
+          <div className="mt-5 flex flex-col items-start gap-2">
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleCreate}
+                disabled={isCreating}
+                variant="ghost"
+                className="bg-[#6E75F9] flex items-center text-[#fff] hover:bg-[#6E75F9]/90 hover:text-[#fff] px-8 h-10 text-base font-medium"
+              >
+                {isCreating ? 'Creating...' : 'Create'}
+              </Button>
+              <span className="text-xs text-[#A5ADC6] mt-1">Cost to deploy: ~0.02 MON</span>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        className={cn(
-          'flex flex-col gap-4 mt-4 transition-all duration-300',
-          showMoreOptions ? 'flex' : 'hidden'
-        )}
-      >
-        <div className="flex justify-between gap-2">
-          <div className="flex-1">
-            <Label className="text-sm font-medium text-foreground">X Link</Label>
-            <div className="mt-2">
-              <Input
-                type="text"
-                placeholder="Enter the X link"
-                value={formData.xLink}
-                onChange={handleInputChange('xLink')}
-                className="w-full"
-              />
-            </div>
-          </div>
-
-          <div className="flex-1">
-            <Label className="text-sm font-medium text-foreground">Telegram Link</Label>
-            <div className="mt-2">
-              <Input
-                type="text"
-                placeholder="Enter the Telegram link"
-                value={formData.tgLink}
-                onChange={handleInputChange('tgLink')}
-                className="w-full"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-between gap-2">
-          <div className="flex-1">
-            <Label className="text-sm font-medium text-foreground">Website Link</Label>
-            <div className="mt-2">
-              <Input
-                type="text"
-                placeholder="Enter the website link"
-                value={formData.websiteLink}
-                onChange={handleInputChange('websiteLink')}
-                className="w-full"
-              />
-            </div>
-          </div>
-          <div className="flex-1" />
-        </div>
-      </div>
-
-      <div className="mt-4">
-        <Label className="text-sm font-medium text-[#131E40]">
-          Token Description <RedStart />
-        </Label>
-        <div className="mt-2">
-          <textarea
-            placeholder="Enter the description"
-            value={formData.description}
-            onChange={handleInputChange('description')}
-            rows={4}
-            className={cn(
-              'w-full px-3 py-2 border border-input rounded-md bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 resize-none',
-              showErrors && errors.description && 'border-red-500'
+            {hasErrors && (
+              <div className="text-red-500 text-sm">Please fill in all required fields</div>
             )}
-          />
-          {showErrors && errors.description && (
-            <p className="text-red-500 text-xs mt-1">{errors.description}</p>
-          )}
+          </div>
         </div>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="mt-5 flex items-center gap-4">
-        <Button
-          onClick={handleCreate}
-          disabled={isCreating}
-          variant="ghost"
-          className="bg-[#6E75F9] flex items-center text-[#fff] hover:bg-[#6E75F9]/90 hover:text-[#fff] px-8 h-10 text-base font-medium"
-        >
-          {isCreating ? 'Creating...' : 'Create'}
-          <span className="text-xs text-[#ffffff50] mt-1">Cost to deploy: ~0.02 MON</span>
-        </Button>
-        {hasErrors && (
-          <div className="text-red-500 text-sm">Please fill in all required fields</div>
-        )}
       </div>
     </div>
   );
