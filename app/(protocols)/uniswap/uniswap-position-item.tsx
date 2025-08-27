@@ -29,6 +29,7 @@ export function PositionItem({ position }: PositionItemProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const {
+    poolId,
     version,
     fee,
     token0: wrapToken0,
@@ -81,6 +82,7 @@ export function PositionItem({ position }: PositionItemProps) {
 
   return (
     <Card className="py-0 relative border border-[#ebebeb] hover:border-gray-200 gap-0 transition-colors">
+      <div className="p-4">{poolId}</div>
       <TokenPairAndStatus
         token0={wrapToken0}
         token1={wrapToken1}

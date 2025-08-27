@@ -11,8 +11,8 @@ import { formatBig } from '@/lib/utils/number';
 import { UNISWAP_TOKENS } from '../use-uniswap-token';
 
 const TICK_BASE = 1.0001;
-const TICK_LOWER_MIN = -887272;
-const TICK_UPPER_MAX = 887272;
+const TICK_LOWER_MIN = -886800;
+const TICK_UPPER_MAX = 886800;
 const Q96 = BigInt('79228162514264337593543950336');
 
 export function sqrtPriceX96ToPrice(sqrtPriceX96: string) {
@@ -96,6 +96,7 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
     currentPrice,
     currentLiquidity,
     liquidity,
+    poolId,
     totalLiquidityUsd,
   } = v3Position;
 
@@ -175,6 +176,7 @@ export function usePositionDataFormat(uniswapPosition: IUniswapPosition) {
   }, [liquidity]);
 
   return {
+    poolId,
     version,
     fee,
     feeTier,
