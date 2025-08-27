@@ -29,7 +29,6 @@ export function PositionItem({ position }: PositionItemProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const {
-    poolId,
     version,
     fee,
     token0: wrapToken0,
@@ -62,8 +61,12 @@ export function PositionItem({ position }: PositionItemProps) {
   };
 
   function formatPrice(price: number | string) {
-    if (Number(price) > 0.01) {
+    if (Number(price) > 0.01 && Number(price) < 10 ** 5) {
       return formatNumber(price);
+    } else if (Number(price) > 10 ** 5) {
+      const p = toNonExponential(price);
+      console.log('p', p);
+      return p.replace(/0{3,}/g, (match) => `0(${match.length})`);
     } else {
       const p = toNonExponential(price);
       return p.length > 10 ? p.slice(0, 12) : p;
@@ -71,6 +74,10 @@ export function PositionItem({ position }: PositionItemProps) {
   }
 
   function formatAmount(amount: number) {
+    if (amount.toString().startsWith('<')) {
+      return amount;
+    }
+
     return numbro(amount).format({
       thousandSeparated: true,
       average: true,
@@ -82,7 +89,6 @@ export function PositionItem({ position }: PositionItemProps) {
 
   return (
     <Card className="py-0 relative border border-[#ebebeb] hover:border-gray-200 gap-0 transition-colors">
-      <div className="p-4">{poolId}</div>
       <TokenPairAndStatus
         token0={wrapToken0}
         token1={wrapToken1}
