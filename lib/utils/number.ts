@@ -84,3 +84,23 @@ export function truncateNumber(result: string, precision: number): string {
 
   return result;
 }
+
+// 将科学记数法转化正常计数
+export function toNonExponential(num: number | string) {
+  if (typeof num === 'string') {
+    if (Number.isNaN(Number.parseFloat(num))) return num;
+    if (!num.includes('e')) return num;
+    num = Number.parseFloat(num);
+  }
+  if (typeof num !== 'number') return num;
+  if (!String(num).includes('e')) return String(num);
+
+  const strParam = String(num);
+  const index = Number(strParam.match(/\d+$/)?.[0]);
+  const basis = strParam.match(/^[\d.]+/)?.[0]?.replace(/\./, '') || '';
+  if (/e-/.test(strParam)) {
+    return basis.padStart(index + basis.length, '0').replace(/^0/, '0.');
+  } else {
+    return basis.padEnd(index + 1, '0');
+  }
+}
