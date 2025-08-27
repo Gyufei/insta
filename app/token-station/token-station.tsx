@@ -1,6 +1,6 @@
 'use client';
 
-import { useAppKitNetwork } from '@reown/appkit/react';
+import { useAppKit, useAppKitNetwork } from '@reown/appkit/react';
 import { Loader } from 'lucide-react';
 import { divide, multiply, subtract } from 'safebase';
 import { toast } from 'sonner';
@@ -66,6 +66,7 @@ function calculateProcessingRate(amount: number): number {
 export function TokenStation() {
   const { chainId, switchNetwork } = useAppKitNetwork();
   const { address } = useAccount();
+  const { open } = useAppKit();
   const prevAddressRef = useRef<string | undefined>(undefined);
 
   const isMobile = useIsMobile();
@@ -323,6 +324,11 @@ export function TokenStation() {
   }
 
   function handleConfirm() {
+    if (!address) {
+      open();
+      return;
+    }
+
     if (shouldApprove) {
       handleFromApprove();
     } else {
@@ -570,7 +576,9 @@ export function TokenStation() {
             className="min-w-40 h-12 text-xl font-medium flex leading-[24px] items-center justify-center rounded-md bg-[#6E75F9] text-white hover:bg-[#6E75F990]"
             onClick={handleConfirm}
           >
-            {isFromAllowanceLoading ? (
+            {!address ? (
+              <span>Connect Wallet</span>
+            ) : isFromAllowanceLoading ? (
               <Loader className="w-6 h-6 animate-spin" />
             ) : shouldApprove ? (
               <span className="flex items-center">
