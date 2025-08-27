@@ -331,7 +331,7 @@ export function TokenStation() {
   }
 
   function handleSwap() {
-    if (Number(fromAmount) < MIN_TRANSACTION_AMOUNT) {
+    if (Number(fromValue) < MIN_TRANSACTION_AMOUNT) {
       toast.error('The minimum transaction amount is 2 USD');
       return;
     }
