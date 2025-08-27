@@ -115,7 +115,7 @@ export function PositionItem({ position }: PositionItemProps) {
                 height={16}
               />
               <span>/</span>
-              <span>{formatNumber(token1Amount)}</span>
+              <span>{formatAmount(token1Amount)}</span>
               <LogoWithPlaceholder
                 src={wrapToken1.logo}
                 name={wrapToken1.symbol}
