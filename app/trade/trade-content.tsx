@@ -190,6 +190,7 @@ export function TokenContent() {
               label="You pay"
               showMaxButton={true}
               onMaxClick={handleMaxClick}
+              justHasBalance={true}
             />
           </Card>
 
@@ -225,6 +226,7 @@ export function TokenContent() {
               isBalancePending={isToBalancePending}
               label="You receive"
               disabled={true}
+              justHasBalance={false}
             />
           </Card>
         </div>

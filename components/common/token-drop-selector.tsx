@@ -21,6 +21,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
 import { useTokenInfo } from '@/lib/data/use-token-info';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 import { cn, isSameAddress } from '@/lib/utils';
@@ -39,6 +40,7 @@ interface TokenSelectorProps {
   showMaxButton?: boolean;
   onMaxClick?: () => void;
   className?: string;
+  justHasBalance?: boolean;
 }
 
 export function TokenDropSelector({
@@ -54,6 +56,7 @@ export function TokenDropSelector({
   showMaxButton = false,
   onMaxClick,
   className,
+  justHasBalance = false,
 }: TokenSelectorProps) {
   const [tokens, setTokens] = useState(UNISWAP_TOKENS);
   const [searchQuery, setSearchQuery] = useState('');
@@ -65,6 +68,7 @@ export function TokenDropSelector({
     isSearchingAddress ? searchQuery.trim() : ''
   );
 
+  const { data: balanceData } = useApiAccountTokenBalance();
   const { data: uniswapTokensData, isLoading: isUniswapTokensLoading } = useUniswapTokens();
 
   const allTokens = useMemo(() => {
@@ -74,10 +78,19 @@ export function TokenDropSelector({
       description: token.tokenDescription,
     }));
 
-    const all = [...tokens, ...(uniswapTokens || [])];
+    if (justHasBalance) {
+      const monBalanceTokens = balanceData?.filter((token) => token.network === 'MON');
 
-    return all;
-  }, [tokens, uniswapTokensData]);
+      const hasBalanceTokens = uniswapTokens?.filter((token) =>
+        monBalanceTokens?.some((bToken) => bToken.address === token.address)
+      );
+
+      const all = [...tokens, ...(hasBalanceTokens || [])];
+      return all;
+    }
+
+    return [...tokens, ...(uniswapTokens || [])];
+  }, [tokens, uniswapTokensData, balanceData, justHasBalance]);
 
   const filteredTokens = useMemo(() => {
     if (!searchQuery.trim()) {
