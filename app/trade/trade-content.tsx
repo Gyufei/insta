@@ -27,6 +27,7 @@ import { cn, isSameAddress } from '@/lib/utils';
 import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
 
 import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings';
+import { WMONAD_TOKEN } from '../(protocols)/uniswap/use-uniswap-token';
 
 export function TokenContent() {
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
@@ -55,7 +56,8 @@ export function TokenContent() {
   const isCanBuyPair = useMemo(() => {
     const isMonUsdSell = isSameAddress(sellToken?.address || '', MonUSD.address);
     const isMonBuy = isSameAddress(buyToken?.address || '', MONAD.address);
-    return isMonUsdSell && isMonBuy;
+    const isWMonBuy = isSameAddress(buyToken?.address || '', WMONAD_TOKEN.address);
+    return isMonUsdSell && (isMonBuy || isWMonBuy);
   }, [sellToken, buyToken]);
 
   const quoteParams =
