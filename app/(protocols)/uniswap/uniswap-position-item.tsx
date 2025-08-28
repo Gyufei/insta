@@ -65,8 +65,9 @@ export function PositionItem({ position }: PositionItemProps) {
       return formatNumber(price);
     } else if (Number(price) > 10 ** 5) {
       const p = toNonExponential(price);
-      console.log('p', p);
       return p.replace(/0{3,}/g, (match) => `0(${match.length})`);
+    } else if (Number(price) < 10 ** -12) {
+      return '<0.000000000001';
     } else {
       const p = toNonExponential(price);
       return p.length > 10 ? p.slice(0, 12) : p;
@@ -148,9 +149,7 @@ export function PositionItem({ position }: PositionItemProps) {
               <div>
                 <span className="text-gray-500">Max: </span>
                 <span className="max-w-[140px] truncate">
-                  {String(formatPrice(maxPrice)).length > 10
-                    ? String(formatPrice(maxPrice)).slice(0, 10) + '...'
-                    : formatNumber(maxPrice) || '-'}
+                  {formatPrice(maxPrice || '-')}
                   {wrapToken1.symbol} / {wrapToken0.symbol}
                 </span>
               </div>

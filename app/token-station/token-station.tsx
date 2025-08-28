@@ -267,6 +267,30 @@ export function TokenStation() {
     setToAmount(withSlippage);
   }
 
+  function handleToTokenChange(tokenSymbol: string) {
+    const allToken = STATION_TO_TOKENS;
+    const selectedToken = allToken.find((token) => token.symbol === tokenSymbol);
+
+    if (selectedToken) {
+      setTokenTo(selectedToken);
+    }
+
+    if (!selectedToken) {
+      return;
+    }
+
+    if (fromAmount === '0') {
+      setFromAmount('0');
+      return;
+    }
+
+    const fPrice = tokenFrom.symbol === 'ETH' ? Number(ETHPrice) : 1;
+    const tPrice = selectedToken.symbol === 'MON' ? Number(monPrice) : 1;
+
+    const withSlippage = calculateToAmount(fromAmount, fPrice, tPrice);
+    setToAmount(withSlippage);
+  }
+
   function calculateToAmount(value: string, fPrice: number | string, tPrice: number | string) {
     const fromAmountPrice = multiply(value, String(fPrice));
 
@@ -503,10 +527,7 @@ export function TokenStation() {
                 <Select
                   value={tokenTo.symbol}
                   onValueChange={(value) => {
-                    const selectedToken = STATION_TO_TOKENS.find((token) => token.symbol === value);
-                    if (selectedToken) {
-                      setTokenTo(selectedToken);
-                    }
+                    handleToTokenChange(value);
                   }}
                 >
                   <SelectTrigger className="w-full focus-visible:ring-0">
