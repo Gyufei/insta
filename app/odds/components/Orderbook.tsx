@@ -63,6 +63,8 @@ export default function Orderbook({ marketId, outcomeIndex }: OrderbookProps) {
 
   const { buy: bids, sell: asks, lastPrice, spread } = data;
 
+  const isEmpty = (!asks || asks.length === 0) && (!bids || bids.length === 0);
+
   return (
     <div className="bg-white relative">
       {/* Fixed Header */}
@@ -74,6 +76,12 @@ export default function Orderbook({ marketId, outcomeIndex }: OrderbookProps) {
           <div className="text-right">TOTAL</div>
         </div>
       </div>
+
+      {isEmpty && (
+        <div className="flex items-center justify-center py-8">
+          <div className="text-gray-400 text-sm">No Data</div>
+        </div>
+      )}
 
       {/* Scrollable Content */}
       <div
@@ -110,29 +118,25 @@ export default function Orderbook({ marketId, outcomeIndex }: OrderbookProps) {
             ))}
         </div>
 
-        {/* Spread and Last Price */}
-        {lastPrice ||
-          (spread && (
-            <div ref={spreadBoxRef} className="sticky z-10 px-2 py-4 bg-gray-50 border-y">
-              <div
-                className={cn(
-                  'flex items-center justify-between text-sm',
-                  lastPrice && spread
-                    ? 'justify-between'
-                    : lastPrice && !spread
-                      ? 'justify-end'
-                      : 'justify-start'
-                )}
-              >
-                {lastPrice && (
-                  <div className="font-medium">Last: ${formatNumber(lastPrice || 0)}</div>
-                )}
-                {spread && (
-                  <div className="text-gray-500">Spread: ${formatNumber(spread || 0)}</div>
-                )}
-              </div>
+        {(lastPrice || spread) && (
+          <div ref={spreadBoxRef} className="sticky z-10 px-2 py-4 bg-gray-50 border-y">
+            <div
+              className={cn(
+                'flex items-center justify-between text-sm',
+                lastPrice && spread
+                  ? 'justify-between'
+                  : lastPrice && !spread
+                    ? 'justify-end'
+                    : 'justify-start'
+              )}
+            >
+              {lastPrice && (
+                <div className="font-medium">Last: ${formatNumber(lastPrice || 0)}</div>
+              )}
+              {spread && <div className="text-gray-500">Spread: ${formatNumber(spread || 0)}</div>}
             </div>
-          ))}
+          </div>
+        )}
 
         {/* Bids (Buy Orders) */}
         <div ref={bidsRef} className="divide-y">
