@@ -1,3 +1,4 @@
+import { useAppKit } from '@reown/appkit/react';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
@@ -14,6 +15,7 @@ import { useTwitterSign } from '@/lib/utils/use-twitter-sign';
 
 export function TwitterLink() {
   const { address } = useAccount();
+  const { open } = useAppKit();
   const { data: twitterInfo } = useTwitterInfo();
 
   const isLink = !!twitterInfo?.id;
@@ -61,13 +63,16 @@ export function TwitterLink() {
   }, [error]);
 
   function handleGoTwitter() {
+    if (!address) {
+      open();
+      return;
+    }
+
     if (isSavingXBind || isLink) return;
     const cbUrl = getCallbackUrl();
     sessionStorage.setItem('twitter-callbackUrl', cbUrl);
     goTwitter(cbUrl);
   }
-
-  if (!address) return null;
 
   return (
     <div className="flex items-end gap-2">
