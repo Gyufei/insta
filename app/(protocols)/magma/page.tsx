@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { MateImageBase, MetaBaseHost } from '@/config/env-url';
+import { MetaBaseHost } from '@/config/env-url';
 
 import { TitleH2 } from '@/components/common/title-h2';
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: 'Magma',
     url: MetaBaseHost,
     siteName: 'Tadle',
-    images: `${MateImageBase}/UjXLk9pSW552Wq3jVMIQU.png`,
+    images: `https://cdn.tadle.com/images/social-card.png`,
     locale: 'en_US',
     type: 'website',
   },

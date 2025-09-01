@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     description: 'Tadle - The Parallel Sandbox opening a new dimension of accessing dApps.',
     url: MetaBaseHost,
     siteName: 'Tadle',
-    images: `${MateImageBase}/UjXLk9pSW552Wq3jVMIQU.png`,
+    images: `https://cdn.tadle.com/images/social-card.png`,
     locale: 'en_US',
     type: 'website',
   },
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     },
     description: 'Tadle - The Parallel Sandbox opening a new dimension of accessing dApps.',
     site: '@tadle_com',
-    images: [`${MateImageBase}/UjXLk9pSW552Wq3jVMIQU.png`],
+    images: [`https://cdn.tadle.com/images/social-card.png`],
   },
 };
 
@@ -74,6 +74,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <link rel="icon" href="https://cdn.tadle.com/icons/favicon-black.ico" />
       <body className={`${aeonik.variable} antialiased`}>
         <Web3AppKitContextProvider cookies={cookies}>
           <BaseLayout>{children}</BaseLayout>

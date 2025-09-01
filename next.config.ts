@@ -28,6 +28,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'img-bucket.tadle.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.tadle.com',
+      },
     ],
   },
   /* config options here */

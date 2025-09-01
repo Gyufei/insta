@@ -12,7 +12,13 @@ export function MobileBalanceHeader() {
 
   return (
     <div className={cn('h-16  md:hidden flex items-center justify-between px-4')}>
-      <Image src="/icons/logo.svg" alt="logo" width={70} height={20} className="" />
+      <Image
+        src="https://cdn.tadle.com/images/logo-black.svg"
+        alt="logo"
+        width={70}
+        height={20}
+        className=""
+      />
       <Button
         onClick={() => setIsOpen(false)}
         variant="ghost"

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { MateImageBase, MetaBaseHost } from '@/config/env-url';
+import { MetaBaseHost } from '@/config/env-url';
 
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: 'Nad.Fun',
     url: MetaBaseHost,
     siteName: 'Tadle',
-    images: `${MateImageBase}/UjXLk9pSW552Wq3jVMIQU.png`,
+    images: `https://cdn.tadle.com/images/social-card.png`,
     locale: 'en_US',
     type: 'website',
   },

@@ -508,7 +508,13 @@ export default function AppSidebar() {
       >
         <Link href="/" className={cn('flex items-center justify-center')}>
           {open ? (
-            <Image src="/icons/logo.svg" alt="logo" width={100} height={26} className="" />
+            <Image
+              src="https://cdn.tadle.com/images/logo-black.svg"
+              alt="logo"
+              width={100}
+              height={26}
+              className=""
+            />
           ) : (
             <Image src="/icons/logo-small.svg" alt="logo" width={30} height={30} className="" />
           )}
