@@ -22,9 +22,10 @@ export function useTwitterSign() {
 
   function goTwitter(cb: string) {
     const codeChange = generateRandomString(6);
+
     window.location.href = isProduction
-      ? `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=NWxiS1k1WnpIVFpGdFg2YmtfQk46MTpjaQ&redirect_uri=${cb}&scope=users.read%20tweet.read%20offline.access%20space.read&state=state&code_challenge=${codeChange}&code_challenge_method=plain`
-      : `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=NlF6aWE5Yk9kU1hfQUl2bkhLX1Y6MTpjaQ&redirect_uri=${cb}&scope=users.read%20tweet.read%20offline.access%20space.read&state=state&code_challenge=${codeChange}&code_challenge_method=plain`;
+      ? `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=NWxiS1k1WnpIVFpGdFg2YmtfQk46MTpjaQ&redirect_uri=${cb}&scope=users.read%20tweet.read%20offline.access&state=state&code_challenge=${codeChange}&code_challenge_method=plain`
+      : `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=NlF6aWE5Yk9kU1hfQUl2bkhLX1Y6MTpjaQ&redirect_uri=${cb}&scope=users.read%20tweet.read%20offline.access&state=state&code_challenge=${codeChange}&code_challenge_method=plain`;
   }
 
   function removeXVerifyCode() {
