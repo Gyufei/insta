@@ -54,7 +54,7 @@ export function UniswapCreateCoin() {
   const [websitePopoverOpen, setWebsitePopoverOpen] = useState(false);
   const [twitterInput, setTwitterInput] = useState('');
   const [websiteInput, setWebsiteInput] = useState('');
-  
+
   // 链接验证错误状态
   const [twitterInputError, setTwitterInputError] = useState('');
   const [websiteInputError, setWebsiteInputError] = useState('');
@@ -73,14 +73,14 @@ export function UniswapCreateCoin() {
   // URL 验证函数
   const isValidUrl = (url: string): boolean => {
     if (!url.trim()) return true; // 空值允许通过
-    
+
     try {
       // 检查是否包含协议，如果没有则添加 https://
       let urlToCheck = url;
       if (!urlToCheck.match(/^https?:\/\//)) {
         urlToCheck = 'https://' + urlToCheck;
       }
-      
+
       const urlObj = new URL(urlToCheck);
       return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
     } catch {
@@ -94,7 +94,7 @@ export function UniswapCreateCoin() {
       setTwitterInputError('请输入有效的网址链接');
       return;
     }
-    
+
     setTwitterInputError('');
     setFormData((prev) => ({ ...prev, xLink: twitterInput }));
     setTwitterPopoverOpen(false);
@@ -107,7 +107,7 @@ export function UniswapCreateCoin() {
       setWebsiteInputError('请输入有效的网址链接');
       return;
     }
-    
+
     setWebsiteInputError('');
     setFormData((prev) => ({ ...prev, websiteLink: websiteInput }));
     setWebsitePopoverOpen(false);
@@ -382,7 +382,7 @@ export function UniswapCreateCoin() {
                           handleTwitterConfirm();
                         }
                       }}
-                      className={cn("mt-1", twitterInputError && "border-red-500")}
+                      className={cn('mt-1', twitterInputError && 'border-red-500')}
                     />
                     {twitterInputError && (
                       <p className="text-red-500 text-xs mt-1">{twitterInputError}</p>
@@ -450,7 +450,7 @@ export function UniswapCreateCoin() {
                           handleWebsiteConfirm();
                         }
                       }}
-                      className={cn("mt-1", websiteInputError && "border-red-500")}
+                      className={cn('mt-1', websiteInputError && 'border-red-500')}
                     />
                     {websiteInputError && (
                       <p className="text-red-500 text-xs mt-1">{websiteInputError}</p>
@@ -570,7 +570,6 @@ export function UniswapCreateCoin() {
               >
                 {isCreating ? 'Creating...' : 'Create'}
               </Button>
-              <span className="text-xs text-[#A5ADC6] mt-1">Cost to deploy: ~0.02 MON</span>
             </div>
             {hasErrors && (
               <div className="text-red-500 text-sm">Please fill in all required fields</div>
