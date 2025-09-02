@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     description: 'Tadle - The Parallel Sandbox opening a new dimension of accessing dApps.',
     url: MetaBaseHost,
     siteName: 'Tadle',
-    images: `https://cdn.tadle.com/images/social-card.png`,
+    images: `https://cdn.tadle.com/images/thumbnail-1800_945.jpg`,
     locale: 'en_US',
     type: 'website',
   },
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     },
     description: 'Tadle - The Parallel Sandbox opening a new dimension of accessing dApps.',
     site: '@tadle_com',
-    images: [`https://cdn.tadle.com/images/social-card.png`],
+    images: [`https://cdn.tadle.com/images/thumbnail-1800_945.jpg`],
   },
 };
 

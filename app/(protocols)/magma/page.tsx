@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: 'Magma',
     url: MetaBaseHost,
     siteName: 'Tadle',
-    images: `https://cdn.tadle.com/images/social-card.png`,
+    images: `https://cdn.tadle.com/images/thumbnail-1800_945.jpg`,
     locale: 'en_US',
     type: 'website',
   },
