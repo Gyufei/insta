@@ -78,7 +78,8 @@ export default function NetworkSelect() {
 
   // 从URL参数获取网络
   const getNetworkFromUrl = () => {
-    const chainParam = searchParams.get('chain');
+    const nowUrl = new URL(window.location.href);
+    const chainParam = nowUrl.searchParams.get('chain');
     if (chainParam && URL_PARAM_TO_NETWORK[chainParam]) {
       const networkId = URL_PARAM_TO_NETWORK[chainParam];
       const network = NETWORKS.find((n) => String(n.id) === networkId);

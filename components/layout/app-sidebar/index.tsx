@@ -1,5 +1,6 @@
 'use client';
 
+import { useAppKitNetwork } from '@reown/appkit/react';
 import { CircleUserRound, Codesandbox, Minus, Plus, X } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
@@ -7,6 +8,8 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
+import { NetworkConfigs } from '@/config/network-config';
 
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -58,6 +61,12 @@ type MenuGroup = {
 
 const BaseNetUrlPath = ['/token-station', '/badge-gallery'];
 
+const NETWORK_TO_URL_PARAM: Record<string, string> = {
+  [String(NetworkConfigs.monadTestnet.id)]: 'monad',
+  [String(NetworkConfigs.base.id)]: 'base',
+  [String(NetworkConfigs.eth.id)]: 'eth',
+};
+
 // 组件定义
 function MenuItemLink({ item, isActive }: { item: MenuItem; isActive: boolean }) {
   const [isHover, setIsHover] = useState(false);
@@ -85,7 +94,7 @@ function MenuItemLink({ item, isActive }: { item: MenuItem; isActive: boolean })
 }
 
 function checkIsGroupActive(group: MenuGroup, pathname: string) {
-  return group.items.some((item) => pathname.includes(item.href));
+  return group.items.some((item) => item.href.startsWith(pathname) || pathname.includes(item.href));
 }
 
 const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: string }) => {
@@ -120,7 +129,10 @@ const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: st
               {group.items.map((item) => (
                 <SidebarMenuSubItem key={item.href}>
                   <SidebarMenuSubButton className="relative" asChild>
-                    <MenuItemLink item={item} isActive={pathname.startsWith(item.href)} />
+                    <MenuItemLink
+                      item={item}
+                      isActive={item.href.startsWith(pathname) || pathname.includes(item.href)}
+                    />
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
               ))}
@@ -183,9 +195,21 @@ export default function AppSidebar() {
   const { open, toggleSidebar } = useSidebar();
   const isMobile = useIsMobile();
 
+  const { chainId } = useAppKitNetwork();
+
+  function getCurrentChainNameHref(href: string) {
+    if (BaseNetUrlPath.includes(href)) {
+      const chainName = NETWORK_TO_URL_PARAM[String(chainId)];
+      if (chainName === 'monad') return href;
+      return `${href}?chain=${chainName}`;
+    }
+
+    return `${href}?chain=monad`;
+  }
+
   const testnetItems = [
     {
-      href: '/faucet',
+      href: getCurrentChainNameHref('/faucet'),
       label: 'Faucet',
       icon: (
         <Image
@@ -204,7 +228,7 @@ export default function AppSidebar() {
 
   const monadModulesItems = [
     {
-      href: '/trade',
+      href: getCurrentChainNameHref('/trade'),
       label: 'Trade',
       icon: (
         <Image src="/icons/trade-gray.svg" alt="trade" width={12} height={12} className="h-3 w-3" />
@@ -214,7 +238,7 @@ export default function AppSidebar() {
       ),
     },
     {
-      href: '/odds',
+      href: getCurrentChainNameHref('/odds'),
       label: 'Odds',
       icon: (
         <Image src="/icons/odds-gray.svg" alt="odds" width={12} height={12} className="h-3 w-3" />
@@ -232,7 +256,7 @@ export default function AppSidebar() {
 
   const baseModulesItems = [
     {
-      href: '/badge-gallery',
+      href: getCurrentChainNameHref('/badge-gallery'),
       label: 'Badge Gallery',
       icon: (
         <Image
@@ -254,7 +278,7 @@ export default function AppSidebar() {
       ),
     },
     {
-      href: '/token-station',
+      href: getCurrentChainNameHref('/token-station'),
       label: 'Token Station',
       icon: (
         <Image
@@ -279,21 +303,21 @@ export default function AppSidebar() {
 
   const protocolItems = [
     {
-      href: '/uniswap',
+      href: getCurrentChainNameHref('/uniswap'),
       label: 'Uniswap V3',
       icon: (
         <Image src="/icons/uniswap.svg" alt="uniswap" width={12} height={12} className="h-3 w-3" />
       ),
     },
     {
-      href: '/apriori',
+      href: getCurrentChainNameHref('/apriori'),
       label: 'Apriori',
       icon: (
         <Image src="/icons/apriori.svg" alt="aprior" width={12} height={12} className="h-3 w-3" />
       ),
     },
     {
-      href: '/nad-fun',
+      href: getCurrentChainNameHref('/nad-fun'),
       label: 'Nad.Fun',
       icon: (
         <Image
@@ -306,7 +330,7 @@ export default function AppSidebar() {
       ),
     },
     {
-      href: '/magma',
+      href: getCurrentChainNameHref('/magma'),
       label: 'Magma',
       icon: (
         <Image
@@ -319,7 +343,7 @@ export default function AppSidebar() {
       ),
     },
     {
-      href: '/nad-name-service',
+      href: getCurrentChainNameHref('/nad-name-service'),
       label: 'Nad Name Service',
       icon: (
         <Image
@@ -332,7 +356,7 @@ export default function AppSidebar() {
       ),
     },
     {
-      href: '/ambient',
+      href: getCurrentChainNameHref('/ambient'),
       label: 'Ambient',
       icon: (
         <Image src="/icons/ambient.svg" alt="ambient" width={12} height={12} className="h-3 w-3" />
@@ -341,7 +365,11 @@ export default function AppSidebar() {
   ];
 
   const utilitiesItems = [
-    { href: '/authority', label: 'Authority', icon: <CircleUserRound className="h-3 w-3" /> },
+    {
+      href: getCurrentChainNameHref('/authority'),
+      label: 'Authority',
+      icon: <CircleUserRound className="h-3 w-3" />,
+    },
   ];
 
   const initGroup = [
@@ -404,7 +432,7 @@ export default function AppSidebar() {
     },
   ];
 
-  const [menuGroups, setMenuGroup] = useState<MenuGroup[]>(initGroup);
+  const [menuGroups, setMenuGroup] = useState<MenuGroup[]>([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -506,7 +534,10 @@ export default function AppSidebar() {
           height: 'var(--height-navbar)',
         }}
       >
-        <Link href="/" className={cn('flex items-center justify-center')}>
+        <Link
+          href={getCurrentChainNameHref('/')}
+          className={cn('flex items-center justify-center')}
+        >
           {open ? (
             <Image
               src="https://cdn.tadle.com/images/logo-black.svg"
