@@ -134,6 +134,7 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
     const mutation = useMutation({
       mutationFn: executeMutation,
       onSuccess: () => {
+        toast.success(successMessage);
         if (extraArgs?.refreshQueryKey?.length > 0) {
           if (Array.isArray(extraArgs.refreshQueryKey[0])) {
             extraArgs.refreshQueryKey.forEach((key) => {
