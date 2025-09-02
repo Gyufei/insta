@@ -74,7 +74,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <link rel="icon" href="https://cdn.tadle.com/icons/favicon-black.ico" />
+      <link rel="icon" href="https://cdn.tadle.com/icons/favicon-purple.ico" />
       <body className={`${aeonik.variable} antialiased`}>
         <Web3AppKitContextProvider cookies={cookies}>
           <BaseLayout>{children}</BaseLayout>
