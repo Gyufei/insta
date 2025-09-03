@@ -21,12 +21,13 @@ export function TwitterLink() {
   const isLink = !!twitterInfo?.id;
   const twitterName = twitterInfo?.username || '';
 
-  const { code, error, from, goTwitter, removeXVerifyCode } = useTwitterSign();
+  const { code, error, goTwitter, removeXVerifyCode } = useTwitterSign();
   const { mutate: saveXBind, isPending: isSavingXBind } = useSaveXBind();
 
   const Host = isProduction
-    ? 'https://v3.tadle.com/uniswap'
-    : 'https://preview-v3.tadle.com/uniswap';
+    ? 'https://v3.tadle.com/uniswap?chain=monad'
+    : 'https://preview-v3.tadle.com/uniswap?chain=monad';
+  // 'http://localhost:3000/uniswap?chain=monad';
 
   function getCallbackUrl() {
     const current = window.location.origin + window.location.pathname + window.location.search;
@@ -34,11 +35,11 @@ export function TwitterLink() {
       return Host;
     }
 
-    return Host + '?from=' + current;
+    return Host; // + '?from=' + current;
   }
 
   useQuery({
-    queryKey: !from && code ? ['save-twitter', code] : [],
+    queryKey: code ? ['save-twitter', code] : [],
     queryFn: () => {
       const callbackUrl = sessionStorage.getItem('twitter-callbackUrl');
 
@@ -50,15 +51,9 @@ export function TwitterLink() {
         {
           onSuccess: () => {
             removeXVerifyCode();
-            if (from) {
-              window.location.href = from;
-            }
           },
           onError: () => {
             removeXVerifyCode();
-            if (from) {
-              window.location.href = from;
-            }
           },
         }
       );
