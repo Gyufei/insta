@@ -200,9 +200,6 @@ export function TokenStation() {
       setMode('CCIP');
     } else if (chainId === NetworkConfigs.base.id) {
       setMode('BRIDGE');
-    } else {
-      toggleNetwork(NetworkConfigs.eth);
-      setMode('CCIP');
     }
   }, [chainId]);
 
