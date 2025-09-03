@@ -22,7 +22,7 @@ export function useAprioriClaim() {
       };
     },
     SUCCESS_MESSAGES.CLAIM_SUCCESS,
-    ERROR_MESSAGES.WITHDRAW_FAILED,
+    ERROR_MESSAGES.CLAIM_FAILED,
     {
       checkAddress: true,
       checkAccount: true,

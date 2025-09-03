@@ -22,8 +22,8 @@ export function useOddsClaim() {
         token_address: MonUSD.address,
       };
     },
-    SUCCESS_MESSAGES.CLAIM_SUCCESS,
-    ERROR_MESSAGES.CLAIM_FAILED,
+    SUCCESS_MESSAGES.TOKEN_CLAIM_SUCCESS,
+    ERROR_MESSAGES.TOKEN_CLAIM_FAILED,
     { checkAddress: true, checkAccount: true, refreshQueryKey: ['user', 'balance'] }
   )();
 }

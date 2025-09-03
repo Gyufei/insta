@@ -16,8 +16,8 @@ export function useBadgeClaim() {
         wallet: address,
       };
     },
-    SUCCESS_MESSAGES.CLAIM_SUCCESS,
-    ERROR_MESSAGES.CLAIM_FAILED,
+    SUCCESS_MESSAGES.REWARDS_CLAIM_SUCCESS,
+    ERROR_MESSAGES.REWARDS_CLAIM_FAILED,
     { checkAddress: true, checkAccount: false, refreshQueryKey: ['badge', 'wallet'] }
   )();
 }
