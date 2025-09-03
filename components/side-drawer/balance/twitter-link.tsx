@@ -42,14 +42,26 @@ export function TwitterLink() {
     queryFn: () => {
       const callbackUrl = sessionStorage.getItem('twitter-callbackUrl');
 
-      saveXBind({
-        code: code!,
-        redirect_uri: callbackUrl || Host,
-      });
-
-      if (from) {
-        window.location.href = from;
-      }
+      saveXBind(
+        {
+          code: code!,
+          redirect_uri: callbackUrl || Host,
+        },
+        {
+          onSuccess: () => {
+            removeXVerifyCode();
+            if (from) {
+              window.location.href = from;
+            }
+          },
+          onError: () => {
+            removeXVerifyCode();
+            if (from) {
+              window.location.href = from;
+            }
+          },
+        }
+      );
     },
     enabled: !!code,
   });
