@@ -53,7 +53,7 @@ export default function MarketTitle({ title, id }: MarketTitleProps) {
 
   return (
     <Link
-      href={`/odds/market/${id}`}
+      href={`/odds/market/${id}?chain=monad`}
       className="block h-[30px] overflow-hidden cursor-pointer hover:text-pro-blue"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

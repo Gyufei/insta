@@ -105,6 +105,8 @@ export default function TradingBox({ market }: TradingBoxProps) {
     }
   }, [selectedOutcome]);
 
+  const estRecivedAmount = useMemo(() => {}, []);
+
   const handleAmountChange = (value: string) => {
     // Allow decimal point and up to 4 decimal places
     const cleanValue = value.replace(/[^0-9.]/g, '');
@@ -466,12 +468,19 @@ export default function TradingBox({ market }: TradingBoxProps) {
         </div>
       </div>
 
-      <div className="space-y-1.5 mb-6">
-        <div className="flex items-center justify-between">
-          <span className="text-gray-500">Est. amount received</span>
-          <span className="text-green-600 font-medium">$0.00</span>
+      {tradingMode === 'limit' && (
+        <div className="space-y-1.5 mb-6">
+          <div className="flex items-center justify-between">
+            <span className="text-gray-500">Est. amount received</span>
+            <span className="text-green-600 font-medium">
+              $
+              {tradeState.sharesToSell && tradeState.price
+                ? (tradeState.sharesToSell * (tradeState.price || 0)).toFixed(2)
+                : '0.00'}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 

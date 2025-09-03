@@ -34,7 +34,7 @@ export default function MarketHolders({ title, holders, isPositive = true }: Mar
           >
             {holder.wallet || holder.user_id ? (
               <Link
-                href={`/profile/${holder.wallet || holder.user_id}`}
+                href={`/profile/${holder.wallet || holder.user_id}?chain=monad`}
                 className="flex items-center gap-3 hover:text-blue-600"
               >
                 {holder.user_avatar ? (

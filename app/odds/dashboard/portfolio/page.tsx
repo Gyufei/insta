@@ -327,7 +327,7 @@ export default function Portfolio() {
                     />
                     <div className="min-w-0">
                       <Link
-                        href={`/market/${market.market_id}`}
+                        href={`/market/${market.market_id}?chain=monad`}
                         className="font-medium mb-1 hover:text-pro-blue block truncate"
                       >
                         {market.title}

@@ -121,7 +121,7 @@ export default function Watchlist() {
                   <div className="md:col-span-6 flex items-center gap-6 min-w-0 w-full">
                     <div className="md:hidden text-xs text-gray-400 mb-1">MARKET</div>
                     <Link
-                      href={`/odds/market/${market.id}`}
+                      href={`/odds/market/${market.id}?chain=monad`}
                       className="flex items-center gap-3 min-w-0 hover:text-pro-blue w-full"
                     >
                       <Image

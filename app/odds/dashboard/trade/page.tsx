@@ -110,7 +110,7 @@ export default function Trade() {
                       />
                       <div className="min-w-0">
                         <Link
-                          href={`/odds/market/${position.market.id}`}
+                          href={`/odds/market/${position.market.id}?chain=monad`}
                           className="font-medium mb-1 hover:text-pro-blue block truncate"
                         >
                           {position.market.title}
@@ -191,7 +191,7 @@ export default function Trade() {
                       />
                       <div className="min-w-0">
                         <Link
-                          href={`/odds/market/${order.market.id}`}
+                          href={`/odds/market/${order.market.id}?chain=monad`}
                           className="font-medium mb-1 hover:text-pro-blue block truncate"
                         >
                           {order.market.title}

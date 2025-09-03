@@ -458,7 +458,7 @@ export default function MarketList() {
                           </span>
                         </div>
                         <Link
-                          href={`/odds/market/${activity.market.id}`}
+                          href={`/odds/market/${activity.market.id}?chain=monad`}
                           className="text-sm text-gray-500 hover:text-pro-blue block mt-1"
                           style={{
                             overflow: 'hidden',
