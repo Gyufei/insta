@@ -40,6 +40,7 @@ export function useSaveXBind() {
     mutationFn: saveXBind,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      queryClient.invalidateQueries({ queryKey: ['twitter', 'info'] });
     },
     onError: (e: Error) => {
       if (e.message.includes('already exists')) {
