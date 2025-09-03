@@ -112,13 +112,13 @@ export default function NetworkSelect() {
       }
     } else if (net.id === NetworkConfigs.monadTestnet.id && isBasePath) {
       const beforePageUrl = localStorage.getItem('monad-before-page-url');
-      const goUrl = ['null', 'undefined'].includes(beforePageUrl || '')
+      const goUrl = ['null', '/null', '/undefined', 'undefined'].includes(beforePageUrl || '')
         ? '/uniswap'
         : beforePageUrl;
 
       setSelectedNetwork(net);
       switchNetwork(net);
-      router.replace(goUrl + '?chain=monad' || '/?chain=monad');
+      router.replace(goUrl + '?chain=monad');
     } else {
       setSelectedNetwork(net);
       switchNetwork(net);
