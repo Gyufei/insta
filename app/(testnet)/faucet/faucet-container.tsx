@@ -180,8 +180,10 @@ export function FaucetContainer() {
       }
     }
 
+    const wallet = !address ? inputAddress : isDSA ? address : selectedAccount || '';
+
     faucetAirdrop({
-      wallet: isDSA ? address : selectedAccount || '',
+      wallet,
       wallet_type: isDSA ? 'DSA' : 'EOA',
       token_address: selectedToken,
       sandbox_account: isDSA ? selectedAccount : currentAccount?.sandbox_account || '',
