@@ -32,6 +32,7 @@ import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useTokenStationSwapBridge } from '@/lib/data/use-token-station-swap-bridge';
 import { useTokenStationSwapCCIP } from '@/lib/data/use-token-station-swap-ccip';
+import { eventBus } from '@/lib/state/eventBus';
 import { cn, formatAddress } from '@/lib/utils';
 import { formatNumber, truncateNumber } from '@/lib/utils/number';
 import { useIsMobile } from '@/lib/utils/use-mobile';
@@ -64,7 +65,7 @@ function calculateProcessingRate(amount: number): number {
 }
 
 export function TokenStation() {
-  const { chainId, switchNetwork } = useAppKitNetwork();
+  const { chainId } = useAppKitNetwork();
   const { address } = useAccount();
   const { open } = useAppKit();
   const prevAddressRef = useRef<string | undefined>(undefined);
@@ -200,7 +201,7 @@ export function TokenStation() {
     } else if (chainId === NetworkConfigs.base.id) {
       setMode('BRIDGE');
     } else {
-      switchNetwork(NetworkConfigs.eth);
+      toggleNetwork(NetworkConfigs.eth);
       setMode('CCIP');
     }
   }, [chainId]);
@@ -217,9 +218,13 @@ export function TokenStation() {
     setToAmount(withSlippage);
   }
 
-  function handleChangeMode(mode: 'CCIP' | 'BRIDGE') {
-    if (mode === 'CCIP' && chainId !== NetworkConfigs.eth.id) {
-      switchNetwork(NetworkConfigs.eth);
+  function toggleNetwork(net: (typeof NetworkConfigs)[keyof typeof NetworkConfigs]) {
+    eventBus.publish('toggle-network', net);
+  }
+
+  function handleChangeMode(md: 'CCIP' | 'BRIDGE') {
+    if (md === 'CCIP' && chainId !== NetworkConfigs.eth.id) {
+      toggleNetwork(NetworkConfigs.eth);
 
       const selectedToken = STATION_FROM_TOKENS_ETH.find(
         (token) => token.symbol === tokenFrom.symbol
@@ -228,8 +233,8 @@ export function TokenStation() {
       if (selectedToken) {
         setTokenFrom(selectedToken as (typeof STATION_FROM_TOKENS_ETH)[number]);
       }
-    } else if (mode === 'BRIDGE' && chainId !== NetworkConfigs.base.id) {
-      switchNetwork(NetworkConfigs.base);
+    } else if (md === 'BRIDGE' && chainId !== NetworkConfigs.base.id) {
+      toggleNetwork(NetworkConfigs.base);
 
       const selectedToken = STATION_FROM_TOKENS_BASE.find(
         (token) => token.symbol === tokenFrom.symbol
@@ -240,7 +245,7 @@ export function TokenStation() {
       }
     }
 
-    setMode(mode);
+    setMode(md);
   }
 
   function handleFromTokenChange(tokenSymbol: string) {
@@ -372,9 +377,9 @@ export function TokenStation() {
     }
 
     if (mode === 'CCIP' && chainId !== NetworkConfigs.eth.id) {
-      switchNetwork(NetworkConfigs.eth);
+      toggleNetwork(NetworkConfigs.eth);
     } else if (mode === 'BRIDGE' && chainId !== NetworkConfigs.base.id) {
-      switchNetwork(NetworkConfigs.base);
+      toggleNetwork(NetworkConfigs.base);
     }
 
     if (Number(fromAmount) > Number(fromBalance)) {

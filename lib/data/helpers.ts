@@ -94,7 +94,7 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
 
     async function executeMutation(args: unknown) {
       if (!checkWalletAndAccount(extraArgs.checkAddress, extraArgs.checkAccount)) {
-        return;
+        throw new Error(ERROR_MESSAGES.WALLET_NOT_CONNECTED);
       }
 
       const url = new URL(apiPath);
@@ -102,6 +102,9 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
 
       try {
         const txRes = await sendApiRequest<ITxResponse>(url.toString(), params);
+        if ('tx_hash' in txRes) {
+          return txRes.tx_hash;
+        }
         await handleTransaction(txRes, send, errorMessage);
       } catch (err) {
         let errDisplay = (err as Error).message;

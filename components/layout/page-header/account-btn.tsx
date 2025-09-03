@@ -37,7 +37,7 @@ export function AccountBtn() {
       disabled={isLoading}
     >
       <div className="flex items-center justify-center leading-5 text-primary">
-        {account ? <>Account(#{accountInfo.id})</> : <>Create Account</>}
+        {account ? <>#{accountInfo.id}</> : <>Create Account</>}
       </div>
     </Button>
   );

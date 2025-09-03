@@ -44,7 +44,7 @@ export const MonUSD = {
   symbol: 'monUSD',
   logo: '/icons/monUSD.svg',
   decimals: 18,
-  description: 'Tadle Stablecoin on Monad',
+  description: 'Tadle Monad USD',
 };
 
 export const TokenPriceMap: Record<string, number> = {

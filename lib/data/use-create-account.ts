@@ -1,5 +1,6 @@
-import { ApiPath } from './api-path';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+
+import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
 
 export interface CreateAccountParams {
@@ -15,8 +16,8 @@ export function useCreateAccount() {
         owner: address,
       };
     },
-    SUCCESS_MESSAGES.CREATE_AUTHORITY_SUCCESS,
-    ERROR_MESSAGES.CREATE_AUTHORITY_FAILED,
+    SUCCESS_MESSAGES.CREATE_ACCOUNT_SUCCESS,
+    ERROR_MESSAGES.CREATE_ACCOUNT_FAILED,
     { checkAddress: true, checkAccount: false, refreshQueryKey: ['account'] }
   )();
 }

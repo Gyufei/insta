@@ -14,12 +14,15 @@ export function useFaucetAirdrop() {
     ApiPath.faucetAirdrop,
 
     (args: unknown, address: string) => {
-      const { token_address, sandbox_account } = args as {
+      const { wallet, token_address, wallet_type, sandbox_account } = args as {
         token_address: string;
         sandbox_account: string;
+        wallet_type: string;
+        wallet: string;
       };
       return {
-        wallet: address,
+        wallet: wallet || address,
+        wallet_type,
         token_address,
         sandbox_account,
       };
@@ -27,8 +30,8 @@ export function useFaucetAirdrop() {
     SUCCESS_MESSAGES.FAUCET_AIRDROP_SUCCESS,
     ERROR_MESSAGES.FAUCET_AIRDROP_FAILED,
     {
-      checkAddress: true,
-      checkAccount: true,
+      checkAddress: false,
+      checkAccount: false,
       refreshQueryKey: ['account', 'balance'],
     }
   )();

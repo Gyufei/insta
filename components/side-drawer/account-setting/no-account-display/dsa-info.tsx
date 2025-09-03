@@ -30,7 +30,7 @@ export function DSAInfo() {
   const button = (
     <button
       onClick={handleCreateAccountClick}
-      className="shadow-cta scale-xs flex flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-blue-500 px-4 py-2 text-sm leading-none font-semibold whitespace-nowrap text-primary-foreground duration-75 ease-out select-none focus:outline-none disabled:bg-blue-300 disabled:cursor-not-allowed dark:shadow-none"
+      className="shadow-cta scale-xs flex flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-[#6E75F9] px-4 py-2 text-sm leading-none font-semibold whitespace-nowrap text-primary-foreground duration-75 ease-out select-none focus:outline-none disabled:bg-[#6E75F980] disabled:cursor-not-allowed dark:shadow-none"
       style={{ minHeight: '24px' }}
       disabled={isDisabled}
     >

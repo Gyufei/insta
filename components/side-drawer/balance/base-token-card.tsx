@@ -74,22 +74,38 @@ export function BaseTokenCard({
             </div>
           </div>
 
-          <div className="flex flex-col pl-3 w-full">
-            <div className="flex items-center justify-between">
-              <div className="text-primary mb-1 flex items-center text-sm font-semibold whitespace-nowrap">
-                {formatNumber(balance)} {token.symbol}
-              </div>
-              <div className="flex items-center gap-2">
-                {!!onClaim && (
+          <div className="flex justify-between pl-3 w-full">
+            <div className="flex flex-col w-full">
+              <div className="flex items-center justify-between">
+                <div className="text-primary mb-1 flex items-center text-sm font-semibold whitespace-nowrap">
+                  {formatNumber(balance)} {token.symbol}
+                </div>
+
+                {!onClaim && showTrade && (
                   <Button
-                    onClick={handleClaim}
+                    onClick={handleTrade}
                     variant="outline"
                     size="sm"
-                    className="h-5 w-12 hover:border-pro-blue/20 cursor-pointer hover:bg-pro-blue/20 hover:text-pro-blue text-xs px-[10px]"
+                    className="h-5 hover:border-pro-blue/20 cursor-pointer hover:bg-pro-blue/20 hover:text-pro-blue text-xs px-[10px]"
                   >
-                    {isClaiming ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Claim'}
+                    Trade
                   </Button>
                 )}
+              </div>
+              <div className="text-xs font-medium mt-1 whitespace-nowrap text-gray-300">
+                {token.description}
+              </div>
+            </div>
+            {!!onClaim && (
+              <div className="flex flex-col items-center gap-2">
+                <Button
+                  onClick={handleClaim}
+                  variant="outline"
+                  size="sm"
+                  className="h-5 w-12 hover:border-pro-blue/20 cursor-pointer hover:bg-pro-blue/20 hover:text-pro-blue text-xs px-[10px]"
+                >
+                  {isClaiming ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Claim'}
+                </Button>
                 {showTrade && (
                   <Button
                     onClick={handleTrade}
@@ -101,10 +117,7 @@ export function BaseTokenCard({
                   </Button>
                 )}
               </div>
-            </div>
-            <div className="text-xs font-medium whitespace-nowrap text-gray-300">
-              {token.description}
-            </div>
+            )}
           </div>
         </div>
       </CardContent>

@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+import { eventBus } from '@/lib/state/eventBus';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useIsMobile } from '@/lib/utils/use-mobile';
 
@@ -124,6 +125,17 @@ export default function NetworkSelect() {
       updateUrlChainParam(String(net.id));
     }
   }
+
+  useEffect(() => {
+    const unSub = eventBus.subscribe(
+      'toggle-network',
+      (net: (typeof NetworkConfigs)[keyof typeof NetworkConfigs]) => {
+        handleSelectNetwork(net);
+      }
+    );
+
+    return () => unSub();
+  }, []);
 
   useEffect(() => {
     if (pageHasInit) {

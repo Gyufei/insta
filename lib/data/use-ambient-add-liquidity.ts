@@ -46,8 +46,8 @@ export function useAmbientAddLiquidity() {
         token_b_decimals: params.token_b_decimals,
       };
     },
-    SUCCESS_MESSAGES.CREATE_POSITION_SUCCESS,
-    ERROR_MESSAGES.CREATE_POSITION_FAILED,
+    SUCCESS_MESSAGES.ADD_LIQUIDITY_SUCCESS,
+    ERROR_MESSAGES.ADD_LIQUIDITY_FAILED,
     {
       checkAddress: true,
       checkAccount: true,

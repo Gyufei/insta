@@ -207,7 +207,7 @@ export default function AppSidebar() {
     return `${href}?chain=monad`;
   }
 
-  const testnetItems = [
+  const monadModulesItems = [
     {
       href: getCurrentChainNameHref('/faucet'),
       label: 'Faucet',
@@ -224,9 +224,6 @@ export default function AppSidebar() {
         <Image src="/icons/faucet.svg" alt="faucet" width={12} height={12} className="h-3 w-3" />
       ),
     },
-  ];
-
-  const monadModulesItems = [
     {
       href: getCurrentChainNameHref('/trade'),
       label: 'Trade',
@@ -413,23 +410,6 @@ export default function AppSidebar() {
       ),
       items: monadModulesItems,
     },
-    {
-      id: 'testnet',
-      label: 'Testnet',
-      icon: (
-        <Image
-          src="/icons/testnet-gray.svg"
-          alt="testnet"
-          width={12}
-          height={12}
-          className="h-5 w-5"
-        />
-      ),
-      hoverIcon: (
-        <Image src="/icons/testnet.svg" alt="testnet" width={12} height={12} className="h-5 w-5" />
-      ),
-      items: testnetItems,
-    },
   ];
 
   const [menuGroups, setMenuGroup] = useState<MenuGroup[]>([]);
@@ -570,7 +550,7 @@ export default function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter>{open && <Version version="v0.1.0" />}</SidebarFooter>
+      <SidebarFooter>{open && <Version version="v3.2.0" />}</SidebarFooter>
     </Sidebar>
   );
 }

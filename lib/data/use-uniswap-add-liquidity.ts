@@ -40,8 +40,8 @@ export function useUniswapAddLiquidity() {
         token1_decimals: params.token1_decimals,
       };
     },
-    SUCCESS_MESSAGES.CREATE_POSITION_SUCCESS,
-    ERROR_MESSAGES.CREATE_POSITION_FAILED,
+    SUCCESS_MESSAGES.ADD_LIQUIDITY_SUCCESS,
+    ERROR_MESSAGES.ADD_LIQUIDITY_FAILED,
     {
       checkAddress: true,
       checkAccount: true,

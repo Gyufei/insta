@@ -35,8 +35,8 @@ export function useTokenStationSwapBridge() {
         token_out_name: params.token_out_name,
       };
     },
-    SUCCESS_MESSAGES.SWAP_SUCCESS,
-    ERROR_MESSAGES.SWAP_FAILED,
+    SUCCESS_MESSAGES.TOP_UP_SUCCESS,
+    ERROR_MESSAGES.TOP_UP_FAILED,
     { checkAddress: true, checkAccount: false, refreshQueryKey: [] }
   )();
 }
