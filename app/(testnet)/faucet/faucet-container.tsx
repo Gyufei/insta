@@ -1,6 +1,5 @@
 'use client';
 
-import { useAppKit } from '@reown/appkit/react';
 import { CircleAlert, Wallet } from 'lucide-react';
 import { toast } from 'sonner';
 import { isAddress } from 'viem';
@@ -27,11 +26,11 @@ import { useCreateAccount } from '@/lib/data/use-create-account';
 import { useFaucetAirdrop } from '@/lib/data/use-faucet-airdrop';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { cn, formatAddress } from '@/lib/utils';
+import { useWalletConnect } from '@/lib/web3/use-wallet-connect';
 
 export function FaucetContainer() {
   const { address } = useAccount();
-  const { open } = useAppKit();
-  const { data: accountInfo, isLoading: isLoadingAccount } = useSelectedAccount();
+  const { data: accountInfo } = useSelectedAccount();
 
   const { isPending: isCreatePending } = useCreateAccount();
   const { setCurrentComponent } = useSideDrawerStore();
@@ -39,6 +38,7 @@ export function FaucetContainer() {
 
   const { data: accounts } = useAccounts();
   const { data: currentAccount } = useSelectedAccount();
+  const { openWeb3Modal } = useWalletConnect();
 
   const [selectOpen, setSelectOpen] = useState(false);
   const [monAddress, setMonAddress] = useState<string | null>(
@@ -52,7 +52,6 @@ export function FaucetContainer() {
   const [inputValid, setInputValid] = useState(true);
 
   const [isInit, setIsInit] = useState(false);
-  const [isWaitConnect, setIsWaitConnect] = useState(false);
 
   const [selectedToken, setSelectedToken] = useState(MONAD.address);
   const isCheckMon = selectedToken === MONAD.address;
@@ -115,14 +114,6 @@ export function FaucetContainer() {
   }, [address, isCheckMon, isCheckMonUSD, isDSA]);
 
   useEffect(() => {
-    if (isWaitConnect && address && !isLoadingAccount && !accountInfo?.sandbox_account) {
-      setCurrentComponent({ name: 'AccountSetting' });
-      toast.info('Please create your DSA account.');
-      setIsWaitConnect(false);
-    }
-  }, [isWaitConnect, address, isLoadingAccount, accountInfo?.sandbox_account]);
-
-  useEffect(() => {
     if (isInit) {
       return;
     }
@@ -149,8 +140,7 @@ export function FaucetContainer() {
   };
 
   const handleConnectWallet = () => {
-    open();
-    setIsWaitConnect(true);
+    openWeb3Modal();
   };
 
   const handleInputChange = (value: string) => {

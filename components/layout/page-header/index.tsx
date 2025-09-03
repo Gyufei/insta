@@ -1,6 +1,6 @@
 'use client';
 
-import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react';
+import { useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 import { Power } from 'lucide-react';
 
 import Image from 'next/image';
@@ -10,22 +10,19 @@ import { Button } from '@/components/ui/button';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/lib/utils/use-mobile';
+import { useWalletConnect } from '@/lib/web3/use-wallet-connect';
 
 import SidebarToggle from '../sidebar-toggle';
 import { AccountBtn } from './account-btn';
 import NetworkSelect from './network-select';
 
 export function PageHeader() {
-  const { open } = useAppKit();
   const { disconnect } = useDisconnect();
   const { isConnected } = useAppKitAccount();
 
   const { setIsOpen } = useSideDrawerStore();
   const isMobile = useIsMobile();
-
-  function openWeb3Modal() {
-    open();
-  }
+  const { openWeb3Modal } = useWalletConnect();
 
   function openBalanceDrawer() {
     setIsOpen(true);
