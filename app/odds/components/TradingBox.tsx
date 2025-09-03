@@ -105,8 +105,6 @@ export default function TradingBox({ market }: TradingBoxProps) {
     }
   }, [selectedOutcome]);
 
-  const estRecivedAmount = useMemo(() => {}, []);
-
   const handleAmountChange = (value: string) => {
     // Allow decimal point and up to 4 decimal places
     const cleanValue = value.replace(/[^0-9.]/g, '');
