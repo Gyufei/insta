@@ -31,7 +31,7 @@ import { cn, formatAddress } from '@/lib/utils';
 export function FaucetContainer() {
   const { address } = useAccount();
   const { open } = useAppKit();
-  const { data: accountInfo } = useSelectedAccount();
+  const { data: accountInfo, isLoading: isLoadingAccount } = useSelectedAccount();
 
   const { isPending: isCreatePending } = useCreateAccount();
   const { setCurrentComponent } = useSideDrawerStore();
@@ -115,11 +115,12 @@ export function FaucetContainer() {
   }, [address, isCheckMon, isCheckMonUSD, isDSA]);
 
   useEffect(() => {
-    if (isWaitConnect && address) {
+    if (isWaitConnect && address && !isLoadingAccount && !accountInfo?.sandbox_account) {
       setCurrentComponent({ name: 'AccountSetting' });
+      toast.info('Please create your DSA account.');
       setIsWaitConnect(false);
     }
-  }, [isWaitConnect, address]);
+  }, [isWaitConnect, address, isLoadingAccount, accountInfo?.sandbox_account]);
 
   useEffect(() => {
     if (isInit) {
