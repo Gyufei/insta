@@ -21,5 +21,5 @@ export const metadata: Metadata = {
 };
 
 export default function Odds() {
-  redirect('/odds/markets');
+  redirect('/odds/markets?chain=monad');
 }

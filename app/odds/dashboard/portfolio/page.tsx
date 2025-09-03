@@ -274,7 +274,7 @@ export default function Portfolio() {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-medium text-[#131E40]">My Markets</h2>
         <button
-          onClick={() => router.push('/odds/dashboard/create-market')}
+          onClick={() => router.push('/odds/dashboard/create-market?chain=monad')}
           className="px-4 py-2 bg-[#6E75F910] text-[#6E75F9] rounded-[8px] hover:bg-[#6E75F920]"
         >
           Create Market

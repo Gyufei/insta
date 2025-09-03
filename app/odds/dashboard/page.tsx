@@ -21,5 +21,5 @@ export const metadata: Metadata = {
 };
 
 export default function DashboardPage() {
-  redirect('/odds/dashboard/trade');
+  redirect('/odds/dashboard/trade?chain=monad');
 }

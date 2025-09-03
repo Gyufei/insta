@@ -19,9 +19,19 @@ export default function DashboardNav() {
 
   // Define all possible views and their icons
   const allViews = [
-    { id: 'trade', href: '/odds/dashboard/trade', label: 'Trade', icon: Layers },
-    { id: 'portfolio', href: '/odds/dashboard/portfolio', label: 'Portfolio', icon: SwatchBook },
-    { id: 'watchlist', href: '/odds/dashboard/watchlist', label: 'WatchList', icon: Star },
+    { id: 'trade', href: '/odds/dashboard/trade?chain=monad', label: 'Trade', icon: Layers },
+    {
+      id: 'portfolio',
+      href: '/odds/dashboard/portfolio?chain=monad',
+      label: 'Portfolio',
+      icon: SwatchBook,
+    },
+    {
+      id: 'watchlist',
+      href: '/odds/dashboard/watchlist?chain=monad',
+      label: 'WatchList',
+      icon: Star,
+    },
   ];
 
   function isActive(view: IView) {

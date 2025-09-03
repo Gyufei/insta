@@ -168,20 +168,20 @@ export default function OddsHeader() {
 
           <nav className="flex-none flex items-center md:gap-6 gap-2 md:border-none border border-[#EBEBEB] rounded-[8px] p-1">
             <NavLink
-              href="/odds/markets"
+              href="/odds/markets?chain=monad"
               label="Markets"
               icon={<Grid className="h-4 w-4" />}
               isActive={pathname === '/odds' || pathname.startsWith('/odds/market')}
             />
             <NavLink
-              href="/odds/dashboard"
+              href="/odds/dashboard?chain=monad"
               icon={<LayoutDashboard className="h-4 w-4" />}
               label="Dashboard"
               isActive={pathname.startsWith('/odds/dashboard')}
             />
             <NavLink
               icon={<Medal className="h-4 w-4" />}
-              href="/odds/ranks"
+              href="/odds/ranks?chain=monad"
               label="Ranks"
               isActive={pathname === '/odds/ranks'}
             />

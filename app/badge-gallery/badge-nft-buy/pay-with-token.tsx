@@ -98,6 +98,7 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
   }, [address, chainId]);
 
   const [init, setInit] = useState(false);
+
   useEffect(() => {
     if (init) {
       return;

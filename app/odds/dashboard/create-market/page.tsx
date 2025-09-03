@@ -211,7 +211,7 @@ export default function CreateMarketPage() {
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm">
-        <Link href="/dashboard/portfolio" className="text-gray-500 hover:text-gray-900">
+        <Link href="/dashboard/portfolio?chain=monad" className="text-gray-500 hover:text-gray-900">
           Portfolio
         </Link>
         <ChevronRight className="h-4 w-4 text-gray-400" />
