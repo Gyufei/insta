@@ -313,7 +313,9 @@ export function FaucetContainer() {
         )}
       </div>
 
-      <p className="text-xs mt-2 text-[#A5ADC6] font-normal">{tipContent}</p>
+      {(!isCheckMon || (isCheckMon && address)) && (
+        <p className="text-xs mt-2 text-[#A5ADC6] font-normal">{tipContent}</p>
+      )}
 
       {!address && (
         <Button

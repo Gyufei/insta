@@ -43,7 +43,7 @@ export function AccountCard({
               isCurrent ? 'text-primary-foreground' : 'text-primary'
             )}
           >
-            V1
+            V3
           </div>
           <div
             className={cn(
