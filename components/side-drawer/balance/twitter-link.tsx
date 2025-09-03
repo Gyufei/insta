@@ -34,7 +34,7 @@ export function TwitterLink() {
       return Host;
     }
 
-    return Host + '?from=' + encodeURIComponent(current);
+    return Host + '?from=' + current;
   }
 
   useQuery({
@@ -42,14 +42,25 @@ export function TwitterLink() {
     queryFn: () => {
       const callbackUrl = sessionStorage.getItem('twitter-callbackUrl');
 
-      saveXBind({
-        code: code!,
-        redirect_uri: callbackUrl || Host,
-      });
-
-      if (from) {
-        window.location.href = decodeURIComponent(from);
-      }
+      saveXBind(
+        {
+          code: code!,
+          redirect_uri: callbackUrl || Host,
+        },
+        {
+          onError: (error) => {
+            console.log('error', error);
+            if (from) {
+              window.location.href = from;
+            }
+          },
+          onSuccess: () => {
+            if (from) {
+              window.location.href = from;
+            }
+          },
+        }
+      );
     },
     enabled: !!code,
   });
