@@ -54,10 +54,10 @@ export function TokenHeader({ token }: TokenHeaderProps) {
 
         <div className="mt-4 flex items-center gap-2 rounded-sm bg-gray-200/20 p-1 text-gray-400">
           <span className="text-gray-400 flex items-center truncate font-mono text-xs">
-            {token?.address || '0x916e57F62e068635E93942Cd9Ee65e3fd4De2379'}
+            {token?.address || ''}
           </span>
           <button onClick={copyToClipboard} className="flex cursor-pointer items-center">
-            <Copy className="text-gray-300-500 h-4 w-4" />
+            <Copy className="h-4 w-4" />
           </button>
         </div>
       </CardContent>

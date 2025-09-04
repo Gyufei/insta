@@ -1,11 +1,13 @@
 'use client';
-import { ClipboardCheck, ClipboardCopyIcon } from 'lucide-react';
 
 import { NetworkConfigs } from '@/config/network-config';
+
+import Cppy from '@/components/icon/cppy';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
 import { useSelectedAccount } from '@/lib/data/use-account';
-import { useCopyToClipboard } from '@/lib/utils/use-copy-to-clipboard';
 import { cn } from '@/lib/utils';
+import { useCopyToClipboard } from '@/lib/utils/use-copy-to-clipboard';
 
 export function AccountAddressCopy({ className }: { className?: string }) {
   const { data: accountInfo } = useSelectedAccount();
@@ -30,13 +32,9 @@ export function AccountAddressCopy({ className }: { className?: string }) {
           <TooltipTrigger asChild>
             <button
               onClick={copyToClipboard}
-              className="text-primary hover:text-primary/50 active:text-primary/50 dark:border-gray/50 dark:bg-blue has-tooltip relative -ml-px inline-flex flex-shrink-0 cursor-pointer items-center rounded-r-sm border border-gray-300 bg-gray-50 px-2 py-2 transition duration-150 ease-in-out focus:border-blue-300 focus:ring-blue-300 focus:outline-none active:bg-gray-100"
+              className="text-primary hover:text-primary/50 active:text-primary/50 dark:border-gray/50 dark:bg-blue has-tooltip relative -ml-px inline-flex flex-shrink-0 cursor-pointer items-center rounded-r-sm border border-gray-300 bg-gray-50 px-2 py-2 transition duration-150 ease-in-out focus:outline-none active:bg-gray-100"
             >
-              {isCopied ? (
-                <ClipboardCheck className="h-5 w-5 flex-shrink-0 dark:opacity-90" />
-              ) : (
-                <ClipboardCopyIcon className="h-5 w-5 flex-shrink-0 dark:opacity-90" />
-              )}
+              <Cppy className="h-5 w-5 flex-shrink-0 dark:opacity-90" />
             </button>
           </TooltipTrigger>
           <TooltipContent>
