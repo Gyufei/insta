@@ -12,12 +12,18 @@ export function useWalletConnect() {
   const { data: accounts, refetch: refetchAccounts } = useAccounts();
 
   const [waitConnect, setWaitConnect] = useState(false);
-  const { setCurrentComponent } = useSideDrawerStore();
+  const { currentComponent, setCurrentComponent } = useSideDrawerStore();
 
   function openWeb3Modal() {
     open();
     setWaitConnect(true);
   }
+
+  useEffect(() => {
+    if (!isConnected && currentComponent?.name === 'AccountSetting') {
+      setCurrentComponent({ name: 'Balance' });
+    }
+  }, [isConnected, currentComponent, setCurrentComponent]);
 
   useEffect(() => {
     if ((accounts || [])?.length > 0) {
