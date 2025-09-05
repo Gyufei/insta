@@ -17,6 +17,16 @@ export function formatNumber(num: string | number) {
   });
 }
 
+export function formatNumberUnit(num: string | number) {
+  return numbro(num).format({
+    thousandSeparated: true,
+    average: true,
+    mantissa: 4,
+    trimMantissa: true,
+    roundingFunction: Math.floor,
+  });
+}
+
 export function formatPercentage(num: string | number) {
   return numbro(num).format({
     trimMantissa: true,

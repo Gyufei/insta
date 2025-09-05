@@ -20,6 +20,11 @@ export function useWalletConnect() {
   }
 
   useEffect(() => {
+    if (accountInfo) {
+      setWaitConnect(false);
+      return;
+    }
+
     if (!isConnected || accountInfo || isLoading || !waitConnect) {
       return;
     }

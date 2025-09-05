@@ -28,6 +28,8 @@ export function WithPointImgCDN(path: string, chain: string) {
 }
 
 export const ApiPath = {
+  metrics: `${ApiHost}/metrics`,
+
   account: `${ApiHost}/account/sandbox_account`,
   createAccount: `${ApiHost}/account/create_sandbox_account`,
   addAuthority: `${ApiHost}/account/enable`,

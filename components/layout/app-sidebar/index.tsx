@@ -1,16 +1,21 @@
 'use client';
 
+// React imports
+// Third-party libraries
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { CircleUserRound, Codesandbox, Minus, Plus, X } from 'lucide-react';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
+// Next.js imports
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+// Internal imports
 import { NetworkConfigs } from '@/config/network-config';
 
+// UI components
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
@@ -41,6 +46,7 @@ import { useSelectedAccount } from '@/lib/data/use-account';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/lib/utils/use-mobile';
 
+// Local components
 import { Version } from './version';
 
 // 类型定义
@@ -57,9 +63,12 @@ type MenuGroup = {
   icon: React.ReactNode;
   hoverIcon?: React.ReactNode;
   items: MenuItem[];
+  isMenuItem: boolean;
+  href?: string;
 };
 
-const BaseNetUrlPath = ['/token-station', '/badge-gallery'];
+// 常量配置
+const BASE_NET_URL_PATHS = ['/token-station', '/badge-gallery'];
 
 const NETWORK_TO_URL_PARAM: Record<string, string> = {
   [String(NetworkConfigs.monadTestnet.id)]: 'monad',
@@ -67,147 +76,19 @@ const NETWORK_TO_URL_PARAM: Record<string, string> = {
   [String(NetworkConfigs.eth.id)]: 'eth',
 };
 
-// 组件定义
-function MenuItemLink({ item, isActive }: { item: MenuItem; isActive: boolean }) {
-  const [isHover, setIsHover] = useState(false);
+const WINDOW_BREAKPOINTS = {
+  MOBILE: 768,
+  DESKTOP: 1440,
+} as const;
 
-  return (
-    <Link
-      onMouseEnter={() => setIsHover(true)}
-      onMouseLeave={() => setIsHover(false)}
-      href={item.href}
-      className={cn(
-        'flex p-[10px] relative items-center text-pro-gray overflow-visible rounded-md',
-        (isActive || isHover) && 'bg-white text-primary'
-      )}
-    >
-      <div
-        className={cn(
-          'absolute h-6 w-[2px] bg-primary transition-all duration-300 -left-[11px]',
-          isActive || isHover ? 'opacity-100' : 'opacity-0'
-        )}
-      />
-      {isActive || isHover ? item.hoverIcon || item.icon : item.icon}
-      <span className="ml-2 text-xs font-medium">{item.label}</span>
-    </Link>
-  );
-}
+const APP_VERSION = 'v3.2.0';
 
-function checkIsGroupActive(group: MenuGroup, pathname: string) {
-  return group.items.some((item) => item.href.startsWith(pathname) || pathname.includes(item.href));
-}
+// 全局状态
+let previousPathname = '';
 
-const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: string }) => {
-  const [isHover, setIsHover] = useState(false);
-  const isGroupActive = checkIsGroupActive(group, pathname);
-
-  return (
-    <Collapsible defaultOpen className="group/collapsible">
-      <SidebarGroup className="py-0 px-[10px]">
-        <SidebarGroupLabel
-          asChild
-          className={cn(
-            'h-10',
-            isHover && 'text-primary bg-white',
-            isGroupActive ? 'text-primary bg-white/60' : 'text-pro-gray'
-          )}
-        >
-          <CollapsibleTrigger
-            onMouseEnter={() => setIsHover(true)}
-            onMouseLeave={() => setIsHover(false)}
-            className={cn('flex w-full items-center')}
-          >
-            {isGroupActive ? group.hoverIcon || group.icon : group.icon}
-            <span className="ml-2 text-sm font-medium">{group.label}</span>
-            <Minus className="ml-auto h-5 w-5 transition-transform hidden group-data-[state=open]/collapsible:inline-block" />
-            <Plus className="ml-auto h-5 w-5 transition-transform inline-block group-data-[state=open]/collapsible:hidden" />
-          </CollapsibleTrigger>
-        </SidebarGroupLabel>
-        <CollapsibleContent>
-          <SidebarGroupContent>
-            <SidebarMenuSub className="pr-0 !mr-0 mt-2">
-              {group.items.map((item) => (
-                <SidebarMenuSubItem key={item.href}>
-                  <SidebarMenuSubButton className="relative" asChild>
-                    <MenuItemLink
-                      item={item}
-                      isActive={item.href.startsWith(pathname) || pathname.includes(item.href)}
-                    />
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              ))}
-            </SidebarMenuSub>
-          </SidebarGroupContent>
-        </CollapsibleContent>
-      </SidebarGroup>
-    </Collapsible>
-  );
-};
-
-const CollapsedMenuGroup = ({
-  group,
-  isMobile,
-  pathname,
-}: {
-  group: MenuGroup;
-  isMobile: boolean;
-  pathname: string;
-}) => {
-  const isGroupActive = checkIsGroupActive(group, pathname);
-
-  return (
-    <DropdownMenu>
-      <SidebarMenuItem>
-        <DropdownMenuTrigger asChild>
-          <SidebarMenuButton
-            className={cn('ml-2', isGroupActive ? 'text-primary bg-white' : 'text-pro-gray')}
-          >
-            {group.icon}
-          </SidebarMenuButton>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          side={isMobile ? 'bottom' : 'right'}
-          align={isMobile ? 'end' : 'start'}
-          className="min-w-56 rounded-lg"
-        >
-          {group.items.map((item) => (
-            <DropdownMenuItem asChild key={item.href}>
-              <Link href={item.href} className="flex items-center">
-                {isGroupActive ? item.hoverIcon || item.icon : item.icon}
-                <span className="ml-2">{item.label}</span>
-              </Link>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </SidebarMenuItem>
-    </DropdownMenu>
-  );
-};
-
-let prevPath = '';
-
-export default function AppSidebar() {
-  const { data: accountInfo } = useSelectedAccount();
-
-  const pathname = usePathname();
-  const isBasePath = BaseNetUrlPath.includes(pathname);
-
-  const { open, toggleSidebar } = useSidebar();
-  const isMobile = useIsMobile();
-
-  const { chainId } = useAppKitNetwork();
-
-  function getCurrentChainNameHref(href: string) {
-    if (BaseNetUrlPath.includes(href)) {
-      const chainName = NETWORK_TO_URL_PARAM[String(chainId)];
-      if (chainName === 'monad') return href;
-      return `${href}?chain=${chainName}`;
-    }
-
-    return `${href}?chain=monad`;
-  }
-
-  const monadModulesItems = [
+// 菜单配置函数
+function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string) {
+  const monadModulesItems: MenuItem[] = [
     {
       href: getCurrentChainNameHref('/faucet'),
       label: 'Faucet',
@@ -244,14 +125,9 @@ export default function AppSidebar() {
         <Image src="/icons/odds.svg" alt="odds" width={12} height={12} className="h-3 w-3" />
       ),
     },
-    // {
-    //   href: '/c2c',
-    //   label: 'C2C',
-    //   icon: <Circle className="h-3 w-3" />,
-    // },
   ];
 
-  const baseModulesItems = [
+  const baseModulesItems: MenuItem[] = [
     {
       href: getCurrentChainNameHref('/badge-gallery'),
       label: 'Badge Gallery',
@@ -298,7 +174,7 @@ export default function AppSidebar() {
     },
   ];
 
-  const protocolItems = [
+  const protocolItems: MenuItem[] = [
     {
       href: getCurrentChainNameHref('/uniswap'),
       label: 'Uniswap V3',
@@ -361,7 +237,7 @@ export default function AppSidebar() {
     },
   ];
 
-  const utilitiesItems = [
+  const utilitiesItems: MenuItem[] = [
     {
       href: getCurrentChainNameHref('/authority'),
       label: 'Authority',
@@ -369,7 +245,55 @@ export default function AppSidebar() {
     },
   ];
 
-  const initGroup = [
+  return {
+    monadModulesItems,
+    baseModulesItems,
+    protocolItems,
+    utilitiesItems,
+  };
+}
+
+function createInitialMenuGroups(getCurrentChainNameHref: (href: string) => string): MenuGroup[] {
+  const { monadModulesItems, protocolItems } = createMenuItemsConfig(getCurrentChainNameHref);
+
+  return [
+    {
+      id: 'metrics',
+      label: 'Metrics',
+      href: getCurrentChainNameHref('/metrics'),
+      icon: (
+        <Image
+          src="/icons/metrics-gray.svg"
+          alt="modules"
+          width={12}
+          height={12}
+          className="h-5 w-5"
+        />
+      ),
+      hoverIcon: (
+        <Image src="/icons/metrics.svg" alt="modules" width={12} height={12} className="h-5 w-5" />
+      ),
+      isMenuItem: true,
+      items: [],
+    },
+    {
+      id: 'modules',
+      label: 'Modules',
+      icon: (
+        <Image
+          src="/icons/modules-gray.svg"
+          alt="modules"
+          width={12}
+          height={12}
+          className="h-5 w-5"
+        />
+      ),
+      hoverIcon: (
+        <Image src="/icons/modules.svg" alt="modules" width={12} height={12} className="h-5 w-5" />
+      ),
+      items: monadModulesItems,
+      isMenuItem: false,
+    },
     {
       id: 'protocols',
       label: 'Protocols',
@@ -392,51 +316,238 @@ export default function AppSidebar() {
         />
       ),
       items: protocolItems,
-    },
-    {
-      id: 'modules',
-      label: 'Modules',
-      icon: (
-        <Image
-          src="/icons/modules-gray.svg"
-          alt="modules"
-          width={12}
-          height={12}
-          className="h-5 w-5"
-        />
-      ),
-      hoverIcon: (
-        <Image src="/icons/modules.svg" alt="modules" width={12} height={12} className="h-5 w-5" />
-      ),
-      items: monadModulesItems,
+      isMenuItem: false,
     },
   ];
+}
+
+// 内部组件
+const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
+  const [isHover, setIsHover] = useState(false);
+
+  return (
+    <Link
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+      href={item.href}
+      className={cn(
+        'flex p-[10px] relative items-center text-pro-gray overflow-visible rounded-md',
+        (isActive || isHover) && 'bg-white text-primary'
+      )}
+    >
+      <div
+        className={cn(
+          'absolute h-6 w-[2px] bg-primary transition-all duration-300 -left-[11px]',
+          isActive || isHover ? 'opacity-100' : 'opacity-0'
+        )}
+      />
+      {isActive || isHover ? item.hoverIcon || item.icon : item.icon}
+      <span className="ml-2 text-xs font-medium">{item.label}</span>
+    </Link>
+  );
+};
+
+// 工具函数
+const isGroupActive = (group: MenuGroup, pathname: string): boolean => {
+  return group.items.some((item) => item.href.startsWith(pathname) || pathname.includes(item.href));
+};
+
+const isItemActive = (item: MenuItem, pathname: string): boolean => {
+  return item.href?.startsWith(pathname) || pathname.includes(item.href);
+};
+
+const ExpandedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
+  const [isHover, setIsHover] = useState(false);
+
+  return (
+    <SidebarMenuItem className="py-0 px-[10px]" key={item.href}>
+      <Link
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+        href={item.href}
+        className={cn(
+          'flex p-[10px] relative items-center text-pro-gray overflow-visible rounded-md',
+          (isActive || isHover) && 'bg-white text-primary'
+        )}
+      >
+        {isActive || isHover ? item.hoverIcon || item.icon : item.icon}
+        <span className="ml-2 text-sm font-medium">{item.label}</span>
+      </Link>
+    </SidebarMenuItem>
+  );
+};
+
+const CollapsedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
+  const [isHover, setIsHover] = useState(false);
+
+  return (
+    <SidebarMenuItem key={item.href}>
+      <SidebarMenuButton
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+        className={cn('ml-2', isActive ? 'text-primary bg-white' : 'text-pro-gray')}
+      >
+        <Link href={item.href}>
+          {isActive || isHover ? item.hoverIcon || item.icon : item.icon}
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
+const ExpandedMenuGroup = ({ group, pathname }: { group: MenuGroup; pathname: string }) => {
+  const [isHover, setIsHover] = useState(false);
+  const groupIsActive = isGroupActive(group, pathname);
+
+  return (
+    <Collapsible defaultOpen className="group/collapsible">
+      <SidebarGroup className="py-0 px-[10px]">
+        <SidebarGroupLabel
+          asChild
+          className={cn(
+            'h-10',
+            isHover && 'text-primary bg-white',
+            groupIsActive ? 'text-primary bg-white/60' : 'text-pro-gray'
+          )}
+        >
+          <CollapsibleTrigger
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
+            className={cn('flex w-full items-center')}
+          >
+            {groupIsActive ? group.hoverIcon || group.icon : group.icon}
+            <span className="ml-2 text-sm font-medium">{group.label}</span>
+            <Minus className="ml-auto h-5 w-5 transition-transform hidden group-data-[state=open]/collapsible:inline-block" />
+            <Plus className="ml-auto h-5 w-5 transition-transform inline-block group-data-[state=open]/collapsible:hidden" />
+          </CollapsibleTrigger>
+        </SidebarGroupLabel>
+        <CollapsibleContent>
+          <SidebarGroupContent>
+            <SidebarMenuSub className="pr-0 !mr-0 mt-2">
+              {group.items.map((item) => (
+                <SidebarMenuSubItem key={item.href}>
+                  <SidebarMenuSubButton className="relative" asChild>
+                    <MenuItemLink item={item} isActive={isItemActive(item, pathname)} />
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              ))}
+            </SidebarMenuSub>
+          </SidebarGroupContent>
+        </CollapsibleContent>
+      </SidebarGroup>
+    </Collapsible>
+  );
+};
+
+const CollapsedMenuGroup = ({
+  group,
+  isMobile,
+  pathname,
+}: {
+  group: MenuGroup;
+  isMobile: boolean;
+  pathname: string;
+}) => {
+  const groupIsActive = isGroupActive(group, pathname);
+
+  return (
+    <DropdownMenu>
+      <SidebarMenuItem>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton
+            className={cn('ml-2', groupIsActive ? 'text-primary bg-white' : 'text-pro-gray')}
+          >
+            {group.icon}
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          side={isMobile ? 'bottom' : 'right'}
+          align={isMobile ? 'end' : 'start'}
+          className="min-w-56 rounded-lg"
+        >
+          {group.items.map((item) => (
+            <DropdownMenuItem asChild key={item.href}>
+              <Link href={item.href} className="flex items-center">
+                {groupIsActive ? item.hoverIcon || item.icon : item.icon}
+                <span className="ml-2">{item.label}</span>
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </SidebarMenuItem>
+    </DropdownMenu>
+  );
+};
+
+export default function AppSidebar() {
+  const { data: accountInfo } = useSelectedAccount();
+
+  const pathname = usePathname();
+  const isBasePath = BASE_NET_URL_PATHS.includes(pathname);
+
+  const { open, toggleSidebar } = useSidebar();
+  const isMobile = useIsMobile();
+
+  const { chainId } = useAppKitNetwork();
+
+  const getCurrentChainNameHref = useCallback(
+    (href: string): string => {
+      if (BASE_NET_URL_PATHS.includes(href)) {
+        const chainName = NETWORK_TO_URL_PARAM[String(chainId)];
+        if (chainName === 'monad') return href;
+        return `${href}?chain=${chainName}`;
+      }
+      return `${href}?chain=monad`;
+    },
+    [chainId]
+  );
+
+  const memoGetCurrentChainNameHref = useCallback(
+    (href: string): string => getCurrentChainNameHref(href),
+    [getCurrentChainNameHref]
+  );
+
+  const { baseModulesItems, utilitiesItems } = useMemo(
+    () => createMenuItemsConfig(memoGetCurrentChainNameHref),
+    [memoGetCurrentChainNameHref]
+  );
+
+  const initialMenuGroups = useMemo(
+    () => createInitialMenuGroups(memoGetCurrentChainNameHref),
+    [memoGetCurrentChainNameHref]
+  );
 
   const [menuGroups, setMenuGroup] = useState<MenuGroup[]>([]);
 
+  // 窗口尺寸变化的处理
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768 && window.innerWidth < 1440 && open) {
-        toggleSidebar(); // 折叠侧边栏
+      const windowWidth = window.innerWidth;
+
+      if (
+        windowWidth > WINDOW_BREAKPOINTS.MOBILE &&
+        windowWidth < WINDOW_BREAKPOINTS.DESKTOP &&
+        open
+      ) {
+        toggleSidebar();
       }
 
-      if (window.innerWidth < 768 && !open) {
-        toggleSidebar(); // 展开侧边栏
+      if (windowWidth < WINDOW_BREAKPOINTS.MOBILE && !open) {
+        toggleSidebar();
       }
     };
 
     window.addEventListener('resize', handleResize);
-
-    // 初始化时检查窗口大小
-    handleResize();
+    handleResize(); // 初始化时检查
 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [open, toggleSidebar]);
 
   useEffect(() => {
     let groups: MenuGroup[] = [];
+
     if (isBasePath) {
       groups = [
         {
@@ -461,10 +572,11 @@ export default function AppSidebar() {
             />
           ),
           items: baseModulesItems,
+          isMenuItem: false,
         },
       ];
     } else {
-      groups = groups.concat(...initGroup);
+      groups = [...initialMenuGroups];
 
       if (accountInfo?.sandbox_account) {
         groups.push({
@@ -472,36 +584,39 @@ export default function AppSidebar() {
           label: 'Utilities',
           icon: <Codesandbox className="h-5 w-5" />,
           items: utilitiesItems,
+          isMenuItem: false,
         });
       }
     }
 
     setMenuGroup(groups);
-  }, [isBasePath, accountInfo?.sandbox_account]);
+  }, [
+    isBasePath,
+    accountInfo?.sandbox_account,
+    baseModulesItems,
+    initialMenuGroups,
+    utilitiesItems,
+  ]);
 
-  function MobileCloseBtn() {
-    return (
-      <Button
-        onClick={() => toggleSidebar()}
-        variant="ghost"
-        size="icon"
-        className="h-9 w-9 bg-transparent"
-      >
-        <X className="h-5 w-5" />
-      </Button>
-    );
-  }
+  const MobileCloseButton = () => (
+    <Button onClick={toggleSidebar} variant="ghost" size="icon" className="h-9 w-9 bg-transparent">
+      <X className="h-5 w-5" />
+    </Button>
+  );
 
+  // 移动端路由变化时关闭侧边栏
   useEffect(() => {
-    const isInsideOdd = prevPath.includes('/odds') && pathname.includes('/odds');
-    const isInsideC2C = prevPath.includes('/c2c') && pathname.includes('/c2c');
+    const isInsideOdds = previousPathname.includes('/odds') && pathname.includes('/odds');
+    const isInsideC2C = previousPathname.includes('/c2c') && pathname.includes('/c2c');
+    const shouldCloseSidebar =
+      previousPathname !== pathname && isMobile && open && !isInsideOdds && !isInsideC2C;
 
-    if (prevPath !== pathname && isMobile && open && !isInsideOdd && !isInsideC2C) {
+    if (shouldCloseSidebar) {
       toggleSidebar();
     }
 
-    prevPath = pathname;
-  }, [isMobile, open, pathname]);
+    previousPathname = pathname;
+  }, [isMobile, open, pathname, toggleSidebar]);
 
   return (
     <Sidebar className="grid-sidebar-nav border-none" collapsible="icon">
@@ -530,13 +645,35 @@ export default function AppSidebar() {
             <Image src="/icons/logo-small.svg" alt="logo" width={30} height={30} className="" />
           )}
         </Link>
-        {isMobile ? <MobileCloseBtn /> : <SidebarTrigger className="text-muted-foreground/80" />}
+        {isMobile ? <MobileCloseButton /> : <SidebarTrigger className="text-muted-foreground/80" />}
       </SidebarHeader>
 
       <SidebarContent className="scrollbar-hover mt-[10px]">
         <SidebarMenu>
-          {menuGroups.map((group) =>
-            open ? (
+          {menuGroups.map((group) => {
+            const itemIsActive = group.href ? isItemActive(group as MenuItem, pathname) : false;
+
+            return group.isMenuItem ? (
+              open ? (
+                <ExpandedMenuItem
+                  key={group.id}
+                  item={{
+                    ...group,
+                    href: group.href || '',
+                  }}
+                  isActive={itemIsActive}
+                />
+              ) : (
+                <CollapsedMenuItem
+                  key={group.id}
+                  item={{
+                    ...group,
+                    href: group.href || '',
+                  }}
+                  isActive={itemIsActive}
+                />
+              )
+            ) : open ? (
               <ExpandedMenuGroup key={group.id} group={group} pathname={pathname} />
             ) : (
               <CollapsedMenuGroup
@@ -545,12 +682,12 @@ export default function AppSidebar() {
                 isMobile={isMobile}
                 pathname={pathname}
               />
-            )
-          )}
+            );
+          })}
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter>{open && <Version version="v3.2.0" />}</SidebarFooter>
+      <SidebarFooter>{open && <Version version={APP_VERSION} />}</SidebarFooter>
     </Sidebar>
   );
 }

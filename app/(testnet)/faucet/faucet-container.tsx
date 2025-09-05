@@ -51,8 +51,6 @@ export function FaucetContainer() {
   const [inputAddress, setInputAddress] = useState<string | null>(null);
   const [inputValid, setInputValid] = useState(true);
 
-  const [isInit, setIsInit] = useState(false);
-
   const [selectedToken, setSelectedToken] = useState(MONAD.address);
   const isCheckMon = selectedToken === MONAD.address;
   const isCheckMonUSD = selectedToken === MonUSD.address;
@@ -114,16 +112,13 @@ export function FaucetContainer() {
   }, [address, isCheckMon, isCheckMonUSD, isDSA]);
 
   useEffect(() => {
-    if (isInit) {
-      return;
-    }
-
     if (currentAccount) {
       setMonAddress(currentAccount.sandbox_account);
-      setMonUSDAddress(currentAccount.sandbox_account);
-      setIsInit(true);
+      if (!monUSDAddress || isDSA) {
+        setMonUSDAddress(currentAccount.sandbox_account);
+      }
     }
-  }, [currentAccount, isInit]);
+  }, [currentAccount]);
 
   const handleCreateAccount = () => {
     if (!address) return;

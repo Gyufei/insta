@@ -24,6 +24,7 @@ export function TwitterLink() {
   const { code, error, goTwitter, removeXVerifyCode } = useTwitterSign();
   const { mutate: saveXBind, isPending: isSavingXBind } = useSaveXBind();
 
+  // TODO: remove-to-home
   const Host = isProduction
     ? 'https://v3.tadle.com/uniswap?chain=monad'
     : 'https://preview-v3.tadle.com/uniswap?chain=monad';
