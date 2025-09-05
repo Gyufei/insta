@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TokenStationPage() {
+export default function MetricsPage() {
   return (
     <CommonPageLayout title="Metrics" iconSrc={null}>
       <MetricsContent />

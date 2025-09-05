@@ -3,13 +3,13 @@ import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
-import { useSelectedAccount } from '../data/use-account';
+import { useAccounts } from '../data/use-account';
 import { useSideDrawerStore } from '../state/side-drawer';
 
 export function useWalletConnect() {
   const { open } = useAppKit();
   const { isConnected } = useAppKitAccount();
-  const { data: accountInfo, isSuccess } = useSelectedAccount();
+  const { data: accounts, refetch: refetchAccounts } = useAccounts();
 
   const [waitConnect, setWaitConnect] = useState(false);
   const { setCurrentComponent } = useSideDrawerStore();
@@ -20,23 +20,31 @@ export function useWalletConnect() {
   }
 
   useEffect(() => {
-    if (accountInfo) {
+    if ((accounts || [])?.length > 0) {
       setWaitConnect(false);
       return;
     }
 
-    if (!isConnected || accountInfo || !isSuccess || !waitConnect) {
+    if (!isConnected || !waitConnect) {
       return;
     }
 
-    if (isConnected && isSuccess && !accountInfo && waitConnect) {
-      setTimeout(() => {
+    async function getAccounts() {
+      const acs = await refetchAccounts();
+
+      if ((acs?.data || [])?.length > 0) {
+        setWaitConnect(false);
+      } else {
         setCurrentComponent({ name: 'AccountSetting' });
         toast.info('Please create your DSA account.');
         setWaitConnect(false);
-      }, 500);
+      }
     }
-  }, [isConnected, accountInfo, isSuccess, waitConnect]);
+
+    if (isConnected && waitConnect) {
+      getAccounts();
+    }
+  }, [isConnected, accounts, waitConnect]);
 
   return {
     openWeb3Modal,
