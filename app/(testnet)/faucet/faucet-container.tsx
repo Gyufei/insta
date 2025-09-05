@@ -120,6 +120,21 @@ export function FaucetContainer() {
     }
   }, [currentAccount]);
 
+  useEffect(() => {
+    if (!accountsOptions.length) return;
+
+    const isMonUSDExist = accountsOptions.find((account) => account.value === monUSDAddress);
+    const isMonExist = accountsOptions.find((account) => account.value === monAddress);
+
+    if (!isMonUSDExist) {
+      setMonUSDAddress(accountsOptions[0].value);
+    }
+
+    if (!isMonExist) {
+      setMonAddress(accountsOptions[0].value);
+    }
+  }, [isCheckMonUSD, currentAccount, accountsOptions, monAddress, monUSDAddress]);
+
   const handleCreateAccount = () => {
     if (!address) return;
     setCurrentComponent({ name: 'AccountSetting' });
