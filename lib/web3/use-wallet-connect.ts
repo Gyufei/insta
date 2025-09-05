@@ -9,7 +9,7 @@ import { useSideDrawerStore } from '../state/side-drawer';
 export function useWalletConnect() {
   const { open } = useAppKit();
   const { isConnected } = useAppKitAccount();
-  const { data: accountInfo, isLoading } = useSelectedAccount();
+  const { data: accountInfo, isSuccess } = useSelectedAccount();
 
   const [waitConnect, setWaitConnect] = useState(false);
   const { setCurrentComponent } = useSideDrawerStore();
@@ -25,18 +25,18 @@ export function useWalletConnect() {
       return;
     }
 
-    if (!isConnected || accountInfo || isLoading || !waitConnect) {
+    if (!isConnected || accountInfo || !isSuccess || !waitConnect) {
       return;
     }
 
-    if (isConnected && !isLoading && !accountInfo && waitConnect) {
+    if (isConnected && isSuccess && !accountInfo && waitConnect) {
       setTimeout(() => {
         setCurrentComponent({ name: 'AccountSetting' });
         toast.info('Please create your DSA account.');
         setWaitConnect(false);
       }, 500);
     }
-  }, [isConnected, accountInfo, isLoading, waitConnect]);
+  }, [isConnected, accountInfo, isSuccess, waitConnect]);
 
   return {
     openWeb3Modal,

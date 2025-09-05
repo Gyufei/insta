@@ -40,7 +40,7 @@ export function useAccounts() {
 }
 
 export function useSelectedAccount() {
-  const { data: accountInfo, isLoading } = useAccounts();
+  const { data: accountInfo, isLoading, isSuccess } = useAccounts();
   const { currentAccountAddress, setCurrentAccountAddress } = useAccountStore();
 
   const selectedAccount = useMemo(() => {
@@ -63,6 +63,7 @@ export function useSelectedAccount() {
 
   return {
     isLoading,
+    isSuccess,
     data: selectedAccount,
   };
 }
