@@ -1,4 +1,5 @@
 import { Ellipsis, Minus, Plus } from 'lucide-react';
+import numbro from 'numbro';
 
 import { useState } from 'react';
 
@@ -14,7 +15,7 @@ import {
 
 import { IAmbientPosition } from '@/lib/data/use-ambient-position';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { formatNumber } from '@/lib/utils/number';
+import { formatNumber, toNonExponential } from '@/lib/utils/number';
 
 import { TokenPairAndStatus } from './am-common/token-pair-and-status';
 import { useAmbientPositionFormat } from './use-ambient-position-format';
@@ -58,6 +59,34 @@ export function PositionItem({ position }: PositionItemProps) {
     });
   };
 
+  function formatPrice(price: number | string) {
+    if (Number(price) > 0.01 && Number(price) < 10 ** 5) {
+      return formatNumber(price);
+    } else if (Number(price) > 10 ** 5) {
+      const p = toNonExponential(price);
+      return p.replace(/0{3,}/g, (match) => `0(${match.length})`);
+    } else if (Number(price) < 10 ** -12) {
+      return '<0.000000000001';
+    } else {
+      const p = toNonExponential(price);
+      return p.length > 10 ? p.slice(0, 12) : p;
+    }
+  }
+
+  function formatAmount(amount: number | string) {
+    if (amount.toString().startsWith('<')) {
+      return amount;
+    }
+
+    return numbro(amount).format({
+      thousandSeparated: true,
+      average: true,
+      mantissa: 2,
+      trimMantissa: true,
+      roundingFunction: Math.floor,
+    });
+  }
+
   return (
     <Card className="py-0 mt-4 relative border border-[#ebebeb] hover:border-gray-200 gap-0 transition-colors">
       <TokenPairAndStatus token0={token0!} token1={token1!} />
@@ -66,13 +95,13 @@ export function PositionItem({ position }: PositionItemProps) {
         <div className="flex flex-row md:flex-nowrap flex-wrap md:justify-start justify-between gap-3 flex-grow mr-2">
           <div className="flex-1 basis-0">
             <span className="text-base font-semibold text-primary">
-              {formatNumber(price || '-')}
+              {formatPrice(price || '-')}
             </span>
             <span className="block text-sm text-gray-500 truncate">Current Price</span>
           </div>
           <div className="flex-1 basis-0 text-base font-semibold">
             <div className="flex items-center gap-1 text-primary">
-              <span>{formatNumber(token0Amount)}</span>
+              <span>{formatAmount(token0Amount)}</span>
               <LogoWithPlaceholder
                 src={token0?.logo}
                 name={token0?.symbol || ''}
@@ -81,7 +110,7 @@ export function PositionItem({ position }: PositionItemProps) {
                 height={16}
               />
               <span>/</span>
-              <span>{formatNumber(token1Amount)}</span>
+              <span>{formatAmount(token1Amount)}</span>
               <LogoWithPlaceholder
                 src={token1?.logo}
                 name={token1?.symbol || ''}
@@ -108,15 +137,13 @@ export function PositionItem({ position }: PositionItemProps) {
               <div>
                 <span className="text-gray-500">Min: </span>
                 <span>
-                  {formatNumber(price_lower || '-')} {token1?.symbol} / {token0?.symbol}
+                  {formatPrice(price_lower || '-')} {token1?.symbol} / {token0?.symbol}
                 </span>
               </div>
               <div>
                 <span className="text-gray-500">Max: </span>
                 <span>
-                  {String(formatNumber(price_upper)).length > 10
-                    ? String(formatNumber(price_upper)).slice(0, 10) + '...'
-                    : formatNumber(price_upper) || '-'}
+                  {formatPrice(price_upper || '-')}
                   {token1?.symbol} / {token0?.symbol}
                 </span>
               </div>

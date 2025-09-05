@@ -4,7 +4,8 @@ import { useMemo } from 'react';
 
 import { useAmbientCalcImpact } from '@/lib/data/use-ambient-calc-impact';
 import { IAmbientPosition } from '@/lib/data/use-ambient-position';
-import { truncateNumber } from '@/lib/utils/number';
+import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
+import { toNonExponential, truncateNumber } from '@/lib/utils/number';
 
 import { UNISWAP_TOKENS } from '../uniswap/use-uniswap-token';
 
@@ -102,7 +103,17 @@ export function useAmbientPositionFormat(position: IAmbientPosition) {
     };
   }
 
-  const tokens = UNISWAP_TOKENS;
+  const { data: uniswapTokensData } = useUniswapTokens();
+
+  const tokens = useMemo(() => {
+    const uniswapTokens = uniswapTokensData?.map((t) => ({
+      ...t,
+      logo: t.logoURI || '',
+      description: t.tokenDescription || '',
+    }));
+
+    return [...UNISWAP_TOKENS, ...(uniswapTokens || [])];
+  }, [uniswapTokensData]);
 
   const { data: impactPrice, isLoading: isLoadingImpactPrice } = useAmbientCalcImpact({
     base_token: pos.base,
@@ -131,16 +142,17 @@ export function useAmbientPositionFormat(position: IAmbientPosition) {
   }, [impactPrice, isLoadingImpactPrice, decimalsRate]);
 
   const minPrice = useMemo(() => {
+    console.log(askTick);
     const tick0 = Math.pow(TICK_BASE, Number(askTick || 0));
     const prc = (1 / tick0) * decimalsRate;
-    return truncateNumber(String(prc), token1?.decimals || 18);
-  }, [askTick, decimalsRate, token1?.decimals]);
+    return toNonExponential(prc);
+  }, [askTick, decimalsRate]);
 
   const maxPrice = useMemo(() => {
     const tick1 = Math.pow(TICK_BASE, Number(bidTick || 0));
     const prc = (1 / tick1) * decimalsRate;
-    return truncateNumber(String(prc), token1?.decimals || 18);
-  }, [bidTick, decimalsRate, token1?.decimals]);
+    return toNonExponential(prc);
+  }, [bidTick, decimalsRate]);
 
   const amountObj = useMemo(() => {
     if (!minPrice || !maxPrice || !price || !token0?.decimals || !token1?.decimals)
