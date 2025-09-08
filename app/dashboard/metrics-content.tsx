@@ -9,6 +9,7 @@ import {
   LineElement,
   LinearScale,
   PointElement,
+  type ScriptableContext,
   Title,
   Tooltip,
 } from 'chart.js';
@@ -62,7 +63,14 @@ function MetricsChart({
           label: series.label,
           data: series.values.map((item) => item.value),
           borderColor: '#6C63FF',
-          backgroundColor: 'rgba(108, 99, 255, 0.25)',
+          backgroundColor: (context: ScriptableContext<'line'>) => {
+            const ctx = context.chart.ctx;
+            const gradient = ctx.createLinearGradient(0, 0, 0, 260);
+            gradient.addColorStop(0, '#6E75F9');
+            gradient.addColorStop(0.1, '#6E75F950');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            return gradient;
+          },
           fill: true,
           tension: 0.4,
           borderWidth: 2,
