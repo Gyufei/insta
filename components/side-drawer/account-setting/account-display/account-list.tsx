@@ -1,6 +1,6 @@
 'use client';
 
-import { useAccountList } from '@/app/authority/use-account-list';
+import { useAccountList } from '@/components/side-drawer/account-setting/use-account-list';
 
 import { WithLoading } from '@/components/common/with-loading';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';

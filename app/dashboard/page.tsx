@@ -4,12 +4,12 @@ import { MetaBaseHost } from '@/config/env-url';
 
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
-import FullAccountDisplay from './full-account-display';
+import { MetricsContent } from './metrics-content';
 
 export const metadata: Metadata = {
-  title: 'Authority',
+  title: 'Dashboard',
   openGraph: {
-    title: 'Authority',
+    title: 'Dashboard',
     url: MetaBaseHost,
     siteName: 'Tadle',
     images: `https://cdn.tadle.com/images/thumbnail-1800_945.jpg`,
@@ -18,15 +18,15 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Authority',
+    title: 'Dashboard',
     site: '@tadle_com',
   },
 };
 
-export default function Authority() {
+export default function MetricsPage() {
   return (
-    <CommonPageLayout title="Account Setting" iconSrc={null}>
-      <FullAccountDisplay />
+    <CommonPageLayout title="Dashboard" iconSrc={null}>
+      <MetricsContent />
     </CommonPageLayout>
   );
 }

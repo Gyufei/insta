@@ -3,7 +3,7 @@
 // React imports
 // Third-party libraries
 import { useAppKitNetwork } from '@reown/appkit/react';
-import { CircleUserRound, Codesandbox, Minus, Plus, X } from 'lucide-react';
+import { Minus, Plus, X } from 'lucide-react';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -237,19 +237,10 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
     },
   ];
 
-  const utilitiesItems: MenuItem[] = [
-    {
-      href: getCurrentChainNameHref('/authority'),
-      label: 'Authority',
-      icon: <CircleUserRound className="h-3 w-3" />,
-    },
-  ];
-
   return {
     monadModulesItems,
     baseModulesItems,
     protocolItems,
-    utilitiesItems,
   };
 }
 
@@ -258,9 +249,9 @@ function createInitialMenuGroups(getCurrentChainNameHref: (href: string) => stri
 
   return [
     {
-      id: 'metrics',
-      label: 'Metrics',
-      href: getCurrentChainNameHref('/metrics'),
+      id: 'dashboard',
+      label: 'Dashboard',
+      href: getCurrentChainNameHref('/dashboard'),
       icon: (
         <Image
           src="/icons/metrics-gray.svg"
@@ -507,7 +498,7 @@ export default function AppSidebar() {
     [getCurrentChainNameHref]
   );
 
-  const { baseModulesItems, utilitiesItems } = useMemo(
+  const { baseModulesItems } = useMemo(
     () => createMenuItemsConfig(memoGetCurrentChainNameHref),
     [memoGetCurrentChainNameHref]
   );
@@ -577,26 +568,10 @@ export default function AppSidebar() {
       ];
     } else {
       groups = [...initialMenuGroups];
-
-      if (accountInfo?.sandbox_account) {
-        groups.push({
-          id: 'utilities',
-          label: 'Utilities',
-          icon: <Codesandbox className="h-5 w-5" />,
-          items: utilitiesItems,
-          isMenuItem: false,
-        });
-      }
     }
 
     setMenuGroup(groups);
-  }, [
-    isBasePath,
-    accountInfo?.sandbox_account,
-    baseModulesItems,
-    initialMenuGroups,
-    utilitiesItems,
-  ]);
+  }, [isBasePath, accountInfo?.sandbox_account, baseModulesItems, initialMenuGroups]);
 
   const MobileCloseButton = () => (
     <Button onClick={toggleSidebar} variant="ghost" size="icon" className="h-9 w-9 bg-transparent">

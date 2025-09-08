@@ -152,7 +152,7 @@ function MetricsChart({
 
 export function MetricsContent() {
   const [leftRange, setLeftRange] = useState<TimeRange>('14D');
-  const [rightRange, setRightRange] = useState<TimeRange>('14D');
+  // const [rightRange, setRightRange] = useState<TimeRange>('14D');
   const { data = [], isLoading, error } = useMetrics();
 
   const baseData = useMemo<IMetricsItem[]>(() => {
@@ -163,10 +163,10 @@ export function MetricsContent() {
     () => filterByRange(baseData || [], leftRange),
     [baseData, leftRange]
   );
-  const rightFiltered = useMemo(
-    () => filterByRange(baseData || [], rightRange),
-    [baseData, rightRange]
-  );
+  // const rightFiltered = useMemo(
+  //   () => filterByRange(baseData || [], rightRange),
+  //   [baseData, rightRange]
+  // );
 
   const holdersSeries = useMemo(() => {
     return leftFiltered.map((d) => ({
@@ -175,22 +175,23 @@ export function MetricsContent() {
     }));
   }, [leftFiltered]);
 
-  const sandboxSeries = useMemo(() => {
-    return rightFiltered.map((d) => ({
-      time: Math.floor(new Date(d.date).getTime() / 1000),
-      value: d.data.sandboxAccounts,
-    }));
-  }, [rightFiltered]);
+  // const sandboxSeries = useMemo(() => {
+  //   return rightFiltered.map((d) => ({
+  //     time: Math.floor(new Date(d.date).getTime() / 1000),
+  //     value: d.data.sandboxAccounts,
+  //   }));
+  // }, [rightFiltered]);
 
   const holdersLatest = leftFiltered.length
     ? leftFiltered[leftFiltered.length - 1].data.holders
     : 0;
-  const sandboxLatest = rightFiltered.length
-    ? rightFiltered[rightFiltered.length - 1].data.sandboxAccounts
-    : 0;
+
+  // const sandboxLatest = rightFiltered.length
+  //   ? rightFiltered[rightFiltered.length - 1].data.sandboxAccounts
+  //   : 0;
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 px-4 2xl:px-12">
+    <div className="grid grid-cols-1 gap-4 px-4 2xl:px-12">
       <Card className="border-[#EBEBEB] rounded-[8px]">
         <CardHeader className="flex items-start justify-between gap-4 px-5">
           <div>
@@ -216,7 +217,7 @@ export function MetricsContent() {
         </CardContent>
       </Card>
 
-      <Card className="border-[#EBEBEB] rounded-[8px]">
+      {/* <Card className="border-[#EBEBEB] rounded-[8px]">
         <CardHeader className="flex items-start justify-between gap-4 px-5">
           <div>
             <CardDescription className="text-[#A5ADC6] text-sm">Sandbox Users</CardDescription>
@@ -239,7 +240,7 @@ export function MetricsContent() {
             <MetricsChart series={{ label: 'SandboxUsers', values: sandboxSeries }} />
           )}
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }

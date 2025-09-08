@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi';
 
 import Image from 'next/image';
 
-import { useAccountList } from '@/app/authority/use-account-list';
+import { useAccountList } from '@/components/side-drawer/account-setting/use-account-list';
 
 import { WithLoading } from '@/components/common/with-loading';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
