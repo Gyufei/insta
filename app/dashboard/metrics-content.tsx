@@ -73,14 +73,13 @@ function MetricsChart({
       dailyLabels.set(dateKey, true);
 
       // 根据数据点数量决定显示格式
-      // if (series.values.length > 20) {
-      // 数据点很多时，只显示日期
-      return `${mm}-${dd}`;
-      // }
-      // else {
-      //   // 数据点较少时，显示日期和时间
-      //   return `${mm}-${dd} ${hh}:00`;
-      // }
+      if (series.values.length > 3) {
+        // 数据点很多时，只显示日期
+        return `${mm}-${dd}`;
+      } else {
+        // 数据点较少时，显示日期和时间
+        return `${mm}-${dd} ${hh}:00`;
+      }
     });
 
     return {
