@@ -10,13 +10,13 @@ import {
 import { useMonadBalanceByApi } from '@/lib/data/balance/use-monad-balance-by-api';
 
 import { useSelectedAccount } from '../data/account-address/use-selected-account';
+import { useUniswapTokenBalance } from '../data/balance/use-uniswap-token-balance';
 import { isSameAddress } from '../utils';
 import { truncateNumber } from '../utils/number';
-import { useTokenBalanceByRPC } from './use-token-balance-by-rpc';
+import { useRPCTokenBalance } from './use-rpc-token-balance';
 
 interface BalanceResult {
   balance: string;
-  balanceBig: string | bigint | undefined;
   isBalancePending: boolean;
   isNative: boolean;
 }
@@ -30,31 +30,18 @@ export function useGetAccountBalance(tokenAddress: string, enableQuery = true): 
     isSameAddress(tokenAddress, DEFAULT_NATIVE_ADDRESS) ||
     isSameAddress(tokenAddress, BACKEND_NATIVE_ADDRESS);
 
-  const {
-    balance: nativeBalance,
-    balanceBig: nativeBalanceBig,
-    isPending: isNativeBalancePending,
-  } = useMonadBalanceByApi();
+  const { balance: nativeBalance, isPending: isNativeBalancePending } = useMonadBalanceByApi();
 
-  const {
-    balance: tokenBalance,
-    balanceBig: tokenBalanceBig,
-    isPending: isTokenBalancePending,
-  } = useTokenBalanceByRPC(
-    NetworkConfigs.monadTestnet.id,
+  const { data: tokenBalance, isPending: isTokenBalancePending } = useUniswapTokenBalance(
     accountAddress || '',
-    tokenAddress,
-    tokens,
-    !isNative && enableQuery
+    tokenAddress
   );
 
-  const balance = isNative ? truncateNumber(nativeBalance, 4) : truncateNumber(tokenBalance, 4);
-  const balanceBig = isNative ? nativeBalanceBig : tokenBalanceBig;
+  const balance = isNative ? truncateNumber(nativeBalance, 4) : truncateNumber(tokenBalance?.balance || '0', 4);
   const isBalancePending = isNative ? isNativeBalancePending : isTokenBalancePending;
 
   return {
     balance,
-    balanceBig,
     isBalancePending,
     isNative,
   };

@@ -8,7 +8,7 @@ import { useAccounts } from '@/lib/data/account-address/use-account';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useCreateAccount } from '@/lib/data/use-create-account';
 import { useAccountStore } from '@/lib/state/account';
-import { useBalanceByRPC } from '@/lib/web3/use-balance-by-rpc';
+import { useRPCNativeBalance } from '@/lib/web3/use-rpc-native-balance';
 
 const GAS_LIMIT_FOR_CREATE_ACCOUNT = 0.0161845008;
 
@@ -20,7 +20,7 @@ export function useAccountList() {
   const { mutateAsync: createAccount, isPending: isCreatePending } = useCreateAccount();
   const { currentAccountType, setCurrentAccountType } = useAccountStore();
 
-  const { balance: monadBalance } = useBalanceByRPC(NetworkConfigs.monadTestnet.id, address || '');
+  const { balance: monadBalance } = useRPCNativeBalance(NetworkConfigs.monadTestnet.id, address || '');
 
   const tooLessGasForCreate = useMemo(() => {
     return !address || Number(monadBalance) < GAS_LIMIT_FOR_CREATE_ACCOUNT;

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { formatBig } from '../utils/number';
 
-export function useBalanceByRPC(chainId: number, address: string) {
+export function useRPCNativeBalance(chainId: number, address: string) {
   const { data: balanceData, isPending } = useBalance({
     address: address as `0x${string}`,
     chainId,
@@ -13,19 +13,13 @@ export function useBalanceByRPC(chainId: number, address: string) {
     },
   });
 
-  const balanceBig = useMemo(() => {
-    if (!address) return '0';
-    return balanceData?.value;
-  }, [balanceData, address]);
-
   const balance = useMemo(() => {
     if (!address) return '0';
-    return formatBig(String(balanceBig), balanceData?.decimals);
-  }, [balanceBig, balanceData?.decimals, address]);
+    return formatBig(String(balanceData?.value), balanceData?.decimals);
+  }, [balanceData?.decimals, balanceData?.value, address]);
 
   return {
     isPending: Boolean(address) && isPending,
-    balanceBig,
     balance,
   };
 }

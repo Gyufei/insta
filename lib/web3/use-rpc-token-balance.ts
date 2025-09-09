@@ -8,7 +8,7 @@ import { IToken } from '@/config/tokens';
 
 import { formatBig } from '@/lib/utils/number';
 
-export function useTokenBalanceByRPC(
+export function useRPCTokenBalance(
   chainId: number,
   address: string,
   tokenAddress: string,
@@ -31,25 +31,19 @@ export function useTokenBalanceByRPC(
 
   const { data: balanceData, isPending: isBalancePending } = res;
 
-  const balanceBig = useMemo(() => {
-    if (!address || !tokenAddress) return '0';
-    return balanceData;
-  }, [balanceData, address, tokenAddress]);
-
   const balance = useMemo(() => {
     if (!address || !tokenAddress) return '0';
 
     const decimals = TOKEN_DECIMALS[String(chainId)][tokenAddress];
 
     return formatBig(
-      String(balanceBig),
+      String(balanceData),
       currentToken?.decimals || decimals || DEFAULT_TOKEN_DECIMALS
     ); // ERC20 代币通常使用 18 位小数
-  }, [balanceBig, address, tokenAddress, currentToken]);
+  }, [chainId, balanceData, address, tokenAddress, currentToken]);
 
   return {
     ...res,
-    balanceBig,
     balance,
     isPending: !!address && !!tokenAddress && isBalancePending,
   };

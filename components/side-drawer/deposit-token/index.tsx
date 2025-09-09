@@ -7,7 +7,7 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
 import { useDeposit } from '@/lib/data/use-deposit';
 import { parseBig } from '@/lib/utils/number';
-import { useBalanceByRPC } from '@/lib/web3/use-balance-by-rpc';
+import { useRPCNativeBalance } from '@/lib/web3/use-rpc-native-balance';
 
 import { ActionButton } from '../common/action-button';
 import { SideDrawerLayout } from '../common/side-drawer-layout';
@@ -23,7 +23,7 @@ export function DepositToken() {
   const { handleBack } = usePathChangeBack();
   const { mutate: deposit, isPending } = useDeposit();
 
-  const { balance, isPending: isBalancePending } = useBalanceByRPC(NetworkConfigs.monadTestnet.id, address || '');
+  const { balance, isPending: isBalancePending } = useRPCNativeBalance(NetworkConfigs.monadTestnet.id, address || '');
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
 
   const handleDeposit = () => {

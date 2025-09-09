@@ -17,16 +17,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { UNISWAP_TOKENS } from '@/app/(protocols)/uniswap/use-uniswap-token';
-
 import { NetworkConfigs } from '@/config/network-config';
 import { MonUSD } from '@/config/tokens';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
+import { useAccountOrWalletBalanceByApi } from '@/lib/data/balance/use-account-or-wallet-balance-by-api';
 import { formatNumber } from '@/lib/utils/number';
-// import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
-import { useBalanceByRPC } from '@/lib/web3/use-balance-by-rpc';
-import { useTokenBalanceByRPC } from '@/lib/web3/use-token-balance-by-rpc';
+import { useRPCNativeBalance } from '@/lib/web3/use-rpc-native-balance';
 
 import { GAS_LIMIT_FOR_CLAIM_MONUSD, useOddsClaim } from '../../common/use-odds-claim';
 import { useOddsDeposit } from '../../common/use-odds-deposit';
@@ -39,21 +36,13 @@ import TransferConfirmModal from '../../components/TransferConfirmModal';
 export default function Portfolio() {
   const router = useRouter();
   const { address } = useAccount();
-  const { data: accountInfo, isLoading: isAccountInfoPending } = useSelectedAccount();
-  const tokens = UNISWAP_TOKENS;
+  const { data: accountInfo } = useSelectedAccount();
 
   const {
     balance: fundingBalance,
-    isPending: isBalancePending,
+    isBalancePending: isLoadingFundingBalance,
     refetch: refetchFundingBalance,
-  } = useTokenBalanceByRPC(
-    NetworkConfigs.monadTestnet.id,
-    accountInfo?.sandbox_account || '',
-    MonUSD.address,
-    tokens
-  );
-
-  const isLoadingFundingBalance = isAccountInfoPending || isBalancePending;
+  } = useAccountOrWalletBalanceByApi(NetworkConfigs.monadTestnet.id, MonUSD.address);
 
   const { data: tradingBalanceData } = useTradingBalance();
 
@@ -62,8 +51,11 @@ export default function Portfolio() {
   const { data: marketsData, isLoading: isLoadingMarkets, error: marketsError } = useUserMarkets();
   const markets = marketsData?.market_list;
 
-  const { balance: walletBalance } = useBalanceByRPC(NetworkConfigs.monadTestnet.id, address || '');
-  // const { balance: monadBalance } = useApiMonadBalance();
+  const { balance: walletBalance } = useRPCNativeBalance(
+    NetworkConfigs.monadTestnet.id,
+    address || ''
+  );
+
   const { mutate: deposit, isPending: isTransferringToTrading } = useOddsDeposit();
   const { mutate: withdraw, isPending: isTransferringToFunding } = useOddsWithdraw();
   const { mutate: claim, isPending: isProcessingClaim } = useOddsClaim();
@@ -387,7 +379,7 @@ export default function Portfolio() {
         isOpen={showTransferModal}
         onClose={() => setShowTransferModal(false)}
         onConfirm={transferDirection === 'F2T' ? handleTransferToTrading : handleTransferToFunding}
-        maxAmount={transferDirection === 'F2T' ? fundingBalance : tradingBalance}
+        maxAmount={transferDirection === 'F2T' ? fundingBalance || '' : tradingBalance || ''}
         direction={transferDirection}
         needsApproval={false}
         isAwaitingConfirm={isTransferringToTrading || isTransferringToFunding}

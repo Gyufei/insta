@@ -11,24 +11,18 @@ export function useMonadBalanceByApi() {
     (token) => token.network === 'MON' && token.token === 'MON'
   );
 
-  const balanceBig = useMemo(() => {
-    if (!monadBalanceRes) {
-      return '0';
-    }
-
-    return monadBalanceRes?.balance;
-  }, [monadBalanceRes]);
-
   const balance = useMemo(() => {
-    if (!balanceBig) {
+    if (!monadBalanceRes?.balance) {
       return '0';
     }
 
-    return divide(String(balanceBig || '0'), String(10 ** (monadBalanceRes?.decimals || 18)));
-  }, [balanceBig, monadBalanceRes?.decimals]);
+    return divide(
+      String(monadBalanceRes?.balance || '0'),
+      String(10 ** (monadBalanceRes?.decimals || 18))
+    );
+  }, [monadBalanceRes?.balance, monadBalanceRes?.decimals]);
 
   return {
-    balanceBig,
     balance,
     isPending,
   };

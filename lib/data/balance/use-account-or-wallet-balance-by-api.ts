@@ -4,13 +4,9 @@ import { NetworkConfigs } from '@/config/network-config';
 
 import { useAllChainBalanceByApi } from './use-all-chain-balance-by-api';
 
-interface BalanceResult {
-  balance: string;
-  isBalancePending: boolean;
-}
-
-export function useAccountOrWalletBalanceByApi(chainId: number, tokenAddress: string): BalanceResult {
-  const { data: balanceData, isPending: isBalancePending } = useAllChainBalanceByApi();
+export function useAccountOrWalletBalanceByApi(chainId: number, tokenAddress: string) {
+  const res = useAllChainBalanceByApi();
+  const { data: balanceData, isPending: isBalancePending } = res;
 
   const balanceNetwork =
     chainId === NetworkConfigs.base.id
@@ -30,6 +26,7 @@ export function useAccountOrWalletBalanceByApi(chainId: number, tokenAddress: st
   }, [balanceData, balanceNetwork, tokenAddress]);
 
   return {
+    ...res,
     balance,
     isBalancePending,
   };

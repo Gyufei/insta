@@ -3,12 +3,11 @@ import { IToken } from '@/config/tokens';
 
 import { isSameAddress } from '../utils';
 import { truncateNumber } from '../utils/number';
-import { useBalanceByRPC } from './use-balance-by-rpc';
-import { useTokenBalanceByRPC } from './use-token-balance-by-rpc';
+import { useRPCNativeBalance } from './use-rpc-native-balance';
+import { useRPCTokenBalance } from './use-rpc-token-balance';
 
 interface BalanceResult {
   balance: string;
-  balanceBig: string | bigint | undefined;
   isBalancePending: boolean;
   isNative: boolean;
 }
@@ -24,26 +23,27 @@ export function useRPCBalance(
     isSameAddress(tokenAddress, DEFAULT_NATIVE_ADDRESS) ||
     isSameAddress(tokenAddress, BACKEND_NATIVE_ADDRESS);
 
-  const {
-    balance: nativeBalance,
-    balanceBig: nativeBalanceBig,
-    isPending: isNativeBalancePending,
-  } = useBalanceByRPC(chainId, address);
+  const { balance: nativeBalance, isPending: isNativeBalancePending } = useRPCNativeBalance(
+    chainId,
+    address
+  );
 
-  const {
-    balance: tokenBalance,
-    balanceBig: tokenBalanceBig,
-    isPending: isTokenBalancePending,
-  } = useTokenBalanceByRPC(chainId, address, tokenAddress, tokens, !isNative && enableQuery);
+  const { balance: tokenBalance, isPending: isTokenBalancePending } = useRPCTokenBalance(
+    chainId,
+    address,
+    tokenAddress,
+    tokens,
+    !isNative && enableQuery
+  );
 
-  const balance = isNative ? truncateNumber(nativeBalance, 4) : truncateNumber(tokenBalance, 4);
+  const balance = isNative
+    ? truncateNumber(nativeBalance, 4)
+    : truncateNumber(tokenBalance?.balance || '0', 4);
 
-  const balanceBig = isNative ? nativeBalanceBig : tokenBalanceBig;
   const isBalancePending = Boolean(isNative) ? isNativeBalancePending : isTokenBalancePending;
 
   return {
     balance,
-    balanceBig,
     isBalancePending,
     isNative,
   };

@@ -15,7 +15,7 @@ import { APR_MONAD, G_MONAD, IToken, MONAD, MonUSD } from '@/config/tokens';
 import { useAllChainBalanceByApi } from '@/lib/data/balance/use-all-chain-balance-by-api';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 // import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
-import { useBalanceByRPC } from '@/lib/web3/use-balance-by-rpc';
+import { useRPCNativeBalance } from '@/lib/web3/use-rpc-native-balance';
 
 import { AprMONTokenCard } from './apr-mon-token-card';
 import { BaseTokenCard } from './base-token-card';
@@ -39,7 +39,7 @@ export default function TokenList() {
   const { address } = useAccount();
   const { data: balanceData } = useAllChainBalanceByApi();
 
-  const { balance: walletBalance } = useBalanceByRPC(NetworkConfigs.monadTestnet.id, address || '');
+  const { balance: walletBalance } = useRPCNativeBalance(NetworkConfigs.monadTestnet.id, address || '');
   const { mutate: claimMonUsd, isPending: isProcessingClaim } = useOddsClaim();
   const { data: uniswapTokensData } = useUniswapTokens();
 
