@@ -20,7 +20,6 @@ import { NadNameTransfer } from '@/app/(protocols)/nad-name-service/nad-name-tra
 import { UniswapAddLiquidity } from '@/app/(protocols)/uniswap/add-liquidity';
 import { UniswapCreatePosition } from '@/app/(protocols)/uniswap/create-position';
 import { UniswapRemoveLiquidity } from '@/app/(protocols)/uniswap/remove-liquidity';
-import { UniswapSwap } from '@/app/(protocols)/uniswap/swap';
 import { BadgeNftBuy } from '@/app/badge-gallery/badge-nft-buy';
 import { OddsMarketSellAndBuy } from '@/app/odds/market/market-sell-and-buy';
 
@@ -48,7 +47,6 @@ const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   NadNameTransfer: NadNameTransfer,
   MagmaDeposit: MagmaDeposit,
   MagmaWithdraw: MagmaWithdraw,
-  UniswapSwap: UniswapSwap,
   UniswapCreatePosition: UniswapCreatePosition,
   UniswapAddLiquidity: UniswapAddLiquidity,
   UniswapRemoveLiquidity: UniswapRemoveLiquidity,

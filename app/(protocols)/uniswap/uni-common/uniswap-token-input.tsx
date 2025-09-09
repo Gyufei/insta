@@ -8,9 +8,9 @@ import { IToken } from '@/config/tokens';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { cn } from '@/lib/utils';
 
-import { SwapBaseTokenInput } from '../swap/swap-base-token-input';
-import { SwapInputBalanceDisplay } from '../swap/swap-input-balance-display';
-import { SwapTokenDisplay } from '../swap/swap-token-display';
+import { SwapBaseTokenInput } from './swap-base-token-input';
+import { SwapInputBalanceDisplay } from './swap-input-balance-display';
+import { SwapTokenDisplay } from './swap-token-display';
 
 interface SwapTokenInputProps {
   label: string | null;

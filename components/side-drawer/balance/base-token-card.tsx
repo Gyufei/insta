@@ -42,7 +42,6 @@ export function BaseTokenCard({
       sessionStorage.setItem('token', JSON.stringify(token));
       router.push(`/trade`);
     }
-    // setCurrentComponent({ name: 'UniswapSwap', props: { token } });
   }
 
   function handleClaim() {

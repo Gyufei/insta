@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 
-import { useGetAccountBalance } from '../../../../lib/web3/use-get-account-balance';
+import { useGetAccountBalance } from '@/lib/data/balance/use-get-account-balance';
 
 interface BalanceDisplayProps {
   tokenAddress: string;

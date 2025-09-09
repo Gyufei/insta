@@ -24,9 +24,9 @@ import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
-import { useGetAccountBalance } from '@/lib/web3/use-get-account-balance';
+import { useGetAccountBalance } from '@/lib/data/balance/use-get-account-balance';
 
-import { SlippageSettings } from '../(protocols)/uniswap/swap/slippage-settings';
+import { SlippageSettings } from './slippage-settings';
 import { WMONAD_TOKEN } from '../(protocols)/uniswap/use-uniswap-token';
 
 export function TokenContent() {

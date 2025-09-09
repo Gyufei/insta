@@ -9,11 +9,11 @@ import {
 
 import { useMonadBalanceByApi } from '@/lib/data/balance/use-monad-balance-by-api';
 
-import { useSelectedAccount } from '../data/account-address/use-selected-account';
-import { useUniswapTokenBalance } from '../data/balance/use-uniswap-token-balance';
-import { isSameAddress } from '../utils';
-import { truncateNumber } from '../utils/number';
-import { useRPCTokenBalance } from './use-rpc-token-balance';
+import { useSelectedAccount } from '../account-address/use-selected-account';
+import { useUniswapTokenBalance } from './use-uniswap-token-balance';
+import { isSameAddress } from '../../utils';
+import { truncateNumber } from '../../utils/number';
+import { useRPCTokenBalance } from '../../web3/use-rpc-token-balance';
 
 interface BalanceResult {
   balance: string;
