@@ -1,3 +1,5 @@
+import { useAccount } from 'wagmi';
+
 import { NetworkConfigs } from '@/config/network-config';
 import { MONAD } from '@/config/tokens';
 
@@ -5,7 +7,7 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
 import { useDeposit } from '@/lib/data/use-deposit';
 import { parseBig } from '@/lib/utils/number';
-import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
+import { useBalanceByRPC } from '@/lib/web3/use-balance-by-rpc';
 
 import { ActionButton } from '../common/action-button';
 import { SideDrawerLayout } from '../common/side-drawer-layout';
@@ -15,12 +17,13 @@ import { SideDrawerBackHeader } from '../side-drawer-back-header';
 import { usePathChangeBack } from '../use-path-change-back';
 
 export function DepositToken() {
+  const { address } = useAccount();
   const token = MONAD;
 
   const { handleBack } = usePathChangeBack();
   const { mutate: deposit, isPending } = useDeposit();
 
-  const { balance, isPending: isBalancePending } = useWalletBalance(NetworkConfigs.monadTestnet.id);
+  const { balance, isPending: isBalancePending } = useBalanceByRPC(NetworkConfigs.monadTestnet.id, address || '');
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
 
   const handleDeposit = () => {

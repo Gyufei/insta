@@ -1,6 +1,6 @@
 'use client';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 
 import { AuthorityCard } from './authority-card';
 

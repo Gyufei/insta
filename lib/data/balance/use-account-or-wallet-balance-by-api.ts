@@ -2,15 +2,15 @@ import { useMemo } from 'react';
 
 import { NetworkConfigs } from '@/config/network-config';
 
-import { useApiAccountTokenBalance } from './use-api-account-token-balance';
+import { useAllChainBalanceByApi } from './use-all-chain-balance-by-api';
 
 interface BalanceResult {
   balance: string;
   isBalancePending: boolean;
 }
 
-export function useApiWalletBalance(chainId: number, tokenAddress: string): BalanceResult {
-  const { data: balanceData, isPending: isBalancePending } = useApiAccountTokenBalance();
+export function useAccountOrWalletBalanceByApi(chainId: number, tokenAddress: string): BalanceResult {
+  const { data: balanceData, isPending: isBalancePending } = useAllChainBalanceByApi();
 
   const balanceNetwork =
     chainId === NetworkConfigs.base.id

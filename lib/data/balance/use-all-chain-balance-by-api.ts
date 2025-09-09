@@ -1,7 +1,7 @@
 import { useAccount } from 'wagmi';
 
-import { ApiPath } from './api-path';
-import { createQueryHook } from './helpers';
+import { ApiPath } from '../api-path';
+import { createQueryHook } from '../helpers';
 
 export interface IAccountTokenBalance {
   network: string;
@@ -12,7 +12,7 @@ export interface IAccountTokenBalance {
   formattedBalance: string;
 }
 
-export function useApiAccountTokenBalance() {
+export function useAllChainBalanceByApi() {
   const { address: wallet } = useAccount();
 
   return createQueryHook<IAccountTokenBalance[]>(

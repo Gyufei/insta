@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
+import { useAllChainBalanceByApi } from '@/lib/data/balance/use-all-chain-balance-by-api';
 import { useClaimedAirdrop } from '@/lib/data/use-claimed-airdrop';
 import { useWithdraw } from '@/lib/data/use-withdraw';
 import { isSameAddress } from '@/lib/utils';
@@ -39,7 +39,7 @@ export function WithdrawToken() {
 
   const { handleBack } = usePathChangeBack();
 
-  const { data: balanceData } = useApiAccountTokenBalance();
+  const { data: balanceData } = useAllChainBalanceByApi();
 
   const { data: airdropData } = useClaimedAirdrop();
   const airdropAmount = useMemo(() => {

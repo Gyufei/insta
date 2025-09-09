@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 
 import { ApiPath } from '@/lib/data/api-path';
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { Fetcher } from '@/lib/fetcher';
 
 interface IUserInfoResponse {

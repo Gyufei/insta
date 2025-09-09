@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
-import { useAccounts } from '../data/use-account';
+import { useAccounts } from '../data/account-address/use-account';
 import { useSideDrawerStore } from '../state/side-drawer';
 
 export function useWalletConnect() {

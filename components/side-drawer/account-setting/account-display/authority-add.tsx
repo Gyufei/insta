@@ -11,7 +11,7 @@ import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useCreateAuthority } from '@/lib/data/use-create-authority';
 
 export function AuthorityAdd() {

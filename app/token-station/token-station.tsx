@@ -27,7 +27,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { useApiWalletBalance } from '@/lib/data/use-api-wallet-balance';
+import { useAccountOrWalletBalanceByApi } from '@/lib/data/balance/use-account-or-wallet-balance-by-api';
 import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useTokenStationSwapBridge } from '@/lib/data/use-token-station-swap-bridge';
@@ -36,7 +36,7 @@ import { eventBus } from '@/lib/state/eventBus';
 import { cn, formatAddress } from '@/lib/utils';
 import { formatNumber, truncateNumber } from '@/lib/utils/number';
 import { useIsMobile } from '@/lib/utils/use-mobile';
-import { useGetAddressBalance } from '@/lib/web3/use-get-address-balance';
+import { useRPCBalance } from '@/lib/web3/use-rpc-balance';
 
 import {
   STATION_FROM_TOKENS_BASE,
@@ -111,12 +111,12 @@ export function TokenStation() {
     return NetworkConfigs.eth;
   }, [mode]);
 
-  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useApiWalletBalance(
+  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useAccountOrWalletBalanceByApi(
     currentNet.id,
     tokenFromAddress
   );
 
-  const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAddressBalance(
+  const { balance: toBalance, isBalancePending: isToBalancePending } = useRPCBalance(
     NetworkConfigs.monadTestnet.id,
     toAddress,
     tokenTo.address,

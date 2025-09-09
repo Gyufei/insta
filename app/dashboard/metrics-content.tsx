@@ -14,10 +14,9 @@ import {
   Tooltip,
 } from 'chart.js';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Line } from 'react-chartjs-2';
 
-import RangeTabs from '@/components/common/range-tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { IMetricsItem, useMetrics } from '@/lib/data/use-metrics';
@@ -40,10 +39,18 @@ type TimeRange = '14D' | '30D' | 'ALL';
 function filterByRange(data: IMetricsItem[], range: TimeRange) {
   if (range === 'ALL') return data;
   const days = range === '14D' ? 14 : 30;
-  // 每6小时一个数据点，一天有4个数据点
-  const dataPointsPerDay = 4;
-  const maxDataPoints = days * dataPointsPerDay;
-  return data.slice(-maxDataPoints);
+  if (!data || data.length === 0) return [];
+  // 以数据中的最新日期为基准，向前回溯 N 天
+  const endTime = Math.max(
+    ...data
+      .map((d) => new Date(d.date).getTime())
+      .filter((t) => Number.isFinite(t))
+  );
+  const startTime = endTime - days * 24 * 60 * 60 * 1000;
+  return data.filter((d) => {
+    const t = new Date(d.date).getTime();
+    return Number.isFinite(t) && t >= startTime && t <= endTime;
+  });
 }
 
 function MetricsChart({
@@ -200,8 +207,8 @@ function MetricsChart({
 }
 
 export function MetricsContent() {
-  const [leftRange, setLeftRange] = useState<TimeRange>('14D');
-  const [rightRange, setRightRange] = useState<TimeRange>('14D');
+  const leftRange: TimeRange = '30D';
+  const rightRange: TimeRange = '30D';
   const { data = [], isLoading, error } = useMetrics();
 
   // 控制第二个图表显示的开关
@@ -252,7 +259,6 @@ export function MetricsContent() {
               {formatNumber(holdersLatest)}
             </CardTitle>
           </div>
-          <RangeTabs value={leftRange} onChange={setLeftRange} />
         </CardHeader>
         <CardContent className="px-5">
           {isLoading ? (
@@ -278,7 +284,6 @@ export function MetricsContent() {
                 {formatNumber(sandboxLatest)}
               </CardTitle>
             </div>
-            <RangeTabs value={rightRange} onChange={setRightRange} />
           </CardHeader>
           <CardContent className="px-5">
             {isLoading ? (

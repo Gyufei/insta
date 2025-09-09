@@ -12,7 +12,7 @@ import { ButtonWithCheck } from '@/components/common/button-with-check';
 import { ErrorMessage } from '@/components/side-drawer/common/error-message';
 import { Button } from '@/components/ui/button';
 
-import { useApiWalletBalance } from '@/lib/data/use-api-wallet-balance';
+import { useAccountOrWalletBalanceByApi } from '@/lib/data/balance/use-account-or-wallet-balance-by-api';
 import { IBadgeNft } from '@/lib/data/use-badge-nfts';
 import { useBadgePurchase } from '@/lib/data/use-badge-purchase';
 import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
@@ -33,7 +33,7 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
     return BUY_TOKEN_CONFIG_BASE.find((token) => token.symbol === payToken)?.address || '';
   }, [payToken]);
 
-  const { balance: tokenBalance, isBalancePending } = useApiWalletBalance(
+  const { balance: tokenBalance, isBalancePending } = useAccountOrWalletBalanceByApi(
     NetworkConfigs.base.id,
     payTokenAddress
   );

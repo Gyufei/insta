@@ -3,8 +3,8 @@ import { IToken } from '@/config/tokens';
 
 import { isSameAddress } from '../utils';
 import { truncateNumber } from '../utils/number';
-import { useAddressBalance } from './use-address-balance';
-import { useAddressTokenBalance } from './use-address-token-balance';
+import { useBalanceByRPC } from './use-balance-by-rpc';
+import { useTokenBalanceByRPC } from './use-token-balance-by-rpc';
 
 interface BalanceResult {
   balance: string;
@@ -13,7 +13,7 @@ interface BalanceResult {
   isNative: boolean;
 }
 
-export function useGetAddressBalance(
+export function useRPCBalance(
   chainId: number,
   address: string,
   tokenAddress: string,
@@ -28,13 +28,13 @@ export function useGetAddressBalance(
     balance: nativeBalance,
     balanceBig: nativeBalanceBig,
     isPending: isNativeBalancePending,
-  } = useAddressBalance(chainId, address);
+  } = useBalanceByRPC(chainId, address);
 
   const {
     balance: tokenBalance,
     balanceBig: tokenBalanceBig,
     isPending: isTokenBalancePending,
-  } = useAddressTokenBalance(chainId, address, tokenAddress, tokens, !isNative && enableQuery);
+  } = useTokenBalanceByRPC(chainId, address, tokenAddress, tokens, !isNative && enableQuery);
 
   const balance = isNative ? truncateNumber(nativeBalance, 4) : truncateNumber(tokenBalance, 4);
 

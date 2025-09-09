@@ -9,7 +9,7 @@ import { ERROR_MESSAGES } from '@/config/const-msg';
 import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { cn } from '@/lib/utils';
 

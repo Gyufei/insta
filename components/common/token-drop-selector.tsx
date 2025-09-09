@@ -21,7 +21,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
+import { useAllChainBalanceByApi } from '@/lib/data/balance/use-all-chain-balance-by-api';
 import { useTokenInfo } from '@/lib/data/use-token-info';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 import { cn, isSameAddress } from '@/lib/utils';
@@ -68,7 +68,7 @@ export function TokenDropSelector({
     isSearchingAddress ? searchQuery.trim() : ''
   );
 
-  const { data: balanceData } = useApiAccountTokenBalance();
+  const { data: balanceData } = useAllChainBalanceByApi();
   const { data: uniswapTokensData, isLoading: isUniswapTokensLoading } = useUniswapTokens();
 
   const allTokens = useMemo(() => {

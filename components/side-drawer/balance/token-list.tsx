@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { useAccount } from 'wagmi';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -11,10 +12,10 @@ import {
 import { NetworkConfigs } from '@/config/network-config';
 import { APR_MONAD, G_MONAD, IToken, MONAD, MonUSD } from '@/config/tokens';
 
-import { useApiAccountTokenBalance } from '@/lib/data/use-api-account-token-balance';
+import { useAllChainBalanceByApi } from '@/lib/data/balance/use-all-chain-balance-by-api';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 // import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
-import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
+import { useBalanceByRPC } from '@/lib/web3/use-balance-by-rpc';
 
 import { AprMONTokenCard } from './apr-mon-token-card';
 import { BaseTokenCard } from './base-token-card';
@@ -35,9 +36,10 @@ function filterTokenByQuery(tokens: IToken[], query: string) {
 }
 
 export default function TokenList() {
-  const { data: balanceData } = useApiAccountTokenBalance();
+  const { address } = useAccount();
+  const { data: balanceData } = useAllChainBalanceByApi();
 
-  const { balance: walletBalance } = useWalletBalance(NetworkConfigs.monadTestnet.id);
+  const { balance: walletBalance } = useBalanceByRPC(NetworkConfigs.monadTestnet.id, address || '');
   const { mutate: claimMonUsd, isPending: isProcessingClaim } = useOddsClaim();
   const { data: uniswapTokensData } = useUniswapTokens();
 

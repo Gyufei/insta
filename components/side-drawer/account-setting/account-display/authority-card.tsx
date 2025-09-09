@@ -5,7 +5,7 @@ import { NetworkConfigs } from '@/config/network-config';
 
 import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useDeleteAuthority } from '@/lib/data/use-delete-authority';
 import { formatAddress } from '@/lib/utils';
 

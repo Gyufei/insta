@@ -4,10 +4,11 @@ import { useMemo } from 'react';
 
 import { NetworkConfigs } from '@/config/network-config';
 
-import { useAccounts, useSelectedAccount } from '@/lib/data/use-account';
+import { useAccounts } from '@/lib/data/account-address/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useCreateAccount } from '@/lib/data/use-create-account';
 import { useAccountStore } from '@/lib/state/account';
-import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
+import { useBalanceByRPC } from '@/lib/web3/use-balance-by-rpc';
 
 const GAS_LIMIT_FOR_CREATE_ACCOUNT = 0.0161845008;
 
@@ -17,12 +18,24 @@ export function useAccountList() {
   const { data: currAccountInfo } = useSelectedAccount();
   const { setCurrentAccountAddress } = useAccountStore();
   const { mutateAsync: createAccount, isPending: isCreatePending } = useCreateAccount();
+  const { currentAccountType, setCurrentAccountType } = useAccountStore();
 
-  const { balance: monadBalance } = useWalletBalance(NetworkConfigs.monadTestnet.id);
+  const { balance: monadBalance } = useBalanceByRPC(NetworkConfigs.monadTestnet.id, address || '');
 
   const tooLessGasForCreate = useMemo(() => {
     return !address || Number(monadBalance) < GAS_LIMIT_FOR_CREATE_ACCOUNT;
   }, [address, monadBalance]);
+
+  const currentAccount = useMemo(() => {
+    if (currentAccountType === 'EOA') {
+      return {
+        sandbox_account: address,
+        id: 'EOA',
+      };
+    }
+
+    return currAccountInfo;
+  }, [currAccountInfo, currentAccountType, address]);
 
   async function handleCreateAccount() {
     if (!address) return;
@@ -30,13 +43,14 @@ export function useAccountList() {
   }
 
   function handleToggleAccount(accAddr: string) {
+    setCurrentAccountType('DSA');
     if (currAccountInfo?.sandbox_account === accAddr) return;
     setCurrentAccountAddress(accAddr);
   }
 
   return {
     allAccounts,
-    currAccountInfo,
+    currAccountInfo: currentAccount,
     isCreatePending,
     handleCreateAccount,
     handleToggleAccount,

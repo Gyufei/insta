@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useNadFunCreateToken } from '@/lib/data/use-nadfun-create-token';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';

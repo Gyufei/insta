@@ -1,8 +1,7 @@
 'use client';
 
-import { useAccountList } from '@/components/side-drawer/account-setting/use-account-list';
-
 import { WithLoading } from '@/components/common/with-loading';
+import { useAccountList } from '@/components/side-drawer/account-setting/use-account-list';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 import { AccountCard } from './account-card';
@@ -18,7 +17,7 @@ export function AccountList() {
   } = useAccountList();
 
   return (
-    <div className="mt-4 grid grid-cols-2 gap-4">
+    <div className="mt-4 grid grid-cols-1 gap-4">
       {allAccounts?.map((account) => (
         <AccountCard
           key={account.id}

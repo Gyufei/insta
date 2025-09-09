@@ -7,7 +7,7 @@ import { ERROR_MESSAGES } from '@/config/const-msg';
 import { Fetcher } from '../fetcher';
 import { ITxResponse } from '../model';
 import { useSendTx } from '../web3/use-send-tx';
-import { useSelectedAccount } from './use-account';
+import { useSelectedAccount } from './account-address/use-selected-account';
 
 // Common parameter interface
 export interface BaseParams {

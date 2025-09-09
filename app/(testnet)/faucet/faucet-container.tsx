@@ -21,7 +21,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { useAccounts, useSelectedAccount } from '@/lib/data/use-account';
+import { useAccounts } from '@/lib/data/account-address/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useCreateAccount } from '@/lib/data/use-create-account';
 import { useFaucetAirdrop } from '@/lib/data/use-faucet-airdrop';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';

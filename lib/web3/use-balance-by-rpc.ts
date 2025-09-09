@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { formatBig } from '../utils/number';
 
-export function useAddressBalance(chainId: number, address: string) {
+export function useBalanceByRPC(chainId: number, address: string) {
   const { data: balanceData, isPending } = useBalance({
     address: address as `0x${string}`,
     chainId,

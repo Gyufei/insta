@@ -17,14 +17,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { UNISWAP_TOKENS } from '@/app/(protocols)/uniswap/use-uniswap-token';
+
 import { NetworkConfigs } from '@/config/network-config';
 import { MonUSD } from '@/config/tokens';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { formatNumber } from '@/lib/utils/number';
 // import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
-import { useAccountTokenBalance } from '@/lib/web3/use-account-token-balance';
-import { useWalletBalance } from '@/lib/web3/use-wallet-balance';
+import { useBalanceByRPC } from '@/lib/web3/use-balance-by-rpc';
+import { useTokenBalanceByRPC } from '@/lib/web3/use-token-balance-by-rpc';
 
 import { GAS_LIMIT_FOR_CLAIM_MONUSD, useOddsClaim } from '../../common/use-odds-claim';
 import { useOddsDeposit } from '../../common/use-odds-deposit';
@@ -37,13 +39,21 @@ import TransferConfirmModal from '../../components/TransferConfirmModal';
 export default function Portfolio() {
   const router = useRouter();
   const { address } = useAccount();
-  const { data: accountInfo } = useSelectedAccount();
+  const { data: accountInfo, isLoading: isAccountInfoPending } = useSelectedAccount();
+  const tokens = UNISWAP_TOKENS;
 
   const {
     balance: fundingBalance,
-    isPending: isLoadingFundingBalance,
+    isPending: isBalancePending,
     refetch: refetchFundingBalance,
-  } = useAccountTokenBalance(NetworkConfigs.monadTestnet.id, MonUSD.address);
+  } = useTokenBalanceByRPC(
+    NetworkConfigs.monadTestnet.id,
+    accountInfo?.sandbox_account || '',
+    MonUSD.address,
+    tokens
+  );
+
+  const isLoadingFundingBalance = isAccountInfoPending || isBalancePending;
 
   const { data: tradingBalanceData } = useTradingBalance();
 
@@ -52,7 +62,7 @@ export default function Portfolio() {
   const { data: marketsData, isLoading: isLoadingMarkets, error: marketsError } = useUserMarkets();
   const markets = marketsData?.market_list;
 
-  const { balance: walletBalance } = useWalletBalance(NetworkConfigs.monadTestnet.id);
+  const { balance: walletBalance } = useBalanceByRPC(NetworkConfigs.monadTestnet.id, address || '');
   // const { balance: monadBalance } = useApiMonadBalance();
   const { mutate: deposit, isPending: isTransferringToTrading } = useOddsDeposit();
   const { mutate: withdraw, isPending: isTransferringToFunding } = useOddsWithdraw();

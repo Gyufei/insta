@@ -7,13 +7,17 @@ import { BaseNetIds } from '@/config/network-config';
 
 import { Button } from '@/components/ui/button';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
+import { useAccountStore } from '@/lib/state/account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { formatAddress } from '@/lib/utils';
 
 export function AccountBtn() {
   const { address } = useAccount();
   const { data: accountInfo, isLoading } = useSelectedAccount();
+
   const account = accountInfo?.sandbox_account;
+  const { currentAccountType } = useAccountStore();
 
   const { chainId } = useAppKitNetwork();
   const isBaseNet = useMemo(() => BaseNetIds.includes(String(chainId)), [chainId]);
@@ -36,8 +40,17 @@ export function AccountBtn() {
       onClick={handleCreate}
       disabled={isLoading}
     >
-      <div className="flex items-center justify-center leading-5 text-primary">
-        {account ? <>#{accountInfo.id}</> : <>Create Account</>}
+      <div className="flex flex-col items-center justify-center leading-5 text-primary">
+        <span className="text-xs text-primary">
+          {currentAccountType === 'EOA' ? (
+            <>#{formatAddress(address || '')}</>
+          ) : (
+            <>#{accountInfo?.id}</>
+          )}
+        </span>
+        <span className="text-[10px] text-[#A5ADC6] leading-[14px]">
+          {currentAccountType === 'EOA' ? <>EOA</> : <>DSA</>}
+        </span>
       </div>
     </Button>
   );

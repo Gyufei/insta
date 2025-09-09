@@ -42,7 +42,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/lib/utils/use-mobile';
 

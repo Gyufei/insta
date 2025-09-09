@@ -1,6 +1,6 @@
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 
-import { useSelectedAccount } from '@/lib/data/use-account';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { cn } from '@/lib/utils';
 
