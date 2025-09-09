@@ -40,7 +40,10 @@ type TimeRange = '14D' | '30D' | 'ALL';
 function filterByRange(data: IMetricsItem[], range: TimeRange) {
   if (range === 'ALL') return data;
   const days = range === '14D' ? 14 : 30;
-  return data.slice(-days);
+  // 每6小时一个数据点，一天有4个数据点
+  const dataPointsPerDay = 4;
+  const maxDataPoints = days * dataPointsPerDay;
+  return data.slice(-maxDataPoints);
 }
 
 function MetricsChart({
@@ -49,11 +52,35 @@ function MetricsChart({
   series: { label: string; values: { time: number; value: number }[] };
 }) {
   const chartData = useMemo(() => {
+    // 创建一个Map来跟踪每天是否已经显示过标签
+    const dailyLabels = new Map<string, boolean>();
+
     const labels = series.values.map((item) => {
-      const date = new Date(item.time * 1000);
+      const date = new Date(item.time);
       const mm = String(date.getMonth() + 1).padStart(2, '0');
       const dd = String(date.getDate()).padStart(2, '0');
+      const hh = String(date.getHours()).padStart(2, '0');
+
+      // 创建日期键（YYYY-MM-DD格式）
+      const dateKey = `${date.getFullYear()}-${mm}-${dd}`;
+
+      // 检查这一天是否已经显示过标签
+      if (dailyLabels.has(dateKey)) {
+        return ''; // 如果已经显示过，返回空字符串
+      }
+
+      // 标记这一天已经显示过标签
+      dailyLabels.set(dateKey, true);
+
+      // 根据数据点数量决定显示格式
+      // if (series.values.length > 20) {
+      // 数据点很多时，只显示日期
       return `${mm}-${dd}`;
+      // }
+      // else {
+      //   // 数据点较少时，显示日期和时间
+      //   return `${mm}-${dd} ${hh}:00`;
+      // }
     });
 
     return {
@@ -100,6 +127,17 @@ function MetricsChart({
         cornerRadius: 8,
         displayColors: false,
         callbacks: {
+          title: function (context) {
+            // 显示完整的时间信息作为标题
+            const dataIndex = context[0].dataIndex;
+            const timeValue = series.values[dataIndex].time;
+            const date = new Date(timeValue);
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            const hh = String(date.getHours()).padStart(2, '0');
+            const min = String(date.getMinutes()).padStart(2, '0');
+            return `${mm}-${dd} ${hh}:${min}`;
+          },
           label: function (context) {
             return `${formatNumberUnit(context.parsed.y)}`;
           },
@@ -120,6 +158,10 @@ function MetricsChart({
           font: {
             family: 'Aeonik, system-ui, sans-serif',
             size: 12,
+          },
+          callback: function (value) {
+            const label = this.getLabelForValue(Number(value));
+            return label || '';
           },
         },
       },
@@ -160,8 +202,11 @@ function MetricsChart({
 
 export function MetricsContent() {
   const [leftRange, setLeftRange] = useState<TimeRange>('14D');
-  // const [rightRange, setRightRange] = useState<TimeRange>('14D');
+  const [rightRange, setRightRange] = useState<TimeRange>('14D');
   const { data = [], isLoading, error } = useMetrics();
+
+  // 控制第二个图表显示的开关
+  const showSecondChart = false;
 
   const baseData = useMemo<IMetricsItem[]>(() => {
     return data || [];
@@ -171,32 +216,32 @@ export function MetricsContent() {
     () => filterByRange(baseData || [], leftRange),
     [baseData, leftRange]
   );
-  // const rightFiltered = useMemo(
-  //   () => filterByRange(baseData || [], rightRange),
-  //   [baseData, rightRange]
-  // );
+  const rightFiltered = useMemo(
+    () => filterByRange(baseData || [], rightRange),
+    [baseData, rightRange]
+  );
 
   const holdersSeries = useMemo(() => {
     return leftFiltered.map((d) => ({
-      time: Math.floor(new Date(d.date).getTime() / 1000),
+      time: new Date(d.date).getTime(),
       value: d.data.holders,
     }));
   }, [leftFiltered]);
 
-  // const sandboxSeries = useMemo(() => {
-  //   return rightFiltered.map((d) => ({
-  //     time: Math.floor(new Date(d.date).getTime() / 1000),
-  //     value: d.data.sandboxAccounts,
-  //   }));
-  // }, [rightFiltered]);
+  const sandboxSeries = useMemo(() => {
+    return rightFiltered.map((d) => ({
+      time: new Date(d.date).getTime(),
+      value: d.data.sandboxAccounts,
+    }));
+  }, [rightFiltered]);
 
   const holdersLatest = leftFiltered.length
     ? leftFiltered[leftFiltered.length - 1].data.holders
     : 0;
 
-  // const sandboxLatest = rightFiltered.length
-  //   ? rightFiltered[rightFiltered.length - 1].data.sandboxAccounts
-  //   : 0;
+  const sandboxLatest = rightFiltered.length
+    ? rightFiltered[rightFiltered.length - 1].data.sandboxAccounts
+    : 0;
 
   return (
     <div className="grid grid-cols-1 gap-4 px-4 2xl:px-12">
@@ -225,30 +270,32 @@ export function MetricsContent() {
         </CardContent>
       </Card>
 
-      {/* <Card className="border-[#EBEBEB] rounded-[8px]">
-        <CardHeader className="flex items-start justify-between gap-4 px-5">
-          <div>
-            <CardDescription className="text-[#A5ADC6] text-sm">Sandbox Users</CardDescription>
-            <CardTitle className="text-[32px] font-medium leading-[140%] text-primary mt-[10px]">
-              {formatNumber(sandboxLatest)}
-            </CardTitle>
-          </div>
-          <RangeTabs value={rightRange} onChange={setRightRange} />
-        </CardHeader>
-        <CardContent className="px-5">
-          {isLoading ? (
-            <div className="w-full h-[260px] flex items-center justify-center bg-gray-50">
-              <div className="animate-spin w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full"></div>
+      {showSecondChart && (
+        <Card className="border-[#EBEBEB] rounded-[8px]">
+          <CardHeader className="flex items-start justify-between gap-4 px-5">
+            <div>
+              <CardDescription className="text-[#A5ADC6] text-sm">Sandbox Users</CardDescription>
+              <CardTitle className="text-[32px] font-medium leading-[140%] text-primary mt-[10px]">
+                {formatNumber(sandboxLatest)}
+              </CardTitle>
             </div>
-          ) : error ? (
-            <div className="w-full h-[260px] flex items-center justify-center text-red-600">
-              {error.message}
-            </div>
-          ) : (
-            <MetricsChart series={{ label: 'SandboxUsers', values: sandboxSeries }} />
-          )}
-        </CardContent>
-      </Card> */}
+            <RangeTabs value={rightRange} onChange={setRightRange} />
+          </CardHeader>
+          <CardContent className="px-5">
+            {isLoading ? (
+              <div className="w-full h-[260px] flex items-center justify-center bg-gray-50">
+                <div className="animate-spin w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full"></div>
+              </div>
+            ) : error ? (
+              <div className="w-full h-[260px] flex items-center justify-center text-red-600">
+                {error.message}
+              </div>
+            ) : (
+              <MetricsChart series={{ label: 'SandboxUsers', values: sandboxSeries }} />
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
