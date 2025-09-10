@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 
-import { useGetAccountBalance } from '@/lib/data/balance/use-get-account-balance';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
+import { useAddressBalance } from '@/lib/data/balance/use-address-balnace';
 
 interface BalanceDisplayProps {
   tokenAddress: string;
@@ -18,14 +19,11 @@ export function SwapInputBalanceDisplay({
   onMaxClick,
   onBalanceChange,
 }: BalanceDisplayProps) {
-  const [enableQuery, setEnableQuery] = useState(false);
-  const { balance, isBalancePending } = useGetAccountBalance(tokenAddress, enableQuery);
-
-  useEffect(() => {
-    if (tokenAddress) {
-      setEnableQuery(true);
-    }
-  }, [tokenAddress]);
+  const { data: accountInfo } = useSelectedAccount();
+  const { balance, isBalancePending } = useAddressBalance(
+    accountInfo?.sandbox_account || '',
+    tokenAddress
+  );
 
   useEffect(() => {
     if (balance && onBalanceChange) {

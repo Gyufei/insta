@@ -1,11 +1,13 @@
+import { divide } from 'safebase';
+
 import { useMemo } from 'react';
 
 import { NetworkConfigs } from '@/config/network-config';
 
-import { useAllChainBalanceByApi } from './use-all-chain-balance-by-api';
+import { useApiBalance } from './use-api-balance';
 
 export function useAccountOrWalletBalanceByApi(chainId: number, tokenAddress: string) {
-  const res = useAllChainBalanceByApi();
+  const res = useApiBalance();
   const { data: balanceData, isPending: isBalancePending } = res;
 
   const balanceNetwork =
@@ -22,7 +24,12 @@ export function useAccountOrWalletBalanceByApi(chainId: number, tokenAddress: st
       (bRes) => bRes.address.toLowerCase() === tokenAddress.toLowerCase()
     );
 
-    return targetToken?.formattedBalance || '0';
+    const bal = divide(
+      String(targetToken?.balance || '0'),
+      String(10 ** (targetToken?.decimals || 18))
+    );
+
+    return bal || '0';
   }, [balanceData, balanceNetwork, tokenAddress]);
 
   return {

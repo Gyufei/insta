@@ -2,10 +2,10 @@ import { divide } from 'safebase';
 
 import { useMemo } from 'react';
 
-import { useAllChainBalanceByApi } from './use-all-chain-balance-by-api';
+import { useApiBalance } from './use-api-balance';
 
 export function useMonadBalanceByApi() {
-  const { data: balanceData, isPending } = useAllChainBalanceByApi();
+  const { data: balanceData, isPending } = useApiBalance();
 
   const monadBalanceRes = balanceData?.find(
     (token) => token.network === 'MON' && token.token === 'MON'

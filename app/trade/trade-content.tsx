@@ -3,6 +3,7 @@
 import { CircleX, Loader } from 'lucide-react';
 import { divide } from 'safebase';
 import { toast } from 'sonner';
+import { useAccount } from 'wagmi';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -19,17 +20,23 @@ import { TokenDropSelector } from '@/components/common/token-drop-selector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
+import { useAddressBalance } from '@/lib/data/balance/use-address-balnace';
 import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
 import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
 import { ErrorVO } from '@/lib/model/error-vo';
+import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
-import { useGetAccountBalance } from '@/lib/data/balance/use-get-account-balance';
 
-import { SlippageSettings } from './slippage-settings';
 import { WMONAD_TOKEN } from '../(protocols)/uniswap/use-uniswap-token';
+import { SlippageSettings } from './slippage-settings';
 
 export function TokenContent() {
+  const { address: wallet } = useAccount();
+  const { data: accountInfo } = useSelectedAccount();
+  const { currentAccountType } = useAccountStore();
+
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
   const [sellValue, setSellValue] = useState('');
@@ -43,14 +50,14 @@ export function TokenContent() {
 
   const [rotateTimes, setRotateTimes] = useState(0);
 
-  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useGetAccountBalance(
-    sellToken?.address || '',
-    true
+  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useAddressBalance(
+    currentAccountType === 'EOA' ? wallet || '' : accountInfo?.sandbox_account || '',
+    sellToken?.address || ''
   );
 
-  const { balance: toBalance, isBalancePending: isToBalancePending } = useGetAccountBalance(
-    buyToken?.address || '',
-    true
+  const { balance: toBalance, isBalancePending: isToBalancePending } = useAddressBalance(
+    currentAccountType === 'EOA' ? wallet || '' : accountInfo?.sandbox_account || '',
+    buyToken?.address || ''
   );
 
   const isCanBuyPair = useMemo(() => {

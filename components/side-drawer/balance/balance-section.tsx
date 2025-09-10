@@ -9,7 +9,7 @@ import { WithLoading } from '@/components/common/with-loading';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
-import { useAllChainBalanceByApi } from '@/lib/data/balance/use-all-chain-balance-by-api';
+import { useApiBalance } from '@/lib/data/balance/use-api-balance';
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
@@ -22,7 +22,7 @@ export default function BalanceSection() {
   const { data: accountInfo } = useSelectedAccount();
   const account = accountInfo?.sandbox_account;
 
-  const { data: balanceData, isPending: isPendingBalance } = useAllChainBalanceByApi();
+  const { data: balanceData, isPending: isPendingBalance } = useApiBalance();
   const { data: priceData, isPending: isPendingPrice } = useTokenStationPrice();
 
   const { data: aprioriBalance, isPending: isPendingApr } = useAprioriBalance();

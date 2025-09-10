@@ -12,7 +12,7 @@ import {
 import { NetworkConfigs } from '@/config/network-config';
 import { APR_MONAD, G_MONAD, IToken, MONAD, MonUSD } from '@/config/tokens';
 
-import { useAllChainBalanceByApi } from '@/lib/data/balance/use-all-chain-balance-by-api';
+import { useApiBalance } from '@/lib/data/balance/use-api-balance';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 // import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
 import { useRPCNativeBalance } from '@/lib/web3/use-rpc-native-balance';
@@ -37,7 +37,7 @@ function filterTokenByQuery(tokens: IToken[], query: string) {
 
 export default function TokenList() {
   const { address } = useAccount();
-  const { data: balanceData } = useAllChainBalanceByApi();
+  const { data: balanceData } = useApiBalance();
 
   const { balance: walletBalance } = useRPCNativeBalance(NetworkConfigs.monadTestnet.id, address || '');
   const { mutate: claimMonUsd, isPending: isProcessingClaim } = useOddsClaim();
