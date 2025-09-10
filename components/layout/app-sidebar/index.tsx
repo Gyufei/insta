@@ -12,6 +12,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { BaseNetUrlPath } from '@/config/env-url';
 // Internal imports
 import { NetworkConfigs } from '@/config/network-config';
 
@@ -66,9 +67,6 @@ type MenuGroup = {
   isMenuItem: boolean;
   href?: string;
 };
-
-// 常量配置
-const BASE_NET_URL_PATHS = ['/token-station', '/badge-gallery'];
 
 const NETWORK_TO_URL_PARAM: Record<string, string> = {
   [String(NetworkConfigs.monadTestnet.id)]: 'monad',
@@ -474,7 +472,7 @@ export default function AppSidebar() {
   const { data: accountInfo } = useSelectedAccount();
 
   const pathname = usePathname();
-  const isBasePath = BASE_NET_URL_PATHS.includes(pathname);
+  const isBasePath = BaseNetUrlPath.includes(pathname);
 
   const { open, toggleSidebar } = useSidebar();
   const isMobile = useIsMobile();
@@ -483,7 +481,7 @@ export default function AppSidebar() {
 
   const getCurrentChainNameHref = useCallback(
     (href: string): string => {
-      if (BASE_NET_URL_PATHS.includes(href)) {
+      if (BaseNetUrlPath.includes(href)) {
         const chainName = NETWORK_TO_URL_PARAM[String(chainId)];
         if (chainName === 'monad') return href;
         return `${href}?chain=${chainName}`;
@@ -582,9 +580,7 @@ export default function AppSidebar() {
   // 移动端路由变化时关闭侧边栏
   useEffect(() => {
     const isInsideOdds = previousPathname.includes('/odds') && pathname.includes('/odds');
-    const isInsideC2C = previousPathname.includes('/c2c') && pathname.includes('/c2c');
-    const shouldCloseSidebar =
-      previousPathname !== pathname && isMobile && open && !isInsideOdds && !isInsideC2C;
+    const shouldCloseSidebar = previousPathname !== pathname && isMobile && open && !isInsideOdds;
 
     if (shouldCloseSidebar) {
       toggleSidebar();

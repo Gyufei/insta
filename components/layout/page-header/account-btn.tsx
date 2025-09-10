@@ -3,6 +3,9 @@ import { useAccount } from 'wagmi';
 
 import { useMemo } from 'react';
 
+import { usePathname } from 'next/navigation';
+
+import { BaseNetUrlPath } from '@/config/env-url';
 import { BaseNetIds } from '@/config/network-config';
 
 import { Button } from '@/components/ui/button';
@@ -15,6 +18,7 @@ import { formatAddress } from '@/lib/utils';
 export function AccountBtn() {
   const { address } = useAccount();
   const { data: accountInfo, isLoading } = useSelectedAccount();
+  const pathname = usePathname();
 
   const account = accountInfo?.sandbox_account;
   const { currentAccountType } = useAccountStore();
@@ -23,6 +27,14 @@ export function AccountBtn() {
   const isBaseNet = useMemo(() => BaseNetIds.includes(String(chainId)), [chainId]);
 
   const { setCurrentComponent } = useSideDrawerStore();
+
+  const currentType = useMemo(() => {
+    if (BaseNetUrlPath.includes(pathname)) {
+      return 'EOA';
+    }
+
+    return currentAccountType === 'EOA' ? 'EOA' : 'DSA';
+  }, [currentAccountType, pathname]);
 
   function handleCreate() {
     if (!address) return;
@@ -42,14 +54,10 @@ export function AccountBtn() {
     >
       <div className="flex flex-col items-center justify-center leading-5 text-primary">
         <span className="text-xs text-primary">
-          {currentAccountType === 'EOA' ? (
-            <>#{formatAddress(address || '')}</>
-          ) : (
-            <>#{accountInfo?.id}</>
-          )}
+          {currentType === 'EOA' ? <>#{formatAddress(address || '')}</> : <>#{accountInfo?.id}</>}
         </span>
         <span className="text-[10px] text-[#A5ADC6] leading-[14px]">
-          {currentAccountType === 'EOA' ? <>EOA</> : <>DSA</>}
+          {currentType === 'EOA' ? <>EOA</> : <>DSA</>}
         </span>
       </div>
     </Button>

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import { BaseNetUrlPath } from '@/config/env-url';
 import { INetworkConfig, MONAD_TESTNET_NAME, NetworkConfigs } from '@/config/network-config';
 
 import {
@@ -45,8 +46,6 @@ const URL_PARAM_TO_NETWORK: Record<string, string> = {
   base: String(NetworkConfigs.base.id),
   eth: String(NetworkConfigs.eth.id),
 };
-
-const BaseNetUrlPath = ['/token-station', '/badge-gallery'];
 
 export default function NetworkSelect() {
   const { switchNetwork, chainId } = useAppKitNetwork();
