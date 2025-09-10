@@ -133,4 +133,8 @@ export const ApiPath = {
 
   twitterBind: `${ApiHost}/account/twitter`,
   twitterInfo: `${ApiHost}/account/twitter_info`,
+
+  checkIn: `${ApiHost}/account/checkin`,
+  checkInComplete: `${ApiHost}/account/checkin/complete`,
+  checkInToday: `${ApiHost}/account/checkin/today`,
 };

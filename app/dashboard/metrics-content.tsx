@@ -22,6 +22,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { IMetricsItem, useMetrics } from '@/lib/data/use-metrics';
 import { formatNumber, formatNumberUnit } from '@/lib/utils/number';
 
+import { CheckInBtn } from './check-in-btn';
+
 // 注册 Chart.js 组件
 ChartJS.register(
   CategoryScale,
@@ -42,9 +44,7 @@ function filterByRange(data: IMetricsItem[], range: TimeRange) {
   if (!data || data.length === 0) return [];
   // 以数据中的最新日期为基准，向前回溯 N 天
   const endTime = Math.max(
-    ...data
-      .map((d) => new Date(d.date).getTime())
-      .filter((t) => Number.isFinite(t))
+    ...data.map((d) => new Date(d.date).getTime()).filter((t) => Number.isFinite(t))
   );
   const startTime = endTime - days * 24 * 60 * 60 * 1000;
   return data.filter((d) => {
@@ -250,38 +250,15 @@ export function MetricsContent() {
     : 0;
 
   return (
-    <div className="grid grid-cols-1 gap-4 px-4 2xl:px-12">
-      <Card className="border-[#EBEBEB] rounded-[8px]">
-        <CardHeader className="flex items-start justify-between gap-4 px-5">
-          <div>
-            <CardDescription className="text-[#A5ADC6] text-sm">monUSD Holders</CardDescription>
-            <CardTitle className="text-[32px] font-medium leading-[140%] text-primary mt-[10px]">
-              {formatNumber(holdersLatest)}
-            </CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="px-5">
-          {isLoading ? (
-            <div className="w-full h-[260px] flex items-center justify-center bg-gray-50">
-              <div className="animate-spin w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full"></div>
-            </div>
-          ) : error ? (
-            <div className="w-full h-[260px] flex items-center justify-center text-red-600">
-              {error.message}
-            </div>
-          ) : (
-            <MetricsChart series={{ label: 'Holders', values: holdersSeries }} />
-          )}
-        </CardContent>
-      </Card>
-
-      {showSecondChart && (
+    <>
+      <CheckInBtn />
+      <div className="grid grid-cols-1 gap-4 px-4 2xl:px-12">
         <Card className="border-[#EBEBEB] rounded-[8px]">
           <CardHeader className="flex items-start justify-between gap-4 px-5">
             <div>
-              <CardDescription className="text-[#A5ADC6] text-sm">Sandbox Users</CardDescription>
+              <CardDescription className="text-[#A5ADC6] text-sm">monUSD Holders</CardDescription>
               <CardTitle className="text-[32px] font-medium leading-[140%] text-primary mt-[10px]">
-                {formatNumber(sandboxLatest)}
+                {formatNumber(holdersLatest)}
               </CardTitle>
             </div>
           </CardHeader>
@@ -295,11 +272,37 @@ export function MetricsContent() {
                 {error.message}
               </div>
             ) : (
-              <MetricsChart series={{ label: 'SandboxUsers', values: sandboxSeries }} />
+              <MetricsChart series={{ label: 'Holders', values: holdersSeries }} />
             )}
           </CardContent>
         </Card>
-      )}
-    </div>
+
+        {showSecondChart && (
+          <Card className="border-[#EBEBEB] rounded-[8px]">
+            <CardHeader className="flex items-start justify-between gap-4 px-5">
+              <div>
+                <CardDescription className="text-[#A5ADC6] text-sm">Sandbox Users</CardDescription>
+                <CardTitle className="text-[32px] font-medium leading-[140%] text-primary mt-[10px]">
+                  {formatNumber(sandboxLatest)}
+                </CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="px-5">
+              {isLoading ? (
+                <div className="w-full h-[260px] flex items-center justify-center bg-gray-50">
+                  <div className="animate-spin w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full"></div>
+                </div>
+              ) : error ? (
+                <div className="w-full h-[260px] flex items-center justify-center text-red-600">
+                  {error.message}
+                </div>
+              ) : (
+                <MetricsChart series={{ label: 'SandboxUsers', values: sandboxSeries }} />
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </>
   );
 }

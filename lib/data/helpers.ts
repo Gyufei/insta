@@ -105,7 +105,8 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
         if ('tx_hash' in txRes) {
           return txRes.tx_hash;
         }
-        await handleTransaction(txRes, send, errorMessage);
+        const res = await handleTransaction(txRes, send, errorMessage);
+        return res;
       } catch (err) {
         let errDisplay = (err as Error).message;
         if (!errDisplay) {

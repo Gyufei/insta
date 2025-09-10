@@ -38,6 +38,7 @@ export const ERROR_MESSAGES = {
   INSUFFICIENT_BALANCE: 'Insufficient balance',
   FAUCET_AIRDROP_FAILED: 'Faucet claim failed',
   IMAGE_UPLOAD_FAILED: 'Image upload failed',
+  CHECK_IN_FAILED: 'Check in failed',
 } as const;
 
 export const SUCCESS_MESSAGES = {
@@ -69,4 +70,5 @@ export const SUCCESS_MESSAGES = {
   BADGE_PURCHASE_SUCCESS: 'Badge purchased successfully',
   FAUCET_AIRDROP_SUCCESS: 'Faucet claimed successfully',
   IMAGE_UPLOAD_SUCCESS: 'Image uploaded successfully',
+  CHECK_IN_SUCCESS: 'Check in successfully',
 } as const;
