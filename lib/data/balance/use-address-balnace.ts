@@ -5,9 +5,9 @@ import {
   NetworkConfigs,
 } from '@/config/network-config';
 
+import { useRPCNativeBalance } from '@/lib/data/balance/use-rpc-native-balance';
 import { isSameAddress } from '@/lib/utils';
 import { truncateNumber } from '@/lib/utils/number';
-import { useRPCNativeBalance } from '@/lib/web3/use-rpc-native-balance';
 
 import { useUniswapTokenBalance } from './use-uniswap-token-balance';
 

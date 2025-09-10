@@ -23,7 +23,7 @@ import { MonUSD } from '@/config/tokens';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAccountOrWalletBalanceByApi } from '@/lib/data/balance/use-account-or-wallet-balance-by-api';
 import { formatNumber } from '@/lib/utils/number';
-import { useRPCNativeBalance } from '@/lib/web3/use-rpc-native-balance';
+import { useRPCNativeBalance } from '@/lib/data/balance/use-rpc-native-balance';
 
 import { GAS_LIMIT_FOR_CLAIM_MONUSD, useOddsClaim } from '../../common/use-odds-claim';
 import { useOddsDeposit } from '../../common/use-odds-deposit';

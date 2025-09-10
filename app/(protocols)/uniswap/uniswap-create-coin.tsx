@@ -14,6 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 import { useImageUpload } from '@/lib/data/use-image-upload';
 import { useUniswapCreateCoin } from '@/lib/data/use-uniswap-create-coin';
+import { useAccountStore } from '@/lib/state/account';
 import { cn } from '@/lib/utils';
 
 interface CreateCoinFormData {
@@ -36,6 +37,7 @@ interface FormErrors {
 }
 
 export function UniswapCreateCoin() {
+  const { currentAccountType } = useAccountStore();
   const [formData, setFormData] = useState<CreateCoinFormData>({
     thumbnail: null,
     tokenName: '',
@@ -234,6 +236,7 @@ export function UniswapCreateCoin() {
     }
 
     createCoin({
+      wallet_type: currentAccountType,
       token_name: formData.tokenName,
       token_symbol: formData.tickerName,
       token_url: formData.thumbnail || '',

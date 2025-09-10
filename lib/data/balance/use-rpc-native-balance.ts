@@ -2,7 +2,7 @@ import { useBalance } from 'wagmi';
 
 import { useMemo } from 'react';
 
-import { formatBig } from '../utils/number';
+import { formatBig } from '@/lib/utils/number';
 
 export function useRPCNativeBalance(chainId: number, address: string) {
   const { data: balanceData, isPending } = useBalance({

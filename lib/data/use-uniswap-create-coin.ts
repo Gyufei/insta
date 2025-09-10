@@ -1,10 +1,12 @@
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 
+import { CURRENT_ADDR_TYPE } from '../state/account';
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
 
 export interface UniswapCreateCoinParams {
   wallet: string;
+  wallet_type: CURRENT_ADDR_TYPE;
   sandbox_account: string;
   token_name: string;
   token_symbol: string;
@@ -17,6 +19,7 @@ export interface UniswapCreateCoinParams {
 }
 
 export interface UniswapCreateCoinArgs {
+  wallet_type: CURRENT_ADDR_TYPE;
   token_name: string;
   token_symbol: string;
   token_url: string;
@@ -33,6 +36,7 @@ export function useUniswapCreateCoin() {
       const params = args as UniswapCreateCoinArgs;
       return {
         wallet: address,
+        wallet_type: params.wallet_type,
         sandbox_account: account,
         token_name: params.token_name,
         token_symbol: params.token_symbol,

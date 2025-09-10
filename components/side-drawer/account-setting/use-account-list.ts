@@ -8,7 +8,7 @@ import { useAccounts } from '@/lib/data/account-address/use-account';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useCreateAccount } from '@/lib/data/use-create-account';
 import { useAccountStore } from '@/lib/state/account';
-import { useRPCNativeBalance } from '@/lib/web3/use-rpc-native-balance';
+import { useRPCNativeBalance } from '@/lib/data/balance/use-rpc-native-balance';
 
 const GAS_LIMIT_FOR_CREATE_ACCOUNT = 0.0161845008;
 

@@ -1,8 +1,8 @@
 import { BACKEND_NATIVE_ADDRESS, DEFAULT_NATIVE_ADDRESS } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
-import { isSameAddress } from '../utils';
-import { truncateNumber } from '../utils/number';
+import { isSameAddress } from '../../utils';
+import { truncateNumber } from '../../utils/number';
 import { useRPCNativeBalance } from './use-rpc-native-balance';
 import { useRPCTokenBalance } from './use-rpc-token-balance';
 

@@ -36,7 +36,7 @@ import { eventBus } from '@/lib/state/eventBus';
 import { cn, formatAddress } from '@/lib/utils';
 import { formatNumber, truncateNumber } from '@/lib/utils/number';
 import { useIsMobile } from '@/lib/utils/use-mobile';
-import { useRPCBalance } from '@/lib/web3/use-rpc-balance';
+import { useRPCBalance } from '@/lib/data/balance/use-rpc-balance';
 
 import {
   STATION_FROM_TOKENS_BASE,

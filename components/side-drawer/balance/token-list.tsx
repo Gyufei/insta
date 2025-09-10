@@ -15,7 +15,7 @@ import { APR_MONAD, G_MONAD, IToken, MONAD, MonUSD } from '@/config/tokens';
 import { useApiBalance } from '@/lib/data/balance/use-api-balance';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 // import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
-import { useRPCNativeBalance } from '@/lib/web3/use-rpc-native-balance';
+import { useRPCNativeBalance } from '@/lib/data/balance/use-rpc-native-balance';
 
 import { AprMONTokenCard } from './apr-mon-token-card';
 import { BaseTokenCard } from './base-token-card';
