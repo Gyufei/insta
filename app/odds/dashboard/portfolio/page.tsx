@@ -21,9 +21,10 @@ import { NetworkConfigs } from '@/config/network-config';
 import { MonUSD } from '@/config/tokens';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
-import { useApiChainBalance } from '@/lib/data/balance/use-api-chain-balance';
-import { formatNumber } from '@/lib/utils/number';
+import { useAddressBalance } from '@/lib/data/balance/use-address-balnace';
 import { useRPCNativeBalance } from '@/lib/data/balance/use-rpc-native-balance';
+import { useAccountStore } from '@/lib/state/account';
+import { formatNumber } from '@/lib/utils/number';
 
 import { GAS_LIMIT_FOR_CLAIM_MONUSD, useOddsClaim } from '../../common/use-odds-claim';
 import { useOddsDeposit } from '../../common/use-odds-deposit';
@@ -37,14 +38,19 @@ export default function Portfolio() {
   const router = useRouter();
   const { address } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
+  const { currentAccountType } = useAccountStore();
 
   const {
     balance: fundingBalance,
     isBalancePending: isLoadingFundingBalance,
     refetch: refetchFundingBalance,
-  } = useApiChainBalance(NetworkConfigs.monadTestnet.id, MonUSD.address);
+  } = useAddressBalance(
+    currentAccountType === 'EOA' ? address || '' : accountInfo?.sandbox_account || '',
+    MonUSD.address,
+    MonUSD.decimals
+  );
 
-  const { data: tradingBalanceData } = useTradingBalance();
+  const { data: tradingBalanceData, isPending: isLoadingTradingBalance } = useTradingBalance();
 
   const tradingBalance = tradingBalanceData?.balance;
 
@@ -234,7 +240,11 @@ export default function Portfolio() {
           </div>
           <div className="flex items-center gap-2 mb-[10px]">
             <div className="text-3xl font-medium min-h-[48px] flex items-center">
-              ${tradingBalance ? formatNumber(tradingBalance || '') : ''}
+              {isLoadingTradingBalance ? (
+                <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
+              ) : (
+                <>${tradingBalance ? formatNumber(tradingBalance || '') : ''}</>
+              )}
             </div>
             <button
               id="btnSwap"

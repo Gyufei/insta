@@ -34,7 +34,11 @@ export function useOddsUserInfo() {
   }
 
   return useQuery<IUserInfoResponse>({
-    queryKey: ['user', 'info', address, accountInfo?.sandbox_account],
+    queryKey: [
+      'user',
+      'info',
+      currentAccountType === 'EOA' ? address : accountInfo?.sandbox_account,
+    ],
     queryFn: executeQuery,
     enabled: !!address && !!accountInfo?.sandbox_account,
     staleTime: Infinity,

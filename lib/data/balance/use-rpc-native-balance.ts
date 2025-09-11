@@ -5,7 +5,11 @@ import { useMemo } from 'react';
 import { formatBig } from '@/lib/utils/number';
 
 export function useRPCNativeBalance(chainId: number, address: string) {
-  const { data: balanceData, isPending } = useBalance({
+  const {
+    data: balanceData,
+    isPending,
+    refetch,
+  } = useBalance({
     address: address as `0x${string}`,
     chainId,
     query: {
@@ -19,7 +23,8 @@ export function useRPCNativeBalance(chainId: number, address: string) {
   }, [balanceData?.decimals, balanceData?.value, address]);
 
   return {
-    isPending: Boolean(address) && isPending,
+    isPending: isPending,
     balance,
+    refetch,
   };
 }
