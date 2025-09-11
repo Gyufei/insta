@@ -72,17 +72,15 @@ export const ApiPath = {
   uniswapV3Position: `${ApiHost}/uniswap_v3_position/all_positions`,
   uniswapPositionInfo: `${ApiHost}/uniswap_v3_position/position_info`,
   uniswapQuote: `${ApiHost}/uniswap_router02/quote`,
-  uniswapSwap: `${ApiHost}/uniswap_router02/buy`,
+  uniswapDSASwap: `${ApiHost}/uniswap_router02/buy`,
+  uniswapEOASwap: `${ApiHost}/uniswap_router02/execute`,
   uniswapCreatePoolAndMintPosition: `${ApiHost}/uniswap_v3_position/create_and_mint_pool`,
   uniswapMintPosition: `${ApiHost}/uniswap_v3_position/mint_pool`,
   uniswapCreateToken: `${ApiHost}/uniswap_v3_position/create_token`,
   uniswapAddLiquidity: `${ApiHost}/uniswap_v3_position/deposit`,
   uniswapRemoveLiquidity: `${ApiHost}/uniswap_v3_position/withdraw`,
   uniswapLiquidityRatio: `${ApiHost}/uniswap_v3_position/liquidity_ratio`,
-  uniswapTokenInfo: `${ApiHost}/uniswap_v3_position/token_info`,
   uniswapTokens: `${ApiHost}/uniswap_v3_position/tokens`,
-  uniswapTokenBalance: `${ApiHost}/uniswap_v3_position/token_balance`,
-  uniswapAllowance: `${ApiHost}/uniswap_v3_position/allowance`,
 
   ambientPosition: `${ApiHost}/ambient_finance/positions`,
   ambientPositionInfo: `${ApiHost}/ambient_finance/position_info`,
@@ -138,4 +136,8 @@ export const ApiPath = {
   checkIn: `${ApiHost}/account/checkin`,
   checkInComplete: `${ApiHost}/account/checkin/complete`,
   checkInToday: `${ApiHost}/account/checkin/today`,
+
+  monadTokenInfo: `${ApiHost}/token/info`,
+  monadTokenBalance: `${ApiHost}/token/balance`,
+  monadTokenAllowance: `${ApiHost}/token/allowance`,
 };

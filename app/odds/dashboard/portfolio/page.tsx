@@ -21,7 +21,7 @@ import { NetworkConfigs } from '@/config/network-config';
 import { MonUSD } from '@/config/tokens';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
-import { useAccountOrWalletBalanceByApi } from '@/lib/data/balance/use-account-or-wallet-balance-by-api';
+import { useApiChainBalance } from '@/lib/data/balance/use-api-chain-balance';
 import { formatNumber } from '@/lib/utils/number';
 import { useRPCNativeBalance } from '@/lib/data/balance/use-rpc-native-balance';
 
@@ -42,7 +42,7 @@ export default function Portfolio() {
     balance: fundingBalance,
     isBalancePending: isLoadingFundingBalance,
     refetch: refetchFundingBalance,
-  } = useAccountOrWalletBalanceByApi(NetworkConfigs.monadTestnet.id, MonUSD.address);
+  } = useApiChainBalance(NetworkConfigs.monadTestnet.id, MonUSD.address);
 
   const { data: tradingBalanceData } = useTradingBalance();
 

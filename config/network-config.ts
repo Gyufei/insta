@@ -33,6 +33,8 @@ export const BACKEND_NATIVE_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEe
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
+export const UniversalRouterAddress = '0x3aE6D8A282D67893e17AA70ebFFb33EE5aa65893';
+
 export const TOKEN_DECIMALS: Record<string, Record<string, number>> = {
   [NetworkConfigs.monadTestnet.id]: {
     '0xf817257fed379853cDe0fa4F97AB987181B1E5Ea': 6,

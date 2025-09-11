@@ -11,7 +11,7 @@ export interface IUniswapTokenBalance {
   balance: string;
 }
 
-export function useUniswapTokenBalance(
+export function useMonadTokenBalance(
   address: string,
   tokenAddress: string,
   decimals: number = DEFAULT_TOKEN_DECIMALS
@@ -26,7 +26,7 @@ export function useUniswapTokenBalance(
     }
 
     url.searchParams.set('token_address', tokenAddress);
-    url.searchParams.set('sandbox_account', address);
+    url.searchParams.set('wallet', address);
 
     const res = await Fetcher<IUniswapTokenBalance>(url.toString());
 
@@ -38,8 +38,8 @@ export function useUniswapTokenBalance(
   }
 
   const res = useQuery({
-    queryKey: ['uniswap', 'token', 'balance', tokenAddress ?? '', address ?? ''],
-    queryFn: () => queryFunc(new URL(ApiPath.uniswapTokenBalance)),
+    queryKey: ['monad', 'token', 'balance', tokenAddress ?? '', address ?? ''],
+    queryFn: () => queryFunc(new URL(ApiPath.monadTokenBalance)),
     enabled: !!tokenAddress && !!address,
   });
 

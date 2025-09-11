@@ -3,19 +3,21 @@ import { useAccount } from 'wagmi';
 
 import { useState } from 'react';
 
+import { BACKEND_NATIVE_ADDRESS, DEFAULT_NATIVE_ADDRESS } from '@/config/network-config';
+
 import { Fetcher } from '../fetcher';
 import { ITxResponse } from '../model';
 import { useSendTx } from '../web3/use-send-tx';
 import { ApiPath } from './api-path';
 
-export function useCheckUniswapAllowance(tokenName: string) {
+export function useCheckMonadAllowance(tokenAddress: string, spenderAddress: string) {
   const { address } = useAccount();
   const { send } = useSendTx();
 
   async function checkAllowance() {
     if (!address) return null;
 
-    if (tokenName === 'MON') {
+    if (tokenAddress === DEFAULT_NATIVE_ADDRESS || tokenAddress === BACKEND_NATIVE_ADDRESS) {
       return {
         allowance: Infinity,
         txParams: {
@@ -25,17 +27,19 @@ export function useCheckUniswapAllowance(tokenName: string) {
       };
     }
 
-    const path = ApiPath.uniswapAllowance;
+    const path = ApiPath.monadTokenAllowance;
 
-    const checkAllowanceRes = await Fetcher(`${path}?wallet=${address}&token_name=${tokenName}`);
+    const checkAllowanceRes = await Fetcher(
+      `${path}?wallet=${address}&token_address=${tokenAddress}&spender=${spenderAddress}`
+    );
 
     return checkAllowanceRes as { allowance: string; txParams: ITxResponse };
   }
 
   const res = useQuery({
-    queryKey: ['check-allowance', tokenName, address],
+    queryKey: ['monad-check-allowance', tokenAddress, address, spenderAddress],
     queryFn: checkAllowance,
-    enabled: !!tokenName && !!address,
+    enabled: !!tokenAddress && !!address,
   });
 
   const { data: allowanceRes, isLoading, refetch } = res;

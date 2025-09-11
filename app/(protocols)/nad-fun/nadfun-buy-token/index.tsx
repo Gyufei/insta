@@ -8,7 +8,7 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
-import { useMonadBalanceByApi } from '@/lib/data/balance/use-monad-balance-by-api';
+import { useDSAMonadNativeBalance } from '@/lib/data/balance/use-dsa-monad-native-balance';
 import { useNadFunBuy } from '@/lib/data/use-nadfun-buy';
 import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
@@ -25,7 +25,7 @@ export function NadFunBuyToken() {
   const { handleBack } = useUrlPathDrawerChange('/nad-fun');
   const { token } = currentComponent?.props || { token: null };
 
-  const { balance } = useMonadBalanceByApi();
+  const { balance } = useDSAMonadNativeBalance();
   const { inputValue, btnDisabled, errorData, setErrorData, handleInputChange } =
     useTokenInput(balance);
   const { mutateAsync: buyToken, isPending } = useNadFunBuy();

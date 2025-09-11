@@ -10,7 +10,7 @@ import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
-import { useMonadBalanceByApi } from '@/lib/data/balance/use-monad-balance-by-api';
+import { useDSAMonadNativeBalance } from '@/lib/data/balance/use-dsa-monad-native-balance';
 import { useMagmaDeposit } from '@/lib/data/use-magma-deposit';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { parseBig } from '@/lib/utils/number';
@@ -21,7 +21,7 @@ export function MagmaDeposit() {
 
   const { mutate: deposit, isPending } = useMagmaDeposit();
 
-  const { balance, isPending: isBalancePending } = useMonadBalanceByApi();
+  const { balance, isPending: isBalancePending } = useDSAMonadNativeBalance();
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
   const { isMax, handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
 

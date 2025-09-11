@@ -9,7 +9,7 @@ import { useRPCNativeBalance } from '@/lib/data/balance/use-rpc-native-balance';
 import { isSameAddress } from '@/lib/utils';
 import { truncateNumber } from '@/lib/utils/number';
 
-import { useUniswapTokenBalance } from './use-uniswap-token-balance';
+import { useMonadTokenBalance } from './use-monad-token-balance';
 
 export function useAddressBalance(
   address: string,
@@ -25,7 +25,7 @@ export function useAddressBalance(
     address
   );
 
-  const { data: tokenBalance, isPending: isTokenBalancePending } = useUniswapTokenBalance(
+  const { data: tokenBalance, isPending: isTokenBalancePending } = useMonadTokenBalance(
     address,
     tokenAddress,
     tokenDecimals

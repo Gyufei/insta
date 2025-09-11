@@ -27,7 +27,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { useAccountOrWalletBalanceByApi } from '@/lib/data/balance/use-account-or-wallet-balance-by-api';
+import { useApiChainBalance } from '@/lib/data/balance/use-api-chain-balance';
 import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useTokenStationSwapBridge } from '@/lib/data/use-token-station-swap-bridge';
@@ -111,7 +111,7 @@ export function TokenStation() {
     return NetworkConfigs.eth;
   }, [mode]);
 
-  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useAccountOrWalletBalanceByApi(
+  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useApiChainBalance(
     currentNet.id,
     tokenFromAddress
   );

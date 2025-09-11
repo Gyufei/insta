@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { useApiBalance } from './use-api-balance';
 
-export function useMonadBalanceByApi() {
+export function useDSAMonadNativeBalance() {
   const { data: balanceData, isPending } = useApiBalance();
 
   const monadBalanceRes = balanceData?.find(

@@ -21,9 +21,9 @@ interface UniswapSwapArgs {
   route: IUniswapQuote['route'];
 }
 
-export function useUniswapSwap() {
+export function useUniswapDSASwap() {
   return createMutationHook<UniswapSwapParams>(
-    ApiPath.uniswapSwap,
+    ApiPath.uniswapDSASwap,
     (args: unknown, address: string, account: string) => {
       const params = args as UniswapSwapArgs;
       return {

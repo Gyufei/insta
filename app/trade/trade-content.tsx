@@ -12,6 +12,7 @@ import Image from 'next/image';
 import {
   DEFAULT_NATIVE_ADDRESS,
   DEFAULT_TOKEN_DECIMALS,
+  UniversalRouterAddress,
   replaceNativeAddressUseBackend,
 } from '@/config/network-config';
 import { IToken, MONAD, MonUSD } from '@/config/tokens';
@@ -22,9 +23,10 @@ import { Card } from '@/components/ui/card';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balnace';
-import { useCheckUniswapAllowance } from '@/lib/data/use-uniswap-allowance';
+import { useCheckMonadAllowance } from '@/lib/data/use-monad-allowance';
+import { useUniswapDSASwap } from '@/lib/data/use-uniswap-dsa-swap';
+import { useUniswapEOASwap } from '@/lib/data/use-uniswap-eoa-swap';
 import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
-import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
@@ -56,7 +58,7 @@ export function TokenContent() {
     isLoading: isFromAllowanceLoading,
     handleApprove: handleFromApprove,
     isApproving: isFromApproving,
-  } = useCheckUniswapAllowance(sellToken?.symbol || '');
+  } = useCheckMonadAllowance(sellToken?.address || '', UniversalRouterAddress);
 
   const { balance: fromBalance, isBalancePending: isFromBalancePending } = useAddressBalance(
     currentAccountType === 'EOA' ? wallet || '' : accountInfo?.sandbox_account || '',
@@ -91,7 +93,9 @@ export function TokenContent() {
     error: quoteError,
   } = useUniswapQuote(quoteParams);
 
-  const { mutate: swap, isPending: isSwapPending } = useUniswapSwap();
+  const { mutate: eoaSwap, isPending: isEOASwapPending } = useUniswapEOASwap();
+  const { mutate: dsaSwap, isPending: isDSASwapPending } = useUniswapDSASwap();
+  const isSwapPending = currentAccountType === 'EOA' ? isEOASwapPending : isDSASwapPending;
 
   const shouldApprove = useMemo(() => {
     return false;
@@ -170,6 +174,11 @@ export function TokenContent() {
   function handleSwap() {
     if (!quoteData || !sellToken || !buyToken) return;
 
+    if (Number(sellValue) > Number(fromBalance)) {
+      toast.error('Insufficient balance');
+      return;
+    }
+
     const isSellTokenEth = sellToken.address === DEFAULT_NATIVE_ADDRESS;
     const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
 
@@ -184,12 +193,21 @@ export function TokenContent() {
       return;
     }
 
-    swap({
-      token_in_is_eth: isSellTokenEth,
-      token_out_is_eth: isBuyTokenEth,
-      slippage: (Number(slippage) * 1e16).toString(),
-      route: quoteData.route[0],
-    });
+    if (currentAccountType === 'EOA') {
+      eoaSwap({
+        token_in: sellToken.address,
+        token_out: buyToken.address,
+        amount_in: sellValue,
+        amount_in_decimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
+      });
+    } else {
+      dsaSwap({
+        token_in_is_eth: isSellTokenEth,
+        token_out_is_eth: isBuyTokenEth,
+        slippage: (Number(slippage) * 1e16).toString(),
+        route: quoteData.route[0],
+      });
+    }
   }
 
   const handleSwapTokens = () => {

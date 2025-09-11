@@ -10,8 +10,8 @@ export interface ITokenInfo {
 
 export function useTokenInfo(tokenAddress: string) {
   return createQueryHook<ITokenInfo>(
-    ApiPath.uniswapTokenInfo,
-    () => ['token', 'info', tokenAddress],
+    ApiPath.monadTokenInfo,
+    () => ['monad', 'token', 'info', tokenAddress],
     (url) => {
       if (!tokenAddress) return null;
 

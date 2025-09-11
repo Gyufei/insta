@@ -6,7 +6,7 @@ import { NetworkConfigs } from '@/config/network-config';
 
 import { useApiBalance } from './use-api-balance';
 
-export function useAccountOrWalletBalanceByApi(chainId: number, tokenAddress: string) {
+export function useApiChainBalance(chainId: number, tokenAddress: string) {
   const res = useApiBalance();
   const { data: balanceData, isPending: isBalancePending } = res;
 
