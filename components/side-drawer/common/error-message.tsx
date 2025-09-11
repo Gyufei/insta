@@ -24,7 +24,7 @@ export function ErrorMessage({ show, message, className }: ErrorMessageProps) {
           <CircleX className="h-5 w-5 text-red-500 dark:text-red-400" />
         </div>
         <div className="ml-2 w-[calc(100%-30px)]">
-          <div className="mb-1 text-xs leading-5 font-medium text-red-700 dark:text-red-300 last:mb-0">
+          <div className="mb-1 text-xs font-medium leading-4 text-red-700 dark:text-red-300 last:mb-0">
             <ul className="list-disc pl-4">
               <li>{displayMessage}</li>
             </ul>
