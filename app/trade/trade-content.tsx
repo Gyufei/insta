@@ -94,6 +94,7 @@ export function TokenContent() {
   const { mutate: swap, isPending: isSwapPending } = useUniswapSwap();
 
   const shouldApprove = useMemo(() => {
+    return false;
     if (currentAccountType === 'DSA') {
       return false;
     }
