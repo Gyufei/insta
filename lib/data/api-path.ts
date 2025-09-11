@@ -82,6 +82,7 @@ export const ApiPath = {
   uniswapTokenInfo: `${ApiHost}/uniswap_v3_position/token_info`,
   uniswapTokens: `${ApiHost}/uniswap_v3_position/tokens`,
   uniswapTokenBalance: `${ApiHost}/uniswap_v3_position/token_balance`,
+  uniswapAllowance: `${ApiHost}/uniswap_v3_position/allowance`,
 
   ambientPosition: `${ApiHost}/ambient_finance/positions`,
   ambientPositionInfo: `${ApiHost}/ambient_finance/position_info`,

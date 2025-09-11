@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { SideDrawerLayout } from '../common/side-drawer-layout';
 import { usePathChangeBack } from '../use-path-change-back';
 import { AccountDisplay } from './account-display';
-import { Disconnect } from './disconnect';
 import { NoAccountDisplay } from './no-account-display';
 import { WalletDisplay } from './wallet-display';
 
@@ -23,7 +22,6 @@ export function AccountSetting() {
         <WalletDisplay className={cn(!account ? 'my-8' : 'mb-8')} />
         {account ? <AccountDisplay /> : <NoAccountDisplay />}
       </SideDrawerLayout>
-      <Disconnect />
     </>
   );
 }

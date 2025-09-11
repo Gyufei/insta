@@ -22,6 +22,7 @@ import { Card } from '@/components/ui/card';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balnace';
+import { useCheckUniswapAllowance } from '@/lib/data/use-uniswap-allowance';
 import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
 import { useUniswapSwap } from '@/lib/data/use-uniswap-swap';
 import { ErrorVO } from '@/lib/model/error-vo';
@@ -49,6 +50,13 @@ export function TokenContent() {
   });
 
   const [rotateTimes, setRotateTimes] = useState(0);
+
+  const {
+    allowance: fromAllowance,
+    isLoading: isFromAllowanceLoading,
+    handleApprove: handleFromApprove,
+    isApproving: isFromApproving,
+  } = useCheckUniswapAllowance(sellToken?.symbol || '');
 
   const { balance: fromBalance, isBalancePending: isFromBalancePending } = useAddressBalance(
     currentAccountType === 'EOA' ? wallet || '' : accountInfo?.sandbox_account || '',
@@ -84,6 +92,18 @@ export function TokenContent() {
   } = useUniswapQuote(quoteParams);
 
   const { mutate: swap, isPending: isSwapPending } = useUniswapSwap();
+
+  const shouldApprove = useMemo(() => {
+    if (currentAccountType === 'DSA') {
+      return false;
+    }
+
+    if (!sellToken) return false;
+
+    if (!fromAllowance) return true;
+
+    return Number(fromAllowance) < Number(sellValue);
+  }, [fromAllowance, sellValue, sellToken, currentAccountType]);
 
   useEffect(() => {
     if (quoteData?.output) {
@@ -157,6 +177,11 @@ export function TokenContent() {
       showError: false,
       errorMessage: '',
     });
+
+    if (shouldApprove) {
+      handleFromApprove();
+      return;
+    }
 
     swap({
       token_in_is_eth: isSellTokenEth,
@@ -264,7 +289,13 @@ export function TokenContent() {
               className="min-w-40 h-12 text-xl font-medium flex leading-[24px] items-center justify-center rounded-md bg-[#6E75F9] text-white hover:bg-[#6E75F990]"
               onClick={handleSwap}
             >
-              {isQuoteLoading ? (
+              {isFromAllowanceLoading ? (
+                <Loader className="w-6 h-6 animate-spin" />
+              ) : shouldApprove ? (
+                <span className="flex items-center">
+                  {isFromApproving ? <Loader className="w-6 h-6 mr-1 animate-spin" /> : 'Approve'}
+                </span>
+              ) : isQuoteLoading ? (
                 <span className="flex items-center gap-1">
                   <Loader className="w-6 h-6 animate-spin" />
                   <span>Finalizing quote</span>

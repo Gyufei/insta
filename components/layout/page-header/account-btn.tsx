@@ -52,9 +52,13 @@ export function AccountBtn() {
       onClick={handleCreate}
       disabled={isLoading}
     >
-      <div className="flex flex-col items-center justify-center leading-5 text-primary">
+      <div className="flex items-center justify-center leading-5 text-primary gap-1">
         <span className="text-xs text-primary">
-          {currentType === 'EOA' ? <>#{formatAddress(address || '')}</> : <>#{accountInfo?.id}</>}
+          {currentType === 'EOA' ? (
+            <>#{formatAddress(address || '', { prefix: 4, suffix: 2 })}</>
+          ) : (
+            <>#{accountInfo?.id}</>
+          )}
         </span>
         <span className="text-[10px] text-[#A5ADC6] leading-[14px]">
           {currentType === 'EOA' ? <>EOA</> : <>DSA</>}

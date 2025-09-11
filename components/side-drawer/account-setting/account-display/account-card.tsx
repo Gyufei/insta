@@ -79,7 +79,7 @@ export function AccountCard({
           <div
             title={accountInfo?.sandbox_account || ''}
             className={cn(
-              'flex-1 px-2 flex items-center justify-center text-center font-semibold shadow-inner outline-none select-all text-xs',
+              'flex-1 px-2 flex items-center justify-center text-center font-semibold shadow-inner outline-none select-none text-xs',
               isCurrent ? 'bg-primary-foreground text-primary' : 'bg-card text-card-foreground'
             )}
           >

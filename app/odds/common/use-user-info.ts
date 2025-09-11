@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 
-import { ApiPath } from '@/lib/data/api-path';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
+import { ApiPath } from '@/lib/data/api-path';
 import { Fetcher } from '@/lib/fetcher';
+import { useAccountStore } from '@/lib/state/account';
 
 interface IUserInfoResponse {
   user_id: string;
@@ -16,6 +17,7 @@ interface IUserInfoResponse {
 export function useOddsUserInfo() {
   const { address } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
+  const { currentAccountType } = useAccountStore();
 
   function executeQuery() {
     return Fetcher<IUserInfoResponse>(ApiPath.oddsUserInfo, {
@@ -25,6 +27,7 @@ export function useOddsUserInfo() {
       },
       body: JSON.stringify({
         wallet: address,
+        wallet_type: currentAccountType,
         sandbox_account: accountInfo?.sandbox_account,
       }),
     });

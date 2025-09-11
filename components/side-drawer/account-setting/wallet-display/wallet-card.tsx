@@ -1,7 +1,6 @@
 'use client';
 
-import { Copy, Power } from 'lucide-react';
-import { useDisconnect } from 'wagmi';
+import { Copy } from 'lucide-react';
 
 import Image from 'next/image';
 
@@ -25,15 +24,10 @@ export function WalletCard({
 }) {
   const network = NetworkConfigs.monadTestnet;
   const { isCopied, copyToClipboard } = useCopyToClipboard(walletAddress);
-  const { disconnect } = useDisconnect();
 
   function handleCopyToClipboard(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation();
     copyToClipboard();
-  }
-
-  function handleDisconnect() {
-    disconnect();
   }
 
   if (!walletAddress) return null;
@@ -63,18 +57,7 @@ export function WalletCard({
               'flex h-7 flex-1 items-center justify-end border-r border-l text-center leading-none pr-4',
               isCurrent ? 'border-primary-foreground/50' : 'border-[#ebebeb]/50'
             )}
-          >
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Power className="h-4 w-4" onClick={handleDisconnect} />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Disconnect</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          ></div>
           <div className="inline-flex h-full w-7 items-center justify-center dark:opacity-90">
             <Image
               src={network.icon.replace('monad', isCurrent ? 'monad-white' : 'monad-black')}
@@ -88,7 +71,7 @@ export function WalletCard({
           <div
             title={walletAddress || ''}
             className={cn(
-              'flex-1 px-2 flex items-center justify-center text-center font-semibold shadow-inner outline-none select-all text-xs',
+              'flex-1 px-2 flex items-center justify-center text-center font-semibold shadow-inner outline-none select-none text-xs',
               isCurrent ? 'bg-primary-foreground text-primary' : 'bg-card text-card-foreground'
             )}
           >
