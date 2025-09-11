@@ -1,5 +1,7 @@
 import { useAccount } from 'wagmi';
 
+import { useAccountStore } from '@/lib/state/account';
+
 import { ApiPath } from '../api-path';
 import { createQueryHook } from '../helpers';
 
@@ -14,17 +16,25 @@ export interface IAccountTokenBalance {
 
 export function useApiBalance() {
   const { address: wallet } = useAccount();
+  const { currentAccountType } = useAccountStore();
 
   return createQueryHook<IAccountTokenBalance[]>(
     ApiPath.accountBalance,
-    (account) => ['account', 'balance', wallet ?? '' + account ?? ''],
+    (account) => [
+      'account',
+      'balance',
+      currentAccountType === 'EOA' ? `${wallet}+${wallet}` : `${wallet}+${account}`,
+    ],
     (url, account) => {
-      if (!wallet || !account) {
+      if (!wallet || (currentAccountType === 'DSA' && !account)) {
         return null;
       }
 
       url.searchParams.set('wallet', wallet);
-      url.searchParams.set('sandbox_account', account);
+      url.searchParams.set(
+        'sandbox_account',
+        currentAccountType === 'EOA' ? wallet : account || ''
+      );
 
       return url;
     },

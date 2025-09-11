@@ -3,8 +3,15 @@ import { DepositIcon } from '@/components/icon/deposit';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
 import { WithdrawIcon } from '../../icon/withdraw';
+import { useAccountStore } from '@/lib/state/account';
 
 export default function BalanceActionButtons() {
+  const { currentAccountType } = useAccountStore();
+  
+  if (currentAccountType === 'EOA') {
+    return null;
+  }
+
   return (
     <div className="flex flex-shrink-0">
       <DepositButton />
