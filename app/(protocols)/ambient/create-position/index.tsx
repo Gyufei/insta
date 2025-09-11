@@ -156,7 +156,11 @@ export function AmbientCreatePosition() {
       token_b_decimals: token1.decimals.toString(),
     };
 
-    createPosition(args);
+    createPosition(args, {
+      onSuccess: () => {
+        handleBack();
+      },
+    });
   }
 
   function handleNextStep() {

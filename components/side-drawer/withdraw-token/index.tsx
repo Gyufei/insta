@@ -75,7 +75,14 @@ export function WithdrawToken() {
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, token?.decimals);
-    withdraw({ amount: amount.toString(), tokenAddress: token.address });
+    withdraw(
+      { amount: amount.toString(), tokenAddress: token.address },
+      {
+        onSuccess: () => {
+          handleBack();
+        },
+      }
+    );
   };
 
   return (

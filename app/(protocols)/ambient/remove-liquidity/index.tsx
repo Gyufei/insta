@@ -76,13 +76,20 @@ export function AmbientRemoveLiquidity() {
     if (!ambientPosition || !percent || parseFloat(percent) <= 0 || parseFloat(percent) > 100)
       return;
 
-    removeLiquidity({
-      base_token: ambientPosition.base,
-      quote_token: ambientPosition.quote,
-      bid_tick: ambientPosition.bidTick,
-      ask_tick: ambientPosition.askTick,
-      liquidity: String(ambientPosition.concLiq),
-    });
+    removeLiquidity(
+      {
+        base_token: ambientPosition.base,
+        quote_token: ambientPosition.quote,
+        bid_tick: ambientPosition.bidTick,
+        ask_tick: ambientPosition.askTick,
+        liquidity: String(ambientPosition.concLiq),
+      },
+      {
+        onSuccess: () => {
+          handleBack();
+        },
+      }
+    );
   };
 
   function handlePercentChange(val: string) {

@@ -78,16 +78,23 @@ export function AmbientAddLiquidity() {
   const handleConfirm = () => {
     if (!ambientPosition) return;
 
-    addLiquidity({
-      token_a: replaceNativeAddressUseBackend(token0?.address),
-      token_b: replaceNativeAddressUseBackend(token1?.address),
-      price_current: price,
-      price_lower: price_lower,
-      price_upper: price_upper,
-      token_a_amount: amount0,
-      token_a_decimals: token0?.decimals,
-      token_b_decimals: token1?.decimals,
-    });
+    addLiquidity(
+      {
+        token_a: replaceNativeAddressUseBackend(token0?.address),
+        token_b: replaceNativeAddressUseBackend(token1?.address),
+        price_current: price,
+        price_lower: price_lower,
+        price_upper: price_upper,
+        token_a_amount: amount0,
+        token_a_decimals: token0?.decimals,
+        token_b_decimals: token1?.decimals,
+      },
+      {
+        onSuccess: () => {
+          handleBack();
+        },
+      }
+    );
   };
 
   if (!ambientPosition) {
