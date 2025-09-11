@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { ErrorVO } from '@/lib/model/error-vo';
+import { useAccountStore } from '@/lib/state/account';
 import { cn } from '@/lib/utils';
 
 import { ErrorMessage } from './error-message';
@@ -26,6 +27,7 @@ interface ActionButtonProps {
     | {
         address: boolean;
         accountInfo: boolean;
+        onlyDSA: boolean;
       }
     | undefined;
   [key: string]: unknown;
@@ -37,12 +39,13 @@ export function ActionButton({
   isPending,
   children,
   error,
-  checkFlag = { address: true, accountInfo: true },
+  checkFlag = { address: true, accountInfo: true, onlyDSA: true },
   className,
   ...rest
 }: ActionButtonProps) {
   const { address } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
+  const { currentAccountType } = useAccountStore();
 
   const [internalDisabled, setInternalDisabled] = useState(disabled);
   const [internalErrorData, setInternalErrorData] = useState({
@@ -62,6 +65,15 @@ export function ActionButton({
   }, [error, internalErrorData]);
 
   useEffect(() => {
+    if (checkFlag.onlyDSA && currentAccountType === 'EOA') {
+      setInternalDisabled(true);
+      setInternalErrorData({
+        showError: true,
+        errorMessage: ERROR_MESSAGES.ONLY_DSA_ACCOUNT,
+      });
+      return;
+    }
+
     if (checkFlag.address && !address) {
       setInternalDisabled(true);
       setInternalErrorData({

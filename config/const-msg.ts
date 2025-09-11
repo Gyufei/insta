@@ -39,6 +39,7 @@ export const ERROR_MESSAGES = {
   FAUCET_AIRDROP_FAILED: 'Faucet claim failed',
   IMAGE_UPLOAD_FAILED: 'Image upload failed',
   CHECK_IN_FAILED: 'Check in failed',
+  ONLY_DSA_ACCOUNT: 'Please create or switch to a DSA account first.',
 } as const;
 
 export const SUCCESS_MESSAGES = {
