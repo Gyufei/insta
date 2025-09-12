@@ -16,7 +16,7 @@ export function MagmaStats() {
   const Stats = {
     balance: {
       label: 'Your gMON',
-      value: formatNumber(formatBig(magmaBalance?.balance || '0')),
+      value: formatNumber(magmaBalance?.balance || '0'),
       icon: '/icons/gmon.svg',
     },
     transactionNum: {

@@ -1,8 +1,10 @@
 import { useAccount } from 'wagmi';
 
+import { G_MONAD } from '@/config/tokens';
+
 import { useAccountStore } from '../state/account';
-import { ApiPath } from './api-path';
-import { createQueryHook } from './helpers';
+import { useSelectedAccount } from './account-address/use-selected-account';
+import { useMonadTokenBalance } from './balance/use-monad-token-balance';
 
 export interface IMagmaBalance {
   balance: string;
@@ -11,25 +13,12 @@ export interface IMagmaBalance {
 export function useMagmaBalance() {
   const { address } = useAccount();
   const { currentAccountType } = useAccountStore();
+  const { data: accountInfo } = useSelectedAccount();
 
-  return createQueryHook<IMagmaBalance>(
-    ApiPath.magmaBalance,
-    (account) => ['magma', 'balance', currentAccountType === 'EOA' ? address || '' : account || ''],
-    (url, account) => {
-      if (
-        (currentAccountType === 'EOA' && !address) ||
-        (currentAccountType === 'DSA' && !account)
-      ) {
-        return null;
-      }
-      url.searchParams.set(
-        'sandbox_account',
-        currentAccountType === 'EOA' ? address || '' : account || ''
-      );
-      return url;
-    },
-    {
-      withAccount: true,
-    }
-  )();
+  const res = useMonadTokenBalance(
+    currentAccountType === 'EOA' ? address || '' : accountInfo?.sandbox_account || '',
+    G_MONAD.address
+  );
+
+  return res;
 }

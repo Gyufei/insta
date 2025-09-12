@@ -14,7 +14,7 @@ import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { cn } from '@/lib/utils';
-import { formatBig, formatNumber } from '@/lib/utils/number';
+import { formatNumber } from '@/lib/utils/number';
 
 import { TwitterLink } from './twitter-link';
 
@@ -26,11 +26,11 @@ export default function BalanceSection() {
   const { data: priceData, isPending: isPendingPrice } = useTokenStationPrice();
 
   const { data: aprioriBalance, isPending: isPendingApr } = useAprioriBalance();
-  const aprBalance = formatBig(aprioriBalance?.balance || '0');
+  const aprBalance = aprioriBalance?.balance || '0';
   const aprPrice = TokenPriceMap[APR_MONAD.symbol];
 
   const { data: magmaBalance, isPending: isPendingMagma } = useMagmaBalance();
-  const gMonBalance = formatBig(magmaBalance?.balance || '0');
+  const gMonBalance = magmaBalance?.balance || '0';
   const gMonPrice = TokenPriceMap[G_MONAD.symbol];
 
   const isPending =

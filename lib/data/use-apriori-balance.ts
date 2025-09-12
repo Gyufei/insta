@@ -1,8 +1,10 @@
 import { useAccount } from 'wagmi';
 
+import { APR_MONAD } from '@/config/tokens';
+
 import { useAccountStore } from '../state/account';
-import { ApiPath } from './api-path';
-import { createQueryHook } from './helpers';
+import { useSelectedAccount } from './account-address/use-selected-account';
+import { useMonadTokenBalance } from './balance/use-monad-token-balance';
 
 export interface IApriorBalance {
   balance: string;
@@ -10,30 +12,13 @@ export interface IApriorBalance {
 
 export function useAprioriBalance() {
   const { address } = useAccount();
+  const { data: accountInfo } = useSelectedAccount();
   const { currentAccountType } = useAccountStore();
 
-  return createQueryHook<IApriorBalance>(
-    ApiPath.aprioriBalance,
-    (account) => [
-      'apriori',
-      'balance',
-      currentAccountType === 'EOA' ? address || '' : account || '',
-    ],
-    (url, account) => {
-      if (
-        (currentAccountType === 'EOA' && !address) ||
-        (currentAccountType === 'DSA' && !account)
-      ) {
-        return null;
-      }
-      url.searchParams.set(
-        'sandbox_account',
-        currentAccountType === 'EOA' ? address || '' : account || ''
-      );
-      return url;
-    },
-    {
-      withAccount: true,
-    }
-  )();
+  const res = useMonadTokenBalance(
+    currentAccountType === 'EOA' ? address || '' : accountInfo?.sandbox_account || '',
+    APR_MONAD.address
+  );
+
+  return res;
 }

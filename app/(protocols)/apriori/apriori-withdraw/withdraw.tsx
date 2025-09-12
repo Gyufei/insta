@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useAprioriWithdraw } from '@/lib/data/use-apriori-withdraw';
-import { formatBig, parseBig } from '@/lib/utils/number';
+import { parseBig } from '@/lib/utils/number';
 
 import { WithdrawEstReceive } from './withdraw-est-receive';
 
@@ -21,7 +21,7 @@ export function Withdraw() {
   const { mutate: withdraw, isPending } = useAprioriWithdraw();
 
   const { data: aprioriBalance, isLoading: isBalancePending } = useAprioriBalance();
-  const balance = formatBig(aprioriBalance?.balance || '0');
+  const balance = aprioriBalance?.balance || '0';
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
   const { isMax, handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
 

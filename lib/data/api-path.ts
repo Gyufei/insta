@@ -44,7 +44,6 @@ export const ApiPath = {
   imageUpload: `${ApiHost}/account/upload`,
 
   aprioriInfo: `https://stake-api.apr.io/info`,
-  aprioriBalance: `${ApiHost}/aprior/balance`,
   aprioriDeposit: `${ApiHost}/aprior/deposit`,
   aprioriRequestClaim: `${ApiHost}/aprior/request_redeem`,
   aprioriClaim: `${ApiHost}/aprior/redeem`,
@@ -65,7 +64,6 @@ export const ApiPath = {
   nadNameTransfer: `${ApiHost}/nadname/transfer_ownership`,
 
   magmaInfo: 'https://magma-http-app-testnet-2.fly.dev/graphql',
-  magmaBalance: `${ApiHost}/magma/balance`,
   magmaDeposit: `${ApiHost}/magma/deposit`,
   magmaWithdraw: `${ApiHost}/magma/withdraw`,
 

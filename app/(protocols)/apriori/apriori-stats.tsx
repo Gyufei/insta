@@ -31,7 +31,7 @@ export function AprioriStats() {
     },
     aprMon: {
       label: 'Your aprMON',
-      value: formatNumber(formatBig(aprioriBalance?.balance || '0')),
+      value: formatNumber(aprioriBalance?.balance || '0'),
       icon: '/icons/aprmon.svg',
     },
   };

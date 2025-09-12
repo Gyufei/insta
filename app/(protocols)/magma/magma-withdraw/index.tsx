@@ -14,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useMagmaWithdraw } from '@/lib/data/use-magma-withdraw';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
-import { formatBig, parseBig } from '@/lib/utils/number';
+import { parseBig } from '@/lib/utils/number';
 
 export function MagmaWithdraw() {
   const { handleBack } = useUrlPathDrawerChange('/magma');
@@ -25,7 +25,7 @@ export function MagmaWithdraw() {
   const { mutate: withdraw, isPending } = useMagmaWithdraw();
 
   const { data: magmaBalance, isLoading: isBalancePending } = useMagmaBalance();
-  const balance = formatBig(magmaBalance?.balance || '0');
+  const balance = magmaBalance?.balance || '0';
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
   const { isMax, handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
 

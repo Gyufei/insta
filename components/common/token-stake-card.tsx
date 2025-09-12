@@ -13,7 +13,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-import { formatBig, formatNumber } from '@/lib/utils/number';
+import { formatNumber } from '@/lib/utils/number';
 
 interface TokenStakeCardProps {
   token: IToken;
@@ -36,7 +36,7 @@ export function TokenStakeCard({
   depositButtonText = 'Deposit',
   withdrawButtonText = 'Withdraw',
 }: TokenStakeCardProps) {
-  const formattedBalance = formatBig(balance || '0');
+  const formattedBalance = balance || '0';
   const priceValue = balance ? multiply(formattedBalance, String(tokenPrice)) : '0';
 
   return (
