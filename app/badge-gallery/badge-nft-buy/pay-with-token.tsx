@@ -18,13 +18,14 @@ import { useBadgePurchase } from '@/lib/data/use-badge-purchase';
 import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
 import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
+import { eventBus } from '@/lib/state/eventBus';
 import { truncateNumber } from '@/lib/utils/number';
 
 import { BUY_TOKEN_CONFIG_BASE } from './buy-token-config';
 
 export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
   const { address } = useAccount();
-  const { chainId, switchNetwork } = useAppKitNetwork();
+  const { chainId } = useAppKitNetwork();
   const [payToken, setPayToken] = useState<'ETH' | 'USDT' | 'USDC'>('ETH');
 
   const { data: userBadgeData } = useBadgeWalletNfts();
@@ -95,26 +96,15 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
         errorMessage: ERROR_MESSAGES.WALLET_NOT_CONNECTED,
       });
     }
-  }, [address, chainId]);
+  }, [address]);
 
-  const [init, setInit] = useState(false);
-
-  useEffect(() => {
-    if (init) {
-      return;
-    }
-
-    if (chainId !== NetworkConfigs.base.id) {
-      switchNetwork(NetworkConfigs.base);
-      return;
-    }
-
-    setInit(true);
-  }, [init, chainId]);
+  function toggleNetwork(net: (typeof NetworkConfigs)[keyof typeof NetworkConfigs]) {
+    eventBus.publish('toggle-network', net);
+  }
 
   function handlePay() {
     if (chainId !== NetworkConfigs.base.id) {
-      switchNetwork(NetworkConfigs.base);
+      toggleNetwork(NetworkConfigs.base);
     }
 
     if (shouldApprove) {

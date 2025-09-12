@@ -14,6 +14,7 @@ import {
   DEFAULT_NATIVE_ADDRESS,
   DEFAULT_TOKEN_DECIMALS,
   UniversalRouterAddress,
+  UniversalRouterAddressPermit,
   replaceNativeAddressUseBackend,
 } from '@/config/network-config';
 import { IToken, MONAD, MonUSD } from '@/config/tokens';
@@ -69,13 +70,6 @@ export function TokenContent() {
 
   const [rotateTimes, setRotateTimes] = useState(0);
 
-  const {
-    allowance: fromAllowance,
-    isLoading: isFromAllowanceLoading,
-    handleApprove: handleFromApprove,
-    isApproving: isFromApproving,
-  } = useCheckMonadAllowance(sellToken?.address || '', UniversalRouterAddress);
-
   const { balance: fromBalance, isBalancePending: isFromBalancePending } = useAddressBalance(
     currentAccountType === 'EOA' ? wallet || '' : accountInfo?.sandbox_account || '',
     sellToken?.address || ''
@@ -110,6 +104,16 @@ export function TokenContent() {
     isLoading: isQuoteLoading,
     error: quoteError,
   } = useUniswapQuote(quoteParams);
+
+  const {
+    allowance: fromAllowance,
+    isLoading: isFromAllowanceLoading,
+    handleApprove: handleFromApprove,
+    isApproving: isFromApproving,
+  } = useCheckMonadAllowance(
+    sellToken?.address || '',
+    quoteData?.permitData ? UniversalRouterAddressPermit : UniversalRouterAddress
+  );
 
   const { mutate: eoaSwap, isPending: isEOASwapPending } = useUniswapEOASwap();
   const { mutate: dsaSwap, isPending: isDSASwapPending } = useUniswapDSASwap();

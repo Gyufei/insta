@@ -15,7 +15,7 @@ export function useCheckMonadAllowance(tokenAddress: string, spenderAddress: str
   const { send } = useSendTx();
 
   async function checkAllowance() {
-    if (!address) return null;
+    if (!address || !spenderAddress || !tokenAddress) return null;
 
     if (tokenAddress === DEFAULT_NATIVE_ADDRESS || tokenAddress === BACKEND_NATIVE_ADDRESS) {
       return {

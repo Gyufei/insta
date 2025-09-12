@@ -1,7 +1,11 @@
 'use client';
 
 // import { Sparkles, UsersRound } from 'lucide-react';
+import { useAppKitNetwork } from '@reown/appkit/react';
+
 import { useEffect, useMemo, useState } from 'react';
+
+import { NetworkConfigs } from '@/config/network-config';
 
 import { useBadgeNfts } from '@/lib/data/use-badge-nfts';
 import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
@@ -14,10 +18,12 @@ import { BadgeTitle } from './badge-title';
 import { SwapImg } from './swap-img';
 
 export function BadgeContent() {
+  const { chainId } = useAppKitNetwork();
   const { setCurrentComponent } = useSideDrawerStore();
 
   const { data: allNfts } = useBadgeNfts();
   const { data: userBadgeNfts } = useBadgeWalletNfts();
+  const [init, setInit] = useState(false);
 
   const [selectedNftName, setSelectedNftName] = useState(allNfts?.[0]?.name);
   const isMobile = useIsMobile();
@@ -44,6 +50,25 @@ export function BadgeContent() {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (init) {
+      return;
+    }
+
+    if (chainId !== NetworkConfigs.base.id) {
+      setTimeout(() => {
+        toggleNetwork(NetworkConfigs.base);
+      }, 1000);
+      return;
+    }
+
+    setInit(true);
+  }, [init, chainId]);
+
+  function toggleNetwork(net: (typeof NetworkConfigs)[keyof typeof NetworkConfigs]) {
+    eventBus.publish('toggle-network', net);
+  }
 
   function handleClickImg(v: string) {
     setSelectedNftName(v);
