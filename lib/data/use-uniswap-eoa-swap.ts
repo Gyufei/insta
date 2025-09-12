@@ -3,6 +3,7 @@ import { NetworkConfigs } from '@/config/network-config';
 
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
+import { IUniswapQuote } from './use-uniswap-quote';
 
 interface UniswapSwapParams {
   wallet: string;
@@ -19,6 +20,8 @@ interface UniswapSwapArgs {
   token_out: string;
   amount_in: string;
   amount_in_decimals: string;
+  permitData: IUniswapQuote['permitData'];
+  signature: string;
 }
 
 export function useUniswapEOASwap() {
@@ -33,6 +36,8 @@ export function useUniswapEOASwap() {
         amount_in: params.amount_in,
         amount_in_decimals: params.amount_in_decimals,
         wallet: address,
+        ...(params.permitData ? { permitData: params.permitData } : {}),
+        ...(params.signature ? { signature: params.signature } : {}),
       };
     },
     SUCCESS_MESSAGES.SWAP_SUCCESS,

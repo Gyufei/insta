@@ -3,7 +3,8 @@
 import { CircleX, Loader } from 'lucide-react';
 import { divide } from 'safebase';
 import { toast } from 'sonner';
-import { useAccount } from 'wagmi';
+import { SignTypedDataParameters } from 'viem';
+import { useAccount, useSignTypedData } from 'wagmi';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -26,7 +27,7 @@ import { useAddressBalance } from '@/lib/data/balance/use-address-balnace';
 import { useCheckMonadAllowance } from '@/lib/data/use-monad-allowance';
 import { useUniswapDSASwap } from '@/lib/data/use-uniswap-dsa-swap';
 import { useUniswapEOASwap } from '@/lib/data/use-uniswap-eoa-swap';
-import { useUniswapQuote } from '@/lib/data/use-uniswap-quote';
+import { IUniswapQuote, useUniswapQuote } from '@/lib/data/use-uniswap-quote';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
@@ -35,10 +36,25 @@ import { cn, isSameAddress } from '@/lib/utils';
 import { WMONAD_TOKEN } from '../(protocols)/uniswap/use-uniswap-token';
 import { SlippageSettings } from './slippage-settings';
 
+function CovertPermitData(
+  permitData: IUniswapQuote['permitData'],
+  wallet: string
+): SignTypedDataParameters {
+  const typeData = {
+    ...permitData,
+    primaryType: 'PermitSingle',
+    account: wallet as `0x${string}`,
+    message: permitData.values,
+  };
+
+  return typeData as SignTypedDataParameters;
+}
+
 export function TokenContent() {
   const { address: wallet } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
   const { currentAccountType } = useAccountStore();
+  const { signTypedDataAsync } = useSignTypedData();
 
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -84,6 +100,7 @@ export function TokenContent() {
           tokenOut: replaceNativeAddressUseBackend(buyToken.address),
           amountIn: sellValue,
           amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
+          ...(currentAccountType === 'EOA' ? { wallet } : {}),
         }
       : undefined;
 
@@ -170,7 +187,7 @@ export function TokenContent() {
     return () => unsubscribe();
   }, []);
 
-  function handleSwap() {
+  async function handleSwap() {
     if (shouldApprove) {
       handleFromApprove();
       return;
@@ -193,12 +210,23 @@ export function TokenContent() {
     });
 
     if (currentAccountType === 'EOA') {
-      eoaSwap({
+      let signature;
+      const permitData = quoteData.permitData;
+      if (permitData) {
+        const typeData = CovertPermitData(permitData, wallet || '');
+        signature = await signTypedDataAsync(typeData);
+      }
+
+      console.log(permitData, signature);
+      const args = {
         token_in: sellToken.address,
         token_out: buyToken.address,
         amount_in: sellValue,
         amount_in_decimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
-      });
+        ...(permitData ? { permitData: permitData } : {}),
+        ...(signature ? { signature } : {}),
+      };
+      eoaSwap(args);
     } else {
       dsaSwap({
         token_in_is_eth: isSellTokenEth,

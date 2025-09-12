@@ -6,6 +6,57 @@ import { createQueryHook } from './helpers';
 export interface IUniswapQuote {
   input: string;
   output: string;
+  permitData: {
+    domain: {
+      name: string;
+      chainId: number;
+      verifyingContract: string;
+    };
+    types: {
+      PermitSingle: [
+        {
+          name: string;
+          type: string;
+        },
+        {
+          name: string;
+          type: string;
+        },
+        {
+          name: string;
+          type: string;
+        },
+      ];
+      PermitDetails: [
+        {
+          name: string;
+          type: string;
+        },
+        {
+          name: string;
+          type: string;
+        },
+        {
+          name: string;
+          type: string;
+        },
+        {
+          name: string;
+          type: string;
+        },
+      ];
+    };
+    values: {
+      details: {
+        token: string;
+        amount: string;
+        expiration: string;
+        nonce: string;
+      };
+      spender: string;
+      sigDeadline: string;
+    };
+  };
   route: Array<
     Array<{
       type: string;
