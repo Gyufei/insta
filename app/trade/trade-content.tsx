@@ -13,7 +13,6 @@ import Image from 'next/image';
 import {
   DEFAULT_NATIVE_ADDRESS,
   DEFAULT_TOKEN_DECIMALS,
-  UniversalRouterAddress,
   UniversalRouterAddressPermit,
   replaceNativeAddressUseBackend,
 } from '@/config/network-config';
@@ -112,7 +111,7 @@ export function TokenContent() {
     isApproving: isFromApproving,
   } = useCheckMonadAllowance(
     sellToken?.address || '',
-    quoteData?.permitData ? UniversalRouterAddressPermit : UniversalRouterAddress
+    UniversalRouterAddressPermit
   );
 
   const { mutate: eoaSwap, isPending: isEOASwapPending } = useUniswapEOASwap();
