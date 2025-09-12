@@ -17,7 +17,7 @@ export function CommonPageLayout({
   return (
     <>
       <PageHeader />
-      <div className="grid-main dark:bg-primary-foreground bg-bg-gray relative flex flex-grow flex-col overflow-x-hidden">
+      <div className="grid-main dark:bg-primary-foreground bg-bg-gray relative flex flex-grow flex-col overflow-hidden">
         <div
           className={cn(
             'scrollbar-hover flex h-full flex-col items-center overflow-x-hidden overflow-y-scroll pt-6',
