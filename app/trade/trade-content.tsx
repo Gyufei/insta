@@ -87,7 +87,7 @@ export function TokenContent() {
   }, [sellToken, buyToken]);
 
   const quoteParams = useMemo(() => {
-    return sellToken && buyToken && sellValue && !isCanBuyPair
+    return sellToken && buyToken && sellValue && !isCanBuyPair && Number(sellValue) > 0
       ? {
           tokenIn: replaceNativeAddressUseBackend(sellToken.address),
           tokenOut: replaceNativeAddressUseBackend(buyToken.address),
@@ -109,10 +109,7 @@ export function TokenContent() {
     isLoading: isFromAllowanceLoading,
     handleApprove: handleFromApprove,
     isApproving: isFromApproving,
-  } = useCheckMonadAllowance(
-    sellToken?.address || '',
-    UniversalRouterAddressPermit
-  );
+  } = useCheckMonadAllowance(sellToken?.address || '', UniversalRouterAddressPermit);
 
   const { mutate: eoaSwap, isPending: isEOASwapPending } = useUniswapEOASwap();
   const { mutate: dsaSwap, isPending: isDSASwapPending } = useUniswapDSASwap();
