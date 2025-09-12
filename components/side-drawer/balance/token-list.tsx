@@ -1,21 +1,21 @@
-import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { GAS_LIMIT_FOR_CLAIM_MONUSD, useOddsClaim } from '@/app/odds/common/use-odds-claim';
+import { usePathname, useRouter } from 'next/navigation';
+
 import {
   STATION_FROM_TOKENS_BASE,
   STATION_FROM_TOKENS_ETH,
 } from '@/app/token-station/station-config';
 
-import { NetworkConfigs } from '@/config/network-config';
 import { APR_MONAD, G_MONAD, IToken, MONAD, MonUSD } from '@/config/tokens';
 
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useApiBalance } from '@/lib/data/balance/use-api-balance';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
-// import { useApiMonadBalance } from '@/lib/data/use-api-monad-balance';
-import { useRPCNativeBalance } from '@/lib/data/balance/use-rpc-native-balance';
+import { useAccountStore } from '@/lib/state/account';
+import { eventBus } from '@/lib/state/eventBus';
 
 import { AprMONTokenCard } from './apr-mon-token-card';
 import { BaseTokenCard } from './base-token-card';
@@ -36,11 +36,14 @@ function filterTokenByQuery(tokens: IToken[], query: string) {
 }
 
 export default function TokenList() {
-  const { address } = useAccount();
+  const router = useRouter();
+  const pathname = usePathname();
   const { data: balanceData } = useApiBalance();
 
-  const { balance: walletBalance } = useRPCNativeBalance(NetworkConfigs.monadTestnet.id, address || '');
-  const { mutate: claimMonUsd, isPending: isProcessingClaim } = useOddsClaim();
+  const { address } = useAccount();
+  const { data: selectedAccount } = useSelectedAccount();
+  const { currentAccountType } = useAccountStore();
+
   const { data: uniswapTokensData } = useUniswapTokens();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -78,15 +81,14 @@ export default function TokenList() {
       return;
     }
 
-    if (
-      // Number(monadBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD &&
-      Number(walletBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD
-    ) {
-      toast.error('Insufficient gas for claim monUSD');
-      return;
-    }
+    const addr = currentAccountType === 'EOA' ? address : selectedAccount?.sandbox_account;
 
-    claimMonUsd(undefined);
+    if (pathname.startsWith('/faucet')) {
+      eventBus.publish('claim-monUsd', { name: 'ClaimMonUsd', props: { address: addr } });
+    } else {
+      sessionStorage.setItem('claim-monUsd', JSON.stringify({ address: addr }));
+      router.push('/faucet');
+    }
   }
 
   useEffect(() => {
@@ -145,7 +147,6 @@ export default function TokenList() {
                         )?.formattedBalance || '0'
                       }
                       key={index}
-                      isClaiming={isProcessingClaim}
                       onClaim={token.symbol === 'monUSD' ? monUsdClaim : undefined}
                     />
                   );

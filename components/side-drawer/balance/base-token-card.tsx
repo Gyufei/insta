@@ -1,5 +1,3 @@
-import { Loader2 } from 'lucide-react';
-
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -19,7 +17,6 @@ interface BaseTokenCardProps {
   chain: string;
   showTrade?: boolean;
   className?: string;
-  isClaiming?: boolean;
   onClaim?: (_t: IToken) => void;
 }
 
@@ -29,7 +26,6 @@ export function BaseTokenCard({
   showTrade = true,
   chain,
   className,
-  isClaiming,
   onClaim,
 }: BaseTokenCardProps) {
   const pathname = usePathname();
@@ -103,7 +99,7 @@ export function BaseTokenCard({
                   size="sm"
                   className="h-5 w-12 hover:border-pro-blue/20 cursor-pointer hover:bg-pro-blue/20 hover:text-pro-blue text-xs px-[10px]"
                 >
-                  {isClaiming ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Claim'}
+                  Claim
                 </Button>
                 {showTrade && (
                   <Button

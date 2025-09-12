@@ -25,6 +25,7 @@ import { useAccounts } from '@/lib/data/account-address/use-account';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useCreateAccount } from '@/lib/data/use-create-account';
 import { useFaucetAirdrop } from '@/lib/data/use-faucet-airdrop';
+import { eventBus } from '@/lib/state/eventBus';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { cn, formatAddress } from '@/lib/utils';
 import { useWalletConnect } from '@/lib/web3/use-wallet-connect';
@@ -111,6 +112,36 @@ export function FaucetContainer() {
       }
     }
   }, [address, isCheckMon, isCheckMonUSD, isDSA]);
+
+  function handleJumpTo({ addr }: { addr: string }) {
+    console.log('handleJumpTo', addr);
+    setSelectedToken(MonUSD.address);
+    setMonUSDAddress(addr);
+  }
+
+  useEffect(() => {
+    const addrData = sessionStorage.getItem('claim-monUsd');
+    if (addrData) {
+      const addr = JSON.parse(addrData).address;
+      setTimeout(() => {
+        handleJumpTo({ addr });
+      }, 1000);
+      sessionStorage.removeItem('claim-monUsd');
+    }
+  }, []);
+
+  useEffect(() => {
+    const unSub = eventBus.subscribe(
+      'claim-monUsd',
+      (data: { name: string; props: { address: string } }) => {
+        if (data.name === 'ClaimMonUsd') {
+          handleJumpTo({ addr: data.props.address });
+        }
+      }
+    );
+
+    return () => unSub();
+  }, []);
 
   useEffect(() => {
     if (currentAccount) {
