@@ -108,6 +108,9 @@ export function useUniswapQuote(params?: IUniswapQuoteParams) {
       if (!params) {
         return null;
       }
+      if (Number(params.tokenIn) === 0) {
+        return null;
+      }
       url.searchParams.set('chain_id', chainId);
       url.searchParams.set('token_in', params.tokenIn);
       url.searchParams.set('token_out', params.tokenOut);
