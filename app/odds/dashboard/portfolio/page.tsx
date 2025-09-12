@@ -4,7 +4,6 @@ import {
   ArrowLeftFromLine,
   ArrowRightFromLine,
   BadgeDollarSign,
-  HandCoins,
   Loader2,
   RotateCw,
 } from 'lucide-react';
@@ -17,16 +16,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { NetworkConfigs } from '@/config/network-config';
 import { MonUSD } from '@/config/tokens';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balnace';
-import { useRPCNativeBalance } from '@/lib/data/balance/use-rpc-native-balance';
 import { useAccountStore } from '@/lib/state/account';
 import { formatNumber } from '@/lib/utils/number';
 
-import { GAS_LIMIT_FOR_CLAIM_MONUSD, useOddsClaim } from '../../common/use-odds-claim';
 import { useOddsDeposit } from '../../common/use-odds-deposit';
 import { useOddsWithdraw } from '../../common/use-odds-withdraw';
 import { useTradingBalance } from '../../common/use-trading-balance';
@@ -50,11 +46,6 @@ export default function Portfolio() {
     MonUSD.decimals
   );
 
-  const { balance: walletBalance } = useRPCNativeBalance(
-    NetworkConfigs.monadTestnet.id,
-    address || ''
-  );
-
   const { data: tradingBalanceData, isPending: isLoadingTradingBalance } = useTradingBalance();
 
   const tradingBalance = tradingBalanceData?.balance;
@@ -64,34 +55,11 @@ export default function Portfolio() {
 
   const { mutate: deposit, isPending: isTransferringToTrading } = useOddsDeposit();
   const { mutate: withdraw, isPending: isTransferringToFunding } = useOddsWithdraw();
-  const { mutate: claim, isPending: isProcessingClaim } = useOddsClaim();
 
   const [showSwapModal, setShowSwapModal] = useState(false);
   const [swapClickCount, setSwapClickCount] = useState(0);
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [transferDirection, setTransferDirection] = useState<'F2T' | 'T2F'>('F2T');
-
-  const handleClaim = async () => {
-    if (!address) {
-      toast.error('Please connect your wallet first');
-      return;
-    }
-
-    if (!accountInfo) {
-      toast.error('Please create an account first');
-      return;
-    }
-
-    if (
-      // Number(monadBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD &&
-      Number(walletBalance) <= GAS_LIMIT_FOR_CLAIM_MONUSD
-    ) {
-      toast.error('Insufficient gas for claim monUSD');
-      return;
-    }
-
-    claim(undefined);
-  };
 
   const handleTransferToTrading = async (amount: string) => {
     if (!address) {
@@ -178,32 +146,7 @@ export default function Portfolio() {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              onClick={handleClaim}
-              disabled={isProcessingClaim || isLoadingFundingBalance}
-              className={`flex items-center justify-center gap-1 py-2 font-semibold px-1 text-xs rounded-lg ${
-                isLoadingFundingBalance
-                  ? 'bg-gray-200 animate-pulse cursor-not-allowed'
-                  : 'bg-[#6E75F910] text-[#6E75F9] hover:bg-[#6E75F920]'
-              }`}
-            >
-              {isLoadingFundingBalance ? (
-                <div className="h-4 w-24 bg-gray-300 rounded" />
-              ) : (
-                <>
-                  <HandCoins className="h-4 w-4" />
-                  {isProcessingClaim ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <span className="whitespace-nowrap">Top Up (Free)</span>
-                  )}
-                </>
-              )}
-            </button>
+          <div className="grid grid-cols-1">
             <button
               id="btnTransferToTrading"
               onClick={() => {
