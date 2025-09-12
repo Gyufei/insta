@@ -85,7 +85,7 @@ export default function Portfolio() {
       return;
     }
 
-    if (!accountInfo) {
+    if (currentAccountType === 'DSA' && !accountInfo) {
       toast.error('Please create an account first');
       return;
     }
