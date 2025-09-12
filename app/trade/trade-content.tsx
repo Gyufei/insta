@@ -227,7 +227,7 @@ export function TokenContent() {
 
       console.log(permitData, signature);
       const args = {
-        token_in: sellToken.address,
+        token_in: replaceNativeAddressUseBackend(sellToken.address),
         token_out: buyToken.address,
         amount_in: sellValue,
         amount_in_decimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
