@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation';
 import { MonUSD } from '@/config/tokens';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
-import { useAddressBalance } from '@/lib/data/balance/use-address-balnace';
+import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useAccountStore } from '@/lib/state/account';
 import { formatNumber } from '@/lib/utils/number';
 

@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
-import { useAddressBalance } from '@/lib/data/balance/use-address-balnace';
+import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useCheckMonadAllowance } from '@/lib/data/use-monad-allowance';
 import { useUniswapDSASwap } from '@/lib/data/use-uniswap-dsa-swap';
 import { useUniswapEOASwap } from '@/lib/data/use-uniswap-eoa-swap';
@@ -93,16 +93,17 @@ export function TokenContent() {
     return isMonUsdSell && (isMonBuy || isWMonBuy);
   }, [sellToken, buyToken]);
 
-  const quoteParams =
-    sellToken && buyToken && sellValue && !isCanBuyPair
+  const quoteParams = useMemo(() => {
+    return sellToken && buyToken && sellValue && !isCanBuyPair
       ? {
           tokenIn: replaceNativeAddressUseBackend(sellToken.address),
           tokenOut: replaceNativeAddressUseBackend(buyToken.address),
           amountIn: sellValue,
           amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
-          ...(currentAccountType === 'EOA' ? { wallet } : {}),
+          ...(currentAccountType === 'EOA' && wallet ? { wallet } : {}),
         }
       : undefined;
+  }, [sellToken, buyToken, sellValue, isCanBuyPair, currentAccountType, wallet]);
 
   const {
     data: quoteData,
@@ -115,6 +116,8 @@ export function TokenContent() {
   const isSwapPending = currentAccountType === 'EOA' ? isEOASwapPending : isDSASwapPending;
 
   const shouldApprove = useMemo(() => {
+    if (!wallet) return false;
+
     if (currentAccountType === 'DSA') {
       return false;
     }
@@ -124,7 +127,7 @@ export function TokenContent() {
     if (fromAllowance === Infinity || fromAllowance == null) return false;
 
     return Number(fromAllowance) < Number(sellValue);
-  }, [fromAllowance, sellValue, sellToken, currentAccountType]);
+  }, [fromAllowance, sellValue, sellToken, currentAccountType, wallet]);
 
   useEffect(() => {
     if (quoteData?.output) {
@@ -190,6 +193,11 @@ export function TokenContent() {
   async function handleSwap() {
     if (shouldApprove) {
       handleFromApprove();
+      return;
+    }
+
+    if (!wallet) {
+      toast.error('Please connect your wallet to trade');
       return;
     }
 
@@ -335,7 +343,7 @@ export function TokenContent() {
               className="min-w-40 h-12 text-xl font-medium flex leading-[24px] items-center justify-center rounded-md bg-[#6E75F9] text-white hover:bg-[#6E75F990]"
               onClick={handleSwap}
             >
-              {isFromAllowanceLoading ? (
+              {isFromAllowanceLoading && wallet ? (
                 <Loader className="w-6 h-6 animate-spin" />
               ) : shouldApprove ? (
                 <span className="flex items-center">

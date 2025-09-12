@@ -4,7 +4,7 @@ import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
-import { useAddressBalance } from '@/lib/data/balance/use-address-balnace';
+import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 
 interface BalanceDisplayProps {
   tokenAddress: string;
