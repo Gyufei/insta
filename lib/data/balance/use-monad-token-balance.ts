@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { divide } from 'safebase';
 
-import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
+import { DEFAULT_TOKEN_DECIMALS, replaceNativeAddressUseBackend } from '@/config/network-config';
 
 import { Fetcher } from '@/lib/fetcher';
 
@@ -25,7 +25,7 @@ export function useMonadTokenBalance(
       return null;
     }
 
-    url.searchParams.set('token_address', tokenAddress);
+    url.searchParams.set('token_address', replaceNativeAddressUseBackend(tokenAddress));
     url.searchParams.set('wallet', address);
 
     const res = await Fetcher<IUniswapTokenBalance>(url.toString());
