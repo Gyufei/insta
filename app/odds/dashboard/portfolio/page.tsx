@@ -119,31 +119,34 @@ export default function Portfolio() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-12">
         {/* Funding Balance Card */}
         <div className="bg-white rounded-[8px] border border-[#EBEBEB] p-5">
-          <div className="text-sm text-[#A5ADC6] font-normal uppercase mb-[10px]">
-            Funding Balance
+          <div className="text-sm text-[#A5ADC6] font-normal mb-[10px]">
+            FUNDING BALANCE (monUSD)
           </div>
-          <div className="flex items-center gap-2 mb-[10px] min-h-[48px]">
-            {isLoadingFundingBalance ? (
-              <div className="flex items-center gap-2">
-                <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
-                <div className="h-6 w-6 bg-gray-200 rounded animate-pulse" />
-              </div>
-            ) : (
-              <>
-                <div className="text-3xl font-medium">
-                  ${Number(fundingBalance) === 10 ** -18 ? '0' : formatNumber(fundingBalance)}
+          <div className="flex items-center justify-between mb-[10px] min-h-[48px]">
+            <div className="flex items-center gap-2">
+              {isLoadingFundingBalance ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-6 w-6 bg-gray-200 rounded animate-pulse" />
                 </div>
-                <button
-                  onClick={() => refetchFundingBalance()}
-                  disabled={isLoadingFundingBalance}
-                  className="p-1 hover:bg-gray-100 rounded-[8px] transition-colors"
-                >
-                  <RotateCw
-                    className={`h-4 w-4 text-[#A5ADC6] ${isLoadingFundingBalance ? 'animate-spin' : ''}`}
-                  />
-                </button>
-              </>
-            )}
+              ) : (
+                <>
+                  <div className="text-3xl font-medium">
+                    ${Number(fundingBalance) === 10 ** -18 ? '0' : formatNumber(fundingBalance)}
+                  </div>
+                  <button
+                    onClick={() => refetchFundingBalance()}
+                    disabled={isLoadingFundingBalance}
+                    className="p-1 hover:bg-gray-100 rounded-[8px] transition-colors"
+                  >
+                    <RotateCw
+                      className={`h-4 w-4 text-[#A5ADC6] ${isLoadingFundingBalance ? 'animate-spin' : ''}`}
+                    />
+                  </button>
+                </>
+              )}
+            </div>
+            <Image src={MonUSD.logo} width={24} height={24} alt={MonUSD.symbol} />
           </div>
 
           <div className="grid grid-cols-1">
@@ -161,7 +164,7 @@ export default function Portfolio() {
               }`}
             >
               {isLoadingFundingBalance ? (
-                <div className="h-5 w-16 bg-gray-300 rounded" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
                   <ArrowRightFromLine className="h-4 w-4" />
