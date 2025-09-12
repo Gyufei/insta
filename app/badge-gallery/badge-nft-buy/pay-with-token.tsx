@@ -29,6 +29,7 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
   const [payToken, setPayToken] = useState<'ETH' | 'USDT' | 'USDC'>('ETH');
 
   const { data: userBadgeData } = useBadgeWalletNfts();
+  const [init, setInit] = useState(false);
 
   const payTokenAddress = useMemo(() => {
     return BUY_TOKEN_CONFIG_BASE.find((token) => token.symbol === payToken)?.address || '';
@@ -97,6 +98,21 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
       });
     }
   }, [address]);
+
+  useEffect(() => {
+    if (init) {
+      return;
+    }
+
+    if (chainId !== NetworkConfigs.base.id) {
+      setTimeout(() => {
+        toggleNetwork(NetworkConfigs.base);
+      }, 300);
+      return;
+    }
+
+    setInit(true);
+  }, [init, chainId]);
 
   function toggleNetwork(net: (typeof NetworkConfigs)[keyof typeof NetworkConfigs]) {
     eventBus.publish('toggle-network', net);
