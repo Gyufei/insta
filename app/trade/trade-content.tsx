@@ -153,7 +153,7 @@ export function TokenContent() {
     if (isCanBuyPair) {
       setLiquidityError({
         showError: true,
-        errorMessage: 'Insufficient liquidity, please try again later',
+        errorMessage: errorMsg,
       });
     }
 

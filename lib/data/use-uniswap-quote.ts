@@ -88,6 +88,7 @@ export interface IUniswapQuoteParams {
   tokenOut: string;
   amountIn: string;
   amountInDecimals: string;
+  wallet?: string;
 }
 
 export function useUniswapQuote(params?: IUniswapQuoteParams) {
@@ -112,6 +113,9 @@ export function useUniswapQuote(params?: IUniswapQuoteParams) {
       url.searchParams.set('token_out', params.tokenOut);
       url.searchParams.set('amount_in', params.amountIn);
       url.searchParams.set('amount_in_decimals', params.amountInDecimals);
+      if (params.wallet) {
+        url.searchParams.set('wallet', params.wallet);
+      }
       return url;
     },
     {
