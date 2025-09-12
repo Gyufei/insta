@@ -50,17 +50,17 @@ export default function Portfolio() {
     MonUSD.decimals
   );
 
+  const { balance: walletBalance } = useRPCNativeBalance(
+    NetworkConfigs.monadTestnet.id,
+    address || ''
+  );
+
   const { data: tradingBalanceData, isPending: isLoadingTradingBalance } = useTradingBalance();
 
   const tradingBalance = tradingBalanceData?.balance;
 
   const { data: marketsData, isLoading: isLoadingMarkets, error: marketsError } = useUserMarkets();
   const markets = marketsData?.market_list;
-
-  const { balance: walletBalance } = useRPCNativeBalance(
-    NetworkConfigs.monadTestnet.id,
-    address || ''
-  );
 
   const { mutate: deposit, isPending: isTransferringToTrading } = useOddsDeposit();
   const { mutate: withdraw, isPending: isTransferringToFunding } = useOddsWithdraw();
@@ -99,7 +99,7 @@ export default function Portfolio() {
       return;
     }
 
-    if (!accountInfo) {
+    if (currentAccountType === 'DSA' && !accountInfo) {
       toast.error('Please create an account first');
       return;
     }
@@ -391,7 +391,6 @@ export default function Portfolio() {
         onConfirm={transferDirection === 'F2T' ? handleTransferToTrading : handleTransferToFunding}
         maxAmount={transferDirection === 'F2T' ? fundingBalance || '' : tradingBalance || ''}
         direction={transferDirection}
-        needsApproval={false}
         isAwaitingConfirm={isTransferringToTrading || isTransferringToFunding}
       />
     </div>

@@ -59,11 +59,11 @@ export function useSendTx() {
 
       const txParams = {
         account: address,
-        from: from as `0x${string}`,
         to: to as `0x${string}`,
         data: data as `0x${string}`,
-        gas: BigInt(gas),
         ...(value ? { value: BigInt(value) } : {}),
+        ...(from ? { from: from as `0x${string}` } : {}),
+        ...(gas ? { gas: BigInt(gas) } : {}),
       };
 
       if (data && data.startsWith(PaymentProxyHash)) {

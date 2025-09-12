@@ -49,6 +49,10 @@ export function useOddsDeposit() {
     },
     SUCCESS_MESSAGES.TRANSFER_TO_TRADING_SUCCESS,
     ERROR_MESSAGES.TRANSFER_TO_TRADING_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['user', 'positions'] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [['odds', 'trading_balance']],
+    }
   )();
 }
