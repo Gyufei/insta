@@ -104,7 +104,7 @@ export function TokenContent() {
 
     if (!sellToken) return false;
 
-    if (!fromAllowance) return true;
+    if (fromAllowance === Infinity || fromAllowance == null) return false;
 
     return Number(fromAllowance) < Number(sellValue);
   }, [fromAllowance, sellValue, sellToken, currentAccountType]);
@@ -171,6 +171,11 @@ export function TokenContent() {
   }, []);
 
   function handleSwap() {
+    if (shouldApprove) {
+      handleFromApprove();
+      return;
+    }
+
     if (!quoteData || !sellToken || !buyToken) return;
 
     if (Number(sellValue) > Number(fromBalance)) {
@@ -186,11 +191,6 @@ export function TokenContent() {
       showError: false,
       errorMessage: '',
     });
-
-    if (shouldApprove) {
-      handleFromApprove();
-      return;
-    }
 
     if (currentAccountType === 'EOA') {
       eoaSwap({
