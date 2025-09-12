@@ -98,7 +98,6 @@ export function TokenContent() {
   const isSwapPending = currentAccountType === 'EOA' ? isEOASwapPending : isDSASwapPending;
 
   const shouldApprove = useMemo(() => {
-    return false;
     if (currentAccountType === 'DSA') {
       return false;
     }
