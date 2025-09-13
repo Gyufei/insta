@@ -1,7 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { divide } from 'safebase';
 
-import { DEFAULT_TOKEN_DECIMALS, replaceNativeAddressUseBackend } from '@/config/network-config';
+import {
+  BACKEND_NATIVE_ADDRESS,
+  DEFAULT_NATIVE_ADDRESS,
+  DEFAULT_TOKEN_DECIMALS,
+  replaceNativeAddressUseBackend,
+} from '@/config/network-config';
 
 import { Fetcher } from '@/lib/fetcher';
 
@@ -23,6 +28,12 @@ export function useMonadTokenBalance(
   async function queryFunc(url: URL) {
     if (!tokenAddress || !address) {
       return null;
+    }
+
+    if (tokenAddress === DEFAULT_NATIVE_ADDRESS || tokenAddress === BACKEND_NATIVE_ADDRESS) {
+      return {
+        balance: '0',
+      };
     }
 
     url.searchParams.set('token_address', replaceNativeAddressUseBackend(tokenAddress));
