@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi';
 
 import { NetworkConfigs } from '@/config/network-config';
 
-import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useDeleteAuthority } from '@/lib/data/use-delete-authority';
@@ -18,7 +18,7 @@ export function AuthorityCard({ manager }: { manager: string }) {
   const account = accountInfo?.sandbox_account;
 
   const handleDelete = async () => {
-    if (!address || !account) {
+    if (!address || !account || isPending) {
       return;
     }
 
@@ -30,28 +30,22 @@ export function AuthorityCard({ manager }: { manager: string }) {
   };
 
   return (
-    <Card className="flex-shrink-0">
-      <CardContent className="flex items-center px-4">
-        <CardTitle className="mr-4 flex-grow text-xs font-medium text-gray-500">
-          Authority
-        </CardTitle>
+    <Card className="flex-shrink-0 py-[14px] border border-[#EBEBEB]">
+      <CardContent className="flex items-center justify-between px-4">
         <a
           rel="noopener noreferrer"
           target="_blank"
           href={`${network.blockExplorers.default.url}/address/${manager}`}
-          className="text-sm font-medium text-blue-500"
+          className="text-sm font-medium text-primary"
         >
           {formatAddress(manager)}
         </a>
         <CardFooter className="ml-4 w-8 border-0 p-0">
           {address !== manager && (
-            <button
+            <Trash2
+              className="h-4 text-[#A5ADC6] cursor-pointer hover:text-primary"
               onClick={handleDelete}
-              disabled={isPending}
-              className="flex h-8 w-8 flex-shrink-0 cursor-pointer items-center justify-center rounded-sm px-2 py-2 text-xs font-semibold whitespace-nowrap transition-colors duration-75 ease-out select-none hover:bg-orange-500/15 focus:bg-orange-500/15 focus:outline-none disabled:opacity-50"
-            >
-              <Trash2 className="h-4 text-orange-500 dark:opacity-90" />
-            </button>
+            />
           )}
         </CardFooter>
       </CardContent>

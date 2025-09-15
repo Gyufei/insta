@@ -14,8 +14,8 @@ export function WalletDisplay({ className }: { className?: string }) {
 
   return (
     <div className={className}>
-      <div className="text-sm font-semibold mb-4">EOA</div>
-      <div className="mt-4 grid grid-cols-1 gap-4">
+      <div className="text-base font-semibold leading-[140%] mb-4">EOA</div>
+      <div className="mt-3 flex">
         <WalletCard
           walletAddress={address || ''}
           isCurrent={currentAccountType === 'EOA'}

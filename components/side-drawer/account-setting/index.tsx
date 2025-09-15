@@ -19,7 +19,7 @@ export function AccountSetting() {
       <SideDrawerBackHeader title="Account Settings" onClick={handleBack} />
 
       <SideDrawerLayout>
-        <WalletDisplay className={cn(!account ? 'my-8' : 'mb-8')} />
+        <WalletDisplay className={cn('mt-6 mb-8')} />
         {account ? <AccountDisplay /> : <NoAccountDisplay />}
       </SideDrawerLayout>
     </>

@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useCreateAuthority } from '@/lib/data/use-create-authority';
+import { cn } from '@/lib/utils';
 
 export function AuthorityAdd() {
   const { data: accountInfo } = useSelectedAccount();
@@ -50,12 +51,15 @@ export function AuthorityAdd() {
   };
 
   return (
-    <div className="relative mt-4 flex flex-grow items-center">
+    <div className="relative mt-3 flex flex-grow items-center">
       <Input
         type="text"
         autoComplete="off"
         placeholder="New Authority"
-        className={isError ? 'border-destructive' : ''}
+        className={cn(
+          'h-10 bg-white border border-[#EBEBEB] pr-[70px]',
+          isError ? 'border-destructive' : ''
+        )}
         value={inputValue}
         onChange={handleInputChange}
         aria-invalid={isError}
@@ -64,7 +68,7 @@ export function AuthorityAdd() {
         disabled={!inputValue || isPending}
         onClick={handleAdd}
         size="sm"
-        className="absolute top-[2px] right-1"
+        className="absolute h-8 top-[4px] right-1 disabled:bg-[#FAFAFA] bg-[#6E75F920] disabled:text-[#A5ADC6] text-[#6E75F9]"
       >
         <WithLoading isLoading={!!isPending} className="mr-2" />
         Add
