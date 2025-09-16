@@ -552,7 +552,7 @@ export function UniswapCreateCoin() {
                 onChange={handleInputChange('description')}
                 rows={4}
                 className={cn(
-                  'w-full px-3 py-2 border border-input rounded-md bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 resize-none',
+                  'w-full px-3 py-2 border border-input rounded-md bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus:ring-ring focus:ring-offset-2 resize-none',
                   showErrors && errors.description && 'border-red-500'
                 )}
               />

@@ -368,6 +368,13 @@ input::placeholder {
   @apply font-normal text-gray-400;
 }
 
+/* 输入框和文本区域焦点样式 */
+input:focus,
+textarea:focus {
+  border-color: #6E75F9 !important;
+  transition: border-color 0.2s ease-in-out;
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
