@@ -118,6 +118,10 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
           errDisplay = errDisplay.split('error:')[1].trim();
         }
 
+        if (errDisplay.includes('User rejected the request.')) {
+          errDisplay = 'User rejected the request.';
+        }
+
         if (errDisplay.includes('reverted:')) {
           errDisplay = errDisplay.split('reverted:')[1].trim();
         }
