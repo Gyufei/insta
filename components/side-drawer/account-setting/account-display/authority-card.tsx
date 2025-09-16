@@ -38,7 +38,10 @@ export function AuthorityCard({ manager }: { manager: string }) {
           href={`${network.blockExplorers.default.url}/address/${manager}`}
           className="text-sm font-medium text-primary"
         >
-          {formatAddress(manager)}
+          {formatAddress(manager, {
+            prefix: 12,
+            suffix: 12,
+          })}
         </a>
         <CardFooter className="ml-4 w-8 border-0 p-0">
           {address !== manager && (

@@ -19,8 +19,8 @@ export function AuthorityManage() {
             </TooltipTrigger>
             <TooltipContent>
               <p className="max-w-[200px]">
-                Authorities are the Ethereum addresses that can access your DSA. Currently only
-                Authorities are able to request withdrawals from the DSA.
+                Authorities are your trusted Ethereum addresses. Only they can request withdrawals
+                from your account.
               </p>
             </TooltipContent>
           </Tooltip>

@@ -49,7 +49,7 @@ export function AccountList() {
         <button
           disabled={isPending}
           onClick={handleCreateAccount}
-          className="text-[#6E75F9] flex h-9 w-full flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-[#6E75F920] text-sm font-medium whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none"
+          className="text-[#6E75F9] flex h-9 w-full flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-[#6E75F920] text-sm font-medium whitespace-nowrap transition-colors duration-75 ease-out select-none focus:outline-none hover:bg-[#6E75F930]"
         >
           <WithLoading isLoading={!!isPending}>+ New</WithLoading>
         </button>
