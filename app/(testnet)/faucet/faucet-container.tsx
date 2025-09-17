@@ -309,7 +309,10 @@ export function FaucetContainer() {
           >
             <SelectTrigger className="w-full pl-10 mt-2 shadow-none focus-visible:ring-0">
               <SelectValue placeholder="Select a account">
-                {formatAddress(selectedAccount || '')}
+                {formatAddress(selectedAccount || '', {
+                  prefix: 12,
+                  suffix: 12,
+                })}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
@@ -334,7 +337,10 @@ export function FaucetContainer() {
                           selectedAccount === account.value && 'text-primary'
                         )}
                       >
-                        {formatAddress(account.value)}
+                        {formatAddress(account.value, {
+                          prefix: 12,
+                          suffix: 12
+                        })}
                       </span>
                     </div>
                     <div className="bg-[#6E75F910] text-xs text-[#6E75F9] px-2 h-5 flex items-center justify-center">

@@ -10,7 +10,7 @@ import {
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -22,6 +22,7 @@ import { useSelectedAccount } from '@/lib/data/account-address/use-selected-acco
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useAccountStore } from '@/lib/state/account';
 import { formatNumber } from '@/lib/utils/number';
+import { trackEvent } from '@/lib/analytics';
 
 import { useOddsDeposit } from '../../common/use-odds-deposit';
 import { useOddsWithdraw } from '../../common/use-odds-withdraw';
@@ -31,6 +32,13 @@ import SwapModal from '../../components/SwapModal';
 import TransferConfirmModal from '../../components/TransferConfirmModal';
 
 export default function Portfolio() {
+  // Track portfolio page view
+  React.useEffect(() => {
+    trackEvent('PORTFOLIO_VIEW', {
+      event_category: 'portfolio',
+      account_type: currentAccountType,
+    });
+  }, [currentAccountType]);
   const router = useRouter();
   const { address } = useAccount();
   const { data: accountInfo } = useSelectedAccount();

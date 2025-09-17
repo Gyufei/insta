@@ -32,6 +32,7 @@ import { ErrorVO } from '@/lib/model/error-vo';
 import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
+import { trackEvent, trackTrade } from '@/lib/analytics';
 
 import { WMONAD_TOKEN } from '../(protocols)/uniswap/use-uniswap-token';
 import { SlippageSettings } from './slippage-settings';
@@ -192,6 +193,11 @@ export function TokenContent() {
 
   async function handleSwap() {
     if (shouldApprove) {
+      trackEvent('TOKEN_APPROVE', {
+        event_category: 'trading',
+        token_symbol: sellToken?.symbol,
+        token_address: sellToken?.address,
+      });
       handleFromApprove();
       return;
     }
@@ -205,8 +211,20 @@ export function TokenContent() {
 
     if (Number(sellValue) > Number(fromBalance)) {
       toast.error('Insufficient balance');
+      trackEvent('ERROR_OCCURRED', {
+        event_category: 'trading',
+        error_message: 'Insufficient balance',
+        custom_parameters: {
+          sell_token: sellToken.symbol,
+          requested_amount: sellValue,
+          available_balance: fromBalance,
+        },
+      });
       return;
     }
+
+    // Track trade initiation
+    trackTrade('initiated', sellToken.symbol || '', buyToken.symbol || '', sellValue);
 
     const isSellTokenEth = sellToken.address === DEFAULT_NATIVE_ADDRESS;
     const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
@@ -255,6 +273,16 @@ export function TokenContent() {
     const tempValue = sellValue;
     setSellValue(buyValue);
     setBuyValue(tempValue);
+
+    // Track token swap action
+    trackEvent('SWAP_TOKENS', {
+      event_category: 'trading',
+      event_label: 'token_pair_swap',
+      custom_parameters: {
+        from_token: sellToken?.symbol,
+        to_token: buyToken?.symbol,
+      },
+    });
   };
 
   const handleMaxClick = () => {

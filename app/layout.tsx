@@ -1,4 +1,5 @@
 import { Toaster } from 'sonner';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
@@ -80,6 +81,7 @@ export default async function RootLayout({
           <BaseLayout>{children}</BaseLayout>
           <Toaster richColors />
         </Web3AppKitContextProvider>
+        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
       </body>
     </html>
   );

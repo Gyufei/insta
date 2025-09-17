@@ -5,10 +5,11 @@ import { useEffect, useState } from 'react';
 
 import { useAccounts } from '../data/account-address/use-account';
 import { useSideDrawerStore } from '../state/side-drawer';
+import { trackWalletConnection, trackEvent } from '../analytics';
 
 export function useWalletConnect() {
   const { open } = useAppKit();
-  const { isConnected } = useAppKitAccount();
+  const { isConnected, address } = useAppKitAccount();
   const { data: accounts, refetch: refetchAccounts } = useAccounts();
 
   const [waitConnect, setWaitConnect] = useState(false);
@@ -22,8 +23,15 @@ export function useWalletConnect() {
   useEffect(() => {
     if (!isConnected && currentComponent?.name === 'AccountSetting') {
       setCurrentComponent({ name: 'Balance' });
+      // Track wallet disconnect
+      trackEvent('WALLET_DISCONNECT', {
+        event_category: 'wallet',
+      });
+    } else if (isConnected && address) {
+      // Track wallet connection
+      trackWalletConnection(address, 'EOA');
     }
-  }, [isConnected, currentComponent, setCurrentComponent]);
+  }, [isConnected, address, currentComponent, setCurrentComponent]);
 
   useEffect(() => {
     if ((accounts || [])?.length > 0) {

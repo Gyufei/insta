@@ -6,6 +6,7 @@ import { NumberInput } from '@/components/common/number-input';
 import { Button } from '@/components/ui/button';
 
 import { cn } from '@/lib/utils';
+import { trackEvent } from '@/lib/analytics';
 
 interface SlippageSettingsProps {
   onSlippageChange: (value: string) => void;
@@ -26,12 +27,26 @@ export function SlippageSettings({ onSlippageChange }: SlippageSettingsProps) {
     setIsAuto(true);
     setInputValue(AutoSlippage);
     onSlippageChange(AutoSlippage);
+    
+    // Track slippage change
+    trackEvent('SLIPPAGE_CHANGE', {
+      event_category: 'trading',
+      event_label: 'auto_slippage',
+      value: parseFloat(AutoSlippage),
+    });
   };
 
   const handleCustomSlippageChange = (value: string) => {
     setIsAuto(false);
     setInputValue(value);
     onSlippageChange(value);
+    
+    // Track slippage change
+    trackEvent('SLIPPAGE_CHANGE', {
+      event_category: 'trading',
+      event_label: 'custom_slippage',
+      value: parseFloat(value) || 0,
+    });
   };
 
   return (
