@@ -18,11 +18,11 @@ import { useRouter } from 'next/navigation';
 
 import { MonUSD } from '@/config/tokens';
 
+import { trackEvent } from '@/lib/analytics';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useAccountStore } from '@/lib/state/account';
 import { formatNumber } from '@/lib/utils/number';
-import { trackEvent } from '@/lib/analytics';
 
 import { useOddsDeposit } from '../../common/use-odds-deposit';
 import { useOddsWithdraw } from '../../common/use-odds-withdraw';
@@ -32,13 +32,6 @@ import SwapModal from '../../components/SwapModal';
 import TransferConfirmModal from '../../components/TransferConfirmModal';
 
 export default function Portfolio() {
-  // Track portfolio page view
-  React.useEffect(() => {
-    trackEvent('PORTFOLIO_VIEW', {
-      event_category: 'portfolio',
-      account_type: currentAccountType,
-    });
-  }, [currentAccountType]);
   const router = useRouter();
   const { address } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
@@ -68,6 +61,14 @@ export default function Portfolio() {
   const [swapClickCount, setSwapClickCount] = useState(0);
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [transferDirection, setTransferDirection] = useState<'F2T' | 'T2F'>('F2T');
+
+  // Track portfolio page view
+  React.useEffect(() => {
+    trackEvent('PORTFOLIO_VIEW', {
+      event_category: 'portfolio',
+      account_type: currentAccountType,
+    });
+  }, [currentAccountType]);
 
   const handleTransferToTrading = async (amount: string) => {
     if (!address) {
