@@ -115,7 +115,7 @@ export function UniswapCreatePosition() {
 
   function handleAmount1Change(value: string) {
     setAmount1(value);
-    if (value && initPrice) {
+    if (value && initPrice && ratio) {
       const reciprocal = truncateNumber(divide(String(value), ratio), token0?.decimals || 18);
       setAmount0(reciprocal);
     }

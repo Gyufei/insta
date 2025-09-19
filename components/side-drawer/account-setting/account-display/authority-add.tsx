@@ -68,7 +68,7 @@ export function AuthorityAdd() {
         disabled={!inputValue || isPending}
         onClick={handleAdd}
         size="sm"
-        className="absolute h-8 top-[4px] right-1 disabled:bg-[#FAFAFA] bg-[#6E75F920] disabled:text-[#A5ADC6] text-[#6E75F9] hover:bg-[#6E75F930]"
+        className="absolute h-8 top-[4px] right-1 disabled:bg-[#FAFAFA] bg-[#6E75F920] disabled:text-[#A5ADC6] text-[#6E75F9] hover:text-white hover:bg-[#6E75F9]"
       >
         <WithLoading isLoading={!!isPending} className="mr-2" />
         Add
