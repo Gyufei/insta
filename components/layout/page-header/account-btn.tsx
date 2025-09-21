@@ -55,7 +55,7 @@ export function AccountBtn() {
       <div className="flex items-center justify-center leading-5 text-primary gap-1">
         <span className="text-xs text-primary">
           {currentType === 'EOA' ? (
-            <>#{formatAddress(address || '', { prefix: 4, suffix: 2 })}</>
+            <>{formatAddress(address || '', { prefix: 4, suffix: 2 })}</>
           ) : (
             <>#{accountInfo?.id}</>
           )}
