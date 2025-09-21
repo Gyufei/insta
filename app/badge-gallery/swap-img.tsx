@@ -56,7 +56,7 @@ export function SwapImg({
       setSelectedName(nft.name);
       setIsAnimating(false);
       setAnimationTarget(null);
-    }, 600); // 调整动画持续时间以匹配更快的动画速度
+    }, 600); // 更快的动画时间
   }, [isAnimating, setSelectedName]);
 
   return (
@@ -73,6 +73,20 @@ export function SwapImg({
         const isBehindCard = idx > 0;
         const shouldAnimate = isAnimatingCard && isBehindCard;
         const isOtherCard = isAnimating && !isAnimatingCard;
+        
+        // 简化的变换逻辑
+        const getTransform = () => {
+          if (shouldAnimate) {
+            // 动画状态：直接移动到第一张卡片的位置
+            return `scale(1.05) translateZ(150px) translateX(0px)`;
+          } else if (isOtherCard) {
+            // 其他卡片在动画期间的变换
+            return `scale(${1 - idx * 0.05 - 0.08}) translateZ(${-idx * 20 - 40}px) translateX(${idx * 10}px)`;
+          } else {
+            // 正常状态
+            return `scale(${1 - idx * 0.05}) translateZ(${-idx * 20}px) translateX(${idx * 10}px)`;
+          }
+        };
         
         return (
           <div
@@ -94,15 +108,11 @@ export function SwapImg({
                 !isAnimating ? 'hover:scale-105' : ''
               }`}
               style={{
-                transform: shouldAnimate 
-                  ? `scale(1.05) rotateY(${isAnimating ? '360deg' : '0deg'}) translateZ(${isAnimating ? '150px' : '0px'}) rotateX(${isAnimating ? '15deg' : '0deg'}) translateX(${isAnimating ? `-${40 + idx * 15}px` : '0px'})`
-                  : isOtherCard
-                    ? `scale(${1 - idx * 0.05 - (isAnimating ? 0.03 : 0.08)}) translateZ(${-idx * 20 - (isAnimating ? 20 : 40)}px) translateX(${idx * 10}px)`
-                    : `scale(${1 - idx * 0.05}) translateZ(${-idx * 20}px) translateX(${idx * 10}px)`,
+                transform: getTransform(),
                 transition: shouldAnimate 
-                  ? 'transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1)'
+                  ? 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                   : isOtherCard
-                    ? 'transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1)'
+                    ? 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                     : 'transform 0.3s ease-out',
                 transformStyle: 'preserve-3d',
                 opacity: 1,
