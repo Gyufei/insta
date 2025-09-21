@@ -1,5 +1,3 @@
-import React, { useEffect, useRef, useState } from 'react';
-
 import Link from 'next/link';
 
 interface MarketTitleProps {
@@ -8,66 +6,22 @@ interface MarketTitleProps {
 }
 
 export default function MarketTitle({ title, id }: MarketTitleProps) {
-  const [shouldScroll, setShouldScroll] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const titleRef = useRef<HTMLDivElement>(null);
-  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    if (titleRef.current) {
-      const hasOverflow = titleRef.current.scrollWidth > titleRef.current.clientWidth;
-      setShouldScroll(hasOverflow);
-    }
-  }, [title]);
-
-  useEffect(() => {
-    return () => {
-      if (hoverTimerRef.current) {
-        clearTimeout(hoverTimerRef.current);
-      }
-    };
-  }, []);
-
-  const handleMouseEnter = () => {
-    setIsHovering(true);
-    if (shouldScroll) {
-      hoverTimerRef.current = setTimeout(() => {
-        const titleElement = titleRef.current;
-        if (titleElement) {
-          const distance = titleElement.scrollWidth - titleElement.clientWidth;
-          titleElement.style.transform = `translateX(-${distance}px)`;
-        }
-      }, 3000);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovering(false);
-    if (hoverTimerRef.current) {
-      clearTimeout(hoverTimerRef.current);
-    }
-    if (titleRef.current) {
-      titleRef.current.style.transform = 'translateX(0)';
-    }
-  };
-
   return (
     <Link
+      className="h-fit w-full relative cursor-pointer group block"
       href={`/odds/market/${id}?chain=monad`}
-      className="block h-[30px] overflow-hidden cursor-pointer hover:text-pro-blue"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
-      <div
-        ref={titleRef}
-        className={`font-semibold text-lg leading-tight ${
-          shouldScroll ? 'whitespace-nowrap' : 'truncate'
-        }`}
-        style={{
-          transition: isHovering ? 'transform 1.5s ease-in-out' : 'transform 0.3s ease-out',
-        }}
-      >
-        {title}
+      <div className="max-w-[calc(100%)] w-full @container mb-2">
+        <div className="flex flex-col justify-center min-h-[36px]">
+          <div
+            className="flex flex-col justify-center min-h-[36px]"
+            style={{ paddingRight: '0px' }}
+          >
+            <p className="text-lg font-semibold w-fit line-clamp-3 lg:line-clamp-2 text-pretty text-text decoration-2 min-w-0 pl-0 leading-[20px] hover:line-clamp-3">
+              {title}
+            </p>
+          </div>
+        </div>
       </div>
     </Link>
   );
