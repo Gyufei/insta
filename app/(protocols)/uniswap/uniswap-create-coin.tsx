@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
 
+import { NumberInput } from '@/components/common/number-input';
 import { TitleH2 } from '@/components/common/title-h2';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -72,7 +73,53 @@ export function UniswapCreateCoin() {
     isSuccess: isCreated,
   } = useUniswapCreateCoin();
 
-  // URL 验证函数
+  // Twitter 用户名验证函数
+  const isValidTwitterInput = (input: string): boolean => {
+    if (!input.trim()) return true; // 空值允许通过
+
+    const trimmedInput = input.trim();
+
+    // 1. 检查是否是纯用户名格式 (如: jack)
+    const usernamePattern = /^[a-zA-Z0-9_]+$/;
+    if (usernamePattern.test(trimmedInput)) {
+      return true;
+    }
+
+    // 2. 检查是否是 https://x.com/username 格式
+    const xUrlPattern = /^https:\/\/x\.com\/[a-zA-Z0-9_]+$/;
+    if (xUrlPattern.test(trimmedInput)) {
+      return true;
+    }
+
+    // 3. 检查是否是 https://twitter.com/username 格式
+    const twitterUrlPattern = /^https:\/\/twitter\.com\/[a-zA-Z0-9_]+$/;
+    if (twitterUrlPattern.test(trimmedInput)) {
+      return true;
+    }
+
+    return false;
+  };
+
+  // 获取 Twitter 输入验证错误信息
+  const getTwitterInputError = (input: string): string => {
+    if (!input.trim()) return '';
+
+    const trimmedInput = input.trim();
+
+    // 检查是否包含无效字符组合
+    if (trimmedInput.includes('@') && trimmedInput.includes('http')) {
+      return 'Please enter a valid Twitter username or link';
+    }
+
+    // 检查是否包含空格
+    if (trimmedInput.includes(' ')) {
+      return 'Input cannot contain spaces';
+    }
+
+    return 'Please enter a valid Twitter username or link';
+  };
+
+  // URL 验证函数 (用于网站链接)
   const isValidUrl = (url: string): boolean => {
     if (!url.trim()) return true; // 空值允许通过
 
@@ -84,16 +131,74 @@ export function UniswapCreateCoin() {
       }
 
       const urlObj = new URL(urlToCheck);
-      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+      
+      // 检查协议
+      if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
+        return false;
+      }
+
+      const hostname = urlObj.hostname;
+      
+      // 检查是否是 IP 地址
+      const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+      if (ipPattern.test(hostname)) {
+        return true; // IP 地址是有效的
+      }
+
+      // 检查域名格式：必须包含至少一个点，且以有效的顶级域名结尾
+      const domainParts = hostname.split('.');
+      if (domainParts.length < 2) {
+        return false; // 至少需要 domain.tld 格式
+      }
+
+      // 检查每个部分不能为空
+      if (domainParts.some(part => part.length === 0)) {
+        return false;
+      }
+
+      // 检查顶级域名是否有效
+      const tld = domainParts[domainParts.length - 1].toLowerCase();
+      const validTlds = [
+        // 通用顶级域名
+        'com', 'org', 'net', 'edu', 'gov', 'mil', 'int', 'info', 'biz', 'name', 'pro',
+        // 新通用顶级域名
+        'co', 'io', 'me', 'tv', 'cc', 'ly', 'be', 'to', 'in', 'it', 'de', 'fr', 'uk', 'us',
+        'ca', 'au', 'jp', 'cn', 'ru', 'br', 'mx', 'es', 'nl', 'se', 'no', 'dk', 'fi',
+        'pl', 'tr', 'ar', 'cl', 'pe', 've', 'ec', 'uy', 'py', 'bo', 'gy', 'sr',
+        // 国家代码顶级域名
+        'ac', 'ad', 'ae', 'af', 'ag', 'ai', 'al', 'am', 'ao', 'aq', 'as', 'at', 'aw', 'ax', 'az',
+        'ba', 'bb', 'bd', 'be', 'bf', 'bg', 'bh', 'bi', 'bj', 'bl', 'bm', 'bn', 'bq', 'bs', 'bt', 'bv', 'bw', 'by', 'bz',
+        'cc', 'cd', 'cf', 'cg', 'ch', 'ci', 'ck', 'cm', 'cr', 'cu', 'cv', 'cw', 'cx', 'cy', 'cz',
+        'dj', 'dm', 'do', 'dz', 'ee', 'eg', 'eh', 'er', 'et', 'eu', 'fj', 'fk', 'fm', 'fo',
+        'ga', 'gb', 'gd', 'ge', 'gf', 'gg', 'gh', 'gi', 'gl', 'gm', 'gn', 'gp', 'gq', 'gr', 'gs', 'gt', 'gu', 'gw', 'gy',
+        'hk', 'hm', 'hn', 'hr', 'ht', 'hu', 'id', 'ie', 'il', 'im', 'is', 'je', 'jo',
+        'ke', 'kg', 'kh', 'ki', 'km', 'kn', 'kp', 'kr', 'kw', 'ky', 'kz',
+        'la', 'lb', 'lc', 'li', 'lk', 'lr', 'ls', 'lt', 'lu', 'lv', 'ly',
+        'ma', 'mc', 'md', 'me', 'mf', 'mg', 'mh', 'mk', 'ml', 'mm', 'mn', 'mo', 'mp', 'mq', 'mr', 'ms', 'mt', 'mu', 'mv', 'mw', 'my', 'mz',
+        'na', 'nc', 'ne', 'nf', 'ng', 'ni', 'nl', 'no', 'np', 'nr', 'nu', 'nz',
+        'om', 'pa', 'pe', 'pf', 'pg', 'ph', 'pk', 'pl', 'pm', 'pn', 'pr', 'ps', 'pt', 'pw', 'py',
+        'qa', 're', 'ro', 'rs', 'ru', 'rw', 'sa', 'sb', 'sc', 'sd', 'se', 'sg', 'si', 'sj', 'sk', 'sl', 'sm', 'sn', 'so', 'sr', 'ss', 'st', 'sv', 'sx', 'sy', 'sz',
+        'tc', 'td', 'tf', 'tg', 'th', 'tj', 'tk', 'tl', 'tm', 'tn', 'to', 'tr', 'tt', 'tv', 'tw', 'tz',
+        'ua', 'ug', 'um', 'us', 'uy', 'uz', 'va', 'vc', 've', 'vg', 'vi', 'vn', 'vu',
+        'wf', 'ws', 'ye', 'yt', 'za', 'zm', 'zw'
+      ];
+
+      return validTlds.includes(tld);
     } catch {
       return false;
     }
   };
 
+  // Twitter 输入验证状态
+  const isTwitterInputValid = isValidTwitterInput(twitterInput);
+
+  // Website 输入验证状态
+  const isWebsiteInputValid = isValidUrl(websiteInput);
+
   // 处理 Twitter 链接确认
   const handleTwitterConfirm = () => {
-    if (!isValidUrl(twitterInput)) {
-      setTwitterInputError('请输入有效的网址链接');
+    if (!isValidTwitterInput(twitterInput)) {
+      setTwitterInputError(getTwitterInputError(twitterInput));
       return;
     }
 
@@ -106,7 +211,7 @@ export function UniswapCreateCoin() {
   // 处理 Website 链接确认
   const handleWebsiteConfirm = () => {
     if (!isValidUrl(websiteInput)) {
-      setWebsiteInputError('请输入有效的网址链接');
+      setWebsiteInputError('Please enter a valid website link');
       return;
     }
 
@@ -372,7 +477,7 @@ export function UniswapCreateCoin() {
                   <div>
                     <Label className="text-sm font-medium text-foreground">X Link</Label>
                     <Input
-                      placeholder="Enter X link"
+                      placeholder="Enter X Username"
                       value={twitterInput}
                       onChange={(e) => {
                         setTwitterInput(e.target.value);
@@ -385,7 +490,11 @@ export function UniswapCreateCoin() {
                           handleTwitterConfirm();
                         }
                       }}
-                      className={cn('mt-1', twitterInputError && 'border-red-500')}
+                      className={cn(
+                        'mt-1',
+                        (twitterInputError || (twitterInput && !isTwitterInputValid)) &&
+                          'border-red-500 input-error'
+                      )}
                     />
                     {twitterInputError && (
                       <p className="text-red-500 text-xs mt-1">{twitterInputError}</p>
@@ -394,7 +503,8 @@ export function UniswapCreateCoin() {
                   <div className="flex gap-2">
                     <Button
                       onClick={handleTwitterConfirm}
-                      className="flex-1 bg-[#6E75F9] hover:bg-[#6E75F9]/90"
+                      disabled={!!(twitterInput && !isTwitterInputValid)}
+                      className="flex-1 bg-[#6E75F9] hover:bg-[#6E75F9]/90 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Confirm
                     </Button>
@@ -453,7 +563,11 @@ export function UniswapCreateCoin() {
                           handleWebsiteConfirm();
                         }
                       }}
-                      className={cn('mt-1', websiteInputError && 'border-red-500')}
+                      className={cn(
+                        'mt-1',
+                        (websiteInputError || (websiteInput && !isWebsiteInputValid)) &&
+                          'border-red-500 input-error'
+                      )}
                     />
                     {websiteInputError && (
                       <p className="text-red-500 text-xs mt-1">{websiteInputError}</p>
@@ -462,7 +576,8 @@ export function UniswapCreateCoin() {
                   <div className="flex gap-2">
                     <Button
                       onClick={handleWebsiteConfirm}
-                      className="flex-1 bg-[#6E75F9] hover:bg-[#6E75F9]/90"
+                      disabled={!!(websiteInput && !isWebsiteInputValid)}
+                      className="flex-1 bg-[#6E75F9] hover:bg-[#6E75F9]/90 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Confirm
                     </Button>
@@ -508,11 +623,14 @@ export function UniswapCreateCoin() {
                 Total Supply <RedStart />
               </Label>
               <div className="mt-2">
-                <Input
-                  type="text"
+                <NumberInput
                   placeholder="Enter the total supply"
                   value={formData.totalSupply}
-                  onChange={handleInputChange('totalSupply')}
+                  onChange={(v) =>
+                    handleInputChange('totalSupply')({
+                      target: { value: v },
+                    } as React.ChangeEvent<HTMLInputElement>)
+                  }
                   className={cn('w-full', showErrors && errors.totalSupply && 'border-red-500')}
                 />
                 {showErrors && errors.totalSupply && (

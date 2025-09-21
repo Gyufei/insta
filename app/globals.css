@@ -371,7 +371,12 @@ input::placeholder {
 /* 输入框和文本区域焦点样式 */
 input:focus,
 textarea:focus {
-  border-color: #6E75F9 !important;
+  border-color: #6e75f9 !important;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.input-error:focus {
+  border-color: #ff5722 !important;
   transition: border-color 0.2s ease-in-out;
 }
 

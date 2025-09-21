@@ -1,10 +1,21 @@
 import { useMutation } from '@tanstack/react-query';
+import * as CryptoJS from 'crypto-js';
 import { toast } from 'sonner';
 
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 
 import { Fetcher } from '../fetcher';
 import { ApiPath } from './api-path';
+
+// 生成每周token的函数（与后端完全一致）
+const generateWeeklyToken = (): string => {
+  const currentTimestamp = Date.now();
+  const oneWeekInMs = 7 * 24 * 60 * 60 * 1000; // 一周的毫秒数
+  const weekNumber = Math.floor(currentTimestamp / oneWeekInMs);
+
+  // 使用crypto-js进行MD5加密，与后端Node.js crypto.createHash('md5')结果一致
+  return CryptoJS.MD5(weekNumber.toString()).toString();
+};
 
 interface ImageUploadResponse {
   url: string;
@@ -21,9 +32,15 @@ export function useImageUpload(onSuccess?: (data: ImageUploadResponse) => void) 
       const formData = new FormData();
       formData.append('image', params.image);
 
+      // 生成每周token
+      const token = generateWeeklyToken();
+
       const response = await Fetcher<ImageUploadResponse>(ApiPath.imageUpload, {
         method: 'POST',
         body: formData,
+        headers: {
+          'x-auth-token': token,
+        },
         // 不设置 Content-Type，让浏览器自动设置 multipart/form-data
       });
 
