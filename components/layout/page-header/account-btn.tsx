@@ -38,11 +38,10 @@ export function AccountBtn() {
 
   function handleCreate() {
     if (!address) return;
+    if (isBaseNet && !account) {
+      return;
+    }
     setCurrentComponent({ name: 'AccountSetting' });
-  }
-
-  if (isBaseNet && !account) {
-    return null;
   }
 
   return (
