@@ -15,7 +15,7 @@ export function SideDrawerBackHeader({ title, onClick }: HeaderProps) {
         >
           <ArrowLeft className="md:h-4 md:w-4 h-6 w-6 transition-transform text-[#a5adc6] duration-75 ease-out group-hover:-translate-x-1" />
         </button>
-        <div className="text-sm text-primary md:text-left text-center w-full leading-none font-semibold whitespace-nowrap truncate">
+        <div className="text-sm text-primary md:text-left text-center w-full leading-[140%] font-semibold whitespace-nowrap truncate">
           {title}
         </div>
       </div>

@@ -1,6 +1,5 @@
 import { useAppKit, useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
 import { toast } from 'sonner';
-import { useChainId } from 'wagmi';
 
 import { useEffect, useState } from 'react';
 
