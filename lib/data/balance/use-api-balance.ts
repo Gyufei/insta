@@ -39,7 +39,7 @@ export function useApiBalance() {
       return url;
     },
     {
-      withAccount: true,
+      withAccount: false,
     }
   )();
 }

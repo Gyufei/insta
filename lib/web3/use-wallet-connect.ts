@@ -1,14 +1,18 @@
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { useAppKit, useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
 import { toast } from 'sonner';
+import { useChainId } from 'wagmi';
 
 import { useEffect, useState } from 'react';
 
+import { NetworkConfigs } from '@/config/network-config';
+
+import { trackEvent, trackWalletConnection } from '../analytics';
 import { useAccounts } from '../data/account-address/use-account';
 import { useSideDrawerStore } from '../state/side-drawer';
-import { trackWalletConnection, trackEvent } from '../analytics';
 
 export function useWalletConnect() {
   const { open } = useAppKit();
+  const { chainId } = useAppKitNetwork();
   const { isConnected, address } = useAppKitAccount();
   const { data: accounts, refetch: refetchAccounts } = useAccounts();
 
@@ -49,8 +53,10 @@ export function useWalletConnect() {
       if ((acs?.data || [])?.length > 0) {
         setWaitConnect(false);
       } else {
-        setCurrentComponent({ name: 'AccountSetting' });
-        toast.info('Please create your DSA account.');
+        if (chainId === NetworkConfigs.monadTestnet.id) {
+          setCurrentComponent({ name: 'AccountSetting' });
+          toast.info('Please create your DSA account.');
+        }
         setWaitConnect(false);
       }
     }
@@ -58,7 +64,7 @@ export function useWalletConnect() {
     if (isConnected && waitConnect) {
       getAccounts();
     }
-  }, [isConnected, accounts, waitConnect]);
+  }, [isConnected, accounts, waitConnect, chainId]);
 
   return {
     openWeb3Modal,
