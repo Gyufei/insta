@@ -8,11 +8,13 @@ import { Progress } from '@/components/ui/progress';
 
 import { IBadgeNft } from '@/lib/data/use-badge-nfts';
 import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
+import { cn } from '@/lib/utils';
 import { formatNumber, truncateNumber } from '@/lib/utils/number';
 
 export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
   const { data: userBadgeData } = useBadgeWalletNfts();
-  const isUserNft = selectedNft && userBadgeData?.nftInfo?.name === selectedNft?.name;
+  const userNftName = userBadgeData?.nftInfo?.name;
+  const isUserNft = selectedNft && userNftName === selectedNft?.name;
 
   const total = selectedNft?.total_release_times || 0;
   const remainCount = isUserNft ? Number(userBadgeData?.remainingClaims) : total;
@@ -67,23 +69,39 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
     : 1;
 
   return (
-    <div className="flex flex-col border-y border-[#E6E6E6] py-6">
+    <div
+      className={cn(
+        'flex flex-col border-y border-[#E6E6E6] py-6',
+        userNftName ? 'border-b-0' : 'border-b'
+      )}
+    >
       <div className="flex justify-between items-center mb-3">
         <span className="text-[#131E40] font-medium text-sm">Rewards</span>
-        <span className="text-[#131E40] font-normal text-xs">
-          {remainCount}/{total}
-        </span>
+        {isUserNft && (
+          <span className="text-[#131E40] font-normal text-xs">
+            {remainCount}/{total}
+          </span>
+        )}
       </div>
 
-      <Progress className="" value={Number(progress) * 100} />
+      {isUserNft && <Progress className="" value={Number(progress) * 100} />}
 
-      <div className="flex flex-col gap-4 mt-5">
-        <div className="flex justify-between">
-          <span className="text-[#A5ADC6] text-sm font-normal">Claimed</span>
-          <span className="text-[#131E40] font-medium text-sm">
-            {formatNumber(claimed)} {MONAD.symbol}
-          </span>
-        </div>
+      <div className={cn('flex flex-col gap-4', isUserNft ? 'mt-5' : 'mt-3')}>
+        {isUserNft && (
+          <div className="flex justify-between">
+            <span className="text-[#A5ADC6] text-sm font-normal">Claimed</span>
+            <span className="text-[#131E40] font-medium text-sm">
+              {formatNumber(claimed)} {MONAD.symbol}
+            </span>
+          </div>
+        )}
+
+        {!isUserNft && (
+          <div className="flex justify-between">
+            <span className="text-[#A5ADC6] text-sm font-normal">Claimable Times</span>
+            <span className="text-[#131E40] font-medium text-sm">{formatNumber(total)}</span>
+          </div>
+        )}
 
         <div className="flex justify-between">
           <span className="text-[#A5ADC6] text-sm font-normal">Max Claimable Every Time</span>
@@ -91,15 +109,18 @@ export function RewardInfo({ selectedNft }: { selectedNft: IBadgeNft }) {
             {formatNumber(maxClaimable)} {MONAD.symbol}
           </span>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-[#A5ADC6] text-sm font-normal max-w-[140px] whitespace-break-spaces">
-            Recommended Next <br />
-            Claim Time
-          </span>
-          <span className="text-[#131E40] font-medium text-sm text-right max-w-[100px]">
-            {nextClaimTime}
-          </span>
-        </div>
+
+        {isUserNft && (
+          <div className="flex justify-between items-center">
+            <span className="text-[#A5ADC6] text-sm font-normal max-w-[140px] whitespace-break-spaces">
+              Recommended Next <br />
+              Claim Time
+            </span>
+            <span className="text-[#131E40] font-medium text-sm text-right max-w-[100px]">
+              {nextClaimTime}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

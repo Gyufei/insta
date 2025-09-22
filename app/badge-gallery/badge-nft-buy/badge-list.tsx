@@ -1,9 +1,8 @@
 import Image from 'next/image';
 
-import { Button } from '@/components/ui/button';
-
 import { IBadgeNft, useBadgeNfts } from '@/lib/data/use-badge-nfts';
 import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
+import { cn } from '@/lib/utils';
 
 export function BadgeList({
   selectedNft,
@@ -25,7 +24,7 @@ export function BadgeList({
       <div
         className="grid text-xs text-[#A5ADC6] grid-cols-4 font-medium mt-4 px-[10px]"
         style={{
-          gridTemplateColumns: !haveUserNft ? '110px 20px 90px 1fr' : '110px 20px 1fr',
+          gridTemplateColumns: haveUserNft ? '110px 20px 90px 1fr' : '110px 20px 1fr',
         }}
       >
         <div className="flex items-center justify-start">#</div>
@@ -37,14 +36,15 @@ export function BadgeList({
         {allNfts?.map((nft, index) => (
           <div
             key={nft.name}
-            className="grid grid-cols-4 rounded-[8px] bg-white text-sm text-[#131E40] font-medium relative px-[10px] py-[10px] h-14 transition-colors duration-300 ease-out items-center"
+            className={cn(
+              'grid grid-cols-4 rounded-[8px] bg-white text-sm text-[#131E40] font-medium relative px-[10px] py-[10px] h-14 transition-colors duration-300 ease-out items-center cursor-pointer',
+              selectedNft?.name === nft.name && 'border border-[#6E75F9]'
+            )}
+            onClick={() => handleSelectNft(nft.name)}
             style={{
-              gridTemplateColumns: !haveUserNft ? '110px 20px 90px 1fr' : '110px 20px 1fr',
+              gridTemplateColumns: haveUserNft ? '110px 20px 90px 1fr' : '110px 20px 1fr',
             }}
           >
-            {selectedNft?.name === nft.name && (
-              <div className="bg-black/20 z-elevate absolute w-0.5 h-full top-0 left-0"></div>
-            )}
             <span className="flex items-center gap-2">
               <Image
                 src={`/images/badge-nft/${nft.name}.svg`}
@@ -66,14 +66,13 @@ export function BadgeList({
               </span>
             </span>
 
-            {!haveUserNft && (
-              <span className="basis-[10%] flex items-center gap-2 max-w-[100px]">
-                <Button
-                  onClick={() => handleSelectNft(nft.name)}
-                  className="h-8 flex text-xs font-medium active:bg-white hover:bg-white cursor-pointer items-center border border-[#EBEBEB] text-[#131E40] rounded-[6px] bg-white px-2"
-                >
-                  Select
-                </Button>
+            {haveUserNft && (
+              <span className="basis-[10%] h-[22px] flex items-center gap-2">
+                {haveUserNft === nft.name && (
+                  <span className="bg-[#6E75F910] text-[#6E75F9] text-xs px-2 rounded-[6px]">
+                    Holding
+                  </span>
+                )}
               </span>
             )}
           </div>
