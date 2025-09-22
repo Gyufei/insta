@@ -22,9 +22,19 @@ export function SearchName() {
   // 使用防抖处理搜索词
   const debouncedSearchTerm = useDebounce(inputTerm, 500);
 
-  // 只有当搜索词不为空时才检查可用性
+  // 检查输入是否包含无效字符
+  const hasInvalidCharacters = (text: string) => {
+    if (/[!-"#%&'()*+,.\/:;<=>?@\[\]^_`{|}~]/.test(text)) {
+      return true;
+    }
+    return false;
+  };
+
+  // 只有当搜索词不为空且不包含无效字符时才检查可用性
+  const shouldCheckAvailability = debouncedSearchTerm.trim() && !hasInvalidCharacters(debouncedSearchTerm);
+
   const { data: availabilityData, isLoading } = useNadNameCheckAvailability(
-    debouncedSearchTerm.trim() ? debouncedSearchTerm : ''
+    shouldCheckAvailability ? debouncedSearchTerm : ''
   );
 
   // 当输入框获得焦点时显示结果
@@ -56,7 +66,7 @@ export function SearchName() {
   };
 
   function handleResister() {
-    if (inputTerm && !isTyping && !isLoading && availabilityData?.available) {
+    if (inputTerm && !hasInvalidCharacters(inputTerm) && !isTyping && !isLoading && availabilityData?.available) {
       setCurrentComponent({ name: 'NadNameRegister', props: { registerName: inputTerm } });
     }
   }
@@ -104,7 +114,11 @@ export function SearchName() {
               <div className="flex space-x-4 items-center justify-between">
                 <span className="text-lg p-4 overflow-y-auto scrollbar-none">{inputTerm}.nad</span>
                 <div className="flex mr-2">
-                  {isTyping || isLoading ? (
+                  {hasInvalidCharacters(inputTerm) ? (
+                    <div className="rounded-full font-medium me-2 px-2.5 py-1 text-sm block bg-red-200 text-red-800">
+                      Invalid
+                    </div>
+                  ) : isTyping || isLoading ? (
                     <WithLoading className="mr-2" isLoading={true} />
                   ) : availabilityData?.available ? (
                     <div className="flex items-center">
