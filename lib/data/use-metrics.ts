@@ -29,5 +29,3 @@ export function useMetrics() {
     data: sortedData,
   };
 }
-
-

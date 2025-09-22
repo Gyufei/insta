@@ -165,6 +165,7 @@ function MetricsChart({
             family: 'Aeonik, system-ui, sans-serif',
             size: 12,
           },
+          autoSkip: false,
           callback: function (value) {
             const label = this.getLabelForValue(Number(value));
             return label || '';
