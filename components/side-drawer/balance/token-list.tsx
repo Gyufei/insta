@@ -91,6 +91,10 @@ export default function TokenList() {
     }
   }
 
+  function handleQuerySearch(query: string) {
+    setSearchQuery(query.trim());
+  }
+
   useEffect(() => {
     if (searchQuery) {
       const monTokens = filterTokenByQuery(allMonTokens, searchQuery);
@@ -113,7 +117,7 @@ export default function TokenList() {
         <SearchBar
           placeholder="Search Currency"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => handleQuerySearch(e.target.value)}
         />
       </div>
       <div className="mt-2 flex flex-grow flex-col sm:mt-4">
