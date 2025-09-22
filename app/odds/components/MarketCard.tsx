@@ -78,13 +78,11 @@ export default function MarketCard({
         <div className="h-[78px] overflow-y-auto no-scrollbar space-y-[5px] mb-4">
           {outcomes.map((outcome, index) => (
             <div key={index} className="flex items-center justify-between h-[24px]">
-              <span className="text-gray-700 text-[15px] truncate pr-1">
+              <span className="text-gray-700 text-sm truncate pr-1">
                 {outcome.name || 'Unknown'}
               </span>
               <div className="flex items-center gap-2">
-                <span className="text-gray-900 font-medium text-[15px]">
-                  {outcome.probability}%
-                </span>
+                <span className="text-gray-900 font-medium text-sm">{outcome.probability}%</span>
                 <div className="flex gap-1">
                   <div className="flex items-center gap-1">
                     <Users className="h-4 w-4 text-gray-500" />

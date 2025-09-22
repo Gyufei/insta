@@ -29,7 +29,7 @@ export default function MarketTitle({ title, id }: MarketTitleProps) {
       className="h-fit w-full relative cursor-pointer group block"
       href={`/odds/market/${id}?chain=monad`}
     >
-      <div className="relative h-[48px] mb-2">
+      <div className="relative h-[40px] mb-2">
         <div
           className={
             'w-full' +
@@ -41,7 +41,7 @@ export default function MarketTitle({ title, id }: MarketTitleProps) {
           <p
             ref={textRef}
             className={
-              'text-lg font-semibold w-fit line-clamp-2 text-pretty text-text decoration-2 min-w-0 pl-0 leading-[24px]' +
+              'text-base font-semibold w-fit line-clamp-2 text-pretty text-text decoration-2 min-w-0 pl-0 leading-5' +
               (isOverflowing ? ' group-hover:line-clamp-none' : '')
             }
           >
