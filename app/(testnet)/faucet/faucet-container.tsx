@@ -101,7 +101,7 @@ export function FaucetContainer() {
       }
     } else {
       if (isCheckMon) {
-        return 'Maximum 1 request / 24 hours';
+        return 'DSA Account only. Maximum 1 request / 24 hours.';
       }
       if (isCheckMonUSD) {
         if (isDSA) {
@@ -273,9 +273,13 @@ export function FaucetContainer() {
         </Button>
       </div>
 
-      <h1 className="text-lg text-primary font-normal mt-4">Select Account / Wallet</h1>
+      {!(isCheckMon && address && !accountInfo?.sandbox_account) && (
+        <h1 className="text-lg text-primary font-normal mt-4">
+          {isCheckMonUSD ? 'Select Account / Wallet' : 'Select Account'}
+        </h1>
+      )}
       <div className="relative w-full mt-3">
-        {(!isCheckMon || (isCheckMon && address)) && (
+        {(!isCheckMon || (isCheckMon && address && accountInfo?.sandbox_account)) && (
           <div className="absolute left-3 top-1/2 -translate-y-1/2">
             <Wallet className="h-5 w-5 text-primary" />
           </div>
@@ -297,6 +301,8 @@ export function FaucetContainer() {
               aria-invalid={!inputValid}
             />
           )
+        ) : (isCheckMon && !accountInfo?.sandbox_account) ? (
+          <></>
         ) : (
           <Select
             value={selectedAccount || ''}
@@ -339,7 +345,7 @@ export function FaucetContainer() {
                       >
                         {formatAddress(account.value, {
                           prefix: 12,
-                          suffix: 12
+                          suffix: 12,
                         })}
                       </span>
                     </div>
@@ -363,9 +369,8 @@ export function FaucetContainer() {
           onClick={handleConnectWallet}
           className="w-full mt-4 bg-[#6E75F9] h-10 text-white hover:bg-[#6E75F9]/80"
         >
-          <div className="flex flex-col">
+          <div className="flex items-center justify-center">
             <div className="text-white">Connect Wallet</div>
-            <div className="text-[10px] text-white opacity-50">for 30× monUSD</div>
           </div>
         </Button>
       )}
@@ -380,7 +385,9 @@ export function FaucetContainer() {
             <div className="text-white">
               {isCreatePending ? 'Creating...' : 'Create DSA Account'}
             </div>
-            <div className="text-[10px] text-white opacity-50">for 30× monUSD</div>
+            <div className="text-[10px] text-white opacity-50">
+              {isCheckMon ? 'for receive MON' : 'for 30×  monUSD'}
+            </div>
           </div>
         </Button>
       )}
