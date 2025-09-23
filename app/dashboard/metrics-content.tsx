@@ -213,7 +213,7 @@ export function MetricsContent() {
   const { data = [], isLoading, error } = useMetrics();
 
   // 控制第二个图表显示的开关
-  const showSecondChart = false;
+  const showSecondChart = true;
 
   const baseData = useMemo<IMetricsItem[]>(() => {
     return data || [];
@@ -282,7 +282,9 @@ export function MetricsContent() {
           <Card className="border-[#EBEBEB] rounded-[8px]">
             <CardHeader className="flex items-start justify-between gap-4 px-5">
               <div>
-                <CardDescription className="text-[#A5ADC6] text-sm">Sandbox Users</CardDescription>
+                <CardDescription className="text-[#A5ADC6] text-sm">
+                  Daily Active Users
+                </CardDescription>
                 <CardTitle className="text-[32px] font-medium leading-[140%] text-primary mt-[10px]">
                   {formatNumber(sandboxLatest)}
                 </CardTitle>

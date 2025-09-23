@@ -37,15 +37,28 @@ export function SlippageSettings({ onSlippageChange }: SlippageSettingsProps) {
   };
 
   const handleCustomSlippageChange = (value: string) => {
+    let sanitized = value;
+
+    // 规范化以点开头的输入，如 .5 -> 0.5
+    if (sanitized.startsWith('.')) {
+      sanitized = `0${sanitized}`;
+    }
+
+    // 钳制最大值为 100
+    const num = parseFloat(sanitized);
+    if (!Number.isNaN(num) && num > 100) {
+      sanitized = '100';
+    }
+
     setIsAuto(false);
-    setInputValue(value);
-    onSlippageChange(value);
+    setInputValue(sanitized);
+    onSlippageChange(sanitized);
     
     // Track slippage change
     trackEvent('SLIPPAGE_CHANGE', {
       event_category: 'trading',
       event_label: 'custom_slippage',
-      value: parseFloat(value) || 0,
+      value: parseFloat(sanitized) || 0,
     });
   };
 
@@ -74,6 +87,7 @@ export function SlippageSettings({ onSlippageChange }: SlippageSettingsProps) {
               className="!w-[44px] h-6 pr-0 pl-0 text-primary text-right border-none shadow-none focus-visible:ring-0 !bg-transparent"
               min="0"
               step="0.1"
+              decimalPlaces={2}
             />
           </div>
           <span className="text-sm font-bold text-gray-500 ml-1">%</span>
