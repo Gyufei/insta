@@ -342,7 +342,8 @@ const isGroupActive = (group: MenuGroup, pathname: string): boolean => {
 };
 
 const isItemActive = (item: MenuItem, pathname: string): boolean => {
-  return item.href?.startsWith(pathname) || pathname.includes(item.href);
+  const itemHref = item.href.split('?')[0] || '';
+  return itemHref?.startsWith(pathname) || pathname.includes(itemHref);
 };
 
 const ExpandedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
