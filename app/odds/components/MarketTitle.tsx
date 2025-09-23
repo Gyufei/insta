@@ -32,16 +32,16 @@ export default function MarketTitle({ title, id }: MarketTitleProps) {
       <div className="relative h-[24px] mb-2">
         <div
           className={
-            'w-full' +
+            'w-full transition-all duration-300 ease-in-out' +
             (isOverflowing
-              ? ' group-hover:absolute group-hover:top-0 group-hover:inset-x-0 group-hover:z-20 group-hover:rounded-md group-hover:bg-white group-hover:pt-1 group-hover:pb-2 group-hover:px-2 group-hover:shadow-[0px_0px_10px_0px_rgba(19,30,64,0.05)]'
+              ? ' group-hover:absolute group-hover:top-0 group-hover:inset-x-0 group-hover:z-20 group-hover:rounded-md group-hover:bg-white group-hover:pt-1 group-hover:pb-2 group-hover:px-2 group-hover:shadow-[0px_0px_10px_0px_rgba(19,30,64,0.05)] group-hover:opacity-100'
               : '')
           }
         >
           <p
             ref={textRef}
             className={
-              'text-base font-normal w-fit line-clamp-1 text-pretty text-text decoration-2 min-w-0 pl-0 leading-5' +
+              'text-base font-normal w-fit line-clamp-1 text-pretty text-text decoration-2 min-w-0 pl-0 leading-5 transition-all duration-300 ease-in-out' +
               (isOverflowing ? ' group-hover:line-clamp-none' : '')
             }
           >
