@@ -22,6 +22,7 @@ import { TokenDropSelector } from '@/components/common/token-drop-selector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
+import { trackEvent, trackTrade } from '@/lib/analytics';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useCheckMonadAllowance } from '@/lib/data/use-monad-allowance';
@@ -32,7 +33,6 @@ import { ErrorVO } from '@/lib/model/error-vo';
 import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
-import { trackEvent, trackTrade } from '@/lib/analytics';
 
 import { WMONAD_TOKEN } from '../(protocols)/uniswap/use-uniswap-token';
 import { SlippageSettings } from './slippage-settings';
@@ -314,11 +314,13 @@ export function TokenContent() {
             className={cn(
               'flex justify-center items-center md:px-2 px-0 py-2 md:py-0 md:-mx-[20px] mx-0 -my-[20px] md:my-0 z-10'
             )}
-            onClick={() => {
-              handleSwapTokens();
-            }}
           >
-            <div className="border border-[#ebebeb] rounded-md h-10 w-10 flex items-center justify-center bg-white md:rotate-0 rotate-90">
+            <div
+              onClick={() => {
+                handleSwapTokens();
+              }}
+              className="border border-[#ebebeb] rounded-md h-10 w-10 flex items-center justify-center bg-white md:rotate-0 rotate-90"
+            >
               <Image
                 className={cn(
                   'transition-transform duration-500',
