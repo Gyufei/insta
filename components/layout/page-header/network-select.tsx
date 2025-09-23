@@ -1,6 +1,7 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
+import { toast } from 'sonner';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -33,6 +34,8 @@ const NETWORKS = [
   },
 ] as const;
 
+let ToastId: number | string | undefined;
+
 // 网络ID到URL参数的映射
 const NETWORK_TO_URL_PARAM: Record<string, string> = {
   [String(NetworkConfigs.monadTestnet.id)]: 'monad',
@@ -49,7 +52,7 @@ const URL_PARAM_TO_NETWORK: Record<string, string> = {
 
 export default function NetworkSelect() {
   const { switchNetwork, chainId } = useAppKitNetwork();
-  const [selectedNetwork, setSelectedNetwork] = useState<INetworkConfig>(NETWORKS[0]);
+  const [selectedNetwork, setSelectedNetwork] = useState<INetworkConfig | null>(NETWORKS[0]);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -60,6 +63,92 @@ export default function NetworkSelect() {
   const isMobile = useIsMobile();
 
   const [pageHasInit, setPageInit] = useState(false);
+
+  const [isUnsupportedChain, setIsUnsupportedChain] = useState(false);
+
+  function checkIsUnsupported() {
+    if (typeof window === 'undefined')
+      return {
+        isUnSup: false,
+        cId: 0,
+      };
+    const pageChain = (window.ethereum as unknown as { chainId: string }).chainId;
+
+    if (!pageChain)
+      return {
+        isUnSup: false,
+        cId: 0,
+      };
+
+    const isUnSup = !(
+      [NetworkConfigs.base.id, NetworkConfigs.eth.id, NetworkConfigs.monadTestnet.id] as number[]
+    ).includes(Number(pageChain));
+
+    return {
+      isUnSup,
+      cId: Number(pageChain),
+    };
+  }
+
+  useEffect(() => {});
+
+  useEffect(() => {
+    function checkUnState() {
+      const isUns = checkIsUnsupported();
+      if (!isUns.isUnSup) {
+        setIsUnsupportedChain(false);
+        return;
+      }
+
+      setIsUnsupportedChain(true);
+    }
+
+    const inter = setInterval(() => {
+      checkUnState();
+    }, 1000);
+
+    return () => clearInterval(inter);
+  }, []);
+
+  useEffect(() => {
+    const { isUnSup, cId } = checkIsUnsupported();
+    if (!isUnSup) {
+      return;
+    }
+    if (ToastId) {
+      return;
+    }
+    ToastId = 1;
+    setTimeout(() => {
+      ToastId = toast.custom((t: number | string) => (
+        <div className="bg-white border border-[#ebebeb] rounded-[8px] p-4 w-[360px]">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <Image src="/icons/warn-icon.svg" alt="unsupported-network" width={48} height={48} />
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-primary leading-[20px]">
+                  Unsupported network
+                </span>
+                <span className="text-xs font-normal text-[#A5ADC6] leading-[20px]">
+                  Chain id: {Number(cId)}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center h-6 w-6">
+              <Image
+                onClick={() => toast.dismiss(t)}
+                src="/icons/close.svg"
+                width={24}
+                height={24}
+                alt="close"
+                className="cursor-pointer"
+              />
+            </div>
+          </div>
+        </div>
+      ));
+    }, 1000);
+  }, [isUnsupportedChain]);
 
   // 更新URL参数
   const updateUrlChainParam = (networkId: string) => {
@@ -187,7 +276,7 @@ export default function NetworkSelect() {
 
   return (
     <Select
-      value={selectedNetwork.name}
+      value={!isUnsupportedChain ? selectedNetwork?.name : ''}
       onValueChange={(value) => {
         const network = NETWORKS.find((n) => n.name === value);
         if (network) {
@@ -195,9 +284,24 @@ export default function NetworkSelect() {
         }
       }}
     >
-      <SelectTrigger className="shadow-none focus-visible:ring-0 bg-transparent border-black/10 font-medium">
-        {isMobile ? (
-          <Image src={selectedNetwork.icon} alt={selectedNetwork.name} width={20} height={20} />
+      <SelectTrigger className="shadow-none focus-visible:ring-0 bg-transparent border-black/10 font-medium px-2">
+        {isUnsupportedChain ? (
+          <div className="flex items-center gap-1">
+            <Image src="/icons/unsupport.svg" alt="unsupported-network" width={20} height={20} />
+            {!isMobile && (
+              <span className="capitalize flex flex-col items-start text-xs font-medium text-primary text-left">
+                <span>Unsupported</span>
+                <span>Network</span>
+              </span>
+            )}
+          </div>
+        ) : isMobile ? (
+          <Image
+            src={selectedNetwork?.icon || ''}
+            alt={selectedNetwork?.name || ''}
+            width={20}
+            height={20}
+          />
         ) : (
           <SelectValue />
         )}
