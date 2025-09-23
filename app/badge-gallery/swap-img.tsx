@@ -39,7 +39,7 @@ export function SwapImg({
   );
 
   return (
-    <div className="relative size-full sm:size-[min(500px,100%)] aspect-square">
+    <div className="relative sm:size-[min(500px,100%)] size-[min(300px,90vw)] aspect-square">
       {badgeArr.map((nft, idx) => {
         const zIndex = badgeArr.length - idx; // 越前面的索引 zIndex 越大
         const left = idx * 40;
