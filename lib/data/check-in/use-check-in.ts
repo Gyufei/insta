@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+// removed toast messages from hook to avoid cross-page toasts
 
 import { Fetcher } from '../../fetcher';
 import { ITxResponse } from '../../model';
@@ -52,10 +51,6 @@ export function useCheckIn() {
     mutationFn: executeMutation,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['isCheckIn'] });
-      toast.success(SUCCESS_MESSAGES.CHECK_IN_SUCCESS);
-    },
-    onError: () => {
-      toast.error(ERROR_MESSAGES.CHECK_IN_FAILED);
     },
   });
 

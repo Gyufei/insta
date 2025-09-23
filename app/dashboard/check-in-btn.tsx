@@ -1,4 +1,6 @@
 import { Loader } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 
 import { Button } from '@/components/ui/button';
@@ -7,6 +9,7 @@ import { useCheckIn } from '@/lib/data/check-in/use-check-in';
 import { useIsCheckIn } from '@/lib/data/check-in/use-is-check-in';
 import { cn } from '@/lib/utils';
 import { useWalletConnect } from '@/lib/web3/use-wallet-connect';
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 
 export function CheckInBtn() {
   const { address } = useAccount();
@@ -14,6 +17,14 @@ export function CheckInBtn() {
   const { data: isCheckInData, isLoading: isCheckInLoading } = useIsCheckIn();
   const { mutate, isPending } = useCheckIn();
   const isCheckIn = isCheckInData?.has_checked_in_today;
+  const isMountedRef = useRef(false);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   function handleCheckIn() {
     if (!address) {
@@ -21,7 +32,16 @@ export function CheckInBtn() {
       return;
     }
 
-    mutate(undefined);
+    mutate(undefined, {
+      onSuccess: () => {
+        if (!isMountedRef.current) return;
+        toast.success(SUCCESS_MESSAGES.CHECK_IN_SUCCESS);
+      },
+      onError: () => {
+        if (!isMountedRef.current) return;
+        toast.error(ERROR_MESSAGES.CHECK_IN_FAILED);
+      },
+    });
   }
 
   return (
