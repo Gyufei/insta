@@ -17,6 +17,7 @@ import { useImageUpload } from '@/lib/data/use-image-upload';
 import { useUniswapCreateCoin } from '@/lib/data/use-uniswap-create-coin';
 import { useAccountStore } from '@/lib/state/account';
 import { cn } from '@/lib/utils';
+import { getTwitterInputError, isValidTwitterInput, toCanonicalXUrl } from '@/lib/utils/twitter';
 
 interface CreateCoinFormData {
   thumbnail: string | null;
@@ -72,52 +73,6 @@ export function UniswapCreateCoin() {
     isPending: isCreating,
     isSuccess: isCreated,
   } = useUniswapCreateCoin();
-
-  // Twitter 用户名验证函数
-  const isValidTwitterInput = (input: string): boolean => {
-    if (!input.trim()) return true; // 空值允许通过
-
-    const trimmedInput = input.trim();
-
-    // 1. 检查是否是纯用户名格式 (如: jack)
-    const usernamePattern = /^[a-zA-Z0-9_]+$/;
-    if (usernamePattern.test(trimmedInput)) {
-      return true;
-    }
-
-    // 2. 检查是否是 https://x.com/username 格式
-    const xUrlPattern = /^https:\/\/x\.com\/[a-zA-Z0-9_]+$/;
-    if (xUrlPattern.test(trimmedInput)) {
-      return true;
-    }
-
-    // 3. 检查是否是 https://twitter.com/username 格式
-    const twitterUrlPattern = /^https:\/\/twitter\.com\/[a-zA-Z0-9_]+$/;
-    if (twitterUrlPattern.test(trimmedInput)) {
-      return true;
-    }
-
-    return false;
-  };
-
-  // 获取 Twitter 输入验证错误信息
-  const getTwitterInputError = (input: string): string => {
-    if (!input.trim()) return '';
-
-    const trimmedInput = input.trim();
-
-    // 检查是否包含无效字符组合
-    if (trimmedInput.includes('@') && trimmedInput.includes('http')) {
-      return 'Please enter a valid Twitter username or link';
-    }
-
-    // 检查是否包含空格
-    if (trimmedInput.includes(' ')) {
-      return 'Input cannot contain spaces';
-    }
-
-    return 'Please enter a valid Twitter username or link';
-  };
 
   // URL 验证函数 (用于网站链接)
   const isValidUrl = (url: string): boolean => {
@@ -346,7 +301,7 @@ export function UniswapCreateCoin() {
       token_symbol: formData.tickerName,
       token_url: formData.thumbnail || '',
       token_description: formData.description,
-      x_link: formData.xLink || '',
+      x_link: toCanonicalXUrl(formData.xLink || ''),
       telegram_link: formData.tgLink || '',
       website: formData.websiteLink || '',
       initial_supply: formData.totalSupply,
@@ -475,7 +430,7 @@ export function UniswapCreateCoin() {
               <PopoverContent className="w-[300px] p-4">
                 <div className="space-y-3">
                   <div>
-                    <Label className="text-sm font-medium text-foreground">X Link</Label>
+                    <Label className="text-sm font-medium text-foreground">X Username</Label>
                     <Input
                       placeholder="Enter X Username"
                       value={twitterInput}

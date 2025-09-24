@@ -316,7 +316,11 @@ export function TokenContent() {
     <>
       <div className="px-4 2xl:px-12">
         <div className="flex md:flex-row flex-col justify-between flex-1 gap-0 shadow-none">
-          <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
+          <Card
+            className={cn(
+              'flex-1 relative p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md'
+            )}
+          >
             <TokenDropSelector
               selectedToken={sellToken}
               onTokenChange={setSellToken}
@@ -360,7 +364,9 @@ export function TokenContent() {
             </div>
           </div>
 
-          <Card className="flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md">
+          <Card
+            className={cn('flex-1 p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md')}
+          >
             <TokenDropSelector
               selectedToken={buyToken}
               onTokenChange={setBuyToken}
@@ -372,6 +378,16 @@ export function TokenContent() {
               disabled={true}
               justHasBalance={false}
             />
+            {
+              <div
+                className={cn(
+                  'text-sm leading-[140%] text-[#A5ADC6] transition-all duration-300',
+                  quoteData?.priceImpact ? 'h-[20px]' : 'h-0 overflow-hidden'
+                )}
+              >
+                Price impact: {quoteData?.priceImpact}
+              </div>
+            }
           </Card>
         </div>
 

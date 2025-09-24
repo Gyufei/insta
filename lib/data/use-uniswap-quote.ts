@@ -6,6 +6,7 @@ import { createQueryHook } from './helpers';
 export interface IUniswapQuote {
   input: string;
   output: string;
+  priceImpact: number;
   permitData: {
     domain: {
       name: string;
