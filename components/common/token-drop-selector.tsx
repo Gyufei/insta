@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { UNISWAP_TOKENS } from '@/app/(protocols)/uniswap/use-uniswap-token';
 
-import { IToken } from '@/config/tokens';
+import { IToken, MonUSD } from '@/config/tokens';
 
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 import { NumberInput } from '@/components/common/number-input';
@@ -41,6 +41,7 @@ interface TokenSelectorProps {
   onMaxClick?: () => void;
   className?: string;
   justHasBalance?: boolean;
+  noMonUsd?: boolean;
 }
 
 export function TokenDropSelector({
@@ -57,6 +58,7 @@ export function TokenDropSelector({
   onMaxClick,
   className,
   justHasBalance = false,
+  noMonUsd = false,
 }: TokenSelectorProps) {
   const [tokens, setTokens] = useState(UNISWAP_TOKENS);
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,12 +66,17 @@ export function TokenDropSelector({
   // 检查搜索查询是否为有效的合约地址
   const isSearchingAddress = isAddress(searchQuery.trim());
 
-  const { data: tokenInfo, isLoading: isTokenInfoLoading } = useTokenInfo(
+  const { data: tokenInfoData, isLoading: isTokenInfoLoading } = useTokenInfo(
     isSearchingAddress ? searchQuery.trim() : ''
   );
+  const tokenInfo = isSameAddress(tokenInfoData?.address || '', MonUSD.address)
+    ? undefined
+    : tokenInfoData;
 
   const { data: balanceData } = useApiBalance();
   const { data: uniswapTokensData, isLoading: isUniswapTokensLoading } = useUniswapTokens();
+
+  console.log('noMonUsd-g', noMonUsd);
 
   const allTokens = useMemo(() => {
     const uniswapTokens = uniswapTokensData?.map((token) => ({
@@ -78,6 +85,8 @@ export function TokenDropSelector({
       description: token.tokenDescription,
     }));
 
+    let allToken = [...tokens, ...(uniswapTokens || [])];
+
     if (justHasBalance) {
       const monBalanceTokens = balanceData?.filter((token) => token.network === 'MON');
 
@@ -85,12 +94,15 @@ export function TokenDropSelector({
         monBalanceTokens?.some((bToken) => bToken.address === token.address)
       );
 
-      const all = [...tokens, ...(hasBalanceTokens || [])];
-      return all;
+      allToken = [...tokens, ...(hasBalanceTokens || [])];
     }
 
-    return [...tokens, ...(uniswapTokens || [])];
-  }, [tokens, uniswapTokensData, balanceData, justHasBalance]);
+    if (noMonUsd) {
+      allToken = allToken.filter((token) => !isSameAddress(token.address, MonUSD.address));
+    }
+
+    return allToken;
+  }, [tokens, uniswapTokensData, balanceData, justHasBalance, noMonUsd]);
 
   const filteredTokens = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -131,8 +143,9 @@ export function TokenDropSelector({
     if (isSearchingAddress && tokenInfo) {
       const tokenAddress = tokenInfo.address.toLowerCase();
       const isExist = allTokens.find((token) => token.address.toLowerCase() === tokenAddress);
+      const isMonUsd = isSameAddress(tokenInfo.address, MonUSD.address);
 
-      if (!isExist) {
+      if (!isExist && !isMonUsd) {
         setTokens((prevTokens) => [...prevTokens, tokenInfo as unknown as IToken]);
       }
     }

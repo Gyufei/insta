@@ -16,7 +16,7 @@ import {
   UniversalRouterAddressPermit,
   replaceNativeAddressUseBackend,
 } from '@/config/network-config';
-import { IToken, MONAD, MonUSD } from '@/config/tokens';
+import { IToken, MonUSD } from '@/config/tokens';
 
 import { TokenDropSelector } from '@/components/common/token-drop-selector';
 import { Button } from '@/components/ui/button';
@@ -34,7 +34,6 @@ import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
 
-import { WMONAD_TOKEN } from '../(protocols)/uniswap/use-uniswap-token';
 import { SlippageSettings } from './slippage-settings';
 
 function CovertPermitData(
@@ -80,15 +79,10 @@ export function TokenContent() {
     buyToken?.address || ''
   );
 
-  const isCanBuyPair = useMemo(() => {
-    const isMonUsdSell = isSameAddress(sellToken?.address || '', MonUSD.address);
-    const isMonBuy = isSameAddress(buyToken?.address || '', MONAD.address);
-    const isWMonBuy = isSameAddress(buyToken?.address || '', WMONAD_TOKEN.address);
-    return isMonUsdSell && (isMonBuy || isWMonBuy);
-  }, [sellToken, buyToken]);
+  const isBuyMonUsd = isSameAddress(buyToken?.address || '', MonUSD.address);
 
   const quoteParams = useMemo(() => {
-    return sellToken && buyToken && sellValue && !isCanBuyPair && Number(sellValue) > 0
+    return sellToken && buyToken && sellValue && Number(sellValue) > 0
       ? {
           tokenIn: replaceNativeAddressUseBackend(sellToken.address),
           tokenOut: replaceNativeAddressUseBackend(buyToken.address),
@@ -97,7 +91,7 @@ export function TokenContent() {
           ...(currentAccountType === 'EOA' && wallet ? { wallet } : {}),
         }
       : undefined;
-  }, [sellToken, buyToken, sellValue, isCanBuyPair, currentAccountType, wallet]);
+  }, [sellToken, buyToken, sellValue, currentAccountType, wallet]);
 
   const {
     data: quoteData,
@@ -151,27 +145,25 @@ export function TokenContent() {
       }
     }
 
-    if (isCanBuyPair) {
-      setLiquidityError({
-        showError: true,
-        errorMessage: errorMsg,
-      });
-    }
-
-    if (!quoteError && !isCanBuyPair) {
+    if (!quoteError) {
       setLiquidityError({
         showError: false,
         errorMessage: '',
       });
     }
-  }, [quoteError, isCanBuyPair]);
+  }, [quoteError]);
 
   const [init, setInit] = useState(false);
   useEffect(() => {
     if (!init) {
       const token = sessionStorage.getItem('token');
       if (token) {
-        setSellToken(JSON.parse(token));
+        const t = JSON.parse(token);
+        if (isSameAddress(t.address, MonUSD.address)) {
+          setBuyToken(t);
+        } else {
+          setSellToken(t);
+        }
         sessionStorage.removeItem('token');
       }
       setInit(true);
@@ -183,7 +175,11 @@ export function TokenContent() {
       'trade-token',
       (data: { name: string; props: { token: IToken } }) => {
         if (data.name === 'TradeToken') {
-          setSellToken(data.props.token);
+          if (isSameAddress(data.props.token.address, MonUSD.address)) {
+            setBuyToken(data.props.token);
+          } else {
+            setSellToken(data.props.token);
+          }
           setInit(true);
         }
       }
@@ -307,6 +303,7 @@ export function TokenContent() {
               showMaxButton={true}
               onMaxClick={handleMaxClick}
               justHasBalance={true}
+              noMonUsd={true}
             />
           </Card>
 
@@ -317,16 +314,20 @@ export function TokenContent() {
           >
             <div
               onClick={() => {
+                if (isBuyMonUsd) return;
                 handleSwapTokens();
               }}
-              className="border border-[#ebebeb] rounded-md h-10 w-10 flex items-center justify-center bg-white md:rotate-0 rotate-90"
+              className={cn(
+                'border select-none border-[#ebebeb] rounded-md h-10 w-10 flex items-center justify-center bg-white md:rotate-0 rotate-90',
+                isBuyMonUsd && 'bg-gray-100 cursor-not-allowed'
+              )}
             >
               <Image
                 className={cn(
                   'transition-transform duration-500',
                   rotateTimes === 1 ? 'rotate-360' : 'rotate-0'
                 )}
-                src="/icons/switch.svg"
+                src={isBuyMonUsd ? '/icons/switch-gray.svg' : '/icons/switch.svg'}
                 alt="switch"
                 width={20}
                 height={20}

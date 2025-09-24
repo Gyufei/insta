@@ -85,9 +85,8 @@ export default function NetworkSelect() {
     ).includes(Number(pageChain));
 
     const isBadgeGallery = pathname.includes('badge-gallery');
-    const isEth = Number(pageChain) === NetworkConfigs.eth.id;
-
-    const isUnSup = !isSystemChain || (isBadgeGallery && isEth);
+    const isBase = Number(pageChain) === NetworkConfigs.base.id;
+    const isUnSup = !isSystemChain || (isBadgeGallery && !isBase);
 
     return {
       isUnSup,
