@@ -53,7 +53,7 @@ export function FaucetContainer() {
   const [inputAddress, setInputAddress] = useState<string | null>(null);
   const [inputValid, setInputValid] = useState(true);
 
-  const [selectedToken, setSelectedToken] = useState(MONAD.address);
+  const [selectedToken, setSelectedToken] = useState(MonUSD.address);
   const isCheckMon = selectedToken === MONAD.address;
   const isCheckMonUSD = selectedToken === MonUSD.address;
   const selectedAccount = isCheckMon ? monAddress : isCheckMonUSD ? monUSDAddress : '';
@@ -114,7 +114,6 @@ export function FaucetContainer() {
   }, [address, isCheckMon, isCheckMonUSD, isDSA]);
 
   function handleJumpTo({ addr }: { addr: string }) {
-    console.log('handleJumpTo', addr);
     setSelectedToken(MonUSD.address);
     setMonUSDAddress(addr);
   }
@@ -225,12 +224,12 @@ export function FaucetContainer() {
 
   return (
     <div className={cn('border-[#ebebeb] w-full md:w-[450px] border rounded-[8px] px-5 py-4 mt-5')}>
-      <h1 className="text-lg text-primary font-normal">Select Token</h1>
+      <h1 className="text-lg text-primary font-normal">Token</h1>
       <div className="flex gap-2 mt-2">
         <Button
           variant="outline"
           className={cn(
-            'relative flex flex-1 rounded-[8px] text-sm cursor-pointer items-center gap-2 border px-4 py-3 outline-none select-none focus:outline-none',
+            'hidden relative flex-1 rounded-[8px] text-sm cursor-pointer items-center gap-2 border px-4 py-3 outline-none select-none focus:outline-none',
             isCheckMon ? 'border-[#6E75F9] ' : 'border-[#EBEBEB] hover:border-[#6E75F9]'
           )}
           onClick={() => setSelectedToken(MONAD.address)}
@@ -252,8 +251,8 @@ export function FaucetContainer() {
         <Button
           variant="outline"
           className={cn(
-            'relative flex flex-1 rounded-[8px] text-sm cursor-pointer items-center gap-2 border px-4 py-3 outline-none select-none focus:outline-none',
-            isCheckMonUSD ? 'border-[#6E75F9] ' : 'border-[#EBEBEB] hover:border-[#6E75F9]'
+            'relative flex flex-1 rounded-[8px] text-sm cursor-pointer items-center justify-start gap-2 border px-4 py-3 outline-none select-none focus:outline-none',
+            'border-[#EBEBEB] bg-white hover:bg-white cursor-none'
           )}
           onClick={() => setSelectedToken(MonUSD.address)}
         >
@@ -267,7 +266,7 @@ export function FaucetContainer() {
               src="/icons/check.svg"
               width="16"
               height="16"
-              className="absolute -top-[6px] -right-[6px]"
+              className="hidden absolute -top-[6px] -right-[6px]"
             />
           )}
         </Button>
@@ -301,7 +300,7 @@ export function FaucetContainer() {
               aria-invalid={!inputValid}
             />
           )
-        ) : (isCheckMon && !accountInfo?.sandbox_account) ? (
+        ) : isCheckMon && !accountInfo?.sandbox_account ? (
           <></>
         ) : (
           <Select
