@@ -226,7 +226,7 @@ export function MetricsContent() {
   const { data = [], isLoading, error } = useMetrics();
 
   // 控制第二个图表显示的开关
-  const showSecondChart = true;
+  const showSecondChart = false;
 
   const baseData = useMemo<IMetricsItem[]>(() => {
     return data || [];

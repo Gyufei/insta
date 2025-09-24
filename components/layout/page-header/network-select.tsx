@@ -102,7 +102,7 @@ export default function NetworkSelect() {
   useEffect(() => {
     function checkUnState() {
       const isUns = checkIsUnsupported();
-      console.log(isUns, address);
+
       if (isUns.isUnSup && address) {
         setIsUnsupportedChain(true);
       } else {
