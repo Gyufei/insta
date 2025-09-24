@@ -539,6 +539,13 @@ export default function AppSidebar() {
     let groups: MenuGroup[] = [];
 
     if (isBasePath) {
+      const isEth = chainId === NetworkConfigs.eth.id;
+
+      let menuItems: MenuItem[] = baseModulesItems;
+      if (isEth) {
+        menuItems = baseModulesItems.filter((item) => !item.href.includes('badge-gallery'));
+      }
+
       groups = [
         {
           id: 'modules',
@@ -561,7 +568,7 @@ export default function AppSidebar() {
               className="h-5 w-5"
             />
           ),
-          items: baseModulesItems,
+          items: menuItems,
           isMenuItem: false,
         },
       ];

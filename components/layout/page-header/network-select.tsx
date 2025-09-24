@@ -80,9 +80,14 @@ export default function NetworkSelect() {
         cId: 0,
       };
 
-    const isUnSup = !(
+    const isSystemChain = (
       [NetworkConfigs.base.id, NetworkConfigs.eth.id, NetworkConfigs.monadTestnet.id] as number[]
     ).includes(Number(pageChain));
+
+    const isBadgeGallery = pathname.includes('badge-gallery');
+    const isEth = Number(pageChain) === NetworkConfigs.eth.id;
+
+    const isUnSup = !isSystemChain || (isBadgeGallery && isEth);
 
     return {
       isUnSup,
