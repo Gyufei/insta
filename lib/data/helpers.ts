@@ -56,12 +56,12 @@ export function useWalletAndAccountCheck() {
 
   const checkWalletAndAccount = (checkAddress: boolean, checkAccount: boolean) => {
     if (checkAddress && !address) {
-      toast.info(ERROR_MESSAGES.WALLET_NOT_CONNECTED);
+      toast.warning(ERROR_MESSAGES.WALLET_NOT_CONNECTED);
       return false;
     }
 
     if (checkAccount && !account) {
-      toast.info(ERROR_MESSAGES.ACCOUNT_NOT_CREATED);
+      toast.warning(ERROR_MESSAGES.ACCOUNT_NOT_CREATED);
       return false;
     }
 
@@ -74,6 +74,8 @@ export function useWalletAndAccountCheck() {
     checkWalletAndAccount,
   };
 }
+
+const ShowUseWarningText = ['Already claimed', 'Recipient airdrop'];
 
 // Common mutation hook factory
 export function createMutationHook<TParams extends Record<string, unknown>>(
@@ -133,8 +135,14 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
         if (errDisplay.length > 60) {
           errDisplay = errDisplay.slice(0, 60) + '...';
         }
+        if (errDisplay.includes('User rejected the request.')) {
+          toast.info(errDisplay);
+        } else if (ShowUseWarningText.some((text) => errDisplay.includes(text))) {
+          toast.warning(errDisplay);
+        } else {
+          toast.error(errDisplay);
+        }
 
-        toast.error(errDisplay);
         throw err;
       }
     }

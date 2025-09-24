@@ -26,13 +26,13 @@ export function AuthorityAdd() {
 
   const handleAdd = async () => {
     if (!isAddress(inputValue)) {
-      toast.error(ERROR_MESSAGES.INVALID_ADDRESS);
+      toast.warning(ERROR_MESSAGES.INVALID_ADDRESS);
       setIsError(true);
       return;
     }
 
     if (!accountAddress) {
-      toast.error(ERROR_MESSAGES.ACCOUNT_NOT_CREATED);
+      toast.warning(ERROR_MESSAGES.ACCOUNT_NOT_CREATED);
       return;
     }
 

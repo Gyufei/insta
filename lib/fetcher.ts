@@ -32,7 +32,6 @@ async function parsedRes(res: Response) {
 
       if (!error.message) {
         const resBody = await res.text();
-        console.log(resBody);
         const errorTip = resBody.length > 100 ? 'Failed: An error occurred' : resBody;
         error.message = errorTip;
       }

@@ -76,8 +76,6 @@ export function TokenDropSelector({
   const { data: balanceData } = useApiBalance();
   const { data: uniswapTokensData, isLoading: isUniswapTokensLoading } = useUniswapTokens();
 
-  console.log('noMonUsd-g', noMonUsd);
-
   const allTokens = useMemo(() => {
     const uniswapTokens = uniswapTokensData?.map((token) => ({
       ...token,

@@ -94,10 +94,30 @@ export function TokenContent() {
   }, [sellToken, buyToken, sellValue, currentAccountType, wallet]);
 
   const {
-    data: quoteData,
+    data: quoteDataRes,
     isLoading: isQuoteLoading,
-    error: quoteError,
+    error: quoteErrorRes,
   } = useUniswapQuote(quoteParams);
+
+  const quoteData = useMemo(() => {
+    if (!quoteDataRes) return null;
+
+    if ('status' in quoteDataRes && !quoteDataRes.status) {
+      return null;
+    }
+
+    return quoteDataRes;
+  }, [quoteDataRes]);
+
+  const quoteError = useMemo(() => {
+    if (!quoteDataRes) return null;
+
+    if ('status' in quoteDataRes && !quoteDataRes.status) {
+      return quoteDataRes;
+    }
+
+    return quoteErrorRes;
+  }, [quoteDataRes, quoteErrorRes]);
 
   const {
     allowance: fromAllowance,
@@ -133,15 +153,21 @@ export function TokenContent() {
   }, [quoteData?.output, buyToken?.decimals]);
 
   useEffect(() => {
-    const errorMsg = 'Insufficient liquidity, please try again later';
     if (quoteError) {
+      if (!('message' in quoteError)) return;
+
       if (quoteError.message.includes(`Cannot read properties of undefined (reading 'quote')`)) {
+        const errorMsg = 'Insufficient liquidity, please try again later';
         setLiquidityError({
           showError: true,
           errorMessage: errorMsg,
         });
       } else {
-        toast.error(quoteError.message);
+        if (quoteError.message.includes('token pair')) {
+          toast.warning(quoteError.message);
+        } else {
+          toast.error(quoteError.message);
+        }
       }
     }
 
@@ -239,7 +265,6 @@ export function TokenContent() {
         signature = await signTypedDataAsync(typeData);
       }
 
-      console.log(permitData, signature);
       const args = {
         token_in: replaceNativeAddressUseBackend(sellToken.address),
         token_out: replaceNativeAddressUseBackend(buyToken.address),

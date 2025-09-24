@@ -1,7 +1,10 @@
 import { Loader } from 'lucide-react';
-import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
+
+import { useEffect, useRef } from 'react';
+
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 
 import { Button } from '@/components/ui/button';
 
@@ -9,7 +12,6 @@ import { useCheckIn } from '@/lib/data/check-in/use-check-in';
 import { useIsCheckIn } from '@/lib/data/check-in/use-is-check-in';
 import { cn } from '@/lib/utils';
 import { useWalletConnect } from '@/lib/web3/use-wallet-connect';
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 
 export function CheckInBtn() {
   const { address } = useAccount();
@@ -37,9 +39,13 @@ export function CheckInBtn() {
         if (!isMountedRef.current) return;
         toast.success(SUCCESS_MESSAGES.CHECK_IN_SUCCESS);
       },
-      onError: () => {
+      onError: (e) => {
         if (!isMountedRef.current) return;
-        toast.error(ERROR_MESSAGES.CHECK_IN_FAILED);
+        if (e.message.includes('Already')) {
+          toast.warning(e.message);
+        } else {
+          toast.error(e.message || ERROR_MESSAGES.CHECK_IN_FAILED);
+        }
       },
     });
   }
