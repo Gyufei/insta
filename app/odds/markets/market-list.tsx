@@ -327,7 +327,7 @@ export default function MarketList() {
       {/* Markets Grid */}
       <main
         className={cn(
-          'w-full md:py-8 py-4 min-h-[900px]',
+          'w-full md:py-8 py-4 min-h-[600px]',
           isMobile && showTabs !== 'Markets' && 'hidden'
         )}
       >
