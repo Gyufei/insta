@@ -72,13 +72,14 @@ export default function NetworkSelect() {
         isUnSup: false,
         cId: 0,
       };
-    const pageChain = (window.ethereum as unknown as { chainId: string }).chainId;
+    const pageChain = (window?.ethereum as unknown as { chainId: string })?.chainId;
 
-    if (!pageChain)
+    if (!pageChain) {
       return {
         isUnSup: false,
         cId: 0,
       };
+    }
 
     const isSystemChain = (
       [NetworkConfigs.base.id, NetworkConfigs.eth.id, NetworkConfigs.monadTestnet.id] as number[]

@@ -252,7 +252,7 @@ export function FaucetContainer() {
           variant="outline"
           className={cn(
             'relative flex flex-1 rounded-[8px] text-sm cursor-pointer items-center justify-start gap-2 border px-4 py-3 outline-none select-none focus:outline-none',
-            'border-[#EBEBEB] bg-white hover:bg-white cursor-none'
+            'border-[#EBEBEB] bg-white hover:bg-white cursor-auto hover:border-[#6E75F9]'
           )}
           onClick={() => setSelectedToken(MonUSD.address)}
         >
