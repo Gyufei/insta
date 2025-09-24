@@ -1,5 +1,6 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { toast } from 'sonner';
+import { useAccount } from 'wagmi';
 
 import { useEffect, useState } from 'react';
 
@@ -51,6 +52,7 @@ const URL_PARAM_TO_NETWORK: Record<string, string> = {
 };
 
 export default function NetworkSelect() {
+  const { address } = useAccount();
   const { switchNetwork, chainId } = useAppKitNetwork();
   const [selectedNetwork, setSelectedNetwork] = useState<INetworkConfig | null>(NETWORKS[0]);
 
@@ -67,17 +69,17 @@ export default function NetworkSelect() {
   const [isUnsupportedChain, setIsUnsupportedChain] = useState(false);
 
   function checkIsUnsupported() {
-    if (typeof window === 'undefined')
+    if (typeof window === 'undefined' || !address)
       return {
         isUnSup: false,
-        cId: 0,
+        cId: chainId,
       };
     const pageChain = (window?.ethereum as unknown as { chainId: string })?.chainId;
 
     if (!pageChain) {
       return {
         isUnSup: false,
-        cId: 0,
+        cId: chainId,
       };
     }
 

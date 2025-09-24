@@ -55,7 +55,7 @@ export function CheckInBtn() {
       <Button
         variant="outline"
         className={cn(
-          'absolute -top-[70px] right-0 flex border-none disabled:opacity-100 items-center hover:bg-[#6E75F9]/90 hover:text-[#fff] px-[10px] h-8 text-xs font-medium',
+          'absolute sm:-top-[70px] -top-[53px] right-0 flex border-none disabled:opacity-100 items-center hover:bg-[#6E75F9]/90 hover:text-[#fff] px-[10px] h-8 text-xs font-medium',
           isCheckIn ? 'bg-[#F5F6F9] text-[#A5ADC6]' : 'bg-[#6E75F9] text-[#fff]'
         )}
         onClick={handleCheckIn}

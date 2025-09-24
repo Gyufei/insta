@@ -23,6 +23,7 @@ import { IMetricsItem, useMetrics } from '@/lib/data/use-metrics';
 import { formatNumber, formatNumberUnit } from '@/lib/utils/number';
 
 import { CheckInBtn } from './check-in-btn';
+import { useIsMobile } from '@/lib/utils/use-mobile';
 
 // 注册 Chart.js 组件
 ChartJS.register(
@@ -58,36 +59,48 @@ function MetricsChart({
 }: {
   series: { label: string; values: { time: number; value: number }[] };
 }) {
+  const isMobile = useIsMobile();
+
   const chartData = useMemo(() => {
-    // 创建一个Map来跟踪每天是否已经显示过标签
-    const dailyLabels = new Map<string, boolean>();
-
-    const labels = series.values.map((item) => {
-      const date = new Date(item.time);
-      const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const dd = String(date.getDate()).padStart(2, '0');
-      const hh = String(date.getHours()).padStart(2, '0');
-
-      // 创建日期键（YYYY-MM-DD格式）
-      const dateKey = `${date.getFullYear()}-${mm}-${dd}`;
-
-      // 检查这一天是否已经显示过标签
-      if (dailyLabels.has(dateKey)) {
-        return ''; // 如果已经显示过，返回空字符串
-      }
-
-      // 标记这一天已经显示过标签
-      dailyLabels.set(dateKey, true);
-
-      // 根据数据点数量决定显示格式
-      if (series.values.length > 3) {
-        // 数据点很多时，只显示日期
-        return `${mm}-${dd}`;
-      } else {
-        // 数据点较少时，显示日期和时间
+    // 生成标签：移动端与非移动端策略不同
+    const labels = (() => {
+      const count = series.values.length;
+      const formatLabel = (time: number) => {
+        const date = new Date(time);
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const hh = String(date.getHours()).padStart(2, '0');
+        if (count > 3) return `${mm}-${dd}`;
         return `${mm}-${dd} ${hh}:00`;
+      };
+
+      if (isMobile) {
+        // 移动端：首尾 + 中间等间隔 6 个，共 8 个点显示
+        const full = series.values.map((v) => formatLabel(v.time));
+        if (count <= 8) return full; // 数据点较少时直接显示全部
+        const indices = new Set<number>();
+        const step = (count - 1) / 7; // 8 个点 -> 7 段
+        for (let k = 0; k <= 7; k++) {
+          indices.add(Math.round(k * step));
+        }
+        return full.map((lab, idx) => (indices.has(idx) ? lab : ''));
       }
-    });
+
+      // 非移动端：按天只显示一次
+      const dailyShown = new Map<string, boolean>();
+
+      return series.values.map((item) => {
+        const date = new Date(item.time);
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const hh = String(date.getHours()).padStart(2, '0');
+        const dateKey = `${date.getFullYear()}-${mm}-${dd}`;
+        if (dailyShown.has(dateKey)) return '';
+        dailyShown.set(dateKey, true);
+        if (series.values.length > 3) return `${mm}-${dd}`;
+        return `${mm}-${dd} ${hh}:00`;
+      });
+    })();
 
     return {
       labels,
@@ -115,7 +128,7 @@ function MetricsChart({
         },
       ],
     };
-  }, [series]);
+  }, [series, isMobile]);
 
   const options: ChartOptions<'line'> = {
     responsive: true,
