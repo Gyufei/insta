@@ -69,7 +69,7 @@ export default function NetworkSelect() {
   const [isUnsupportedChain, setIsUnsupportedChain] = useState(false);
 
   function checkIsUnsupported() {
-    if (typeof window === 'undefined' || !address)
+    if (typeof window === 'undefined')
       return {
         isUnSup: false,
         cId: chainId,
@@ -89,7 +89,7 @@ export default function NetworkSelect() {
 
     const isBadgeGallery = pathname.includes('badge-gallery');
     const isBase = Number(pageChain) === NetworkConfigs.base.id;
-    const isUnSup = !isSystemChain || (isBadgeGallery && !isBase);
+    const isUnSup = (!isBadgeGallery && !isSystemChain) || (isBadgeGallery && !isBase);
 
     return {
       isUnSup,
@@ -102,12 +102,12 @@ export default function NetworkSelect() {
   useEffect(() => {
     function checkUnState() {
       const isUns = checkIsUnsupported();
-      if (!isUns.isUnSup) {
+      console.log(isUns, address);
+      if (isUns.isUnSup && address) {
+        setIsUnsupportedChain(true);
+      } else {
         setIsUnsupportedChain(false);
-        return;
       }
-
-      setIsUnsupportedChain(true);
     }
 
     const inter = setInterval(() => {
@@ -115,11 +115,11 @@ export default function NetworkSelect() {
     }, 1000);
 
     return () => clearInterval(inter);
-  }, []);
+  }, [address]);
 
   useEffect(() => {
     const { isUnSup, cId } = checkIsUnsupported();
-    if (!isUnSup) {
+    if (!isUnSup || !address) {
       return;
     }
     if (ToastId) {
