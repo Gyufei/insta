@@ -1,12 +1,16 @@
 {
   "name": "instad-app",
-  "version": "0.1.0",
+  "version": "3.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "node scripts/generate-version.js && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-version": "node scripts/generate-version.js",
+    "version:patch": "npm version patch --no-git-tag-version && node scripts/generate-version.js",
+    "version:minor": "npm version minor --no-git-tag-version && node scripts/generate-version.js",
+    "version:major": "npm version major --no-git-tag-version && node scripts/generate-version.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

@@ -8,6 +8,7 @@ import { MateImageBase, MetaBaseHost } from '@/config/env-url';
 
 import Web3AppKitContextProvider from '@/components/context/appkit';
 import BaseLayout from '@/components/layout/base-layout';
+import { VersionUpdateProvider, VersionUpdateNotification } from '@/components/version';
 
 import { aeonik } from './font';
 import './globals.css';
@@ -77,10 +78,13 @@ export default async function RootLayout({
     <html lang="en">
       <link rel="icon" href="https://cdn.tadle.com/icons/favicon-purple.ico" />
       <body className={`${aeonik.variable} antialiased`}>
-        <Web3AppKitContextProvider cookies={cookies}>
-          <BaseLayout>{children}</BaseLayout>
-          <Toaster richColors />
-        </Web3AppKitContextProvider>
+        <VersionUpdateProvider>
+          <Web3AppKitContextProvider cookies={cookies}>
+            <BaseLayout>{children}</BaseLayout>
+            <Toaster richColors />
+            <VersionUpdateNotification />
+          </Web3AppKitContextProvider>
+        </VersionUpdateProvider>
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
       </body>
     </html>

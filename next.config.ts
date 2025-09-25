@@ -1,4 +1,5 @@
 import { withSentryConfig } from '@sentry/nextjs';
+import { generateVersion } from './scripts/generate-version.js';
 
 import type { NextConfig } from 'next';
 
@@ -37,8 +38,18 @@ const nextConfig: NextConfig = {
     ],
   },
   /* config options here */
-  webpack: (config) => {
+  webpack: (config, { dev, isServer }) => {
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
+
+    // Generate version file during build time
+    if (!dev && !isServer) {
+      try {
+        generateVersion();
+      } catch (error) {
+        console.warn('Failed to generate version file:', error);
+      }
+    }
+
     return config;
   },
 };

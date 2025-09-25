@@ -44,13 +44,14 @@ import {
 } from '@/components/ui/sidebar';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
+import { useVersionCheck } from '@/lib/hooks/use-version-check';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/lib/utils/use-mobile';
 
 // Local components
 import { Version } from './version';
 
-// 类型定义
+// Type definitions
 type MenuItem = {
   href: string;
   label: string;
@@ -79,12 +80,12 @@ const WINDOW_BREAKPOINTS = {
   DESKTOP: 1440,
 } as const;
 
-const APP_VERSION = 'v3.2.0';
+const FALLBACK_APP_VERSION = 'v3.2.0';
 
-// 全局状态
+// Global state
 let previousPathname = '';
 
-// 菜单配置函数
+// Menu configuration function
 function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string) {
   const monadModulesItems: MenuItem[] = [
     {
@@ -310,7 +311,7 @@ function createInitialMenuGroups(getCurrentChainNameHref: (href: string) => stri
   ];
 }
 
-// 内部组件
+// Internal components
 const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
   const [isHover, setIsHover] = useState(false);
 
@@ -336,7 +337,7 @@ const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean })
   );
 };
 
-// 工具函数
+// Utility functions
 const isGroupActive = (group: MenuGroup, pathname: string): boolean => {
   return group.items.some((item) => item.href.startsWith(pathname) || pathname.includes(item.href));
 };
@@ -479,6 +480,7 @@ export default function AppSidebar() {
   const isMobile = useIsMobile();
 
   const { chainId } = useAppKitNetwork();
+  const { currentVersion } = useVersionCheck({ enableAutoCheck: false });
 
   const getCurrentChainNameHref = useCallback(
     (href: string): string => {
@@ -509,7 +511,7 @@ export default function AppSidebar() {
 
   const [menuGroups, setMenuGroup] = useState<MenuGroup[]>([]);
 
-  // 窗口尺寸变化的处理
+  // Handle window resize changes
   useEffect(() => {
     const handleResize = () => {
       const windowWidth = window.innerWidth;
@@ -528,7 +530,7 @@ export default function AppSidebar() {
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); // 初始化时检查
+    handleResize(); // Check on initialization
 
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -585,7 +587,7 @@ export default function AppSidebar() {
     </Button>
   );
 
-  // 移动端路由变化时关闭侧边栏
+  // Close sidebar on mobile route changes
   useEffect(() => {
     const isInsideOdds = previousPathname.includes('/odds') && pathname.includes('/odds');
     const shouldCloseSidebar = previousPathname !== pathname && isMobile && open && !isInsideOdds;
@@ -666,7 +668,9 @@ export default function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter>{open && <Version version={APP_VERSION} />}</SidebarFooter>
+      <SidebarFooter>
+        {open && <Version version={`v${currentVersion?.version || FALLBACK_APP_VERSION}`} />}
+      </SidebarFooter>
     </Sidebar>
   );
 }
