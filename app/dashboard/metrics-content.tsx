@@ -74,32 +74,24 @@ function MetricsChart({
         return `${mm}-${dd} ${hh}:00`;
       };
 
-      if (isMobile) {
-        // 移动端：首尾 + 中间等间隔 6 个，共 8 个点显示
-        const full = series.values.map((v) => formatLabel(v.time));
-        if (count <= 8) return full; // 数据点较少时直接显示全部
-        const indices = new Set<number>();
-        const step = (count - 1) / 7; // 8 个点 -> 7 段
-        for (let k = 0; k <= 7; k++) {
-          indices.add(Math.round(k * step));
-        }
-        return full.map((lab, idx) => (indices.has(idx) ? lab : ''));
+      // Generate all labels first
+      const allLabels = series.values.map((v) => formatLabel(v.time));
+      
+      if (count <= 8) {
+        // If data points are few, show all labels
+        return allLabels;
       }
 
-      // 非移动端：按天只显示一次
-      const dailyShown = new Map<string, boolean>();
-
-      return series.values.map((item) => {
-        const date = new Date(item.time);
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-        const hh = String(date.getHours()).padStart(2, '0');
-        const dateKey = `${date.getFullYear()}-${mm}-${dd}`;
-        if (dailyShown.has(dateKey)) return '';
-        dailyShown.set(dateKey, true);
-        if (series.values.length > 3) return `${mm}-${dd}`;
-        return `${mm}-${dd} ${hh}:00`;
-      });
+      // For both mobile and desktop: show labels with equal spacing
+      const maxLabels = isMobile ? 6 : 8; // Mobile shows fewer labels
+      const indices = new Set<number>();
+      const step = (count - 1) / (maxLabels - 1);
+      
+      for (let k = 0; k < maxLabels; k++) {
+        indices.add(Math.round(k * step));
+      }
+      
+      return allLabels.map((label, idx) => (indices.has(idx) ? label : ''));
     })();
 
     return {
