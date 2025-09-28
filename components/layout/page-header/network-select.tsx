@@ -237,11 +237,6 @@ export default function NetworkSelect() {
       return;
     }
 
-    const network = sessionStorage.getItem('current-network');
-    if (network) {
-      setSelectedNetwork(NETWORKS.find((n) => n.name === network) || NETWORKS[0]);
-    }
-
     if (chainId) {
       const urlNetwork = getNetworkFromUrl();
 
