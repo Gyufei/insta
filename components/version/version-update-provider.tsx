@@ -4,9 +4,18 @@ import { createContext, useContext, ReactNode } from 'react';
 
 import { useVersionCheck } from '@/lib/hooks/use-version-check';
 
+interface VersionInfo {
+  version: string;
+  gitHash: string;
+  fullGitHash: string;
+  buildTimestamp: number;
+  buildDate: string;
+  buildId: string;
+}
+
 interface VersionContextType {
-  currentVersion: any;
-  latestVersion: any;
+  currentVersion: VersionInfo | null;
+  latestVersion: VersionInfo | null;
   hasUpdate: boolean;
   isChecking: boolean;
   error: string | null;
@@ -23,7 +32,7 @@ interface VersionUpdateProviderProps {
 
 export function VersionUpdateProvider({ children }: VersionUpdateProviderProps) {
   const versionCheck = useVersionCheck({
-    checkInterval: 30 * 60 * 1000, // 30分钟检查一次
+    checkInterval: 30 * 60 * 1000, // Check every 30 minutes
     onNewVersionDetected: (newVersion, oldVersion) => {
       console.log('🔄 New version detected in provider:', {
         from: oldVersion.buildId,

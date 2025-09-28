@@ -47,8 +47,8 @@ export function useVersionCheck(options: UseVersionCheckOptions = {}): UseVersio
   const [error, setError] = useState<string | null>(null);
   const [hasUpdate, setHasUpdate] = useState(false);
 
-  const intervalRef = useRef<NodeJS.Timeout>();
-  const abortControllerRef = useRef<AbortController>();
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // 获取当前版本信息
   const getCurrentVersion = useCallback(async (): Promise<VersionInfo | null> => {

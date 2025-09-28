@@ -579,7 +579,7 @@ export default function AppSidebar() {
     }
 
     setMenuGroup(groups);
-  }, [isBasePath, accountInfo?.sandbox_account, baseModulesItems, initialMenuGroups]);
+  }, [isBasePath, accountInfo?.sandbox_account, baseModulesItems, initialMenuGroups, chainId]);
 
   const MobileCloseButton = () => (
     <Button onClick={toggleSidebar} variant="ghost" size="icon" className="h-9 w-9 bg-transparent">
