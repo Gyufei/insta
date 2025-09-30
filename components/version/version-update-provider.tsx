@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode, useState, useCallback } from 'react';
 
 import { useVersionCheck } from '@/lib/hooks/use-version-check';
 
@@ -22,6 +22,9 @@ interface VersionContextType {
   checkForUpdates: () => Promise<void>;
   forceRefresh: () => void;
   dismissUpdate: () => void;
+  // Notification state management
+  showNotification: boolean;
+  setShowNotification: (show: boolean) => void;
 }
 
 const VersionContext = createContext<VersionContextType | null>(null);
@@ -31,6 +34,8 @@ interface VersionUpdateProviderProps {
 }
 
 export function VersionUpdateProvider({ children }: VersionUpdateProviderProps) {
+  const [showNotification, setShowNotification] = useState(false);
+
   const versionCheck = useVersionCheck({
     checkInterval: 30 * 60 * 1000, // Check every 30 minutes
     onNewVersionDetected: (newVersion, oldVersion) => {
@@ -38,13 +43,28 @@ export function VersionUpdateProvider({ children }: VersionUpdateProviderProps) 
         from: oldVersion.buildId,
         to: newVersion.buildId,
       });
+      // Show notification when new version is detected
+      setShowNotification(true);
     },
     onError: (error) => {
       console.error('❌ Version check error in provider:', error);
     },
   });
 
-  return <VersionContext.Provider value={versionCheck}>{children}</VersionContext.Provider>;
+  // Enhanced dismiss function that also hides notification
+  const enhancedDismissUpdate = useCallback(() => {
+    versionCheck.dismissUpdate();
+    setShowNotification(false);
+  }, [versionCheck]);
+
+  const contextValue: VersionContextType = {
+    ...versionCheck,
+    dismissUpdate: enhancedDismissUpdate,
+    showNotification,
+    setShowNotification,
+  };
+
+  return <VersionContext.Provider value={contextValue}>{children}</VersionContext.Provider>;
 }
 
 export function useVersionContext() {

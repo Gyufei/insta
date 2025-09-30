@@ -49,6 +49,12 @@ export function useVersionCheck(options: UseVersionCheckOptions = {}): UseVersio
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const currentVersionRef = useRef<VersionInfo | null>(null);
+
+  // 同步 currentVersion 到 ref
+  useEffect(() => {
+    currentVersionRef.current = currentVersion;
+  }, [currentVersion]);
 
   // 获取当前版本信息
   const getCurrentVersion = useCallback(async (): Promise<VersionInfo | null> => {
@@ -107,8 +113,9 @@ export function useVersionCheck(options: UseVersionCheckOptions = {}): UseVersio
       const remoteVersion: VersionInfo = await response.json();
       setLatestVersion(remoteVersion);
 
-      // 检查是否有更新
-      if (currentVersion && remoteVersion.buildId !== currentVersion.buildId) {
+      // 检查是否有更新 - 使用 ref 获取最新的 currentVersion 避免依赖项循环
+      const current = currentVersionRef.current;
+      if (current && remoteVersion.buildId !== current.buildId) {
         // 检查是否已经忽略了这个版本的更新
         const dismissedVersion = localStorage.getItem(UPDATE_DISMISSED_KEY);
         const shouldShowUpdate = dismissedVersion !== remoteVersion.buildId;
@@ -116,7 +123,7 @@ export function useVersionCheck(options: UseVersionCheckOptions = {}): UseVersio
         setHasUpdate(shouldShowUpdate);
 
         if (shouldShowUpdate && onNewVersionDetected) {
-          onNewVersionDetected(remoteVersion, currentVersion);
+          onNewVersionDetected(remoteVersion, current);
         }
       }
     } catch (err) {
@@ -134,7 +141,7 @@ export function useVersionCheck(options: UseVersionCheckOptions = {}): UseVersio
     } finally {
       setIsChecking(false);
     }
-  }, [currentVersion, isChecking, onNewVersionDetected, onError]);
+  }, [onNewVersionDetected, onError]); // 移除 currentVersion 和 isChecking 依赖
 
   // 强制刷新页面
   const forceRefresh = useCallback(() => {
@@ -176,7 +183,7 @@ export function useVersionCheck(options: UseVersionCheckOptions = {}): UseVersio
         }
       }
     });
-  }, [getCurrentVersion, checkForUpdates, enableAutoCheck]);
+  }, [getCurrentVersion, enableAutoCheck]); // 移除 checkForUpdates 依赖，避免循环
 
   // 设置定时检查
   useEffect(() => {
@@ -185,7 +192,10 @@ export function useVersionCheck(options: UseVersionCheckOptions = {}): UseVersio
     }
 
     intervalRef.current = setInterval(() => {
-      checkForUpdates();
+      // 只有当 currentVersionRef.current 存在时才执行检查
+      if (currentVersionRef.current) {
+        checkForUpdates();
+      }
     }, checkInterval);
 
     return () => {
@@ -193,14 +203,14 @@ export function useVersionCheck(options: UseVersionCheckOptions = {}): UseVersio
         clearInterval(intervalRef.current);
       }
     };
-  }, [enableAutoCheck, currentVersion, checkInterval, checkForUpdates]);
+  }, [enableAutoCheck, currentVersion, checkInterval]); // 保留 currentVersion 依赖用于启动/停止定时器
 
   // 页面可见性变化时检查更新
   useEffect(() => {
     if (!enableAutoCheck) return;
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && currentVersion) {
+      if (document.visibilityState === 'visible' && currentVersionRef.current) {
         // 页面重新变为可见时检查更新
         setTimeout(() => checkForUpdates(), 500);
       }
@@ -211,7 +221,7 @@ export function useVersionCheck(options: UseVersionCheckOptions = {}): UseVersio
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [enableAutoCheck, currentVersion, checkForUpdates]);
+  }, [enableAutoCheck]); // 移除 currentVersion 和 checkForUpdates 依赖，避免循环
 
   // 清理函数
   useEffect(() => {

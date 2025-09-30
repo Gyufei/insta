@@ -2,41 +2,29 @@
 
 import { AlertCircle, RefreshCw, X } from 'lucide-react';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 
-import { useVersionCheck } from '@/lib/hooks/use-version-check';
+import { useVersionContext } from './version-update-provider';
 
 interface VersionUpdateNotificationProps {
   className?: string;
 }
 
 export function VersionUpdateNotification({ className }: VersionUpdateNotificationProps) {
-  const [isVisible, setIsVisible] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const { hasUpdate, latestVersion, currentVersion, forceRefresh, dismissUpdate } =
-    useVersionCheck({
-      checkInterval: 30 * 60 * 1000, // Check every 30 minutes
-      onNewVersionDetected: (newVersion, oldVersion) => {
-        console.log('New version detected:', {
-          from: oldVersion.buildId,
-          to: newVersion.buildId,
-        });
-        setIsVisible(true);
-      },
-      onError: (err) => {
-        console.error('Version check error:', err);
-      },
-    });
-
-  // 当有更新时显示通知
-  useEffect(() => {
-    if (hasUpdate) {
-      setIsVisible(true);
-    }
-  }, [hasUpdate]);
+  // Use the shared version context instead of creating a new version check
+  const { 
+    hasUpdate, 
+    latestVersion, 
+    currentVersion, 
+    forceRefresh, 
+    dismissUpdate,
+    showNotification,
+    setShowNotification 
+  } = useVersionContext();
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -45,14 +33,14 @@ export function VersionUpdateNotification({ className }: VersionUpdateNotificati
 
   const handleDismiss = () => {
     dismissUpdate();
-    setIsVisible(false);
+    setShowNotification(false);
   };
 
   const handleClose = () => {
-    setIsVisible(false);
+    setShowNotification(false);
   };
 
-  if (!isVisible || !hasUpdate || !latestVersion || !currentVersion) {
+  if (!showNotification || !hasUpdate || !latestVersion || !currentVersion) {
     return null;
   }
 
