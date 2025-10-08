@@ -22,7 +22,8 @@ import { TokenDropSelector } from '@/components/common/token-drop-selector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
-import { trackEvent, trackTrade } from '@/lib/analytics';
+import { trackTrade } from '@/lib/analytics';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useCheckMonadAllowance } from '@/lib/data/use-monad-allowance';
@@ -55,6 +56,7 @@ export function TokenContent() {
   const { data: accountInfo } = useSelectedAccount();
   const { currentAccountType } = useAccountStore();
   const { signTypedDataAsync } = useSignTypedData();
+  const { trackEvent } = useEnhancedAnalytics();
 
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -219,6 +221,7 @@ export function TokenContent() {
         event_category: 'trading',
         token_symbol: sellToken?.symbol,
         token_address: sellToken?.address,
+        include_user_id: true,
       });
       handleFromApprove();
       return;
@@ -236,6 +239,7 @@ export function TokenContent() {
       trackEvent('ERROR_OCCURRED', {
         event_category: 'trading',
         error_message: 'Insufficient balance',
+        include_user_id: true,
         custom_parameters: {
           sell_token: sellToken.symbol,
           requested_amount: sellValue,
@@ -299,6 +303,7 @@ export function TokenContent() {
     trackEvent('SWAP_TOKENS', {
       event_category: 'trading',
       event_label: 'token_pair_swap',
+      include_user_id: true,
       custom_parameters: {
         from_token: sellToken?.symbol,
         to_token: buyToken?.symbol,
