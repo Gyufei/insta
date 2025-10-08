@@ -134,9 +134,9 @@ export class EnhancedAnalyticsManager {
       // Track the event using the base analytics system
       trackEvent(eventName, enhancedParams);
 
-      // Send user identification data to our API if wallet is connected
+      // Store user identification data locally if wallet is connected
       if (parameters.wallet_address && parameters.include_user_id) {
-        await this.sendUserIdentificationData(parameters.wallet_address);
+        await this.storeUserIdentificationData(parameters.wallet_address);
       }
     } catch (error) {
       console.warn('Enhanced analytics tracking failed:', error);
@@ -249,9 +249,10 @@ export class EnhancedAnalyticsManager {
   }
 
   /**
-   * Send user identification data to our API for storage
+   * Store user identification data locally for analysis
+   * Replaces the previous API-based storage with local storage
    */
-  private async sendUserIdentificationData(walletAddress: string): Promise<void> {
+  private async storeUserIdentificationData(walletAddress: string): Promise<void> {
     try {
       const userData = await this.userCollector.collectUserIdentification({
         includeWallet: true,
@@ -265,18 +266,13 @@ export class EnhancedAnalyticsManager {
         ...userData,
         // Override with our session data
         sessionId: this.sessionId,
-        timestamp: new Date().toISOString(),
+        timestamp: Date.now(),
       };
 
-      await fetch('/api/user-identification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      // Store data locally instead of sending to API
+      await this.userCollector.storeIdentificationData(payload);
     } catch (error) {
-      console.warn('Failed to send user identification data:', error);
+      console.warn('Failed to store user identification data:', error);
     }
   }
 

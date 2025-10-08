@@ -31,11 +31,35 @@ interface ComprehensiveIPInfo {
  * Advanced IP detection and VPN identification utility
  * Uses multiple techniques including WebRTC, STUN servers, and API calls
  */
+interface IPApiResponse {
+  ip?: string;
+  country_name?: string;
+  region?: string;
+  city?: string;
+  timezone?: string;
+  org?: string;
+  asn?: string;
+}
+
+interface CachedIPApiResponse {
+  data: IPApiResponse;
+  timestamp: number;
+}
+
 export class IPDetector {
   private static instance: IPDetector;
   private cachedIPInfo: ComprehensiveIPInfo | null = null;
   private cacheExpiry: number = 0;
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  
+  // Fine-grained cache for individual IP API responses
+  private ipApiCache: Map<string, CachedIPApiResponse> = new Map();
+  private readonly IP_API_CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+  
+  // Rate limiting for API calls
+  private lastApiCall: number = 0;
+  private readonly MIN_API_INTERVAL = 1000; // 1 second between API calls
+  private pendingApiCalls: Map<string, Promise<IPApiResponse>> = new Map();
 
   // STUN servers for WebRTC IP detection
   private readonly stunServers = [
@@ -46,6 +70,46 @@ export class IPDetector {
     'stun:stun4.l.google.com:19302',
     'stun:stun.cloudflare.com:3478',
     'stun:stun.nextcloud.com:443',
+  ];
+
+  // Backup APIs for geolocation and ISP info
+  private readonly backupApis = [
+    {
+      url: (ip: string) => `https://ipapi.co/${ip}/json/`,
+      parser: (data: Record<string, unknown>): IPApiResponse => ({
+        ip: data.ip as string,
+        country_name: data.country_name as string,
+        region: data.region as string,
+        city: data.city as string,
+        timezone: data.timezone as string,
+        org: data.org as string,
+        asn: data.asn as string,
+      }),
+    },
+    {
+      url: (ip: string) => `http://ip-api.com/json/${ip}`,
+      parser: (data: Record<string, unknown>): IPApiResponse => ({
+        ip: data.query as string,
+        country_name: data.country as string,
+        region: data.regionName as string,
+        city: data.city as string,
+        timezone: data.timezone as string,
+        org: data.isp as string,
+        asn: data.as as string,
+      }),
+    },
+    {
+      url: (ip: string) => `https://ipinfo.io/${ip}/json`,
+      parser: (data: Record<string, unknown>): IPApiResponse => ({
+        ip: data.ip as string,
+        country_name: data.country as string,
+        region: data.region as string,
+        city: data.city as string,
+        timezone: data.timezone as string,
+        org: data.org as string,
+        asn: data.asn as string,
+      }),
+    },
   ];
 
   private constructor() {}
@@ -193,32 +257,101 @@ export class IPDetector {
   }
 
   /**
+   * Get IP API data with caching, rate limiting, and backup APIs
+   */
+  private async getIPApiData(ip: string): Promise<IPApiResponse> {
+    // Check cache first
+    const cached = this.ipApiCache.get(ip);
+    if (cached && Date.now() - cached.timestamp < this.IP_API_CACHE_DURATION) {
+      return cached.data;
+    }
+
+    // Check if there's already a pending request for this IP
+    const pendingRequest = this.pendingApiCalls.get(ip);
+    if (pendingRequest) {
+      return pendingRequest;
+    }
+
+    // Create new request with rate limiting
+    const requestPromise = this.makeIPApiRequest(ip);
+    this.pendingApiCalls.set(ip, requestPromise);
+
+    try {
+      const result = await requestPromise;
+      
+      // Cache the result
+      this.ipApiCache.set(ip, {
+        data: result,
+        timestamp: Date.now(),
+      });
+
+      return result;
+    } finally {
+      // Clean up pending request
+      this.pendingApiCalls.delete(ip);
+    }
+  }
+
+  /**
+   * Make IP API request with rate limiting and backup APIs
+   */
+  private async makeIPApiRequest(ip: string): Promise<IPApiResponse> {
+    // Implement rate limiting
+    const now = Date.now();
+    const timeSinceLastCall = now - this.lastApiCall;
+    if (timeSinceLastCall < this.MIN_API_INTERVAL) {
+      await new Promise(resolve => setTimeout(resolve, this.MIN_API_INTERVAL - timeSinceLastCall));
+    }
+    this.lastApiCall = Date.now();
+
+    // Try each backup API in order
+    for (const api of this.backupApis) {
+      try {
+        const response = await fetch(api.url(ip), {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+          signal: AbortSignal.timeout(5000),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          return api.parser(data);
+        } else if (response.status === 429) {
+          console.warn(`Rate limited by ${api.url(ip)}, trying next API...`);
+          continue;
+        }
+      } catch (error) {
+        console.warn(`Failed to get IP info from ${api.url(ip)}:`, error);
+        continue;
+      }
+    }
+
+    // Return empty response if all APIs fail
+    console.warn(`All IP APIs failed for ${ip}`);
+    return {};
+  }
+
+  /**
    * Get detailed IP information including geolocation
    */
   private async getDetailedIPInfo(ip: string): Promise<Partial<ComprehensiveIPInfo>> {
     try {
-      const response = await fetch(`https://ipapi.co/${ip}/json/`, {
-        method: 'GET',
-        signal: AbortSignal.timeout(5000),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        return {
-          geolocation: {
-            country: data.country_name,
-            region: data.region,
-            city: data.city,
-            timezone: data.timezone,
-          },
-          isp: data.org,
-        };
-      }
+      const data = await this.getIPApiData(ip);
+      return {
+        geolocation: {
+          country: data.country_name,
+          region: data.region,
+          city: data.city,
+          timezone: data.timezone,
+        },
+        isp: data.org,
+      };
     } catch (error) {
       console.warn('Failed to get detailed IP info:', error);
+      return {};
     }
-
-    return {};
   }
 
   /**
@@ -297,37 +430,30 @@ export class IPDetector {
     let confidence = 0;
 
     try {
-      // Check against known VPN IP ranges (simplified check)
-      const response = await fetch(`https://ipapi.co/${ip}/json/`, {
-        signal: AbortSignal.timeout(3000),
-      });
+      const data = await this.getIPApiData(ip);
+      
+      // Check ISP/Organization for VPN keywords
+      const org = (data.org || '').toLowerCase();
+      const vpnKeywords = [
+        'vpn', 'proxy', 'hosting', 'datacenter', 'cloud', 'server',
+        'digital ocean', 'amazon', 'google cloud', 'microsoft',
+        'linode', 'vultr', 'ovh', 'hetzner'
+      ];
 
-      if (response.ok) {
-        const data = await response.json();
-        
-        // Check ISP/Organization for VPN keywords
-        const org = (data.org || '').toLowerCase();
-        const vpnKeywords = [
-          'vpn', 'proxy', 'hosting', 'datacenter', 'cloud', 'server',
-          'digital ocean', 'amazon', 'google cloud', 'microsoft',
-          'linode', 'vultr', 'ovh', 'hetzner'
-        ];
-
-        for (const keyword of vpnKeywords) {
-          if (org.includes(keyword)) {
-            indicators.push(`suspicious_org_${keyword.replace(' ', '_')}`);
-            confidence += 15;
-            break;
-          }
+      for (const keyword of vpnKeywords) {
+        if (org.includes(keyword)) {
+          indicators.push(`suspicious_org_${keyword.replace(' ', '_')}`);
+          confidence += 15;
+          break;
         }
+      }
 
-        // Check for suspicious ASN
-        if (data.asn && typeof data.asn === 'string') {
-          const asn = data.asn.toLowerCase();
-          if (asn.includes('hosting') || asn.includes('datacenter')) {
-            indicators.push('suspicious_asn');
-            confidence += 10;
-          }
+      // Check for suspicious ASN
+      if (data.asn && typeof data.asn === 'string') {
+        const asn = data.asn.toLowerCase();
+        if (asn.includes('hosting') || asn.includes('datacenter')) {
+          indicators.push('suspicious_asn');
+          confidence += 10;
         }
       }
     } catch (error) {
@@ -346,22 +472,16 @@ export class IPDetector {
       const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       
       // Get timezone from IP geolocation
-      const response = await fetch(`https://ipapi.co/${ip}/json/`, {
-        signal: AbortSignal.timeout(3000),
-      });
+      const data = await this.getIPApiData(ip);
+      const ipTimezone = data.timezone;
 
-      if (response.ok) {
-        const data = await response.json();
-        const ipTimezone = data.timezone;
-
-        if (browserTimezone && ipTimezone && browserTimezone !== ipTimezone) {
-          // Check if timezones are in different regions
-          const browserRegion = browserTimezone.split('/')[0];
-          const ipRegion = ipTimezone.split('/')[0];
-          
-          if (browserRegion !== ipRegion) {
-            return { suspicious: true, confidence: 25 };
-          }
+      if (browserTimezone && ipTimezone && browserTimezone !== ipTimezone) {
+        // Check if timezones are in different regions
+        const browserRegion = browserTimezone.split('/')[0];
+        const ipRegion = ipTimezone.split('/')[0];
+        
+        if (browserRegion !== ipRegion) {
+          return { suspicious: true, confidence: 25 };
         }
       }
     } catch (error) {
@@ -452,6 +572,8 @@ export class IPDetector {
   public clearCache(): void {
     this.cachedIPInfo = null;
     this.cacheExpiry = 0;
+    this.ipApiCache.clear();
+    this.pendingApiCalls.clear();
   }
 
   /**

@@ -130,9 +130,9 @@ export function useUserIdentification(
         setLastCollectedAt(new Date());
         setCollectionCount((prev) => prev + 1);
 
-        // Send to API if wallet is connected
+        // Store data locally if wallet is connected
         if (isConnected && address && enableAnalytics) {
-          await userCollectorRef.current!.sendToAPI(data);
+          await userCollectorRef.current!.storeIdentificationData(data);
         }
 
         return data;
