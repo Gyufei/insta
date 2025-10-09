@@ -33,12 +33,14 @@ Google Analytics 组件已集成在根布局中 (`app/layout.tsx`):
 ```tsx
 import { GoogleAnalytics } from '@next/third-parties/google';
 
+import { GA_ID } from '@/config/analytics-config';
+
 export default function RootLayout({ children }) {
   return (
     <html>
       <body>
         {/* 您的应用内容 */}
-        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
+        {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
       </body>
     </html>
   );

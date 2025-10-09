@@ -10,6 +10,8 @@ import Web3AppKitContextProvider from '@/components/context/appkit';
 import BaseLayout from '@/components/layout/base-layout';
 import { VersionUpdateProvider, VersionUpdateNotification } from '@/components/version';
 
+import { GA_ID } from '@/config/analytics-config';
+
 import { aeonik } from './font';
 import './globals.css';
 
@@ -85,7 +87,7 @@ export default async function RootLayout({
             <VersionUpdateNotification />
           </Web3AppKitContextProvider>
         </VersionUpdateProvider>
-        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
+        {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
       </body>
     </html>
   );

@@ -1,5 +1,7 @@
 // Analytics tracking utilities using @next/third-parties/google
 
+import { GA_ID } from '@/config/analytics-config';
+
 // Analytics events configuration
 export const ANALYTICS_EVENTS = {
   // Wallet Connection Events
@@ -183,7 +185,7 @@ export const trackEvent = (
 // Track page views
 export const trackPageView = (page_path: string, page_title?: string) => {
   if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('config', process.env.NEXT_PUBLIC_GA_ID!, {
+    window.gtag('config', GA_ID, {
       page_path,
       page_title,
     });
@@ -193,7 +195,7 @@ export const trackPageView = (page_path: string, page_title?: string) => {
 // Track user properties
 export const setUserProperties = (properties: Record<string, unknown>) => {
   if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('config', process.env.NEXT_PUBLIC_GA_ID!, {
+    window.gtag('config', GA_ID, {
       custom_map: properties,
     });
   }
