@@ -51,11 +51,11 @@ export class IPDetector {
   private cachedIPInfo: ComprehensiveIPInfo | null = null;
   private cacheExpiry: number = 0;
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-  
+
   // Fine-grained cache for individual IP API responses
   private ipApiCache: Map<string, CachedIPApiResponse> = new Map();
   private readonly IP_API_CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
-  
+
   // Rate limiting for API calls
   private lastApiCall: number = 0;
   private readonly MIN_API_INTERVAL = 1000; // 1 second between API calls
@@ -134,7 +134,7 @@ export class IPDetector {
 
       try {
         const rtcConfig = {
-          iceServers: this.stunServers.map(url => ({ urls: url })),
+          iceServers: this.stunServers.map((url) => ({ urls: url })),
           iceCandidatePoolSize: 10,
         };
 
@@ -144,7 +144,7 @@ export class IPDetector {
           if (event.candidate) {
             const candidate = event.candidate.candidate;
             const ipMatch = candidate.match(/(\d+\.\d+\.\d+\.\d+)/);
-            
+
             if (ipMatch) {
               const ip = ipMatch[1];
               if (!seenIPs.has(ip)) {
@@ -166,7 +166,7 @@ export class IPDetector {
 
         // Create offer to start ICE gathering
         pc.createOffer()
-          .then(offer => pc.setLocalDescription(offer))
+          .then((offer) => pc.setLocalDescription(offer))
           .catch(() => {
             // Ignore errors, just resolve with what we have
           });
@@ -185,7 +185,6 @@ export class IPDetector {
             resolve(ips);
           }
         };
-
       } catch (error) {
         console.warn('WebRTC IP detection failed:', error);
         resolve(ips);
@@ -198,18 +197,18 @@ export class IPDetector {
    */
   private getIPType(ip: string): 'public' | 'private' | 'unknown' {
     const parts = ip.split('.').map(Number);
-    
-    if (parts.length !== 4 || parts.some(part => isNaN(part) || part < 0 || part > 255)) {
+
+    if (parts.length !== 4 || parts.some((part) => isNaN(part) || part < 0 || part > 255)) {
       return 'unknown';
     }
 
     // Private IP ranges
     if (
-      (parts[0] === 10) ||
+      parts[0] === 10 ||
       (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) ||
       (parts[0] === 192 && parts[1] === 168) ||
       (parts[0] === 169 && parts[1] === 254) || // Link-local
-      (parts[0] === 127) // Loopback
+      parts[0] === 127 // Loopback
     ) {
       return 'private';
     }
@@ -233,14 +232,14 @@ export class IPDetector {
         const response = await fetch(api, {
           method: 'GET',
           headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
           signal: AbortSignal.timeout(5000),
         });
 
         if (response.ok) {
           const data = await response.json();
-          
+
           // Different APIs return IP in different formats
           const ip = data.ip || data.origin || data.query || null;
           if (ip && typeof ip === 'string') {
@@ -278,7 +277,7 @@ export class IPDetector {
 
     try {
       const result = await requestPromise;
-      
+
       // Cache the result
       this.ipApiCache.set(ip, {
         data: result,
@@ -300,7 +299,9 @@ export class IPDetector {
     const now = Date.now();
     const timeSinceLastCall = now - this.lastApiCall;
     if (timeSinceLastCall < this.MIN_API_INTERVAL) {
-      await new Promise(resolve => setTimeout(resolve, this.MIN_API_INTERVAL - timeSinceLastCall));
+      await new Promise((resolve) =>
+        setTimeout(resolve, this.MIN_API_INTERVAL - timeSinceLastCall)
+      );
     }
     this.lastApiCall = Date.now();
 
@@ -310,7 +311,7 @@ export class IPDetector {
         const response = await fetch(api.url(ip), {
           method: 'GET',
           headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
           signal: AbortSignal.timeout(5000),
         });
@@ -362,11 +363,31 @@ export class IPDetector {
     let confidence = 0;
 
     try {
-      // Check for multiple public IPs (common with VPN)
-      const publicIPs = privateIPs.filter(ip => this.getIPType(ip) === 'public');
+      // Get all public IPs (from WebRTC and API)
+      const publicIPs = privateIPs.filter((ip) => this.getIPType(ip) === 'public');
+
+      // Initialize realIP and vpnIP
+      let realIP: string | undefined;
+      let vpnIP: string | undefined;
+
+      // Check for multiple public IPs (common with VPN leak)
       if (publicIPs.length > 1) {
         indicators.push('multiple_public_ips');
         confidence += 30;
+
+        // When multiple public IPs exist, the API IP is likely the VPN IP
+        // and WebRTC leaked IPs are likely the real IP
+        vpnIP = publicIP;
+        realIP = publicIPs.find((ip) => ip !== publicIP);
+        indicators.push('webrtc_leak_detected');
+        confidence += 20;
+      } else if (publicIPs.length === 1 && publicIPs[0] !== publicIP) {
+        // WebRTC found a different public IP than API
+        // This suggests VPN with IP leak
+        indicators.push('ip_mismatch');
+        confidence += 25;
+        vpnIP = publicIP;
+        realIP = publicIPs[0];
       }
 
       // Check for suspicious IP ranges or known VPN providers
@@ -387,37 +408,32 @@ export class IPDetector {
         confidence += geoCheck.confidence;
       }
 
-      // Determine real IP vs VPN IP
-      let realIP: string | undefined;
-      let vpnIP: string | undefined;
-
-      if (confidence > 50) {
+      // If VPN detected but no IPs determined yet, use publicIP as vpnIP
+      const isVPN = confidence >= 50;
+      if (isVPN && !vpnIP) {
         vpnIP = publicIP;
-        // Try to find real IP from WebRTC leaks
-        const leakedPublicIPs = privateIPs.filter(ip => 
-          this.getIPType(ip) === 'public' && ip !== publicIP
-        );
-        if (leakedPublicIPs.length > 0) {
-          realIP = leakedPublicIPs[0];
-          indicators.push('webrtc_leak_detected');
-          confidence += 20;
-        }
+      }
+
+      // If not VPN or VPN without leak, realIP should be the publicIP
+      if (!isVPN) {
+        realIP = publicIP;
+        vpnIP = undefined;
       }
 
       return {
-        isVPN: confidence > 50,
+        isVPN,
         confidence: Math.min(confidence, 100),
         indicators,
         realIP,
         vpnIP,
       };
-
     } catch (error) {
       console.warn('VPN detection failed:', error);
       return {
         isVPN: false,
         confidence: 0,
         indicators: ['detection_failed'],
+        realIP: publicIP, // Fallback to publicIP
       };
     }
   }
@@ -425,19 +441,32 @@ export class IPDetector {
   /**
    * Check for known VPN indicators
    */
-  private async checkVPNIndicators(ip: string): Promise<{ indicators: string[]; confidence: number }> {
+  private async checkVPNIndicators(
+    ip: string
+  ): Promise<{ indicators: string[]; confidence: number }> {
     const indicators: string[] = [];
     let confidence = 0;
 
     try {
       const data = await this.getIPApiData(ip);
-      
+
       // Check ISP/Organization for VPN keywords
       const org = (data.org || '').toLowerCase();
       const vpnKeywords = [
-        'vpn', 'proxy', 'hosting', 'datacenter', 'cloud', 'server',
-        'digital ocean', 'amazon', 'google cloud', 'microsoft',
-        'linode', 'vultr', 'ovh', 'hetzner'
+        'vpn',
+        'proxy',
+        'hosting',
+        'datacenter',
+        'cloud',
+        'server',
+        'digital ocean',
+        'amazon',
+        'google cloud',
+        'microsoft',
+        'linode',
+        'vultr',
+        'ovh',
+        'hetzner',
       ];
 
       for (const keyword of vpnKeywords) {
@@ -466,11 +495,13 @@ export class IPDetector {
   /**
    * Check for geolocation inconsistencies
    */
-  private async checkGeolocationConsistency(ip: string): Promise<{ suspicious: boolean; confidence: number }> {
+  private async checkGeolocationConsistency(
+    ip: string
+  ): Promise<{ suspicious: boolean; confidence: number }> {
     try {
       // Get timezone from browser
       const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      
+
       // Get timezone from IP geolocation
       const data = await this.getIPApiData(ip);
       const ipTimezone = data.timezone;
@@ -479,7 +510,7 @@ export class IPDetector {
         // Check if timezones are in different regions
         const browserRegion = browserTimezone.split('/')[0];
         const ipRegion = ipTimezone.split('/')[0];
-        
+
         if (browserRegion !== ipRegion) {
           return { suspicious: true, confidence: 25 };
         }
@@ -503,14 +534,14 @@ export class IPDetector {
     try {
       // Get IPs from WebRTC
       const webrtcIPs = await this.getWebRTCIPs();
-      
+
       // Get public IP from API
       const apiPublicIP = await this.getPublicIPFromAPI();
-      
+
       // Combine and deduplicate IPs
       const allIPs = [...webrtcIPs];
       if (apiPublicIP) {
-        const exists = allIPs.some(ipInfo => ipInfo.ip === apiPublicIP);
+        const exists = allIPs.some((ipInfo) => ipInfo.ip === apiPublicIP);
         if (!exists) {
           allIPs.push({
             ip: apiPublicIP,
@@ -521,14 +552,19 @@ export class IPDetector {
       }
 
       // Separate public and private IPs
-      const publicIPs = allIPs.filter(ipInfo => ipInfo.type === 'public');
-      const privateIPs = allIPs.filter(ipInfo => ipInfo.type === 'private').map(ipInfo => ipInfo.ip);
-      
+      const publicIPs = allIPs.filter((ipInfo) => ipInfo.type === 'public');
+      const privateIPs = allIPs
+        .filter((ipInfo) => ipInfo.type === 'private')
+        .map((ipInfo) => ipInfo.ip);
+
       // Use the most reliable public IP
       const primaryPublicIP = apiPublicIP || (publicIPs.length > 0 ? publicIPs[0].ip : '');
 
       // Detect VPN
-      const vpnDetection = await this.detectVPN(primaryPublicIP, [...privateIPs, ...publicIPs.map(ip => ip.ip)]);
+      const vpnDetection = await this.detectVPN(primaryPublicIP, [
+        ...privateIPs,
+        ...publicIPs.map((ip) => ip.ip),
+      ]);
 
       // Get detailed info
       const detailedInfo = primaryPublicIP ? await this.getDetailedIPInfo(primaryPublicIP) : {};
@@ -548,10 +584,9 @@ export class IPDetector {
       this.cacheExpiry = Date.now() + this.CACHE_DURATION;
 
       return result;
-
     } catch (error) {
       console.warn('Failed to get comprehensive IP info:', error);
-      
+
       // Return minimal fallback info
       return {
         publicIP: '',

@@ -344,19 +344,19 @@ export class UserIdentificationCollector {
       sessionId,
       browserFingerprint: typeof browserFingerprint === 'string' ? browserFingerprint : 'error',
       timestamp: Date.now(),
-      
-      // IP information
+
+      // IP information - Use vpnDetection results which now correctly handle all cases
+      realIP: ipData?.vpnDetection?.realIP || ipData?.publicIP,
       vpnIP: ipData?.vpnDetection?.vpnIP,
-      realIP: ipData?.realIP || ipData?.vpnDetection?.realIP || ipData?.publicIP,
       webrtcIPs: ipData?.privateIPs,
       isVPN: ipData?.vpnDetection?.isVPN,
-      
+
       // Cloudflare information
       cloudflareVisitorId: cfData?.visitorId || 'cf_unavailable',
       cfConnectingIP: cfData?.headers?.['cf-connecting-ip'],
       cfCountry: cfData?.country,
       cfRay: cfData?.headers?.['cf-ray'],
-      
+
       // Geolocation
       country: cfData?.country || ipData?.geolocation?.country,
       region: cfData?.region || ipData?.geolocation?.region,
