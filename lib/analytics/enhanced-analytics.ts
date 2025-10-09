@@ -1,6 +1,7 @@
 // Enhanced Analytics with User Identification Integration
 import { UserIdentificationCollector } from '@/lib/utils/user-identification';
-import { trackEvent, trackPageView, ANALYTICS_EVENTS, type AnalyticsParams } from './index';
+
+import { ANALYTICS_EVENTS, type AnalyticsParams, trackEvent, trackPageView } from './index';
 
 /**
  * Enhanced analytics interface that includes user identification data
@@ -46,9 +47,9 @@ export class EnhancedAnalyticsManager {
         includeCloudflare: true,
       });
       this.isInitialized = true;
-      
+
       // Track initialization event
-      this.trackEvent('PAGE_VIEW', {
+      this.trackEvent('USER_INFO', {
         event_category: 'system',
         event_label: 'analytics_initialized',
         include_user_id: true,
@@ -83,24 +84,19 @@ export class EnhancedAnalyticsManager {
         if (process.env.NODE_ENV === 'development') {
           console.log('🔍 Enhanced Analytics - 开始收集用户数据...');
         }
-        
+
         const userData = await this.userCollector.collectUserIdentification({
           includeWallet: true,
           includeFingerprint: true,
           includeIP: true,
           includeCloudflare: true,
         });
-        
+
         // Debug: Log collected user data
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🔍 Enhanced Analytics - userData:', userData);
-        }
-        
         enhancedParams = {
           ...enhancedParams,
           custom_parameters: {
             ...enhancedParams.custom_parameters,
-            // Also include in custom_parameters for backup
             session_id: this.sessionId,
             user_fingerprint: userData.browserFingerprint,
             real_ip: userData.realIP,
@@ -260,7 +256,7 @@ export class EnhancedAnalyticsManager {
         includeIP: true,
         includeCloudflare: true,
       });
-      
+
       const payload = {
         walletAddress,
         ...userData,
@@ -330,9 +326,11 @@ export const enhancedAnalytics = new EnhancedAnalyticsManager();
 // Convenience functions for common use cases
 export const trackEnhancedEvent = enhancedAnalytics.trackEvent.bind(enhancedAnalytics);
 export const trackEnhancedPageView = enhancedAnalytics.trackPageView.bind(enhancedAnalytics);
-export const trackEnhancedWalletConnection = enhancedAnalytics.trackWalletConnection.bind(enhancedAnalytics);
+export const trackEnhancedWalletConnection =
+  enhancedAnalytics.trackWalletConnection.bind(enhancedAnalytics);
 export const trackEnhancedTrade = enhancedAnalytics.trackTrade.bind(enhancedAnalytics);
-export const trackEnhancedProtocolInteraction = enhancedAnalytics.trackProtocolInteraction.bind(enhancedAnalytics);
+export const trackEnhancedProtocolInteraction =
+  enhancedAnalytics.trackProtocolInteraction.bind(enhancedAnalytics);
 
 // Auto-initialize on import in browser environment
 if (typeof window !== 'undefined') {

@@ -22,14 +22,13 @@ import { TokenDropSelector } from '@/components/common/token-drop-selector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
-import { trackTrade } from '@/lib/analytics';
-import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useCheckMonadAllowance } from '@/lib/data/use-monad-allowance';
 import { useUniswapDSASwap } from '@/lib/data/use-uniswap-dsa-swap';
 import { useUniswapEOASwap } from '@/lib/data/use-uniswap-eoa-swap';
 import { IUniswapQuote, useUniswapQuote } from '@/lib/data/use-uniswap-quote';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
@@ -56,7 +55,7 @@ export function TokenContent() {
   const { data: accountInfo } = useSelectedAccount();
   const { currentAccountType } = useAccountStore();
   const { signTypedDataAsync } = useSignTypedData();
-  const { trackEvent } = useEnhancedAnalytics();
+  const { trackEvent, trackTrade } = useEnhancedAnalytics();
 
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);

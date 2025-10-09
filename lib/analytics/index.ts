@@ -1,5 +1,4 @@
 // Analytics tracking utilities using @next/third-parties/google
-
 import { GA_ID } from '@/config/analytics-config';
 
 // Analytics events configuration
@@ -76,6 +75,7 @@ export const ANALYTICS_EVENTS = {
   TRANSACTION_FAILED: 'transaction_failed',
 
   CHECK_IN: 'check_in',
+  USER_INFO: 'user_info',
 } as const;
 
 // Analytics parameters interface
@@ -109,16 +109,18 @@ export const trackEvent = (
     const eventAction = ANALYTICS_EVENTS[eventName];
 
     // Helper function to safely serialize custom parameters
-    const serializeCustomParameters = (customParams?: Record<string, unknown>): Record<string, string | number | boolean> => {
+    const serializeCustomParameters = (
+      customParams?: Record<string, unknown>
+    ): Record<string, string | number | boolean> => {
       if (!customParams) return {};
-      
+
       const serialized: Record<string, string | number | boolean> = {};
-      
+
       for (const [key, value] of Object.entries(customParams)) {
         if (value === null || value === undefined) {
           continue; // Skip null/undefined values
         }
-        
+
         if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
           serialized[key] = value;
         } else if (typeof value === 'object') {
@@ -133,7 +135,7 @@ export const trackEvent = (
           serialized[key] = String(value);
         }
       }
-      
+
       return serialized;
     };
 
