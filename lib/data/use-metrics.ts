@@ -6,6 +6,7 @@ export interface IMetricsItem {
   data: {
     holders: number;
     sandboxAccounts: number;
+    activeUsers: number;
   };
 }
 

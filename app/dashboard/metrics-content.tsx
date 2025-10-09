@@ -218,7 +218,7 @@ export function MetricsContent() {
   const { data = [], isLoading, error } = useMetrics();
 
   // 控制第二个图表显示的开关
-  const showSecondChart = false;
+  const showSecondChart = true;
 
   const baseData = useMemo<IMetricsItem[]>(() => {
     return data || [];
@@ -240,10 +240,10 @@ export function MetricsContent() {
     }));
   }, [leftFiltered]);
 
-  const sandboxSeries = useMemo(() => {
+  const activeUsersSeries = useMemo(() => {
     return rightFiltered.map((d) => ({
       time: new Date(d.date).getTime(),
-      value: d.data.sandboxAccounts,
+      value: d.data.activeUsers,
     }));
   }, [rightFiltered]);
 
@@ -251,8 +251,8 @@ export function MetricsContent() {
     ? leftFiltered[leftFiltered.length - 1].data.holders
     : 0;
 
-  const sandboxLatest = rightFiltered.length
-    ? rightFiltered[rightFiltered.length - 1].data.sandboxAccounts
+  const activeUsersLatest = rightFiltered.length
+    ? rightFiltered[rightFiltered.length - 1].data.activeUsers
     : 0;
 
   return (
@@ -291,7 +291,7 @@ export function MetricsContent() {
                   Daily Active Users
                 </CardDescription>
                 <CardTitle className="text-[32px] font-medium leading-[140%] text-primary mt-[10px]">
-                  {formatNumber(sandboxLatest)}
+                  {formatNumber(activeUsersLatest)}
                 </CardTitle>
               </div>
             </CardHeader>
@@ -305,7 +305,7 @@ export function MetricsContent() {
                   {error.message}
                 </div>
               ) : (
-                <MetricsChart series={{ label: 'SandboxUsers', values: sandboxSeries }} />
+                <MetricsChart series={{ label: 'Active Users', values: activeUsersSeries }} />
               )}
             </CardContent>
           </Card>
