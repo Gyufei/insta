@@ -6,14 +6,14 @@ import * as Sentry from '@sentry/nextjs';
 
 // Use server-side environment variable for DSN for edge runtimes.
 const SENTRY_DSN =
-  process.env.SENTRY_DSN ||
+  process.env.NEXT_PUBLIC_SENTRY_DSN ||
   'https://d76f76cf9282d4721587388fba6c0840@o4508368229498880.ingest.de.sentry.io/4508368267378768';
 
 Sentry.init({
   dsn: SENTRY_DSN,
 
   // Disable Sentry reporting in local development
-  enabled: process.env.NODE_ENV === 'production' && !!SENTRY_DSN,
+  enabled: process.env.NODE_ENV === 'production',
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,
