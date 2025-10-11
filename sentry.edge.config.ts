@@ -4,8 +4,12 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 import * as Sentry from '@sentry/nextjs';
 
+const SENTRY_DSN =
+  process.env.NEXT_PUBLIC_SENTRY_DSN ||
+  'https://d76f76cf9282d4721587388fba6c0840@o4508368229498880.ingest.de.sentry.io/4508368267378768';
+
 Sentry.init({
-  dsn: 'https://d76f76cf9282d4721587388fba6c0840@o4508368229498880.ingest.de.sentry.io/4508368267378768',
+  dsn: SENTRY_DSN,
 
   // Disable Sentry reporting in local development
   enabled: process.env.NODE_ENV === 'production',
