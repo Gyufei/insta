@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 Not Found</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="https://cdn.tadle.com/icons/favicon-purple.ico" />
+    <style>
+      @font-face {
+        font-family: 'Aeonik';
+        src: url('https://cdn.tadle.com/fonts/Aeonik-Regular.ttf') format('truetype');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: 'Aeonik';
+        src: url('https://cdn.tadle.com/fonts/Aeonik-Medium.ttf') format('truetype');
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: 'Aeonik';
+        src: url('https://cdn.tadle.com/fonts/Aeonik-Bold.ttf') format('truetype');
+        font-weight: 600;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Aeonik', Arial, Helvetica, sans-serif;
+        background: #f5f6f9;
+        color: #131e40;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .container {
+        text-align: center;
+        max-width: 600px;
+        width: 100%;
+      }
+
+      .error-code {
+        font-size: 120px;
+        font-weight: 600;
+        color: #6e75f9;
+        line-height: 1;
+        margin-bottom: 24px;
+      }
+
+      h1 {
+        font-size: 32px;
+        font-weight: 600;
+        color: #131e40;
+        margin-bottom: 16px;
+      }
+
+      p {
+        font-size: 16px;
+        color: #a4adc6;
+        margin-bottom: 32px;
+        line-height: 1.6;
+      }
+
+      .button {
+        display: inline-block;
+        background: #6e75f9;
+        color: #ffffff;
+        padding: 12px 32px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 16px;
+        transition: background 0.2s ease;
+        border: none;
+        cursor: pointer;
+      }
+
+      .button:hover {
+        background: #5a62f7;
+      }
+
+      .button:active {
+        transform: translateY(1px);
+      }
+
+      @media (max-width: 640px) {
+        .error-code {
+          font-size: 80px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+
+        p {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="error-code">404</div>
+      <h1>Page Not Found</h1>
+      <p>The page you are looking for doesn't exist or has been moved.</p>
+      <a href="/" class="button">Back to Home</a>
+    </div>
+    <script>
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 3000);
+    </script>
+  </body>
+</html>

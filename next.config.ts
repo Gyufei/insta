@@ -41,6 +41,22 @@ const nextConfig: NextConfig = {
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
     return config;
   },
+  // 重定向常见路径到静态 404 页面，减少动态处理
+  async redirects() {
+    return [
+      // 批量重定向到静态页面，减少动态处理
+      {
+        source: '/wp-:path*',
+        destination: '/404.html', // 静态文件，不消耗 Edge Request
+        permanent: false,
+      },
+      {
+        source: '/:path*admin:path*',
+        destination: '/404.html',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default withSentryConfig(nextConfig, {
