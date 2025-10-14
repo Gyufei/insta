@@ -1,5 +1,7 @@
-import FingerprintJS, { GetResult } from '@fingerprintjs/fingerprintjs';
+// FingerprintJS is optional; we avoid static import to prevent build-time errors
+// and load it dynamically if available.
 import CryptoJS from 'crypto-js';
+// Pure device fingerprint mode: do not depend on network/IP
 
 // Obfuscated constants to hide the library usage
 const SIGNATURE_PREFIX = 'ds_';
@@ -47,13 +49,27 @@ interface CombinedFingerprintData {
   platform: string;
 }
 
+// Minimal runtime-only type compatible with FingerprintJS get() shape
+type FingerprintResult = {
+  visitorId: string;
+  confidence: { score: number };
+  components: Record<string, unknown>;
+};
+
+// Local runtime interface for optional FingerprintJS get() result
+interface FingerprintJSGetResult {
+  visitorId: string;
+  confidence?: { score?: number };
+  components?: Record<string, unknown>;
+}
+
 /**
  * Enhanced device signature generator with obfuscation
  * Generates a unique device fingerprint with additional security layers
  */
 export class DeviceSignatureGenerator {
   private static instance: DeviceSignatureGenerator;
-  private fpPromise: Promise<GetResult> | null = null;
+  private fpPromise: Promise<FingerprintResult> | null = null;
   private cachedSignature: string | null = null;
 
   private constructor() {}
@@ -71,10 +87,39 @@ export class DeviceSignatureGenerator {
   /**
    * Initialize the fingerprint library
    */
-  private async initializeFingerprinting(): Promise<GetResult> {
+  private async initializeFingerprinting(): Promise<FingerprintResult> {
     if (!this.fpPromise) {
-      const fp = await FingerprintJS.load();
-      this.fpPromise = fp.get();
+      this.fpPromise = (async () => {
+        // Try global FingerprintJS if present on window (optional)
+        try {
+          const fpGlobal = (window as unknown as {
+            FingerprintJS?: { load: () => Promise<{ get: () => Promise<FingerprintJSGetResult> }> };
+          }).FingerprintJS;
+          if (fpGlobal && typeof fpGlobal.load === 'function') {
+            const fp = await fpGlobal.load();
+            const res = await fp.get();
+            return {
+              visitorId: res.visitorId ?? '',
+              confidence: { score: Number(res.confidence?.score ?? 0) },
+              components: (res.components ?? {}) as Record<string, unknown>,
+            };
+          }
+        } catch {
+          // ignore and use fallback
+        }
+
+        // Fallback: generate a synthetic, cross-browser stable fingerprint
+        const base = {
+          platform: navigator.platform,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        };
+        const visitorId = CryptoJS.MD5(JSON.stringify(base)).toString();
+        return {
+          visitorId,
+          confidence: { score: 0.5 },
+          components: base as Record<string, unknown>,
+        };
+      })();
     }
     return this.fpPromise;
   }
@@ -333,7 +378,7 @@ export class DeviceSignatureGenerator {
       // Get additional browser characteristics
       const browserCharacteristics = this.getBrowserCharacteristics();
       
-      // Combine all data
+      // Combine all data (for debug only; no longer used for hashing)
       const combinedData: CombinedFingerprintData = {
         visitorId: result.visitorId,
         confidence: result.confidence.score,
@@ -344,19 +389,24 @@ export class DeviceSignatureGenerator {
         platform: navigator.platform,
       };
 
-      // Generate obfuscated signature
-      this.cachedSignature = this.obfuscateFingerprint(combinedData);
+      // IMPORTANT: Use cross-browser stable fields to generate the device signature
+      // Exclude browser-specific values like visitorId/components/userAgent/timestamp
+      // Pure device mode: no network/IP, no WebGL/vendor differences, no hardware counts
+      const stablePayload = {
+        platform: combinedData.platform,
+        timezone: combinedData.browserCharacteristics.locale.timezone,
+      };
+
+      // Generate obfuscated signature from stable payload
+      this.cachedSignature = this.obfuscateFingerprint(stablePayload);
       
       return this.cachedSignature;
     } catch (error) {
       console.warn('Error generating device signature:', error);
       // Fallback signature based on basic browser info
       const fallbackData = {
-        userAgent: navigator.userAgent,
         platform: navigator.platform,
-        language: navigator.language,
-        timestamp: Date.now(),
-        random: Math.random(),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
       return this.obfuscateFingerprint(fallbackData);
     }
