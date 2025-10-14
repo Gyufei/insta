@@ -1,7 +1,5 @@
-// FingerprintJS is optional; we avoid static import to prevent build-time errors
-// and load it dynamically if available.
+import FingerprintJS, { GetResult } from '@fingerprintjs/fingerprintjs';
 import CryptoJS from 'crypto-js';
-// Pure device fingerprint mode: do not depend on network/IP
 
 // Obfuscated constants to hide the library usage
 const SIGNATURE_PREFIX = 'ds_';
@@ -44,23 +42,8 @@ interface CombinedFingerprintData {
   confidence: number;
   components: Record<string, unknown>;
   browserCharacteristics: BrowserCharacteristics;
-  timestamp: number;
   userAgent: string;
   platform: string;
-}
-
-// Minimal runtime-only type compatible with FingerprintJS get() shape
-type FingerprintResult = {
-  visitorId: string;
-  confidence: { score: number };
-  components: Record<string, unknown>;
-};
-
-// Local runtime interface for optional FingerprintJS get() result
-interface FingerprintJSGetResult {
-  visitorId: string;
-  confidence?: { score?: number };
-  components?: Record<string, unknown>;
 }
 
 /**
@@ -69,7 +52,7 @@ interface FingerprintJSGetResult {
  */
 export class DeviceSignatureGenerator {
   private static instance: DeviceSignatureGenerator;
-  private fpPromise: Promise<FingerprintResult> | null = null;
+  private fpPromise: Promise<GetResult> | null = null;
   private cachedSignature: string | null = null;
 
   private constructor() {}
@@ -87,39 +70,10 @@ export class DeviceSignatureGenerator {
   /**
    * Initialize the fingerprint library
    */
-  private async initializeFingerprinting(): Promise<FingerprintResult> {
+  private async initializeFingerprinting(): Promise<GetResult> {
     if (!this.fpPromise) {
-      this.fpPromise = (async () => {
-        // Try global FingerprintJS if present on window (optional)
-        try {
-          const fpGlobal = (window as unknown as {
-            FingerprintJS?: { load: () => Promise<{ get: () => Promise<FingerprintJSGetResult> }> };
-          }).FingerprintJS;
-          if (fpGlobal && typeof fpGlobal.load === 'function') {
-            const fp = await fpGlobal.load();
-            const res = await fp.get();
-            return {
-              visitorId: res.visitorId ?? '',
-              confidence: { score: Number(res.confidence?.score ?? 0) },
-              components: (res.components ?? {}) as Record<string, unknown>,
-            };
-          }
-        } catch {
-          // ignore and use fallback
-        }
-
-        // Fallback: generate a synthetic, cross-browser stable fingerprint
-        const base = {
-          platform: navigator.platform,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        };
-        const visitorId = CryptoJS.MD5(JSON.stringify(base)).toString();
-        return {
-          visitorId,
-          confidence: { score: 0.5 },
-          components: base as Record<string, unknown>,
-        };
-      })();
+      const fp = await FingerprintJS.load();
+      this.fpPromise = fp.get();
     }
     return this.fpPromise;
   }
@@ -191,12 +145,11 @@ export class DeviceSignatureGenerator {
       characteristics.fonts = this.getAvailableFonts();
 
       // Plugin information
-      characteristics.plugins = Array.from(navigator.plugins).map(plugin => ({
+      characteristics.plugins = Array.from(navigator.plugins).map((plugin) => ({
         name: plugin.name,
         filename: plugin.filename,
         description: plugin.description,
       }));
-
     } catch (error) {
       console.warn('Error collecting browser characteristics:', error);
     }
@@ -238,7 +191,9 @@ export class DeviceSignatureGenerator {
   private getWebGLFingerprint(): Record<string, unknown> {
     try {
       const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl') as WebGLRenderingContext | null;
+      const gl =
+        canvas.getContext('webgl') ||
+        (canvas.getContext('experimental-webgl') as WebGLRenderingContext | null);
       if (!gl) return {};
 
       return {
@@ -258,7 +213,9 @@ export class DeviceSignatureGenerator {
    */
   private getAudioFingerprint(): string {
     try {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
       if (!AudioContextClass) return '';
 
       const audioContext = new AudioContextClass();
@@ -279,7 +236,7 @@ export class DeviceSignatureGenerator {
       oscillator.start(0);
 
       const fingerprint = analyser.frequencyBinCount.toString();
-      
+
       oscillator.stop();
       audioContext.close();
 
@@ -294,11 +251,27 @@ export class DeviceSignatureGenerator {
    */
   private getAvailableFonts(): string[] {
     const testFonts = [
-      'Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Verdana',
-      'Georgia', 'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS',
-      'Trebuchet MS', 'Arial Black', 'Impact', 'Lucida Console',
-      'Tahoma', 'Geneva', 'Lucida Sans Unicode', 'Franklin Gothic Medium',
-      'Arial Narrow', 'Brush Script MT', 'Lucida Sans Typewriter'
+      'Arial',
+      'Helvetica',
+      'Times New Roman',
+      'Courier New',
+      'Verdana',
+      'Georgia',
+      'Palatino',
+      'Garamond',
+      'Bookman',
+      'Comic Sans MS',
+      'Trebuchet MS',
+      'Arial Black',
+      'Impact',
+      'Lucida Console',
+      'Tahoma',
+      'Geneva',
+      'Lucida Sans Unicode',
+      'Franklin Gothic Medium',
+      'Arial Narrow',
+      'Brush Script MT',
+      'Lucida Sans Typewriter',
     ];
 
     const availableFonts: string[] = [];
@@ -312,15 +285,15 @@ export class DeviceSignatureGenerator {
 
     // Get baseline measurements
     const baselineWidths: Record<string, number> = {};
-    baseFonts.forEach(baseFont => {
+    baseFonts.forEach((baseFont) => {
       context.font = testSize + ' ' + baseFont;
       baselineWidths[baseFont] = context.measureText(testString).width;
     });
 
     // Test each font
-    testFonts.forEach(font => {
+    testFonts.forEach((font) => {
       let detected = false;
-      baseFonts.forEach(baseFont => {
+      baseFonts.forEach((baseFont) => {
         context.font = testSize + ' ' + font + ', ' + baseFont;
         const width = context.measureText(testString).width;
         if (width !== baselineWidths[baseFont]) {
@@ -342,7 +315,7 @@ export class DeviceSignatureGenerator {
     try {
       // Convert data to string
       const dataString = JSON.stringify(data);
-      
+
       // Apply multiple rounds of hashing with salt
       let hash = dataString;
       for (let i = 0; i < HASH_ROUNDS; i++) {
@@ -351,10 +324,10 @@ export class DeviceSignatureGenerator {
 
       // Add prefix and suffix to further obfuscate
       const obfuscatedHash = SIGNATURE_PREFIX + hash + SIGNATURE_SUFFIX;
-      
+
       // Apply additional transformation
       const finalHash = CryptoJS.MD5(obfuscatedHash + SALT_KEY).toString();
-      
+
       return finalHash;
     } catch (error) {
       console.warn('Error obfuscating fingerprint:', error);
@@ -367,46 +340,16 @@ export class DeviceSignatureGenerator {
    */
   public async generateDeviceSignature(): Promise<string> {
     try {
-      // Return cached signature if available
-      if (this.cachedSignature) {
-        return this.cachedSignature;
-      }
-
-      // Initialize fingerprinting
       const result = await this.initializeFingerprinting();
-      
-      // Get additional browser characteristics
-      const browserCharacteristics = this.getBrowserCharacteristics();
-      
-      // Combine all data (for debug only; no longer used for hashing)
-      const combinedData: CombinedFingerprintData = {
-        visitorId: result.visitorId,
-        confidence: result.confidence.score,
-        components: result.components,
-        browserCharacteristics,
-        timestamp: Date.now(),
-        userAgent: navigator.userAgent,
-        platform: navigator.platform,
-      };
-
-      // IMPORTANT: Use cross-browser stable fields to generate the device signature
-      // Exclude browser-specific values like visitorId/components/userAgent/timestamp
-      // Pure device mode: no network/IP, no WebGL/vendor differences, no hardware counts
-      const stablePayload = {
-        platform: combinedData.platform,
-        timezone: combinedData.browserCharacteristics.locale.timezone,
-      };
-
-      // Generate obfuscated signature from stable payload
-      this.cachedSignature = this.obfuscateFingerprint(stablePayload);
-      
-      return this.cachedSignature;
+      return result.visitorId;
     } catch (error) {
       console.warn('Error generating device signature:', error);
       // Fallback signature based on basic browser info
       const fallbackData = {
+        userAgent: navigator.userAgent,
         platform: navigator.platform,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        language: navigator.language,
+        random: Math.random(),
       };
       return this.obfuscateFingerprint(fallbackData);
     }
@@ -419,13 +362,12 @@ export class DeviceSignatureGenerator {
     try {
       const result = await this.initializeFingerprinting();
       const browserCharacteristics = this.getBrowserCharacteristics();
-      
+
       return {
         visitorId: result.visitorId,
         confidence: result.confidence.score,
         components: result.components,
         browserCharacteristics,
-        timestamp: Date.now(),
         userAgent: navigator.userAgent,
         platform: navigator.platform,
       };

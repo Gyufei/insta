@@ -1,58 +1,59 @@
+import CryptoJS from 'crypto-js';
+
+import { getCloudflareVisitorInfo } from './cloudflare-visitor';
 import { DeviceSignatureGenerator } from './device-signature';
 import { IPDetector } from './ip-detector';
-import { getCloudflareVisitorInfo } from './cloudflare-visitor';
-import CryptoJS from 'crypto-js';
 
 export interface UserIdentificationData {
   // Wallet information
   walletAddress?: string;
   walletType?: string;
-  
+
   // Browser fingerprint
   browserFingerprint: string;
-  
+
   // IP information
   vpnIP?: string;
   realIP?: string;
   webrtcIPs?: string[];
-  
+
   // Cloudflare information
   cloudflareVisitorId: string;
   cfConnectingIP?: string;
   cfCountry?: string;
   cfRay?: string;
-  
+
   // Browser information
   userAgent: string;
   language: string;
   timezone: string;
   screenResolution: string;
   platform: string;
-  
+
   // Session information
   sessionId: string;
   timestamp: number;
-  
+
   // Additional metadata
   referrer?: string;
   pageUrl?: string;
-  
+
   // Geolocation (if available)
   country?: string;
   region?: string;
   city?: string;
-  
+
   // Device information
   isMobile: boolean;
   isTablet: boolean;
   isDesktop: boolean;
-  
+
   // Network information
   connectionType?: string;
   isVPN?: boolean;
   isTor?: boolean;
   isProxy?: boolean;
-  
+
   // Performance metrics
   collectDuration?: number;
   errors?: string[];
@@ -112,11 +113,11 @@ export class UserIdentificationCollector {
    */
   private detectDeviceType(): { isMobile: boolean; isTablet: boolean; isDesktop: boolean } {
     const userAgent = navigator.userAgent.toLowerCase();
-    
+
     const isMobile = /android|webos|iphone|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
     const isTablet = /ipad|android(?!.*mobile)|tablet/i.test(userAgent);
     const isDesktop = !isMobile && !isTablet;
-    
+
     return { isMobile, isTablet, isDesktop };
   }
 
@@ -126,7 +127,7 @@ export class UserIdentificationCollector {
   private getBrowserInfo() {
     const screen = window.screen;
     const deviceType = this.detectDeviceType();
-    
+
     return {
       userAgent: navigator.userAgent,
       language: navigator.language,
@@ -145,8 +146,9 @@ export class UserIdentificationCollector {
   private getConnectionInfo(): { connectionType?: string } {
     try {
       // @ts-expect-error - navigator.connection is not in TypeScript types
-      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-      
+      const connection =
+        navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
       if (connection) {
         return {
           connectionType: connection.effectiveType || connection.type || 'unknown',
@@ -155,7 +157,7 @@ export class UserIdentificationCollector {
     } catch (error) {
       console.warn('Failed to get connection info:', error);
     }
-    
+
     return {};
   }
 
@@ -167,7 +169,7 @@ export class UserIdentificationCollector {
   ): Promise<UserIdentificationData> {
     const startTime = Date.now();
     const errors: string[] = [];
-    
+
     const {
       includeWallet = true,
       includeFingerprint = true,
@@ -199,7 +201,7 @@ export class UserIdentificationCollector {
       });
 
       const result = await Promise.race([dataPromise, timeoutPromise]);
-      
+
       // Calculate collection duration
       const collectDuration = Date.now() - startTime;
       result.collectDuration = collectDuration;
@@ -212,7 +214,6 @@ export class UserIdentificationCollector {
       }
 
       return result;
-
     } catch (error) {
       console.error('Failed to collect user identification:', error);
       errors.push(`Collection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -220,7 +221,7 @@ export class UserIdentificationCollector {
       // Return minimal fallback data
       const browserInfo = this.getBrowserInfo();
       const sessionId = this.generateSessionId();
-      
+
       return {
         sessionId,
         browserFingerprint: 'fallback_' + CryptoJS.MD5(JSON.stringify(browserInfo)).toString(),
@@ -244,7 +245,7 @@ export class UserIdentificationCollector {
     errors: string[];
   }): Promise<UserIdentificationData> {
     const { includeWallet, includeFingerprint, includeIP, includeCloudflare, errors } = options;
-    
+
     // Get basic browser information
     const browserInfo = this.getBrowserInfo();
     const connectionInfo = this.getConnectionInfo();
@@ -256,7 +257,8 @@ export class UserIdentificationCollector {
     // Browser fingerprint
     let fingerprintPromise: Promise<string> | null = null;
     if (includeFingerprint) {
-      fingerprintPromise = this.deviceSignatureGenerator.generateDeviceSignature()
+      fingerprintPromise = this.deviceSignatureGenerator
+        .generateDeviceSignature()
         .catch((error: Error) => {
           errors.push(`Fingerprint error: ${error.message}`);
           return 'fingerprint_error_' + CryptoJS.MD5(sessionId).toString();
@@ -267,32 +269,30 @@ export class UserIdentificationCollector {
     // IP detection
     let ipPromise: Promise<unknown> | null = null;
     if (includeIP) {
-      ipPromise = this.ipDetector.getComprehensiveIPInfo()
-        .catch((error: Error) => {
-          errors.push(`IP detection error: ${error.message}`);
-          return { 
-            publicIP: 'unknown', 
-            privateIPs: [], 
-            vpnDetection: { isVPN: false, confidence: 0, indicators: [] }, 
-            timestamp: Date.now() 
-          };
-        });
+      ipPromise = this.ipDetector.getComprehensiveIPInfo().catch((error: Error) => {
+        errors.push(`IP detection error: ${error.message}`);
+        return {
+          publicIP: 'unknown',
+          privateIPs: [],
+          vpnDetection: { isVPN: false, confidence: 0, indicators: [] },
+          timestamp: Date.now(),
+        };
+      });
       promises.push(ipPromise);
     }
 
     // Cloudflare information
     let cloudflarePromise: Promise<unknown> | null = null;
     if (includeCloudflare) {
-      cloudflarePromise = getCloudflareVisitorInfo()
-        .catch((error: Error) => {
-          errors.push(`Cloudflare error: ${error.message}`);
-          return {
-            visitorId: 'cf_error_' + CryptoJS.MD5(sessionId).toString(),
-            traceInfo: {},
-            headers: {},
-            timestamp: Date.now(),
-          };
-        });
+      cloudflarePromise = getCloudflareVisitorInfo().catch((error: Error) => {
+        errors.push(`Cloudflare error: ${error.message}`);
+        return {
+          visitorId: 'cf_error_' + CryptoJS.MD5(sessionId).toString(),
+          traceInfo: {},
+          headers: {},
+          timestamp: Date.now(),
+        };
+      });
       promises.push(cloudflarePromise);
     }
 
@@ -305,14 +305,14 @@ export class UserIdentificationCollector {
     const cloudflareInfo = cloudflarePromise ? await cloudflarePromise : null;
 
     // Type-safe IP info extraction
-    const ipData = ipInfo as { 
-      publicIP?: string; 
-      privateIPs?: string[]; 
+    const ipData = ipInfo as {
+      publicIP?: string;
+      privateIPs?: string[];
       realIP?: string;
-      vpnDetection?: { 
-        isVPN?: boolean; 
-        vpnIP?: string; 
-        realIP?: string; 
+      vpnDetection?: {
+        isVPN?: boolean;
+        vpnIP?: string;
+        realIP?: string;
       };
       geolocation?: {
         country?: string;
@@ -331,10 +331,12 @@ export class UserIdentificationCollector {
     } | null;
 
     // Wallet information (will be set externally)
-    const walletInfo = includeWallet ? {
-      walletAddress: undefined,
-      walletType: undefined,
-    } : {};
+    const walletInfo = includeWallet
+      ? {
+          walletAddress: undefined,
+          walletType: undefined,
+        }
+      : {};
 
     // Prepare final data
     const identificationData: UserIdentificationData = {
@@ -384,7 +386,7 @@ export class UserIdentificationCollector {
     try {
       // Get additional Cloudflare headers from the existing endpoint
       const cfHeaders = await this.getCloudflareHeaders();
-      
+
       // Prepare the complete identification record
       const identificationRecord = {
         ...data,
@@ -399,16 +401,16 @@ export class UserIdentificationCollector {
 
       // Store in localStorage for persistence
       this.saveToLocalStorage(identificationRecord);
-      
+
       // Store in sessionStorage for current session
       this.saveToSessionStorage(identificationRecord);
-      
+
       // Log the collected data (replaces server-side logging)
       console.log('User identification data collected and stored locally:', {
         sessionId: identificationRecord.sessionId,
-        walletAddress: identificationRecord.walletAddress ? 
-          `${identificationRecord.walletAddress.substring(0, 6)}...${identificationRecord.walletAddress.substring(identificationRecord.walletAddress.length - 4)}` : 
-          'none',
+        walletAddress: identificationRecord.walletAddress
+          ? `${identificationRecord.walletAddress.substring(0, 6)}...${identificationRecord.walletAddress.substring(identificationRecord.walletAddress.length - 4)}`
+          : 'none',
         browserFingerprint: identificationRecord.browserFingerprint.substring(0, 16) + '...',
         cloudflareVisitorId: identificationRecord.cloudflareVisitorId.substring(0, 16) + '...',
         vpnIP: identificationRecord.vpnIP,
@@ -458,7 +460,7 @@ export class UserIdentificationCollector {
     try {
       const storageKey = 'user_identification_data';
       const existingData = this.getFromLocalStorage();
-      
+
       // Keep a history of identification records (max 10)
       const history = existingData?.history || [];
       history.unshift(data);
@@ -526,7 +528,10 @@ export class UserIdentificationCollector {
    * Get user identification data by session ID or wallet address
    * Replaces the GET API endpoint functionality
    */
-  public getUserIdentificationData(sessionId?: string, walletAddress?: string): {
+  public getUserIdentificationData(
+    sessionId?: string,
+    walletAddress?: string
+  ): {
     success: boolean;
     data?: UserIdentificationData;
     message: string;
@@ -564,9 +569,10 @@ export class UserIdentificationCollector {
         }
 
         // Check history
-        const historyMatch = localData.history.find(item => 
-          (sessionId && item.sessionId === sessionId) ||
-          (walletAddress && item.walletAddress === walletAddress)
+        const historyMatch = localData.history.find(
+          (item) =>
+            (sessionId && item.sessionId === sessionId) ||
+            (walletAddress && item.walletAddress === walletAddress)
         );
 
         if (historyMatch) {
