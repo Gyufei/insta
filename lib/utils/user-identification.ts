@@ -146,8 +146,7 @@ export class UserIdentificationCollector {
   private getConnectionInfo(): { connectionType?: string } {
     try {
       // @ts-expect-error - navigator.connection is not in TypeScript types
-      const connection =
-        navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
       if (connection) {
         return {
