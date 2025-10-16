@@ -1,7 +1,8 @@
 import { withSentryConfig } from '@sentry/nextjs';
-import { generateVersion } from './scripts/generate-version.js';
 
 import type { NextConfig } from 'next';
+
+import { generateVersion } from './scripts/generate-version.js';
 
 const nextConfig: NextConfig = {
   images: {
@@ -34,6 +35,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'cdn.tadle.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'app.reve.com',
       },
     ],
   },
