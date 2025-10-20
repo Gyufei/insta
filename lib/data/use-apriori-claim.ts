@@ -29,6 +29,7 @@ export function useAprioriClaim() {
       refreshQueryKey: [
         ['apriori', 'balance'],
         ['account', 'balance'],
+        ['apriori', 'claim'],
       ],
     }
   )();

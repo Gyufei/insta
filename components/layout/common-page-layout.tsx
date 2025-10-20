@@ -8,11 +8,13 @@ export function CommonPageLayout({
   iconSrc,
   children,
   pageConClx,
+  titleClassName,
 }: {
   title: string;
   iconSrc: string | null;
   children: React.ReactNode;
   pageConClx?: string;
+  titleClassName?: string;
 }) {
   return (
     <>
@@ -26,7 +28,7 @@ export function CommonPageLayout({
         >
           <div className="w-full h-full rounded-t-xl bg-white overflow-x-auto">
             <div className="md:min-w-[700px] h-full">
-              <PageTitle title={title} src={iconSrc} />
+              <PageTitle title={title} src={iconSrc} titleClassName={titleClassName} />
               <div className="flex w-full flex-col rounded-t-md bg-white flex-1 pb-4">
                 {children}
               </div>

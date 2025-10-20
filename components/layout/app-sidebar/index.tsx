@@ -181,10 +181,10 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
       ),
     },
     {
-      href: getCurrentChainNameHref('/apriori'),
-      label: 'Apriori',
+      href: getCurrentChainNameHref('/staking'),
+      label: 'Staking',
       icon: (
-        <Image src="/icons/apriori.svg" alt="aprior" width={12} height={12} className="h-3 w-3" />
+        <Image src="/icons/staking.svg" alt="staking" width={12} height={12} className="h-3 w-3" />
       ),
     },
     {
@@ -194,19 +194,6 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
         <Image
           src="/icons/nad-fun.svg"
           alt="nad-fun"
-          width={12}
-          height={12}
-          className="h-3 w-3 rounded-full"
-        />
-      ),
-    },
-    {
-      href: getCurrentChainNameHref('/magma'),
-      label: 'Magma',
-      icon: (
-        <Image
-          src="/icons/magma.jpg"
-          alt="magma"
           width={12}
           height={12}
           className="h-3 w-3 rounded-full"

@@ -8,8 +8,8 @@ export function useSetMax(
   const [isMax, setIsMax] = useState(false);
   const [prevValue, setPrevValue] = useState('');
 
-  const handleSetMax = (checked: boolean) => {
-    setIsMax(checked);
+  const handleSetMax = (checked?: boolean) => {
+    setIsMax(!!checked);
     if (checked) {
       setPrevValue(inputValue);
       forInputChange(maxValue);
