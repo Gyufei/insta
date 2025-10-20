@@ -87,7 +87,7 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
       </div>
 
       {/* Floating Conversion Arrow */}
-      <div className="absolute left-1/2 transform -translate-x-1/2 z-10" style={{ top: '82px' }}>
+      <div className="absolute left-1/2 transform -translate-x-1/2 z-10" style={{ top: '102px' }}>
         <div className="w-10 h-10 bg-white border border-[#E5E5E5] rounded-xl flex items-center justify-center shadow-sm">
           <svg width="16" height="32" viewBox="0 0 16 16" fill="none">
             <path

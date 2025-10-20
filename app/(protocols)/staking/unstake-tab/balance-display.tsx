@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import { APR_MONAD, MONAD } from '@/config/tokens';
+import { MONAD } from '@/config/tokens';
 
 import { ActionButton } from '@/components/new/action-button';
 import { TokenInput } from '@/components/new/token-input';
@@ -9,6 +9,7 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import { Separator } from '@/components/ui/separator';
 
 import { useAprioriWithdraw } from '@/lib/data/use-apriori-withdraw';
+import { useMagmaWithdraw } from '@/lib/data/use-magma-withdraw';
 import { formatNumber } from '@/lib/utils/number';
 import { parseBig } from '@/lib/utils/number';
 
@@ -26,10 +27,18 @@ interface BalanceDisplayProps {
  */
 export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps) {
   const monToken = MONAD;
-  const aprMonToken = APR_MONAD;
   const project = getStakingProject(selectedProject);
 
-  const { mutate: withdraw, isPending } = useAprioriWithdraw();
+  // 根据项目类型使用不同的提款 hook
+  const aprioriWithdraw = useAprioriWithdraw();
+  const magmaWithdraw = useMagmaWithdraw();
+
+  const withdrawHooks = {
+    apriori: aprioriWithdraw,
+    magma: magmaWithdraw,
+  };
+
+  const { mutate: withdraw, isPending } = withdrawHooks[selectedProject];
 
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
 
@@ -38,7 +47,7 @@ export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps
 
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
-    const amount = parseBig(inputValue, aprMonToken?.decimals);
+    const amount = parseBig(inputValue, project.token.decimals);
     withdraw(amount.toString());
   };
 

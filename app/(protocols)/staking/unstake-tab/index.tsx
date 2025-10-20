@@ -40,7 +40,7 @@ export function UnstakeTab({ selectedProject }: UnstakeTabProps) {
       <BalanceDisplay selectedProject={selectedProject} balance={balance} />
 
       {/* Claim and Unstake Sections */}
-      <ClaimUnstakeSections />
+      {selectedProject === 'apriori' && <ClaimUnstakeSections />}
     </div>
   );
 }
