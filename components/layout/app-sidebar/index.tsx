@@ -188,6 +188,19 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
       ),
     },
     {
+      href: getCurrentChainNameHref('/launch-token'),
+      label: 'Launch Token',
+      icon: (
+        <Image
+          src="/icons/launch-token.svg"
+          alt="launch-token"
+          width={12}
+          height={12}
+          className="h-3 w-3"
+        />
+      ),
+    },
+    {
       href: getCurrentChainNameHref('/nad-fun'),
       label: 'Nad.Fun',
       icon: (
