@@ -259,7 +259,7 @@ export function ClaimUnstakeSections() {
               })}
             </div>
           ) : (
-            <div className="text-center py-4 text-gray-400">No withdrawals available</div>
+            <div className="text-center py-4 text-gray-400">No requests found.</div>
           )}
         </TabsContent>
 
@@ -332,7 +332,7 @@ export function ClaimUnstakeSections() {
               })}
             </div>
           ) : (
-            <div className="text-center py-4 text-gray-400">No requests found.</div>
+            <div className="text-center py-4 text-gray-400">No pending requests found.</div>
           )}
         </TabsContent>
       </Tabs>
