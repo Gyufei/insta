@@ -56,6 +56,7 @@ type MenuItem = {
   label: string;
   icon: React.ReactNode;
   hoverIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 };
 
 type MenuGroup = {
@@ -185,6 +186,15 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
       label: 'Staking',
       icon: (
         <Image src="/icons/staking.svg" alt="staking" width={12} height={12} className="h-3 w-3" />
+      ),
+      rightIcon: (
+        <Image
+          src="/icons/staking-items-icon.svg"
+          alt="staking-items"
+          width={32}
+          height={16}
+          className="h-4 w-8"
+        />
       ),
     },
     {
@@ -332,6 +342,7 @@ const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean })
       />
       {isActive || isHover ? item.hoverIcon || item.icon : item.icon}
       <span className="ml-2 text-xs font-medium">{item.label}</span>
+      {item.rightIcon && <div className="ml-auto">{item.rightIcon}</div>}
     </Link>
   );
 };
@@ -460,6 +471,7 @@ const CollapsedMenuGroup = ({
               <Link href={item.href} className="flex items-center">
                 {groupIsActive ? item.hoverIcon || item.icon : item.icon}
                 <span className="ml-2">{item.label}</span>
+                {item.rightIcon && <div className="ml-auto">{item.rightIcon}</div>}
               </Link>
             </DropdownMenuItem>
           ))}

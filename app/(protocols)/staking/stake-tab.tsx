@@ -26,7 +26,7 @@ interface StakeTabProps {
 export function StakeTab({ selectedProject }: StakeTabProps) {
   const monToken = MONAD;
   const { mutate: deposit, isPending } = useAprioriDeposit();
-  const { balance: dsaBalance } = useDSAMonadNativeBalance();
+  const { balance: dsaBalance, isPending: isDsaBalanceLoading } = useDSAMonadNativeBalance();
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(dsaBalance);
 
   const aprioriBalanceResult = useAprioriBalance();
@@ -68,9 +68,10 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
             <Image src="/icons/mon.svg" alt="MON" width={20} height={20} />
             <span className="font-medium text-base text-black">MON</span>
           </div>
-          <div className="text-sm text-[#999999]">
-            Balance: {formatNumber(dsaBalance)}{' '}
-            <span className="text-[#6E75F9] cursor-pointer" onClick={() => handleSetMax(true)}>
+          <div className="text-sm text-[#999999] flex items-center justify-center">
+            Balance:{' '}
+            <WithLoading isLoading={isDsaBalanceLoading}>{`${formatNumber(dsaBalance)}`}</WithLoading>
+            <span className="text-[#6E75F9] cursor-pointer ml-2" onClick={() => handleSetMax(true)}>
               Max
             </span>
           </div>
@@ -109,7 +110,7 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
             <Image src={project.token.logo} alt={project.token.symbol} width={24} height={24} />
             <span className="font-semibold text-lg">{project.token.symbol}</span>
           </div>
-          <div className="text-sm text-[#999999]">
+          <div className="text-sm text-[#999999] flex items-center justify-center">
             Balance: <WithLoading isLoading={isLoading}>{`${formatNumber(balance)}`}</WithLoading>
           </div>
         </div>

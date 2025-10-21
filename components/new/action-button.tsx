@@ -46,7 +46,7 @@ export function ActionButton({
   ...rest
 }: ActionButtonProps) {
   const { address } = useAccount();
-  const { data: accountInfo } = useSelectedAccount();
+  const { data: accountInfo, isLoading: isAccountLoading } = useSelectedAccount();
   const { currentAccountType } = useAccountStore();
 
   const [internalDisabled, setInternalDisabled] = useState(disabled);
@@ -85,7 +85,8 @@ export function ActionButton({
       return;
     }
 
-    if (checkFlag.accountInfo && !accountInfo) {
+    // Only show account not created error if not loading and accountInfo is null
+    if (checkFlag.accountInfo && !isAccountLoading && !accountInfo) {
       setInternalDisabled(true);
       setInternalErrorData({
         showError: true,
@@ -99,7 +100,7 @@ export function ActionButton({
       showError: false,
       errorMessage: '',
     });
-  }, [checkFlag.address, checkFlag.accountInfo, address, accountInfo]);
+  }, [checkFlag.address, checkFlag.accountInfo, address, accountInfo, isAccountLoading]);
 
   function handleClick() {
     if (isDisabled || isPending) return;
