@@ -18,9 +18,9 @@ import { useRouter } from 'next/navigation';
 
 import { MonUSD } from '@/config/tokens';
 
-import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useAccountStore } from '@/lib/state/account';
 import { formatNumber } from '@/lib/utils/number';
 
@@ -301,7 +301,7 @@ export default function Portfolio() {
                     />
                     <div className="min-w-0">
                       <Link
-                        href={`/market/${market.market_id}?chain=monad`}
+                        href={`/odds/market/${market.market_id}?chain=monad`}
                         className="font-medium mb-1 hover:text-pro-blue block truncate"
                       >
                         {market.title}

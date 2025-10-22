@@ -32,7 +32,7 @@ createAppKit({
   metadata: metadata,
   features: {
     analytics: true, // Optional - defaults to your Cloud configuration
-    socials: false,
+    socials: ['x', 'google'],
     swaps: false,
     onramp: false,
     email: false,
