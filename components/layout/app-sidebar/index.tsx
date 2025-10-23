@@ -80,7 +80,7 @@ const WINDOW_BREAKPOINTS = {
   DESKTOP: 1440,
 } as const;
 
-const FALLBACK_APP_VERSION = 'v3.2.0';
+const FALLBACK_APP_VERSION = '3.2.0';
 
 // Global state
 let previousPathname = '';
