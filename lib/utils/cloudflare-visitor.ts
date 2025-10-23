@@ -24,6 +24,11 @@ export class CloudflareVisitorDetector {
   private cachedVisitorInfo: CloudflareVisitorInfo | null = null;
   private cacheExpiry: number = 0;
   private readonly CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+  
+  // Add request-level caching for CF headers to prevent duplicate API calls
+  private cachedHeaders: Record<string, string> | null = null;
+  private headersCacheExpiry: number = 0;
+  private readonly HEADERS_CACHE_DURATION = 30 * 1000; // 30 seconds for headers cache
 
   private constructor() {}
 
@@ -38,9 +43,14 @@ export class CloudflareVisitorDetector {
   }
 
   /**
-   * Get Cloudflare headers from API
+   * Get Cloudflare headers from API with short-term caching to prevent duplicate requests
    */
   private async getCFHeaders(): Promise<Record<string, string>> {
+    // Return cached headers if still valid (30 seconds cache)
+    if (this.cachedHeaders && Date.now() < this.headersCacheExpiry) {
+      return this.cachedHeaders;
+    }
+
     try {
       const response = await fetch('/api/cf-headers', {
         method: 'GET',
@@ -52,7 +62,13 @@ export class CloudflareVisitorDetector {
 
       if (response.ok) {
         const data = await response.json();
-        return data.headers || {};
+        const headers = data.headers || {};
+        
+        // Cache the headers for 30 seconds to prevent duplicate requests
+        this.cachedHeaders = headers;
+        this.headersCacheExpiry = Date.now() + this.HEADERS_CACHE_DURATION;
+        
+        return headers;
       }
     } catch (error) {
       console.warn('Failed to get Cloudflare headers:', error);
@@ -183,11 +199,13 @@ export class CloudflareVisitorDetector {
   }
 
   /**
-   * Clear cached visitor information
+   * Clear cached visitor information and headers cache
    */
   public clearCache(): void {
     this.cachedVisitorInfo = null;
     this.cacheExpiry = 0;
+    this.cachedHeaders = null;
+    this.headersCacheExpiry = 0;
   }
 }
 
