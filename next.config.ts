@@ -57,6 +57,22 @@ const nextConfig: NextConfig = {
 
     return config;
   },
+  // Redirect common paths to static 404 page to reduce dynamic processing
+  async redirects() {
+    return [
+      // Batch redirect to static page to reduce dynamic processing
+      {
+        source: '/wp-:path*',
+        destination: '/404.html', // Static file, does not consume Edge Request
+        permanent: false,
+      },
+      {
+        source: '/:path*admin:path*',
+        destination: '/404.html',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default withSentryConfig(nextConfig, {
