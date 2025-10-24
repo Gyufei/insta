@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 export default function StakingPage() {
   return (
-    <CommonPageLayout title="Staking" iconSrc={null} titleClassName="md:pb-6">
+    <CommonPageLayout title="Staking" iconSrc={null} titleClassName="pb-5 md:pb-6">
       <StakingContent />
     </CommonPageLayout>
   );

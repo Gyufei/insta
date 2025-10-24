@@ -1,9 +1,10 @@
 'use client';
 
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
-import { MONAD } from '@/config/tokens';
+import { type IToken, MONAD } from '@/config/tokens';
 
+import { TokenSelectorDropdown } from '@/components/common/token-selector-dropdown';
 import { WithLoading } from '@/components/common/with-loading';
 import { ActionButton } from '@/components/new/action-button';
 import { TokenInput } from '@/components/new/token-input';
@@ -24,7 +25,22 @@ interface StakeTabProps {
 }
 
 export function StakeTab({ selectedProject }: StakeTabProps) {
-  const monToken = MONAD;
+  // 根据项目配置可选择的代币
+  const availableTokens: IToken[] = [MONAD];
+  const [selectedToken, setSelectedToken] = useState<IToken>(MONAD);
+
+  // 动态获取项目配置
+  const project = getStakingProject(selectedProject);
+
+  // 输出代币选择状态 - 根据项目确定可用的输出代币
+  const availableOutputTokens: IToken[] = [project.token];
+  const [selectedOutputToken, setSelectedOutputToken] = useState<IToken>(project.token);
+
+  // 当项目切换时，更新输出代币选择
+  useEffect(() => {
+    setSelectedOutputToken(project.token);
+  }, [selectedProject, project.token]);
+
   const { mutate: deposit, isPending } = useAprioriDeposit();
   const { balance: dsaBalance, isPending: isDsaBalanceLoading } = useDSAMonadNativeBalance();
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(dsaBalance);
@@ -32,9 +48,6 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
   const aprioriBalanceResult = useAprioriBalance();
   const magmaBalanceResult = useMagmaBalance();
   const { handleSetMax, handleInput } = useSetMax(inputValue, dsaBalance, handleInputChange);
-
-  // 动态获取项目配置
-  const project = getStakingProject(selectedProject);
 
   // 根据选择的项目使用对应的数据
   const balanceResults = {
@@ -50,7 +63,7 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
 
   const handleDeposit = () => {
     if (!inputValue || btnDisabled || isPending) return;
-    const amount = parseBig(inputValue, monToken?.decimals);
+    const amount = parseBig(inputValue, selectedToken?.decimals);
     deposit(amount.toString(), {
       onSuccess: () => {
         // handleBack();
@@ -64,13 +77,16 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
       <div className="bg-white border border-[#E5E5E5] rounded-lg p-4 mb-4">
         {/* Token Selector */}
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 cursor-pointer">
-            <Image src="/icons/mon.svg" alt="MON" width={20} height={20} />
-            <span className="font-medium text-base text-black">MON</span>
-          </div>
+          <TokenSelectorDropdown
+            tokens={availableTokens}
+            selectedToken={selectedToken}
+            onTokenChange={setSelectedToken}
+          />
           <div className="text-sm text-[#999999] flex items-center justify-center">
             Balance:{' '}
-            <WithLoading isLoading={isDsaBalanceLoading}>{`${formatNumber(dsaBalance)}`}</WithLoading>
+            <WithLoading
+              isLoading={isDsaBalanceLoading}
+            >{`${formatNumber(dsaBalance)}`}</WithLoading>
             <span className="text-[#6E75F9] cursor-pointer ml-2" onClick={() => handleSetMax(true)}>
               Max
             </span>
@@ -106,17 +122,18 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
       <div className="bg-white border border-[#E5E5E5] rounded-lg p-4">
         {/* Token Display */}
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <Image src={project.token.logo} alt={project.token.symbol} width={24} height={24} />
-            <span className="font-semibold text-lg">{project.token.symbol}</span>
-          </div>
+          <TokenSelectorDropdown
+            tokens={availableOutputTokens}
+            selectedToken={selectedOutputToken}
+            onTokenChange={setSelectedOutputToken}
+          />
           <div className="text-sm text-[#999999] flex items-center justify-center">
             Balance: <WithLoading isLoading={isLoading}>{`${formatNumber(balance)}`}</WithLoading>
           </div>
         </div>
 
         {/* Amount Display */}
-        <div className="text-2xl font-semibold text-black mb-1">{formatNumber(receiveAmount)}</div>
+        <div className="text-[32px] font-medium text-black mb-1">{formatNumber(receiveAmount)}</div>
       </div>
       <ActionButton
         disabled={btnDisabled}

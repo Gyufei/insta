@@ -1,6 +1,8 @@
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
-import { MONAD } from '@/config/tokens';
+import { MONAD, type IToken } from '@/config/tokens';
+
+import { TokenSelectorDropdown } from '@/components/common/token-selector-dropdown';
 
 import { ActionButton } from '@/components/new/action-button';
 import { TokenInput } from '@/components/new/token-input';
@@ -28,6 +30,15 @@ interface BalanceDisplayProps {
 export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps) {
   const monToken = MONAD;
   const project = getStakingProject(selectedProject);
+  
+  // 动态获取可用的代币选项 - 根据项目确定
+  const availableTokens: IToken[] = [project.token];
+  const [selectedToken, setSelectedToken] = useState<IToken>(project.token);
+  
+  // 当项目切换时，更新选中的代币
+  useEffect(() => {
+    setSelectedToken(project.token);
+  }, [selectedProject, project.token]);
 
   // 根据项目类型使用不同的提款 hook
   const aprioriWithdraw = useAprioriWithdraw();
@@ -47,7 +58,7 @@ export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps
 
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
-    const amount = parseBig(inputValue, project.token.decimals);
+    const amount = parseBig(inputValue, selectedToken.decimals);
     withdraw(amount.toString());
   };
 
@@ -55,10 +66,11 @@ export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps
     <div className="rounded-xl border border-[#EBEBEB] bg-white p-6 shadow-sm">
       {/* Token Header with Dropdown */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2">
-          <Image src={project.token.logo} alt={project.token.symbol} width={24} height={24} />
-          <span className="font-semibold text-lg">{project.token.symbol}</span>
-        </div>
+        <TokenSelectorDropdown
+          tokens={availableTokens}
+          selectedToken={selectedToken}
+          onTokenChange={setSelectedToken}
+        />
         <div className="text-sm text-[#999999]">
           Balance: {formatNumber(balance)}{' '}
           <span className="text-[#6E75F9] cursor-pointer" onClick={() => handleSetMax(true)}>
@@ -72,7 +84,7 @@ export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps
         onInputChange={handleInput}
         placeholder="Amount to withdraw"
       />
-      <Separator className="mt-3 mb-5" />
+      <Separator className="mt-6 mb-5" />
       <WithdrawEstReceive receiveToken={monToken} receiveAmount={receiveAmount} />
       <ActionButton
         disabled={btnDisabled}

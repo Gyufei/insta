@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 
-import Image from 'next/image';
 
+
+import { ProjectSelector } from '@/components/common/project-selector';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 
 import { cn } from '@/lib/utils';
@@ -17,28 +18,14 @@ export function StakingContent() {
   const [selectedProject, setSelectedProject] = useState<StakingProjectId>('apriori');
 
   return (
-    <div className="w-full pl-4 md:pl-12">
+    <div className="w-full px-4 md:pl-12 md:pr-0 flex justify-center md:justify-start">
       <div className="w-full max-w-md">
-        <div className="flex gap-2 p-[4px] mb-12 w-fit bg-[#F5F6F9] rounded-xl">
-          {STAKING_PROJECT_IDS.map((projectId) => {
-            const projectConfig = getStakingProject(projectId);
-            return (
-              <button
-                key={projectId}
-                onClick={() => setSelectedProject(projectId)}
-                className={cn(
-                  'flex items-center gap-2 rounded-xl px-4 py-2 transition-all duration-200',
-                  selectedProject === projectId
-                    ? 'bg-[#FFFFFF] shadow-sm'
-                    : 'bg-[#F5F5F5] text-[#A5ADC6] hover:bg-[#EBEBEB]'
-                )}
-              >
-                <Image src={projectConfig.icon} alt={projectConfig.name} width={20} height={20} />
-                <span className="text-sm font-medium">{projectConfig.name}</span>
-              </button>
-            );
-          })}
-        </div>
+        <ProjectSelector
+          projectIds={STAKING_PROJECT_IDS}
+          getProject={(id: string) => getStakingProject(id as StakingProjectId)}
+          selectedProject={selectedProject}
+          onProjectSelect={(projectId: string) => setSelectedProject(projectId as StakingProjectId)}
+        />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Tab Navigation */}

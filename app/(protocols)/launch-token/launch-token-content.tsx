@@ -2,11 +2,8 @@
 
 import { useState } from 'react';
 
-import Image from 'next/image';
-
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-
-import { cn } from '@/lib/utils';
+import { ProjectSelector } from '@/components/common/project-selector';
 
 import {
   LAUNCH_TOKEN_PROJECT_IDS,
@@ -38,29 +35,15 @@ export function LaunchTokenContent() {
   };
 
   return (
-    <div className="w-full pl-4 md:pl-12">
+    <div className="w-full px-4 md:pl-12 md:pr-0 flex justify-center md:justify-start">
       <div className="w-full max-w-4xl">
         {/* Module Selection Tabs */}
-        <div className="flex gap-2 p-[4px] mb-12 w-fit bg-[#F5F6F9] rounded-xl">
-          {LAUNCH_TOKEN_PROJECT_IDS.map((projectId) => {
-            const projectConfig = getLaunchTokenProject(projectId);
-            return (
-              <button
-                key={projectId}
-                onClick={() => setSelectedProject(projectId)}
-                className={cn(
-                  'flex items-center gap-2 rounded-xl px-4 py-2 transition-all duration-200',
-                  selectedProject === projectId
-                    ? 'bg-[#FFFFFF] shadow-sm'
-                    : 'bg-[#F5F5F5] text-[#A5ADC6] hover:bg-[#EBEBEB]'
-                )}
-              >
-                <Image src={projectConfig.icon} alt={projectConfig.name} width={20} height={20} />
-                <span className="text-sm font-medium">{projectConfig.name}</span>
-              </button>
-            );
-          })}
-        </div>
+        <ProjectSelector
+          projectIds={LAUNCH_TOKEN_PROJECT_IDS}
+          getProject={(id) => getLaunchTokenProject(id as LaunchTokenProjectId)}
+          selectedProject={selectedProject}
+          onProjectSelect={(id) => setSelectedProject(id as LaunchTokenProjectId)}
+        />
 
         {/* Module Content */}
         <Tabs

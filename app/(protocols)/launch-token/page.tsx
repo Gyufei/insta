@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 export default function UniswapPage() {
   return (
-    <CommonPageLayout title="Launch Token" iconSrc={null} titleClassName="md:pb-6">
+    <CommonPageLayout title="Launch Token" iconSrc={null} titleClassName="pb-5 md:pb-6">
       <LaunchTokenContent />
     </CommonPageLayout>
   );

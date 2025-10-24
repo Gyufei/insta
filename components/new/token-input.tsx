@@ -18,7 +18,7 @@ export function TokenInput({
       <div className="relative flex">
         <NumberInput
           placeholder={placeholder}
-          className="w-full pr-2 pl-0 bg-transparent border-0 shadow-none focus:border-0 focus:ring-0 focus-visible:ring-0 text-2xl font-semibold placeholder:text-gray-400"
+          className="w-full pr-2 pl-0 bg-transparent border-0 shadow-none focus:border-0 focus:ring-0 focus-visible:ring-0 !text-[32px] font-medium placeholder:text-gray-400"
           value={inputValue}
           onChange={(v) => onInputChange(v)}
         />

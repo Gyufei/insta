@@ -164,7 +164,7 @@ export function ClaimUnstakeSections() {
         </div>
         <div className="text-sm text-[#999999] flex items-center justify-center">
           <span className="text-gray-500">Available to claim</span>
-          <span className="text-[#6E75F9] ml-3">{availableToClaim} MON</span>
+          <span className="text-[#6E75F9] ml-2">{availableToClaim} MON</span>
         </div>
       </div>
       <Separator className="mt-3 mb-5" />
@@ -220,11 +220,8 @@ export function ClaimUnstakeSections() {
                     <div className="text-sm font-medium">
                       {formatNumber(parseFloat(formatBig(claim.token_amount)))} MON
                     </div>
-                    <div className="text-xs text-gray-500">
-                      Request ID: {claim.request_id.slice(0, 8)}...
-                    </div>
                   </div>
-                  <span className="text-xs px-2 py-1 rounded bg-green-50 text-green-600">
+                  <span className="text-xs px-2 py-1 rounded-[8px] bg-[#6E75F9] text-white">
                     Ready To Claim
                   </span>
                 </div>
@@ -250,7 +247,7 @@ export function ClaimUnstakeSections() {
                       <p className="text-xs text-gray-500 ml-7">
                         Available in ~{remainingMinutes} minutes
                       </p>
-                      <span className="text-xs px-2 py-1 rounded bg-gray-50 text-gray-600">
+                      <span className="text-xs px-2 py-1 rounded-[8px] bg-[#6E75F9] text-white opacity-50">
                         Pending
                       </span>
                     </div>
@@ -283,11 +280,8 @@ export function ClaimUnstakeSections() {
                     <div className="text-sm font-medium">
                       {formatNumber(parseFloat(formatBig(claim.token_amount)))} MON
                     </div>
-                    <div className="text-xs text-gray-500">
-                      Request ID: {claim.request_id.slice(0, 8)}...
-                    </div>
                   </div>
-                  <span className="text-xs px-2 py-1 rounded bg-green-50 text-green-600">
+                  <span className="text-xs px-2 py-1 rounded-[8px] bg-[#6E75F9] text-white">
                     Ready To Claim
                   </span>
                 </div>
@@ -316,17 +310,14 @@ export function ClaimUnstakeSections() {
                         <div className="text-sm font-medium">
                           {formatNumber(parseFloat(formatBig(claim.token_amount)))} MON
                         </div>
-                        <div className="text-xs text-gray-500">
-                          Request ID: {claim.request_id.slice(0, 8)}...
-                        </div>
                       </div>
-                      <span className="text-xs px-2 py-1 rounded bg-gray-50 text-gray-600">
+                      <p className="text-xs text-gray-500 ml-7">
+                        Available in ~{remainingMinutes} minutes
+                      </p>
+                      <span className="text-xs px-2 py-1 rounded-[8px] bg-[#6E75F9] text-white opacity-50">
                         Pending
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 ml-7">
-                      Available in ~{remainingMinutes} minutes
-                    </p>
                   </div>
                 );
               })}

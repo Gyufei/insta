@@ -570,6 +570,15 @@ export function UniswapCreateCoin() {
   const hasErrors =
     showErrors && Object.keys(errors).some((key) => errors[key as keyof FormErrors]);
 
+  // Check if all required fields are filled
+  const isFormIncomplete = 
+    !formData.thumbnail ||
+    !formData.tokenName.trim() ||
+    !formData.tickerName.trim() ||
+    !formData.totalSupply.trim() ||
+    !formData.description.trim() ||
+    (!!formData.totalSupply.trim() && (isNaN(Number(formData.totalSupply)) || Number(formData.totalSupply) <= 0));
+
   function resetForm() {
     setFormData({
       thumbnail: null,
@@ -592,10 +601,10 @@ export function UniswapCreateCoin() {
   }, [isCreated]);
 
   return (
-    <div className="flex w-full flex-grow flex-col px-4">
+    <div className="flex w-full flex-grow flex-col">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-        <div className="flex items-end gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 md:mb-6">
+        <div className="flex flex-col md:flex-row md:items-end gap-1 md:gap-3">
           <TitleH2>Create Coin</TitleH2>
           <span className="text-[#A5ADC6] text-sm leading-[140%] font-normal">
             Data cannot be changed after creation
@@ -603,15 +612,15 @@ export function UniswapCreateCoin() {
         </div>
       </div>
 
-      <div className="flex justify-between gap-4">
-        <div className="flex-col">
+      <div className="flex flex-col md:flex-row md:justify-between gap-6 md:gap-4">
+        <div className="flex-col md:flex-shrink-0">
           <Label className="text-sm font-medium text-[#131E40]">
             Thumbnail Image <RedStart />
           </Label>
           <div className="mt-3">
             <div
               className={cn(
-                'group w-[216px] relative h-[216px] overflow-hidden rounded-lg border-2 border-dashed bg-primary-foreground hover:border-primary/50 transition-colors',
+                'group w-full md:w-[216px] relative h-[216px] overflow-hidden rounded-lg border-2 border-dashed bg-primary-foreground hover:border-primary/50 transition-colors',
                 showErrors && errors.thumbnail ? 'border-red-500' : 'border-[#ebebeb]'
               )}
             >
@@ -659,7 +668,7 @@ export function UniswapCreateCoin() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 mt-4">
+          <div className="flex items-center gap-2 mt-4 w-full md:w-auto">
             <Popover open={twitterPopoverOpen} onOpenChange={handleTwitterPopoverOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -810,8 +819,8 @@ export function UniswapCreateCoin() {
         </div>
 
         {/* Right Column */}
-        <div className="space-y-6 flex-1">
-          <div className="flex justify-between gap-4">
+        <div className="space-y-4 md:space-y-6 flex-1">
+          <div className="flex flex-col md:flex-row md:justify-between gap-4">
             {/* Ticker Name */}
             <div className="flex-1">
               <Label className="text-sm font-medium text-[#131E40]">
@@ -896,12 +905,12 @@ export function UniswapCreateCoin() {
 
           {/* Bottom Section */}
           <div className="mt-5 flex flex-col items-start gap-2">
-            <div className="flex items-center gap-2">
+            <div className="w-full md:w-auto flex items-center gap-2">
               <Button
                 onClick={handleCreate}
-                disabled={isCreating}
+                disabled={isCreating || isFormIncomplete}
                 variant="ghost"
-                className="bg-[#6E75F9] flex items-center text-[#fff] hover:bg-[#6E75F9]/90 hover:text-[#fff] px-8 h-10 text-base font-medium"
+                className="bg-[#6E75F9] flex items-center text-[#fff] hover:bg-[#6E75F9]/90 hover:text-[#fff] px-8 h-10 text-base font-medium w-full md:w-auto"
               >
                 {isCreating ? 'Creating...' : 'Create'}
               </Button>
