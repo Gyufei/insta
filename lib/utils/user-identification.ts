@@ -3,6 +3,7 @@ import CryptoJS from 'crypto-js';
 import { getCloudflareVisitorInfo } from './cloudflare-visitor';
 import { DeviceSignatureGenerator } from './device-signature';
 import { IPDetector } from './ip-detector';
+import { getCloudflareData } from './cloudflare-cache';
 
 export interface UserIdentificationData {
   // Wallet information
@@ -427,7 +428,7 @@ export class UserIdentificationCollector {
   }
 
   /**
-   * Get Cloudflare headers from the existing API endpoint
+   * Get Cloudflare headers using unified caching
    */
   private async getCloudflareHeaders(): Promise<{
     cfConnectingIP?: string;
@@ -436,20 +437,19 @@ export class UserIdentificationCollector {
     userAgent?: string;
   }> {
     try {
-      const response = await fetch('/api/cf-headers');
-      if (response.ok) {
-        const data = await response.json();
-        return {
-          cfConnectingIP: data.clientIP,
-          cfCountry: data.country,
-          cfRay: data.cfHeaders['cf-ray'],
-          userAgent: data.cfHeaders['user-agent'],
-        };
-      }
+      const data = await getCloudflareData();
+      const headers = data.headers || data.cfHeaders || {};
+      
+      return {
+        cfConnectingIP: data.clientIP,
+        cfCountry: data.country,
+        cfRay: headers['cf-ray'],
+        userAgent: headers['user-agent'],
+      };
     } catch (error) {
       console.warn('Failed to get Cloudflare headers:', error);
+      return {};
     }
-    return {};
   }
 
   /**

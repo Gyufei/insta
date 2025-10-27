@@ -1,4 +1,5 @@
 import CryptoJS from 'crypto-js';
+import { getCloudflareData } from './cloudflare-cache';
 
 
 
@@ -24,11 +25,6 @@ export class CloudflareVisitorDetector {
   private cachedVisitorInfo: CloudflareVisitorInfo | null = null;
   private cacheExpiry: number = 0;
   private readonly CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
-  
-  // Add request-level caching for CF headers to prevent duplicate API calls
-  private cachedHeaders: Record<string, string> | null = null;
-  private headersCacheExpiry: number = 0;
-  private readonly HEADERS_CACHE_DURATION = 30 * 1000; // 30 seconds for headers cache
 
   private constructor() {}
 
@@ -43,38 +39,16 @@ export class CloudflareVisitorDetector {
   }
 
   /**
-   * Get Cloudflare headers from API with short-term caching to prevent duplicate requests
+   * Get Cloudflare headers with unified caching
    */
   private async getCFHeaders(): Promise<Record<string, string>> {
-    // Return cached headers if still valid (30 seconds cache)
-    if (this.cachedHeaders && Date.now() < this.headersCacheExpiry) {
-      return this.cachedHeaders;
-    }
-
     try {
-      const response = await fetch('/api/cf-headers', {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-        },
-        signal: AbortSignal.timeout(5000),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const headers = data.headers || {};
-        
-        // Cache the headers for 30 seconds to prevent duplicate requests
-        this.cachedHeaders = headers;
-        this.headersCacheExpiry = Date.now() + this.HEADERS_CACHE_DURATION;
-        
-        return headers;
-      }
+      const data = await getCloudflareData();
+      return data.headers || data.cfHeaders || {};
     } catch (error) {
-      console.warn('Failed to get Cloudflare headers:', error);
+      console.warn('Failed to fetch Cloudflare headers:', error);
+      return {};
     }
-
-    return {};
   }
 
   /**
@@ -204,8 +178,6 @@ export class CloudflareVisitorDetector {
   public clearCache(): void {
     this.cachedVisitorInfo = null;
     this.cacheExpiry = 0;
-    this.cachedHeaders = null;
-    this.headersCacheExpiry = 0;
   }
 }
 
