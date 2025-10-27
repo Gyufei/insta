@@ -18,6 +18,7 @@ import {
 import { useApiBalance } from '@/lib/data/balance/use-api-balance';
 import { useClaimedAirdrop } from '@/lib/data/use-claimed-airdrop';
 import { useWithdraw } from '@/lib/data/use-withdraw';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { isSameAddress } from '@/lib/utils';
 import { parseBig } from '@/lib/utils/number';
 
@@ -64,6 +65,7 @@ export function WithdrawToken() {
   }, [airdropAmount, tokenBalance]);
 
   const { mutate: withdraw, isPending } = useWithdraw();
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(canClaimAmount);
   const { isMax, handleSetMax, handleInput } = useSetMax(
@@ -75,12 +77,53 @@ export function WithdrawToken() {
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, token?.decimals);
+    
+    // GA上报：提款操作
+    trackEvent('WITHDRAW_INITIATED', {
+      event_category: 'portfolio',
+      event_label: 'token_withdrawal',
+      token_symbol: token.symbol,
+      token_address: token.address,
+      amount: inputValue,
+      custom_parameters: {
+        operation: 'withdraw',
+        token_name: token.name
+      }
+    });
+    
     withdraw(
       { amount: amount.toString(), tokenAddress: token.address },
       {
         onSuccess: () => {
+          // GA上报：提款成功
+          trackEvent('WITHDRAW_COMPLETED', {
+            event_category: 'portfolio',
+            event_label: 'token_withdrawal_success',
+            token_symbol: token.symbol,
+            token_address: token.address,
+            amount: inputValue,
+            custom_parameters: {
+              operation: 'withdraw',
+              token_name: token.name
+            }
+          });
           handleBack();
         },
+        onError: (error) => {
+          // GA上报：提款失败
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'error',
+            event_label: 'withdraw_token_failed',
+            error_message: error?.message || 'Unknown error',
+            token_symbol: token.symbol,
+            token_address: token.address,
+            amount: inputValue,
+            custom_parameters: {
+              operation: 'withdraw',
+              token_name: token.name
+            }
+          });
+        }
       }
     );
   };
