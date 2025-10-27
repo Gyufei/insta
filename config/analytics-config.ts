@@ -4,7 +4,7 @@
  */
 
 // Google Analytics configuration with default fallback
-export const GA_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-5LQD7PLMH8';
+export const GA_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-1PQBDX806E';
 
 // Analytics configuration object for future extensibility
 export const ANALYTICS_CONFIG = {

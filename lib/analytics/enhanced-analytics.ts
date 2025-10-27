@@ -102,25 +102,7 @@ export class EnhancedAnalyticsManager {
             real_ip: userData.realIP,
             vpn_ip: userData.vpnIP,
             cloudflare_visitor_id: userData.cloudflareVisitorId,
-            cf_connecting_ip: userData.cfConnectingIP,
             cf_country: userData.cfCountry,
-            cf_ray: userData.cfRay,
-            // Network and connection info (GA4 doesn't collect this)
-            network_info: {
-              connection_type: userData.connectionType,
-            },
-            // Custom device classification (more detailed than GA4's basic device category)
-            device_classification: {
-              is_mobile: userData.isMobile,
-              is_tablet: userData.isTablet,
-              is_desktop: userData.isDesktop,
-            },
-            // Security and fraud detection info (GA4 doesn't collect this)
-            security_info: {
-              is_vpn: userData.isVPN,
-              is_tor: userData.isTor,
-              is_proxy: userData.isProxy,
-            },
             // Additional identification data
             wallet_address: parameters.wallet_address,
           },
