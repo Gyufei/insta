@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import Link from 'next/link';
 
 import { ApiPath } from '@/lib/data/api-path';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 
 import { useOddsUserInfo } from '../../common/use-user-info';
 import { BasicInformation } from './BasicInformation';
@@ -16,6 +17,7 @@ import { useMarketForm } from './useMarketForm';
 export default function CreateMarketPage() {
   const { data: userInfo } = useOddsUserInfo();
   const userId = userInfo?.user_id;
+  const { trackEvent } = useEnhancedAnalytics();
 
   const {
     // State
@@ -180,6 +182,20 @@ export default function CreateMarketPage() {
         signature: '0x', // Empty signature for now
       };
 
+      // Track market creation attempt
+      trackEvent('ODDS_MARKET_CREATE', {
+        event_category: 'odds',
+        event_label: 'odds_market_create_attempt',
+        include_user_id: true,
+        custom_parameters: {
+          market_type: marketType,
+          resolution_type: resolutionType,
+          initial_liquidity: initialLiquidity,
+          categories: selectedCategories.join(','),
+          outcomes_count: outcomes.length,
+        },
+      });
+
       // Create market
       const responseData = await fetch(ApiPath.oddsMarketCreate, {
         method: 'POST',
@@ -194,6 +210,17 @@ export default function CreateMarketPage() {
       const data = response.data;
 
       if (data.market_id && Number.isInteger(data.market_id)) {
+        // Track successful market creation
+        trackEvent('ODDS_MARKET_CREATE', {
+          event_category: 'odds',
+          event_label: 'odds_market_create_success',
+          include_user_id: true,
+          custom_parameters: {
+            market_id: data.market_id,
+            market_type: marketType,
+          },
+        });
+
         toast.success('Market created successfully');
 
         // Navigate to the new market
@@ -202,6 +229,17 @@ export default function CreateMarketPage() {
         throw new Error(response?.message || 'Failed to create market');
       }
     } catch (err) {
+      // Track failed market creation
+      trackEvent('ERROR_OCCURRED', {
+        event_category: 'odds',
+        event_label: 'odds_market_create_failed',
+        error_message: err instanceof Error ? err.message : 'Failed to create market',
+        include_user_id: true,
+        custom_parameters: {
+          market_type: marketType,
+        },
+      });
+
       console.error('Market creation error:', err);
       toast.error(err instanceof Error ? err.message : 'Failed to create market');
     }

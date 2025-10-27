@@ -26,6 +26,7 @@ export const ANALYTICS_EVENTS = {
 
   // Token Station Events
   TOKEN_STATION_VIEW: 'token_station_view',
+  TOKEN_BRIDGE: 'token_bridge',
   TOKEN_BRIDGE_INITIATED: 'token_bridge_initiated',
   TOKEN_BRIDGE_COMPLETED: 'token_bridge_completed',
 
@@ -35,7 +36,10 @@ export const ANALYTICS_EVENTS = {
   UNISWAP_LIQUIDITY_REMOVE: 'uniswap_liquidity_remove',
   AMBIENT_POSITION_CREATE: 'ambient_position_create',
   APRIORI_STAKE: 'apriori_stake',
+  APRIORI_UNSTAKE: 'apriori_unstake',
+  APRIORI_CLAIM: 'apriori_claim',
   MAGMA_STAKE: 'magma_stake',
+  MAGMA_UNSTAKE: 'magma_unstake',
 
   // NAD Fun Events
   NAD_TOKEN_CREATE: 'nad_token_create',
@@ -53,11 +57,12 @@ export const ANALYTICS_EVENTS = {
 
   // Odds/Prediction Market Events
   MARKET_CREATE: 'market_create',
+  ODDS_MARKET_CREATE: 'odds_market_create',
+  ODDS_TRADE: 'odds_trade',
   MARKET_VIEW: 'market_view',
   POSITION_OPEN: 'position_open',
   POSITION_CLOSE: 'position_close',
   ODDS_CLAIM: 'odds_claim',
-
   // Faucet Events
   FAUCET_CLAIM: 'faucet_claim',
 

@@ -17,6 +17,7 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { useAmbientCreatePosition } from '@/lib/data/use-ambient-create-position';
 import { useAmbientLiquidityRatio } from '@/lib/data/use-ambient-liquidity-ratio';
 import { useAmbientPositionInfo } from '@/lib/data/use-ambient-position-info';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateNumber } from '@/lib/utils/number';
@@ -55,6 +56,7 @@ export function AmbientCreatePosition() {
   const [step, setStep] = useState<CreatePositionStep>(CreatePositionStep.SelectToken);
   const { showTokenSelector, setShowTokenSelector, handleTokenSelect, handleBack } =
     useTokenSelector();
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { data: liquidityRatio } = useAmbientLiquidityRatio({
     tokenA: replaceNativeAddressUseBackend(token0?.address || ''),
@@ -156,9 +158,54 @@ export function AmbientCreatePosition() {
       token_b_decimals: token1.decimals.toString(),
     };
 
+    // Track position creation attempt
+    trackEvent('AMBIENT_POSITION_CREATE', {
+      event_category: 'protocol_interaction',
+      event_label: 'ambient_create_position_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'ambient',
+        action: 'create_position',
+        token_pair: `${token0?.symbol}_${token1?.symbol}`,
+        amount_0: amount0,
+        amount_1: amount1,
+        is_new_pool: isNewPool,
+        price_range_min: priceRangeMin,
+        price_range_max: priceRangeMax,
+        init_price: initPrice,
+      },
+    });
+
     createPosition(args, {
       onSuccess: () => {
+        // Track successful position creation
+        trackEvent('AMBIENT_POSITION_CREATE', {
+          event_category: 'protocol_interaction',
+          event_label: 'ambient_create_position_success',
+          include_user_id: true,
+          custom_parameters: {
+            protocol: 'ambient',
+            action: 'create_position_success',
+            token_pair: `${token0?.symbol}_${token1?.symbol}`,
+            amount_0: amount0,
+            amount_1: amount1,
+          },
+        });
         handleBack();
+      },
+      onError: (error: Error) => {
+        // Track failed position creation
+        trackEvent('ERROR_OCCURRED', {
+          event_category: 'protocol_interaction',
+          event_label: 'ambient_create_position_failed',
+          error_message: error?.message || 'Unknown error',
+          include_user_id: true,
+          custom_parameters: {
+            protocol: 'ambient',
+            action: 'create_position_failed',
+            token_pair: `${token0?.symbol}_${token1?.symbol}`,
+          },
+        });
       },
     });
   }
