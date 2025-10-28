@@ -1,5 +1,6 @@
 'use client';
 
+import { useAppKitNetwork } from '@reown/appkit/react';
 import { CircleX, Loader } from 'lucide-react';
 import { divide } from 'safebase';
 import { toast } from 'sonner';
@@ -13,6 +14,7 @@ import Image from 'next/image';
 import {
   DEFAULT_NATIVE_ADDRESS,
   DEFAULT_TOKEN_DECIMALS,
+  NetworkConfigs,
   UniversalRouterAddressPermit,
   replaceNativeAddressUseBackend,
 } from '@/config/network-config';
@@ -52,6 +54,7 @@ function CovertPermitData(
 
 export function TokenContent() {
   const { address: wallet } = useAccount();
+  const { chainId } = useAppKitNetwork();
   const { data: accountInfo } = useSelectedAccount();
   const { currentAccountType } = useAccountStore();
   const { signTypedDataAsync } = useSignTypedData();
@@ -229,6 +232,27 @@ export function TokenContent() {
     if (!wallet) {
       toast.error('Please connect your wallet to trade');
       return;
+    }
+
+    // 检查是否为 Monad Testnet 网络
+    if (chainId !== NetworkConfigs.monadTestnet.id) {
+      try {
+        // // 尝试切换到 Monad Testnet
+        // await switchNetwork(NetworkConfigs.monadTestnet);
+
+        // toast.success('Successfully switched to Monad Testnet');
+        toast.error(
+          'Please switch to the Monad network in your wallet to avoid sending funds to the wrong network.'
+        );
+        return; // 切换成功后返回，用户需要再次点击交易
+      } catch (error) {
+        // 网络切换失败
+
+        toast.error(
+          'Please switch to the Monad network in your wallet to avoid sending funds to the wrong network.'
+        );
+        return;
+      }
     }
 
     if (!quoteData || !sellToken || !buyToken) return;
