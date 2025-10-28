@@ -77,7 +77,7 @@ export function WithdrawToken() {
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, token?.decimals);
-    
+
     // GA上报：提款操作
     trackEvent('WITHDRAW_INITIATED', {
       event_category: 'portfolio',
@@ -87,10 +87,10 @@ export function WithdrawToken() {
       amount: inputValue,
       custom_parameters: {
         operation: 'withdraw',
-        token_name: token.name
-      }
+        token_name: token.name,
+      },
     });
-    
+
     withdraw(
       { amount: amount.toString(), tokenAddress: token.address },
       {
@@ -104,8 +104,8 @@ export function WithdrawToken() {
             amount: inputValue,
             custom_parameters: {
               operation: 'withdraw',
-              token_name: token.name
-            }
+              token_name: token.name,
+            },
           });
           handleBack();
         },
@@ -120,10 +120,10 @@ export function WithdrawToken() {
             amount: inputValue,
             custom_parameters: {
               operation: 'withdraw',
-              token_name: token.name
-            }
+              token_name: token.name,
+            },
           });
-        }
+        },
       }
     );
   };
