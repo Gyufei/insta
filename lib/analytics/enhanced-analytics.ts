@@ -104,7 +104,10 @@ export class EnhancedAnalyticsManager {
             cloudflare_visitor_id: userData.cloudflareVisitorId,
             cf_country: userData.cfCountry,
             // Additional identification data
-            wallet_address: parameters.wallet_address,
+            // wallet_address: `${parameters.wallet_address}`,
+            wallet_address_string: parameters.wallet_address
+              ? `wallet_${parameters.wallet_address}`
+              : undefined,
           },
         };
       }
