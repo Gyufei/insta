@@ -2,15 +2,22 @@
 
 import { useAccount } from 'wagmi';
 
+
+
 import { useCallback, useEffect, useRef } from 'react';
+
+
 
 import { usePathname } from 'next/navigation';
 
+
+
 import { ANALYTICS_EVENTS } from '@/lib/analytics';
-import {
-  type EnhancedAnalyticsParams,
-  enhancedAnalytics,
-} from '@/lib/analytics/enhanced-analytics';
+import { type EnhancedAnalyticsParams, enhancedAnalytics } from '@/lib/analytics/enhanced-analytics';
+
+
+
+
 
 // Global state to prevent duplicate PAGE_VIEW tracking across multiple hook instances
 const globalPageViewTracker = {
@@ -61,22 +68,22 @@ export function useEnhancedAnalytics() {
           globalPageViewTracker.lastTrackedPath = pathname;
 
           // Track page view with enhanced user identification data
-          enhancedAnalytics
-            .trackEvent('PAGE_VIEW', {
-              event_category: 'navigation',
-              event_label: pathname,
-              page_path: pathname,
-              wallet_address: address,
-              include_user_id: true, // This ensures IP, fingerprint, and Cloudflare ID are included
-              custom_parameters: {
-                page_type: pathname.split('/')[1] || 'home',
-                is_wallet_connected: isConnected,
-              },
-            })
-            .catch(console.warn)
-            .finally(() => {
-              globalPageViewTracker.isTracking = false;
-            });
+          // enhancedAnalytics
+          //   .trackEvent('PAGE_VIEW', {
+          //     event_category: 'navigation',
+          //     event_label: pathname,
+          //     page_path: pathname,
+          //     wallet_address: address,
+          //     include_user_id: true, // This ensures IP, fingerprint, and Cloudflare ID are included
+          //     custom_parameters: {
+          //       page_type: pathname.split('/')[1] || 'home',
+          //       is_wallet_connected: isConnected,
+          //     },
+          //   })
+          //   .catch(console.warn)
+          //   .finally(() => {
+          //     globalPageViewTracker.isTracking = false;
+          //   });
         } else {
           globalPageViewTracker.isTracking = false;
         }
@@ -367,26 +374,26 @@ export function useComponentTracking(
 
   useEffect(() => {
     if (trackMount) {
-      trackEvent('PAGE_VIEW', {
-        event_category: 'component',
-        event_label: `${componentName}_mount`,
-        custom_parameters: {
-          component_name: componentName,
-          action: 'mount',
-        },
-      }).catch(console.warn);
+      // trackEvent('PAGE_VIEW', {
+      //   event_category: 'component',
+      //   event_label: `${componentName}_mount`,
+      //   custom_parameters: {
+      //     component_name: componentName,
+      //     action: 'mount',
+      //   },
+      // }).catch(console.warn);
     }
 
     return () => {
       if (trackUnmount) {
-        trackEvent('PAGE_VIEW', {
-          event_category: 'component',
-          event_label: `${componentName}_unmount`,
-          custom_parameters: {
-            component_name: componentName,
-            action: 'unmount',
-          },
-        }).catch(console.warn);
+        // trackEvent('PAGE_VIEW', {
+        //   event_category: 'component',
+        //   event_label: `${componentName}_unmount`,
+        //   custom_parameters: {
+        //     component_name: componentName,
+        //     action: 'unmount',
+        //   },
+        // }).catch(console.warn);
       }
     };
   }, [componentName, trackMount, trackUnmount, trackEvent]);
