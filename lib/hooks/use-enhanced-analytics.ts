@@ -2,90 +2,22 @@
 
 import { useAccount } from 'wagmi';
 
+
+
 import { useCallback, useEffect, useRef } from 'react';
+
+
 
 import { usePathname } from 'next/navigation';
 
-import {
-  type EnhancedAnalyticsParams,
-  enhancedAnalytics,
-} from '@/lib/analytics/enhanced-analytics';
 
-// Analytics events configuration
-export const ANALYTICS_EVENTS = {
-  // Wallet Connection Events
-  WALLET_CONNECT: 'wallet_connect',
-  WALLET_DISCONNECT: 'wallet_disconnect',
-  ACCOUNT_SWITCH: 'account_switch',
 
-  // Trading Events
-  TRADE_INITIATED: 'trade_initiated',
-  TRADE_COMPLETED: 'trade_completed',
-  TRADE_FAILED: 'trade_failed',
-  TOKEN_APPROVE: 'token_approve',
-  SWAP_TOKENS: 'swap_tokens',
-  SLIPPAGE_CHANGE: 'slippage_change',
+import { ANALYTICS_EVENTS } from '@/lib/analytics';
+import { type EnhancedAnalyticsParams, enhancedAnalytics } from '@/lib/analytics/enhanced-analytics';
 
-  // Portfolio Events
-  DEPOSIT_INITIATED: 'deposit_initiated',
-  DEPOSIT_COMPLETED: 'deposit_completed',
-  WITHDRAW_INITIATED: 'withdraw_initiated',
-  WITHDRAW_COMPLETED: 'withdraw_completed',
-  PORTFOLIO_VIEW: 'portfolio_view',
-  BALANCE_REFRESH: 'balance_refresh',
 
-  // Token Station Events
-  TOKEN_STATION_VIEW: 'token_station_view',
-  TOKEN_BRIDGE_INITIATED: 'token_bridge_initiated',
-  TOKEN_BRIDGE_COMPLETED: 'token_bridge_completed',
 
-  // Protocol Events
-  UNISWAP_POSITION_CREATE: 'uniswap_position_create',
-  UNISWAP_LIQUIDITY_ADD: 'uniswap_liquidity_add',
-  UNISWAP_LIQUIDITY_REMOVE: 'uniswap_liquidity_remove',
-  AMBIENT_POSITION_CREATE: 'ambient_position_create',
-  APRIORI_STAKE: 'apriori_stake',
-  MAGMA_STAKE: 'magma_stake',
 
-  // NAD Fun Events
-  NAD_TOKEN_CREATE: 'nad_token_create',
-  NAD_TOKEN_BUY: 'nad_token_buy',
-  NAD_TOKEN_SELL: 'nad_token_sell',
-
-  // NAD Name Service Events
-  NAD_NAME_REGISTER: 'nad_name_register',
-  NAD_NAME_TRANSFER: 'nad_name_transfer',
-  NAD_NAME_SET_PRIMARY: 'nad_name_set_primary',
-
-  // Badge Gallery Events
-  BADGE_PURCHASE: 'badge_purchase',
-  BADGE_CLAIM: 'badge_claim',
-
-  // Odds/Prediction Market Events
-  MARKET_CREATE: 'market_create',
-  MARKET_VIEW: 'market_view',
-  POSITION_OPEN: 'position_open',
-  POSITION_CLOSE: 'position_close',
-  ODDS_CLAIM: 'odds_claim',
-
-  // Faucet Events
-  FAUCET_CLAIM: 'faucet_claim',
-
-  // General UI Events
-  PAGE_VIEW: 'page_view',
-  BUTTON_CLICK: 'button_click',
-  MODAL_OPEN: 'modal_open',
-  MODAL_CLOSE: 'modal_close',
-  SEARCH: 'search',
-  FILTER_CHANGE: 'filter_change',
-  TAB_CHANGE: 'tab_change',
-
-  // Error Events
-  ERROR_OCCURRED: 'error_occurred',
-  TRANSACTION_FAILED: 'transaction_failed',
-
-  CHECK_IN: 'check_in',
-} as const;
 
 // Global state to prevent duplicate PAGE_VIEW tracking across multiple hook instances
 const globalPageViewTracker = {
@@ -136,22 +68,22 @@ export function useEnhancedAnalytics() {
           globalPageViewTracker.lastTrackedPath = pathname;
 
           // Track page view with enhanced user identification data
-          enhancedAnalytics
-            .trackEvent('PAGE_VIEW', {
-              event_category: 'navigation',
-              event_label: pathname,
-              page_path: pathname,
-              wallet_address: address,
-              include_user_id: true, // This ensures IP, fingerprint, and Cloudflare ID are included
-              custom_parameters: {
-                page_type: pathname.split('/')[1] || 'home',
-                is_wallet_connected: isConnected,
-              },
-            })
-            .catch(console.warn)
-            .finally(() => {
-              globalPageViewTracker.isTracking = false;
-            });
+          // enhancedAnalytics
+          //   .trackEvent('PAGE_VIEW', {
+          //     event_category: 'navigation',
+          //     event_label: pathname,
+          //     page_path: pathname,
+          //     wallet_address: address,
+          //     include_user_id: true, // This ensures IP, fingerprint, and Cloudflare ID are included
+          //     custom_parameters: {
+          //       page_type: pathname.split('/')[1] || 'home',
+          //       is_wallet_connected: isConnected,
+          //     },
+          //   })
+          //   .catch(console.warn)
+          //   .finally(() => {
+          //     globalPageViewTracker.isTracking = false;
+          //   });
         } else {
           globalPageViewTracker.isTracking = false;
         }
@@ -442,26 +374,26 @@ export function useComponentTracking(
 
   useEffect(() => {
     if (trackMount) {
-      trackEvent('PAGE_VIEW', {
-        event_category: 'component',
-        event_label: `${componentName}_mount`,
-        custom_parameters: {
-          component_name: componentName,
-          action: 'mount',
-        },
-      }).catch(console.warn);
+      // trackEvent('PAGE_VIEW', {
+      //   event_category: 'component',
+      //   event_label: `${componentName}_mount`,
+      //   custom_parameters: {
+      //     component_name: componentName,
+      //     action: 'mount',
+      //   },
+      // }).catch(console.warn);
     }
 
     return () => {
       if (trackUnmount) {
-        trackEvent('PAGE_VIEW', {
-          event_category: 'component',
-          event_label: `${componentName}_unmount`,
-          custom_parameters: {
-            component_name: componentName,
-            action: 'unmount',
-          },
-        }).catch(console.warn);
+        // trackEvent('PAGE_VIEW', {
+        //   event_category: 'component',
+        //   event_label: `${componentName}_unmount`,
+        //   custom_parameters: {
+        //     component_name: componentName,
+        //     action: 'unmount',
+        //   },
+        // }).catch(console.warn);
       }
     };
   }, [componentName, trackMount, trackUnmount, trackEvent]);

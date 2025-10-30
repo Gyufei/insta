@@ -59,7 +59,9 @@ export function useVersionCheck(options: UseVersionCheckOptions = {}): UseVersio
   // 获取当前版本信息
   const getCurrentVersion = useCallback(async (): Promise<VersionInfo | null> => {
     try {
-      const response = await fetch('/version.json', {
+      // 添加时间戳防止缓存
+      const timestamp = Date.now();
+      const response = await fetch(`/version.json?t=${timestamp}`, {
         cache: 'no-cache',
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',

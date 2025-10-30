@@ -1,15 +1,24 @@
 import { SendHorizontal } from 'lucide-react';
 import { isAddress } from 'viem';
 
+
+
 import { useEffect, useState } from 'react';
 
+
+
 import { ERROR_MESSAGES } from '@/config/const-msg';
+
+
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
+
+
 import { useNadNameTransfer } from '@/lib/data/use-nadname-transfer';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
@@ -19,6 +28,7 @@ export function NadNameTransfer() {
   const registerName = currentComponent?.props?.registerName;
   const { mutate: transferName, isPending } = useNadNameTransfer();
   const { handleBack } = useUrlPathDrawerChange('/nad-name-service');
+  const { trackEvent } = useEnhancedAnalytics();
 
   const [receiver, setReceiver] = useState('');
   const [error, setError] = useState<ErrorVO>({
@@ -51,11 +61,49 @@ export function NadNameTransfer() {
       errorMessage: '',
     });
 
+    // Track transfer attempt
+    trackEvent('NAD_NAME_TRANSFER', {
+      event_category: 'protocol_interaction',
+      event_label: 'nad_name_transfer_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'nad_name_service',
+        action: 'transfer',
+        name: `${registerName}.nad`,
+        receiver: receiver,
+      },
+    });
+
     transferName(
       { name: registerName, receiver },
       {
         onSuccess: () => {
+          // Track successful transfer
+          trackEvent('NAD_NAME_TRANSFER', {
+            event_category: 'protocol_interaction',
+            event_label: 'nad_name_transfer_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'nad_name_service',
+              action: 'transfer_success',
+              name: `${registerName}.nad`,
+            },
+          });
           handleBack();
+        },
+        onError: (error: Error) => {
+          // Track failed transfer
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'protocol_interaction',
+            event_label: 'nad_name_transfer_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'nad_name_service',
+              action: 'transfer_failed',
+              name: `${registerName}.nad`,
+            },
+          });
         },
       }
     );

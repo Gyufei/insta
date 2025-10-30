@@ -1,10 +1,15 @@
 import { BookCopy } from 'lucide-react';
 
+
+
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
+
+
 import { useNadNameSetPrimary } from '@/lib/data/use-nadname-set-primary';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
@@ -12,17 +17,55 @@ export function NadNameSetPrimary() {
   const { currentComponent } = useSideDrawerStore();
   const registerName = currentComponent?.props?.registerName;
   const { mutate: setPrimaryName, isPending } = useNadNameSetPrimary();
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { handleBack } = useUrlPathDrawerChange('/nad-name-service');
 
   if (!registerName) return null;
 
   const handleConfirm = () => {
+    // Track set primary attempt
+    trackEvent('NAD_NAME_SET_PRIMARY', {
+      event_category: 'protocol_interaction',
+      event_label: 'nad_name_set_primary_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'nad_name_service',
+        action: 'set_primary',
+        name: `${registerName}.nad`,
+      },
+    });
+
     setPrimaryName(
       { name: registerName },
       {
         onSuccess: () => {
+          // Track successful set primary
+          trackEvent('NAD_NAME_SET_PRIMARY', {
+            event_category: 'protocol_interaction',
+            event_label: 'nad_name_set_primary_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'nad_name_service',
+              action: 'set_primary_success',
+              name: `${registerName}.nad`,
+            },
+          });
           handleBack();
+        },
+        onError: (error: Error) => {
+          // Track failed set primary
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'protocol_interaction',
+            event_label: 'nad_name_set_primary_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'nad_name_service',
+              action: 'set_primary_failed',
+              name: `${registerName}.nad`,
+            },
+          });
         },
       }
     );

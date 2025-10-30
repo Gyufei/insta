@@ -1,3 +1,5 @@
+import { getCloudflareData, clearCloudflareCache } from './cloudflare-cache';
+
 interface IPInfo {
   ip: string;
   type: 'public' | 'private' | 'unknown';
@@ -25,6 +27,11 @@ interface ComprehensiveIPInfo {
   };
   isp?: string;
   timestamp: number;
+  cloudflareInfo?: {
+    clientIP?: string;
+    realIP?: string;
+    country?: string;
+  };
 }
 
 /**
@@ -52,7 +59,7 @@ export class IPDetector {
   private cacheExpiry: number = 0;
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-  // Fine-grained cache for individual IP API responses
+  // Cache for IP API responses
   private ipApiCache: Map<string, CachedIPApiResponse> = new Map();
   private readonly IP_API_CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 
@@ -196,6 +203,12 @@ export class IPDetector {
    * Determine IP address type
    */
   private getIPType(ip: string): 'public' | 'private' | 'unknown' {
+    // Check if it's IPv6
+    if (ip.includes(':')) {
+      return this.getIPv6Type(ip);
+    }
+
+    // IPv4 logic
     const parts = ip.split('.').map(Number);
 
     if (parts.length !== 4 || parts.some((part) => isNaN(part) || part < 0 || part > 255)) {
@@ -214,6 +227,79 @@ export class IPDetector {
     }
 
     return 'public';
+  }
+
+  /**
+   * Determine IPv6 address type
+   */
+  private getIPv6Type(ip: string): 'public' | 'private' | 'unknown' {
+    try {
+      // Remove zone identifier if present (e.g., %eth0)
+      const cleanIP = ip.split('%')[0];
+
+      // Normalize IPv6 address
+      const normalizedIP = cleanIP.toLowerCase();
+
+      // Private/Special IPv6 ranges
+      if (
+        normalizedIP.startsWith('::1') || // Loopback
+        normalizedIP.startsWith('::') || // Unspecified
+        normalizedIP.startsWith('fe80:') || // Link-local
+        normalizedIP.startsWith('fc00:') || // Unique local
+        normalizedIP.startsWith('fd00:') || // Unique local
+        normalizedIP.startsWith('ff00:') // Multicast
+      ) {
+        return 'private';
+      }
+
+      // Check for IPv4-mapped IPv6 addresses
+      if (normalizedIP.includes('::ffff:')) {
+        const ipv4Part = normalizedIP.split('::ffff:')[1];
+        if (ipv4Part) {
+          // Convert hex to decimal if needed
+          const ipv4 = ipv4Part.includes('.') ? ipv4Part : this.hexToIPv4(ipv4Part);
+          return this.getIPType(ipv4);
+        }
+      }
+
+      return 'public';
+    } catch (error) {
+      console.warn('Failed to parse IPv6 address:', ip, error);
+      return 'unknown';
+    }
+  }
+
+  /**
+   * Convert hex representation to IPv4 format
+   */
+  private hexToIPv4(hex: string): string {
+    try {
+      const num = parseInt(hex, 16);
+      return [(num >>> 24) & 255, (num >>> 16) & 255, (num >>> 8) & 255, num & 255].join('.');
+    } catch (error) {
+      return '';
+    }
+  }
+
+  /**
+   * Get Cloudflare IP information from /api/cf-headers with caching
+   */
+  private async getCloudflareIPInfo(): Promise<{
+    clientIP?: string;
+    realIP?: string;
+    country?: string;
+  }> {
+    try {
+      const data = await getCloudflareData();
+      return {
+        clientIP: data.clientIP,
+        realIP: data.realIP,
+        country: data.country,
+      };
+    } catch (error) {
+      console.warn('Failed to get Cloudflare IP info:', error);
+      return {};
+    }
   }
 
   /**
@@ -532,14 +618,34 @@ export class IPDetector {
     }
 
     try {
+      // First, try to get Cloudflare IP info (most reliable)
+      const cfInfo = await this.getCloudflareIPInfo();
+
       // Get IPs from WebRTC
       const webrtcIPs = await this.getWebRTCIPs();
 
-      // Get public IP from API
-      const apiPublicIP = await this.getPublicIPFromAPI();
+      // Get public IP from API only if Cloudflare IP is not available or is localhost
+      let apiPublicIP: string | null = null;
+      if (!cfInfo.clientIP || cfInfo.clientIP === '::1' || cfInfo.clientIP === '127.0.0.1') {
+        apiPublicIP = await this.getPublicIPFromAPI();
+      }
 
       // Combine and deduplicate IPs
       const allIPs = [...webrtcIPs];
+
+      // Add Cloudflare client IP if available and not localhost
+      if (cfInfo.clientIP && cfInfo.clientIP !== '::1' && cfInfo.clientIP !== '127.0.0.1') {
+        const exists = allIPs.some((ipInfo) => ipInfo.ip === cfInfo.clientIP);
+        if (!exists) {
+          allIPs.push({
+            ip: cfInfo.clientIP,
+            type: this.getIPType(cfInfo.clientIP),
+            source: 'header',
+          });
+        }
+      }
+
+      // Add API IP as fallback
       if (apiPublicIP) {
         const exists = allIPs.some((ipInfo) => ipInfo.ip === apiPublicIP);
         if (!exists) {
@@ -557,8 +663,9 @@ export class IPDetector {
         .filter((ipInfo) => ipInfo.type === 'private')
         .map((ipInfo) => ipInfo.ip);
 
-      // Use the most reliable public IP
-      const primaryPublicIP = apiPublicIP || (publicIPs.length > 0 ? publicIPs[0].ip : '');
+      // Use the most reliable public IP (prioritize Cloudflare, exclude localhost)
+      const validCloudflareIP = cfInfo.clientIP && cfInfo.clientIP !== '::1' && cfInfo.clientIP !== '127.0.0.1' ? cfInfo.clientIP : null;
+      const primaryPublicIP = validCloudflareIP || apiPublicIP || (publicIPs.length > 0 ? publicIPs[0].ip : '');
 
       // Detect VPN
       const vpnDetection = await this.detectVPN(primaryPublicIP, [
@@ -572,11 +679,20 @@ export class IPDetector {
       const result: ComprehensiveIPInfo = {
         publicIP: primaryPublicIP,
         privateIPs,
-        realIP: vpnDetection.realIP,
+        realIP: vpnDetection.realIP || cfInfo.realIP,
         vpnDetection,
-        geolocation: detailedInfo.geolocation,
+        geolocation: {
+          ...detailedInfo.geolocation,
+          // Prioritize Cloudflare country info
+          country: cfInfo.country || detailedInfo.geolocation?.country,
+        },
         isp: detailedInfo.isp,
         timestamp: Date.now(),
+        cloudflareInfo: validCloudflareIP ? {
+          clientIP: cfInfo.clientIP,
+          realIP: cfInfo.realIP,
+          country: cfInfo.country,
+        } : undefined,
       };
 
       // Cache the result
@@ -609,6 +725,15 @@ export class IPDetector {
     this.cacheExpiry = 0;
     this.ipApiCache.clear();
     this.pendingApiCalls.clear();
+    // Clear Cloudflare cache using unified cache
+    clearCloudflareCache();
+  }
+
+  /**
+   * Clear only Cloudflare cache
+   */
+  public static clearCloudflareCache(): void {
+    clearCloudflareCache();
   }
 
   /**

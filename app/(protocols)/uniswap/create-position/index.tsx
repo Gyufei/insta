@@ -2,23 +2,30 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { divide, multiply } from 'safebase';
 import { toast } from 'sonner';
 
+
+
 import { useEffect, useMemo, useState } from 'react';
+
+
 
 import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
 
-import {
-  BACKEND_NATIVE_ADDRESS,
-  DEFAULT_NATIVE_ADDRESS,
-  replaceNativeAddressUseBackend,
-} from '@/config/network-config';
+
+
+import { BACKEND_NATIVE_ADDRESS, DEFAULT_NATIVE_ADDRESS, replaceNativeAddressUseBackend } from '@/config/network-config';
 import { IToken, MONAD, MonUSD } from '@/config/tokens';
+
+
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
+
+
 import { useUniswapLiquidityRatio } from '@/lib/data/use-uniswap-liquidity-ratio';
 import { useUniswapPositionInfo } from '@/lib/data/use-uniswap-position-info';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateNumber } from '@/lib/utils/number';
@@ -59,6 +66,7 @@ export function UniswapCreatePosition() {
 
   const [step, setStep] = useState<CreatePositionStep>(CreatePositionStep.SelectTokenAndFeeTier);
   const { showTokenSelector, setShowTokenSelector, handleTokenSelect } = useTokenSelector();
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { handleBack } = useUrlPathDrawerChange('/uniswap');
 
@@ -176,6 +184,24 @@ export function UniswapCreatePosition() {
         }
       : {};
 
+    // Track position creation attempt
+    trackEvent('UNISWAP_POSITION_CREATE', {
+      event_category: 'protocol_interaction',
+      event_label: 'uniswap_create_position_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'uniswap',
+        action: 'create_position',
+        token_pair: `${token0?.symbol}_${token1?.symbol}`,
+        fee_tier: feeTier,
+        amount_0: amount0,
+        amount_1: amount1,
+        is_new_pool: isNewPool,
+        price_range_min: priceRangeMin,
+        price_range_max: priceRangeMax,
+      },
+    });
+
     createPosition(
       {
         ...args,
@@ -183,7 +209,35 @@ export function UniswapCreatePosition() {
       },
       {
         onSuccess: () => {
+          // Track successful position creation
+          trackEvent('UNISWAP_POSITION_CREATE', {
+            event_category: 'protocol_interaction',
+            event_label: 'uniswap_create_position_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'uniswap',
+              action: 'create_position_success',
+              token_pair: `${token0?.symbol}_${token1?.symbol}`,
+              fee_tier: feeTier,
+              amount_0: amount0,
+              amount_1: amount1,
+            },
+          });
           handleBack();
+        },
+        onError: (error: Error) => {
+          // Track failed position creation
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'protocol_interaction',
+            event_label: 'uniswap_create_position_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'uniswap',
+              action: 'create_position_failed',
+              token_pair: `${token0?.symbol}_${token1?.symbol}`,
+            },
+          });
         },
       }
     );

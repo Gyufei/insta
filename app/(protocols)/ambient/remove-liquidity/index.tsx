@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 
 import { IAmbientPosition } from '@/lib/data/use-ambient-position';
 import { useAmbientRemoveLiquidity } from '@/lib/data/use-ambient-remove-liquidity';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
@@ -21,6 +22,7 @@ import { useAmbientPositionFormat } from '../use-ambient-position-format';
 export function AmbientRemoveLiquidity() {
   const { currentComponent } = useSideDrawerStore();
   const { mutate: removeLiquidity, isPending } = useAmbientRemoveLiquidity();
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { ambientPosition } =
     (currentComponent?.props as {
@@ -76,6 +78,22 @@ export function AmbientRemoveLiquidity() {
     if (!ambientPosition || !percent || parseFloat(percent) <= 0 || parseFloat(percent) > 100)
       return;
 
+    // Track remove liquidity attempt
+    trackEvent('UNISWAP_LIQUIDITY_REMOVE', {
+      event_category: 'protocol_interaction',
+      event_label: 'ambient_remove_liquidity_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'ambient',
+        action: 'remove_liquidity',
+        token_pair: `${token0?.symbol}_${token1?.symbol}`,
+        percent: percent,
+        amount_0: amount0,
+        amount_1: amount1,
+        liquidity: String(ambientPosition.concLiq),
+      },
+    });
+
     removeLiquidity(
       {
         base_token: ambientPosition.base,
@@ -86,7 +104,35 @@ export function AmbientRemoveLiquidity() {
       },
       {
         onSuccess: () => {
+          // Track successful remove liquidity
+          trackEvent('UNISWAP_LIQUIDITY_REMOVE', {
+            event_category: 'protocol_interaction',
+            event_label: 'ambient_remove_liquidity_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'ambient',
+              action: 'remove_liquidity_success',
+              token_pair: `${token0?.symbol}_${token1?.symbol}`,
+              percent: percent,
+              amount_0: amount0,
+              amount_1: amount1,
+            },
+          });
           handleBack();
+        },
+        onError: (error: Error) => {
+          // Track failed remove liquidity
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'protocol_interaction',
+            event_label: 'ambient_remove_liquidity_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'ambient',
+              action: 'remove_liquidity_failed',
+              token_pair: `${token0?.symbol}_${token1?.symbol}`,
+            },
+          });
         },
       }
     );

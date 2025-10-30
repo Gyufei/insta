@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 
+
+
 import { MONAD } from '@/config/tokens';
+
+
 
 import { TokenDisplayCard } from '@/components/common/token-display-card';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
@@ -8,9 +12,12 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
+
+
 import { useDSAMonadNativeBalance } from '@/lib/data/balance/use-dsa-monad-native-balance';
 import { useNadFunBuy } from '@/lib/data/use-nadfun-buy';
 import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { formatBig, parseBig, truncateNumber } from '@/lib/utils/number';
@@ -24,6 +31,7 @@ export function NadFunBuyToken() {
   const { currentComponent } = useSideDrawerStore();
   const { handleBack } = useUrlPathDrawerChange('/nad-fun');
   const { token } = currentComponent?.props || { token: null };
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { balance } = useDSAMonadNativeBalance();
   const { inputValue, btnDisabled, errorData, setErrorData, handleInputChange } =
@@ -65,6 +73,21 @@ export function NadFunBuyToken() {
 
     const amountIn = parseBig(inputValue);
 
+    // Track buy token attempt
+    trackEvent('NAD_TOKEN_BUY', {
+      event_category: 'protocol_interaction',
+      event_label: 'nad_fun_buy_token_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'nad_fun',
+        action: 'buy_token',
+        token_address: token.address,
+        token_symbol: token.symbol,
+        amount_in: inputValue,
+        amount_out_expected: tokenOutDisplay,
+      },
+    });
+
     try {
       await buyToken(
         {
@@ -74,7 +97,35 @@ export function NadFunBuyToken() {
         },
         {
           onSuccess: () => {
+            // Track successful buy
+            trackEvent('NAD_TOKEN_BUY', {
+              event_category: 'protocol_interaction',
+              event_label: 'nad_fun_buy_token_success',
+              include_user_id: true,
+              custom_parameters: {
+                protocol: 'nad_fun',
+                action: 'buy_token_success',
+                token_address: token.address,
+                token_symbol: token.symbol,
+                amount_in: inputValue,
+              },
+            });
             handleBack();
+          },
+          onError: (error: Error) => {
+            // Track failed buy
+            trackEvent('ERROR_OCCURRED', {
+              event_category: 'protocol_interaction',
+              event_label: 'nad_fun_buy_token_failed',
+              error_message: error?.message || 'Unknown error',
+              include_user_id: true,
+              custom_parameters: {
+                protocol: 'nad_fun',
+                action: 'buy_token_failed',
+                token_address: token.address,
+                token_symbol: token.symbol,
+              },
+            });
           },
         }
       );

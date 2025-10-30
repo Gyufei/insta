@@ -3,8 +3,24 @@
  * Centralized configuration for Google Analytics and other analytics services
  */
 
-// Google Analytics configuration with default fallback
-export const GA_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-5LQD7PLMH8';
+import { isProduction } from '@/lib/data/api-path';
+
+// Environment-based Google Analytics configuration
+const getGoogleAnalyticsId = () => {
+  // 如果有环境变量，优先使用环境变量
+  if (process.env.NEXT_PUBLIC_GA_ID) {
+    return process.env.NEXT_PUBLIC_GA_ID;
+  }
+  
+  // 根据环境区分GA ID
+  if (isProduction) {
+    return 'G-FN03SV9KCF'; // 生产环境GA ID
+  } else {
+    return 'G-1PQBDX806E'; // 开发/测试环境GA ID
+  }
+};
+
+export const GA_ID = getGoogleAnalyticsId();
 
 // Analytics configuration object for future extensibility
 export const ANALYTICS_CONFIG = {
