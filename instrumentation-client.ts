@@ -14,10 +14,14 @@ Sentry.init({
 
   // Disable Sentry reporting in local development
   enabled: process.env.NODE_ENV === 'production',
+  // enabled: true,
 
   // Add optional integrations for additional features
   // integrations: [Sentry.replayIntegration()],
-  integrations: [],
+  integrations: [
+    // send console.log, console.warn, and console.error calls as logs to Sentry
+    Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
+  ],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,

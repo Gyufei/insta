@@ -8,6 +8,8 @@ import { SignTypedDataParameters } from 'viem';
 import { useAccount, useSignTypedData } from 'wagmi';
 
 import { useEffect, useMemo, useState } from 'react';
+import * as Sentry from '@sentry/nextjs';
+import { useOddsUserInfo } from '@/app/odds/common/use-user-info';
 
 import Image from 'next/image';
 
@@ -59,6 +61,7 @@ export function TokenContent() {
   const { currentAccountType } = useAccountStore();
   const { signTypedDataAsync } = useSignTypedData();
   const { trackEvent, trackTrade } = useEnhancedAnalytics();
+  const { data: oddsUserInfo } = useOddsUserInfo();
 
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -173,6 +176,26 @@ export function TokenContent() {
           toast.error(quoteError.message);
         }
       }
+
+      // Report quote related errors to Sentry with context
+      try {
+        Sentry.captureMessage('Trade Quote Error', {
+          level: 'warning',
+          tags: {
+            page: 'trade',
+            error_type: 'quote',
+          },
+          extra: {
+            message: quoteError.message,
+            sell_token: sellToken?.symbol,
+            sell_address: sellToken?.address,
+            buy_token: buyToken?.symbol,
+            buy_address: buyToken?.address,
+            sell_value: sellValue,
+            chain_id: chainId,
+          },
+        });
+      } catch {}
     }
 
     if (!quoteError) {
@@ -181,7 +204,76 @@ export function TokenContent() {
         errorMessage: '',
       });
     }
-  }, [quoteError]);
+  }, [quoteError, sellToken, buyToken, sellValue, chainId]);
+
+  // Initialize Sentry user/environment context on mount and when deps change
+  useEffect(() => {
+    try {
+      // User context with custom UID/Alias bound to wallet
+      const userId = oddsUserInfo?.user_id || wallet || undefined;
+      const userName = oddsUserInfo?.user_name || wallet || undefined;
+      if (userId || userName) {
+        Sentry.setUser({ id: userId, username: userName });
+      } else {
+        Sentry.setUser(null);
+      }
+      Sentry.setTag('wallet', wallet || '');
+      if (oddsUserInfo?.user_id) Sentry.setTag('user_id', oddsUserInfo.user_id);
+      if (oddsUserInfo?.user_name) Sentry.setTag('user_name', oddsUserInfo.user_name);
+
+      // Tags for quick filtering
+      Sentry.setTag('page', 'trade');
+      Sentry.setTag('account_type', currentAccountType);
+      if (chainId != null) Sentry.setTag('chain_id', String(chainId));
+
+      // Account context (EOA / DSA addresses)
+      Sentry.setContext('account', {
+        account_type: currentAccountType,
+        eoa_address: wallet || undefined,
+        dsa_address: accountInfo?.sandbox_account || undefined,
+      });
+
+      // Bind custom UID/Alias context
+      Sentry.setContext('user_profile', {
+        user_id: oddsUserInfo?.user_id,
+        user_name: oddsUserInfo?.user_name,
+      });
+
+      // Environment context
+      if (typeof window !== 'undefined') {
+        Sentry.setContext('environment', {
+          userAgent: window.navigator.userAgent,
+          language: window.navigator.language,
+          platform: window.navigator.platform,
+          screen: {
+            width: window.screen?.width,
+            height: window.screen?.height,
+          },
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          referrer: document.referrer,
+          url: window.location.href,
+        });
+      }
+    } catch {}
+  }, [wallet, currentAccountType, chainId, accountInfo?.sandbox_account, oddsUserInfo?.user_id, oddsUserInfo?.user_name]);
+
+  // Breadcrumb for wallet changes (connect/disconnect or switch)
+  useEffect(() => {
+    try {
+      Sentry.addBreadcrumb({
+        category: 'wallet',
+        message: wallet ? 'wallet_connected' : 'wallet_disconnected',
+        level: 'info',
+        data: {
+          wallet: wallet || '',
+          account_type: currentAccountType,
+          dsa_address: accountInfo?.sandbox_account || '',
+          user_id: oddsUserInfo?.user_id || '',
+          user_name: oddsUserInfo?.user_name || '',
+        },
+      });
+    } catch {}
+  }, [wallet, currentAccountType, accountInfo?.sandbox_account, oddsUserInfo?.user_id, oddsUserInfo?.user_name]);
 
   const [init, setInit] = useState(false);
   useEffect(() => {
@@ -218,6 +310,17 @@ export function TokenContent() {
   }, []);
 
   async function handleSwap() {
+    Sentry.addBreadcrumb({
+      category: 'action',
+      message: 'click_swap',
+      level: 'info',
+      data: {
+        sell_token: sellToken?.symbol,
+        buy_token: buyToken?.symbol,
+        sell_value: sellValue,
+        should_approve: shouldApprove,
+      },
+    });
     if (shouldApprove) {
       trackEvent('TOKEN_APPROVE', {
         event_category: 'trading',
@@ -225,12 +328,24 @@ export function TokenContent() {
         token_address: sellToken?.address,
         include_user_id: true,
       });
+      Sentry.addBreadcrumb({
+        category: 'action',
+        message: 'click_approve',
+        level: 'info',
+        data: {
+          token_symbol: sellToken?.symbol,
+          token_address: sellToken?.address,
+        },
+      });
       handleFromApprove();
       return;
     }
 
     if (!wallet) {
       toast.error('Please connect your wallet to trade');
+      Sentry.captureMessage('Swap blocked: wallet not connected', {
+        level: 'info',
+      });
       return;
     }
 
@@ -247,7 +362,10 @@ export function TokenContent() {
         return; // 切换成功后返回，用户需要再次点击交易
       } catch (error) {
         // 网络切换失败
-
+        Sentry.captureException(error, {
+          tags: { page: 'trade', error_type: 'network_switch' },
+          extra: { current_chain_id: chainId },
+        });
         toast.error(
           'Please switch to the Monad network in your wallet to avoid sending funds to the wrong network.'
         );
@@ -267,6 +385,14 @@ export function TokenContent() {
           sell_token: sellToken.symbol,
           requested_amount: sellValue,
           available_balance: fromBalance,
+        },
+      });
+      Sentry.captureMessage('Swap blocked: insufficient balance', {
+        level: 'warning',
+        extra: {
+          requested_amount: sellValue,
+          available_balance: fromBalance,
+          sell_token: sellToken.symbol,
         },
       });
       return;
@@ -289,7 +415,15 @@ export function TokenContent() {
       const permitData = quoteData.permitData;
       if (permitData) {
         const typeData = CovertPermitData(permitData, wallet || '');
-        signature = await signTypedDataAsync(typeData);
+        try {
+          signature = await signTypedDataAsync(typeData);
+        } catch (err) {
+          Sentry.captureException(err, {
+            tags: { page: 'trade', error_type: 'sign_typed_data' },
+            extra: { has_permit: Boolean(permitData) },
+          });
+          throw err;
+        }
       }
 
       const args = {
@@ -300,18 +434,42 @@ export function TokenContent() {
         ...(permitData ? { permitData: permitData } : {}),
         ...(signature ? { signature } : {}),
       };
-      eoaSwap(args);
+      try {
+        eoaSwap(args);
+      } catch (err) {
+        Sentry.captureException(err, {
+          tags: { page: 'trade', error_type: 'eoa_swap' },
+          extra: args,
+        });
+        throw err;
+      }
     } else {
-      dsaSwap({
-        token_in_is_eth: isSellTokenEth,
-        token_out_is_eth: isBuyTokenEth,
-        slippage: (Number(slippage) * 1e16).toString(),
-        route: quoteData.route[0],
-      });
+      try {
+        dsaSwap({
+          token_in_is_eth: isSellTokenEth,
+          token_out_is_eth: isBuyTokenEth,
+          slippage: (Number(slippage) * 1e16).toString(),
+          route: quoteData.route[0],
+        });
+      } catch (err) {
+        Sentry.captureException(err, {
+          tags: { page: 'trade', error_type: 'dsa_swap' },
+        });
+        throw err;
+      }
     }
   }
 
   const handleSwapTokens = () => {
+    Sentry.addBreadcrumb({
+      category: 'action',
+      message: 'swap_tokens',
+      level: 'info',
+      data: {
+        from_token: sellToken?.symbol,
+        to_token: buyToken?.symbol,
+      },
+    });
     setRotateTimes((rotateTimes % 2) + 1);
 
     const tempToken = sellToken;
@@ -335,9 +493,28 @@ export function TokenContent() {
   };
 
   const handleMaxClick = () => {
+    Sentry.addBreadcrumb({
+      category: 'action',
+      message: 'click_max',
+      level: 'info',
+      data: {
+        token: sellToken?.symbol,
+        balance: fromBalance,
+      },
+    });
     if (sellToken) {
       setSellValue(fromBalance);
     }
+  };
+  
+  const handleSlippageChange = (value: string) => {
+    Sentry.addBreadcrumb({
+      category: 'action',
+      message: 'change_slippage',
+      level: 'info',
+      data: { value },
+    });
+    setSlippage(value);
   };
 
   return (
@@ -420,7 +597,7 @@ export function TokenContent() {
         </div>
 
         <div className="flex md:flex-row flex-col md:justify-between md:items-center mt-5 gap-2 md:gap-0">
-          <SlippageSettings onSlippageChange={setSlippage} />
+          <SlippageSettings onSlippageChange={handleSlippageChange} />
 
           <div className="flex flex-col md:items-center md:flex-row gap-2 md:gap-1 justify-end">
             {liquidityError.showError && (
