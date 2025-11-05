@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 
+/**
+ * GET handler for Farcaster account association and frame configuration
+ * Returns account association data and frame metadata for Farcaster integration
+ */
 export async function GET() {
   return NextResponse.json(
     {

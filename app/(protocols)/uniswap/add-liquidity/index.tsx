@@ -1,16 +1,25 @@
 import { divide, multiply } from 'safebase';
 
+
+
 import { useState } from 'react';
 
+
+
 import { replaceNativeAddressUseBackend } from '@/config/network-config';
+
+
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
+
+
 import { useUniswapAddLiquidity } from '@/lib/data/use-uniswap-add-liquidity';
 import { useUniswapLiquidityRatio } from '@/lib/data/use-uniswap-liquidity-ratio';
 import { IUniswapPosition } from '@/lib/data/use-uniswap-position';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
@@ -26,6 +35,7 @@ export function UniswapAddLiquidity() {
   const { currentComponent } = useSideDrawerStore();
   const { mutate: addLiquidity, isPending } = useUniswapAddLiquidity();
   const { handleBack } = useUrlPathDrawerChange('/uniswap');
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { uniswapPosition } =
     (currentComponent?.props as {
@@ -90,6 +100,22 @@ export function UniswapAddLiquidity() {
   const handleConfirm = () => {
     if (!uniswapPosition) return;
 
+    // Track add liquidity attempt
+    trackEvent('UNISWAP_LIQUIDITY_ADD', {
+      event_category: 'protocol_interaction',
+      event_label: 'uniswap_add_liquidity_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'uniswap',
+        action: 'add_liquidity',
+        token_pair: `${token0?.symbol}_${token1?.symbol}`,
+        fee_tier: feeTier,
+        amount_0: amount0,
+        amount_1: amount1,
+        token_id: uniswapPosition.v3Position.tokenId,
+      },
+    });
+
     addLiquidity(
       {
         token_id: uniswapPosition.v3Position.tokenId,
@@ -101,7 +127,34 @@ export function UniswapAddLiquidity() {
       },
       {
         onSuccess: () => {
+          // Track successful add liquidity
+          trackEvent('UNISWAP_LIQUIDITY_ADD', {
+            event_category: 'protocol_interaction',
+            event_label: 'uniswap_add_liquidity_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'uniswap',
+              action: 'add_liquidity_success',
+              token_pair: `${token0?.symbol}_${token1?.symbol}`,
+              amount_0: amount0,
+              amount_1: amount1,
+            },
+          });
           handleBack();
+        },
+        onError: (error: Error) => {
+          // Track failed add liquidity
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'protocol_interaction',
+            event_label: 'uniswap_add_liquidity_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'uniswap',
+              action: 'add_liquidity_failed',
+              token_pair: `${token0?.symbol}_${token1?.symbol}`,
+            },
+          });
         },
       }
     );

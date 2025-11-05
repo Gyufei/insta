@@ -12,6 +12,7 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
 import { useDSAMonadNativeBalance } from '@/lib/data/balance/use-dsa-monad-native-balance';
 import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { parseBig } from '@/lib/utils/number';
 
@@ -20,6 +21,7 @@ export function AprioriDeposit() {
   const aprMonToken = APR_MONAD;
 
   const { mutate: deposit, isPending } = useAprioriDeposit();
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { balance, isPending: isBalancePending } = useDSAMonadNativeBalance();
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
@@ -32,9 +34,52 @@ export function AprioriDeposit() {
   const handleDeposit = () => {
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, monToken?.decimals);
+
+    // Track deposit attempt
+    trackEvent('APRIORI_STAKE', {
+      event_category: 'protocol_interaction',
+      event_label: 'apriori_deposit_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'apriori',
+        action: 'deposit',
+        token: monToken?.symbol,
+        amount: inputValue,
+        receive_token: aprMonToken?.symbol,
+        receive_amount: receiveAmount,
+      },
+    });
+
     deposit(amount.toString(), {
       onSuccess: () => {
+        // Track successful deposit
+        trackEvent('APRIORI_STAKE', {
+          event_category: 'protocol_interaction',
+          event_label: 'apriori_deposit_success',
+          include_user_id: true,
+          custom_parameters: {
+            protocol: 'apriori',
+            action: 'deposit_success',
+            token: monToken?.symbol,
+            amount: inputValue,
+          },
+        });
         handleBack();
+      },
+      onError: (error: Error) => {
+        // Track failed deposit
+        trackEvent('ERROR_OCCURRED', {
+          event_category: 'protocol_interaction',
+          event_label: 'apriori_deposit_failed',
+          error_message: error?.message || 'Unknown error',
+          include_user_id: true,
+          custom_parameters: {
+            protocol: 'apriori',
+            action: 'deposit_failed',
+            token: monToken?.symbol,
+            amount: inputValue,
+          },
+        });
       },
     });
   };

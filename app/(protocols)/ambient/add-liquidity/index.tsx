@@ -14,6 +14,7 @@ import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-
 import { useAmbientAddLiquidity } from '@/lib/data/use-ambient-add-liquidity';
 import { useAmbientLiquidityRatio } from '@/lib/data/use-ambient-liquidity-ratio';
 import { IAmbientPosition } from '@/lib/data/use-ambient-position';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
@@ -26,6 +27,7 @@ export function AmbientAddLiquidity() {
   const { currentComponent } = useSideDrawerStore();
   const { mutate: addLiquidity, isPending } = useAmbientAddLiquidity();
   const { handleBack } = useUrlPathDrawerChange('/ambient');
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { ambientPosition } =
     (currentComponent?.props as {
@@ -78,6 +80,23 @@ export function AmbientAddLiquidity() {
   const handleConfirm = () => {
     if (!ambientPosition) return;
 
+    // Track add liquidity attempt
+    trackEvent('UNISWAP_LIQUIDITY_ADD', {
+      event_category: 'protocol_interaction',
+      event_label: 'ambient_add_liquidity_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'ambient',
+        action: 'add_liquidity',
+        token_pair: `${token0?.symbol}_${token1?.symbol}`,
+        amount_0: amount0,
+        amount_1: amount1,
+        price_current: price,
+        price_lower: price_lower,
+        price_upper: price_upper,
+      },
+    });
+
     addLiquidity(
       {
         token_a: replaceNativeAddressUseBackend(token0?.address),
@@ -91,7 +110,34 @@ export function AmbientAddLiquidity() {
       },
       {
         onSuccess: () => {
+          // Track successful add liquidity
+          trackEvent('UNISWAP_LIQUIDITY_ADD', {
+            event_category: 'protocol_interaction',
+            event_label: 'ambient_add_liquidity_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'ambient',
+              action: 'add_liquidity_success',
+              token_pair: `${token0?.symbol}_${token1?.symbol}`,
+              amount_0: amount0,
+              amount_1: amount1,
+            },
+          });
           handleBack();
+        },
+        onError: (error: Error) => {
+          // Track failed add liquidity
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'protocol_interaction',
+            event_label: 'ambient_add_liquidity_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'ambient',
+              action: 'add_liquidity_failed',
+              token_pair: `${token0?.symbol}_${token1?.symbol}`,
+            },
+          });
         },
       }
     );

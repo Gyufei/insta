@@ -1,6 +1,10 @@
 import { divide, multiply } from 'safebase';
 
+
+
 import { useState } from 'react';
+
+
 
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
@@ -8,8 +12,11 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { Button } from '@/components/ui/button';
 
+
+
 import { IUniswapPosition } from '@/lib/data/use-uniswap-position';
 import { useUniswapRemoveLiquidity } from '@/lib/data/use-uniswap-remove-liquidity';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateNumber } from '@/lib/utils/number';
@@ -22,6 +29,7 @@ export function UniswapRemoveLiquidity() {
   const { currentComponent } = useSideDrawerStore();
   const { mutate: removeLiquidity, isPending } = useUniswapRemoveLiquidity();
   const { handleBack } = useUrlPathDrawerChange('/uniswap');
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { uniswapPosition } =
     (currentComponent?.props as {
@@ -40,6 +48,23 @@ export function UniswapRemoveLiquidity() {
   const handleConfirm = () => {
     if (!uniswapPosition) return;
 
+    // Track remove liquidity attempt
+    trackEvent('UNISWAP_LIQUIDITY_REMOVE', {
+      event_category: 'protocol_interaction',
+      event_label: 'uniswap_remove_liquidity_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'uniswap',
+        action: 'remove_liquidity',
+        token_pair: `${token0?.symbol}_${token1?.symbol}`,
+        percent: percent,
+        amount_0: amount0,
+        amount_1: amount1,
+        liquidity: liquidity,
+        token_id: uniswapPosition.v3Position.tokenId,
+      },
+    });
+
     removeLiquidity(
       {
         token_id: uniswapPosition.v3Position.tokenId,
@@ -51,7 +76,35 @@ export function UniswapRemoveLiquidity() {
       },
       {
         onSuccess: () => {
+          // Track successful remove liquidity
+          trackEvent('UNISWAP_LIQUIDITY_REMOVE', {
+            event_category: 'protocol_interaction',
+            event_label: 'uniswap_remove_liquidity_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'uniswap',
+              action: 'remove_liquidity_success',
+              token_pair: `${token0?.symbol}_${token1?.symbol}`,
+              percent: percent,
+              amount_0: amount0,
+              amount_1: amount1,
+            },
+          });
           handleBack();
+        },
+        onError: (error: Error) => {
+          // Track failed remove liquidity
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'protocol_interaction',
+            event_label: 'uniswap_remove_liquidity_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'uniswap',
+              action: 'remove_liquidity_failed',
+              token_pair: `${token0?.symbol}_${token1?.symbol}`,
+            },
+          });
         },
       }
     );

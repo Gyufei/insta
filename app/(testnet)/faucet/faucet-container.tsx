@@ -5,26 +5,31 @@ import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
+
+
 import { useEffect, useMemo, useState } from 'react';
+
+
 
 import Image from 'next/image';
 
+
+
 import { MONAD, MonUSD } from '@/config/tokens';
+
+
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+
 
 import { useAccounts } from '@/lib/data/account-address/use-account';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useCreateAccount } from '@/lib/data/use-create-account';
 import { useFaucetAirdrop } from '@/lib/data/use-faucet-airdrop';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { eventBus } from '@/lib/state/eventBus';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { cn, formatAddress } from '@/lib/utils';
@@ -37,6 +42,7 @@ export function FaucetContainer() {
   const { isPending: isCreatePending } = useCreateAccount();
   const { setCurrentComponent } = useSideDrawerStore();
   const { mutate: faucetAirdrop, isPending } = useFaucetAirdrop();
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { data: accounts } = useAccounts();
   const { data: currentAccount } = useSelectedAccount();
@@ -214,12 +220,55 @@ export function FaucetContainer() {
 
     const wallet = !address ? inputAddress : isDSA ? address : selectedAccount || '';
 
-    faucetAirdrop({
-      wallet,
-      wallet_type: isDSA ? 'DSA' : 'EOA',
-      token_address: selectedToken,
-      sandbox_account: isDSA ? selectedAccount : currentAccount?.sandbox_account || '',
+    const tokenSymbol = selectedToken === MONAD.address ? 'MON' : 'MonUSD';
+
+    // Track faucet claim attempt
+    trackEvent('FAUCET_CLAIM', {
+      event_category: 'faucet',
+      event_label: 'faucet_claim_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        token: tokenSymbol,
+        wallet_type: isDSA ? 'DSA' : 'EOA',
+        has_wallet_connected: !!address,
+      },
     });
+
+    faucetAirdrop(
+      {
+        wallet,
+        wallet_type: isDSA ? 'DSA' : 'EOA',
+        token_address: selectedToken,
+        sandbox_account: isDSA ? selectedAccount : currentAccount?.sandbox_account || '',
+      },
+      {
+        onSuccess: () => {
+          // Track successful claim
+          trackEvent('FAUCET_CLAIM', {
+            event_category: 'faucet',
+            event_label: 'faucet_claim_success',
+            include_user_id: true,
+            custom_parameters: {
+              token: tokenSymbol,
+              wallet_type: isDSA ? 'DSA' : 'EOA',
+            },
+          });
+        },
+        onError: (error: Error) => {
+          // Track failed claim
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'faucet',
+            event_label: 'faucet_claim_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              token: tokenSymbol,
+              wallet_type: isDSA ? 'DSA' : 'EOA',
+            },
+          });
+        },
+      }
+    );
   };
 
   return (

@@ -1,12 +1,18 @@
 import { useMemo } from 'react';
 
+
+
 import { Button } from '@/components/ui/button';
+
+
 
 import { useBadgeClaim } from '@/lib/data/use-badge-claim';
 import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 
 export function ClaimBtn() {
   const { data: userBadgeData } = useBadgeWalletNfts();
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { mutate: claim, isPending: isClaimPending } = useBadgeClaim();
 
@@ -19,7 +25,42 @@ export function ClaimBtn() {
   }, [userBadgeData, isAllClaimed]);
 
   function handleClaim() {
-    claim(undefined);
+    // Track badge claim attempt
+    trackEvent('BADGE_CLAIM', {
+      event_category: 'badge',
+      event_label: 'badge_claim_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        badge_name: userBadgeData?.nftInfo.name || 'unknown',
+        claim_count: userBadgeData?.claimInfo.total_claim_count || 0,
+      },
+    });
+
+    claim(undefined, {
+      onSuccess: () => {
+        // Track successful claim
+        trackEvent('BADGE_CLAIM', {
+          event_category: 'badge',
+          event_label: 'badge_claim_success',
+          include_user_id: true,
+          custom_parameters: {
+            badge_name: userBadgeData?.nftInfo.name || 'unknown',
+          },
+        });
+      },
+      onError: (error: Error) => {
+        // Track failed claim
+        trackEvent('ERROR_OCCURRED', {
+          event_category: 'badge',
+          event_label: 'badge_claim_failed',
+          error_message: error?.message || 'Unknown error',
+          include_user_id: true,
+          custom_parameters: {
+            badge_name: userBadgeData?.nftInfo.name || 'unknown',
+          },
+        });
+      },
+    });
   }
 
   return (

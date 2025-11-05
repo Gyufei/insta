@@ -4,6 +4,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 import * as Sentry from '@sentry/nextjs';
 
+// Use server-side environment variable for DSN for edge runtimes.
 const SENTRY_DSN =
   process.env.NEXT_PUBLIC_SENTRY_DSN ||
   'https://d76f76cf9282d4721587388fba6c0840@o4508368229498880.ingest.de.sentry.io/4508368267378768';
@@ -19,6 +20,12 @@ Sentry.init({
 
   // Enable logs to be sent to Sentry
   enableLogs: true,
+
+  // Add integrations
+  integrations: [
+    // send console.log, console.warn, and console.error calls as logs to Sentry
+    Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
+  ],
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   debug: false,

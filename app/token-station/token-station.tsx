@@ -7,36 +7,41 @@ import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
+
+
 import { useEffect, useMemo, useRef, useState } from 'react';
+
+
 
 import Image from 'next/image';
 
+
+
 import { NetworkConfigs } from '@/config/network-config';
+
+
 
 import { ButtonWithCheck } from '@/components/common/button-with-check';
 import { NumberInput } from '@/components/common/number-input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
+
+
 import { useApiChainBalance } from '@/lib/data/balance/use-api-chain-balance';
+import { useRPCBalance } from '@/lib/data/balance/use-rpc-balance';
 import { useCheckAllowance } from '@/lib/data/use-check-allowance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useTokenStationSwapBridge } from '@/lib/data/use-token-station-swap-bridge';
 import { useTokenStationSwapCCIP } from '@/lib/data/use-token-station-swap-ccip';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, formatAddress } from '@/lib/utils';
 import { formatNumber, truncateNumber } from '@/lib/utils/number';
 import { useIsMobile } from '@/lib/utils/use-mobile';
-import { useRPCBalance } from '@/lib/data/balance/use-rpc-balance';
 
 import {
   STATION_FROM_TOKENS_BASE,
@@ -69,6 +74,7 @@ export function TokenStation() {
   const { address } = useAccount();
   const { open } = useAppKit();
   const prevAddressRef = useRef<string | undefined>(undefined);
+  const { trackEvent } = useEnhancedAnalytics();
 
   const isMobile = useIsMobile();
   const [mode, setMode] = useState<'CCIP' | 'BRIDGE'>('CCIP');
@@ -384,13 +390,62 @@ export function TokenStation() {
       return;
     }
 
-    swap({
-      token_name: tokenFrom.symbol,
-      amount_in: fromAmount,
-      min_amount_out: toAmount,
-      recipient: toAddress,
-      token_out_name: tokenTo.symbol,
+    // Track token bridge attempt
+    trackEvent('TOKEN_BRIDGE', {
+      event_category: 'token_station',
+      event_label: 'token_bridge_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        mode: mode,
+        token_from: tokenFrom.symbol,
+        token_to: tokenTo.symbol,
+        amount_in: fromAmount,
+        min_amount_out: toAmount,
+        from_network: mode === 'CCIP' ? 'Ethereum' : 'Base',
+        to_network: 'Monad',
+        recipient: toAddress,
+      },
     });
+
+    swap(
+      {
+        token_name: tokenFrom.symbol,
+        amount_in: fromAmount,
+        min_amount_out: toAmount,
+        recipient: toAddress,
+        token_out_name: tokenTo.symbol,
+      },
+      {
+        onSuccess: () => {
+          // Track successful bridge
+          trackEvent('TOKEN_BRIDGE', {
+            event_category: 'token_station',
+            event_label: 'token_bridge_success',
+            include_user_id: true,
+            custom_parameters: {
+              mode: mode,
+              token_from: tokenFrom.symbol,
+              token_to: tokenTo.symbol,
+              amount_in: fromAmount,
+            },
+          });
+        },
+        onError: (error: Error) => {
+          // Track failed bridge
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'token_station',
+            event_label: 'token_bridge_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              mode: mode,
+              token_from: tokenFrom.symbol,
+              token_to: tokenTo.symbol,
+            },
+          });
+        },
+      }
+    );
   }
 
   const ModeSwitch = () => {
