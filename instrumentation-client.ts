@@ -3,6 +3,8 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 import * as Sentry from '@sentry/nextjs';
 
+// Use environment variable for DSN to allow switching Sentry accounts without code changes.
+// In the browser, only variables prefixed with NEXT_PUBLIC_ are available.
 const SENTRY_DSN =
   process.env.NEXT_PUBLIC_SENTRY_DSN ||
   'https://d76f76cf9282d4721587388fba6c0840@o4508368229498880.ingest.de.sentry.io/4508368267378768';
@@ -12,10 +14,14 @@ Sentry.init({
 
   // Disable Sentry reporting in local development
   enabled: process.env.NODE_ENV === 'production',
+  // enabled: true,
 
   // Add optional integrations for additional features
   // integrations: [Sentry.replayIntegration()],
-  integrations: [],
+  integrations: [
+    // send console.log, console.warn, and console.error calls as logs to Sentry
+    Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
+  ],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,

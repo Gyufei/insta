@@ -18,9 +18,9 @@ import { useRouter } from 'next/navigation';
 
 import { MonUSD } from '@/config/tokens';
 
-import { trackEvent } from '@/lib/analytics';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useAccountStore } from '@/lib/state/account';
 import { formatNumber } from '@/lib/utils/number';
 
@@ -36,6 +36,7 @@ export default function Portfolio() {
   const { address } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
   const { currentAccountType } = useAccountStore();
+  const { trackEvent } = useEnhancedAnalytics();
 
   const {
     balance: fundingBalance,
@@ -62,13 +63,19 @@ export default function Portfolio() {
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [transferDirection, setTransferDirection] = useState<'F2T' | 'T2F'>('F2T');
 
-  // Track portfolio page view
+  // Track portfolio data load (not page view, as that's handled automatically)
   React.useEffect(() => {
     trackEvent('PORTFOLIO_VIEW', {
       event_category: 'portfolio',
+      event_label: 'portfolio_data_loaded',
       account_type: currentAccountType,
+      include_user_id: true,
+      custom_parameters: {
+        account_type: currentAccountType,
+        page_type: 'portfolio',
+      },
     });
-  }, [currentAccountType]);
+  }, [currentAccountType, trackEvent]);
 
   const handleTransferToTrading = async (amount: string) => {
     if (!address) {
@@ -294,7 +301,7 @@ export default function Portfolio() {
                     />
                     <div className="min-w-0">
                       <Link
-                        href={`/market/${market.market_id}?chain=monad`}
+                        href={`/odds/market/${market.market_id}?chain=monad`}
                         className="font-medium mb-1 hover:text-pro-blue block truncate"
                       >
                         {market.title}

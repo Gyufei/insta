@@ -17,5 +17,5 @@ export function middleware() {
 
 // 排除静态资源等不需要中间件处理的路径
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|icons/|images/|font/).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|icons/|images/|font/|version.json).*)'],
 };

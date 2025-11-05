@@ -2,6 +2,8 @@ import { withSentryConfig } from '@sentry/nextjs';
 
 import type { NextConfig } from 'next';
 
+import { generateVersion } from './scripts/generate-version.js';
+
 const nextConfig: NextConfig = {
   images: {
     dangerouslyAllowSVG: true,
@@ -34,20 +36,34 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'cdn.tadle.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'app.reve.com',
+      },
     ],
   },
   /* config options here */
-  webpack: (config) => {
+  webpack: (config, { dev, isServer }) => {
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
+
+    // Generate version file during build time
+    if (!dev && !isServer) {
+      try {
+        generateVersion();
+      } catch (error) {
+        console.warn('Failed to generate version file:', error);
+      }
+    }
+
     return config;
   },
-  // 重定向常见路径到静态 404 页面，减少动态处理
+  // Redirect common paths to static 404 page to reduce dynamic processing
   async redirects() {
     return [
-      // 批量重定向到静态页面，减少动态处理
+      // Batch redirect to static page to reduce dynamic processing
       {
         source: '/wp-:path*',
-        destination: '/404.html', // 静态文件，不消耗 Edge Request
+        destination: '/404.html', // Static file, does not consume Edge Request
         permanent: false,
       },
       {
@@ -83,7 +99,7 @@ export default withSentryConfig(nextConfig, {
   // tunnelRoute: "/monitoring",
 
   // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
+  disableLogger: false,
 
   // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
   // See the following for more information:

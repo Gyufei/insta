@@ -1,12 +1,19 @@
 import { useMemo, useState } from 'react';
 
+
+
 import { APR_MONAD } from '@/config/tokens';
+
+
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { Separator } from '@/components/ui/separator';
 
+
+
 import { useAprioriClaim } from '@/lib/data/use-apriori-claim';
 import { useGetAprioriClaim } from '@/lib/data/use-get-apriori-claim';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { formatBig, formatNumber } from '@/lib/utils/number';
 
 import { ClaimCard } from './claim-card';
@@ -16,6 +23,7 @@ export function Claim({ handleBack }: { handleBack: () => void }) {
   const { data: claimRecords, isLoading: isClaimRecordsPending } = useGetAprioriClaim();
   const { mutate: claim, isPending: isClaiming, error: claimError } = useAprioriClaim();
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const { trackEvent } = useEnhancedAnalytics();
 
   // 找到选中的 claim 记录
   const selectedClaim = useMemo(() => {
@@ -52,9 +60,49 @@ export function Claim({ handleBack }: { handleBack: () => void }) {
 
   const handleClaim = () => {
     if (selectedRequestId) {
+      // Track claim attempt
+      trackEvent('APRIORI_CLAIM', {
+        event_category: 'protocol_interaction',
+        event_label: 'apriori_claim_attempt',
+        include_user_id: true,
+        custom_parameters: {
+          protocol: 'apriori',
+          action: 'claim',
+          request_id: selectedRequestId,
+          amount: canClaimAmount,
+          token: 'MON',
+        },
+      });
+
       claim(selectedRequestId, {
         onSuccess: () => {
+          // Track successful claim
+          trackEvent('APRIORI_CLAIM', {
+            event_category: 'protocol_interaction',
+            event_label: 'apriori_claim_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'apriori',
+              action: 'claim_success',
+              request_id: selectedRequestId,
+              amount: canClaimAmount,
+            },
+          });
           handleBack();
+        },
+        onError: (error: Error) => {
+          // Track failed claim
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'protocol_interaction',
+            event_label: 'apriori_claim_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'apriori',
+              action: 'claim_failed',
+              request_id: selectedRequestId,
+            },
+          });
         },
       });
     }

@@ -1,15 +1,20 @@
 {
   "name": "instad-app",
-  "version": "0.1.0",
+  "version": "3.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "node scripts/generate-version.js && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-version": "node scripts/generate-version.js",
+    "version:patch": "npm version patch --no-git-tag-version && node scripts/generate-version.js",
+    "version:minor": "npm version minor --no-git-tag-version && node scripts/generate-version.js",
+    "version:major": "npm version major --no-git-tag-version && node scripts/generate-version.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
+    "@fingerprintjs/fingerprintjs": "^4.6.2",
     "@fnando/sparkline": "^0.3.10",
     "@hookform/resolvers": "^5.0.1",
     "@next/third-parties": "^15.5.3",
@@ -47,6 +52,7 @@
     "react-cool-onclickoutside": "^1.7.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
+    "require-in-the-middle": "^8.0.1",
     "safebase": "^1.0.0",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.0.2",

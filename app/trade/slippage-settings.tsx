@@ -6,7 +6,7 @@ import { NumberInput } from '@/components/common/number-input';
 import { Button } from '@/components/ui/button';
 
 import { cn } from '@/lib/utils';
-import { trackEvent } from '@/lib/analytics';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 
 interface SlippageSettingsProps {
   onSlippageChange: (value: string) => void;
@@ -17,6 +17,7 @@ const AutoSlippage = '1';
 export function SlippageSettings({ onSlippageChange }: SlippageSettingsProps) {
   const [isAuto, setIsAuto] = useState(true);
   const [inputValue, setInputValue] = useState('0.50');
+  const { trackEvent } = useEnhancedAnalytics();
 
   useEffect(() => {
     setInputValue(AutoSlippage);
@@ -33,6 +34,7 @@ export function SlippageSettings({ onSlippageChange }: SlippageSettingsProps) {
       event_category: 'trading',
       event_label: 'auto_slippage',
       value: parseFloat(AutoSlippage),
+      include_user_id: true,
     });
   };
 
@@ -59,6 +61,7 @@ export function SlippageSettings({ onSlippageChange }: SlippageSettingsProps) {
       event_category: 'trading',
       event_label: 'custom_slippage',
       value: parseFloat(sanitized) || 0,
+      include_user_id: true,
     });
   };
 

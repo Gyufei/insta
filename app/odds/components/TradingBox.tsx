@@ -3,12 +3,19 @@ import { ChevronDown, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 
+
+
 import React, { useEffect, useMemo, useState } from 'react';
+
+
 
 import Image from 'next/image';
 
+
+
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { eventBus } from '@/lib/state/eventBus';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 
@@ -43,6 +50,7 @@ export default function TradingBox({ market }: TradingBoxProps) {
   const { address } = useAccount();
   const { data: userInfo } = useOddsUserInfo();
   const userId = userInfo?.user_id;
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { open } = useAppKit();
   const { setCurrentComponent } = useSideDrawerStore();
@@ -211,7 +219,51 @@ export default function TradingBox({ market }: TradingBoxProps) {
       tradeData.price = tradeState.price?.toString();
     }
 
-    await triggerTrade(tradeData);
+    // Track trade attempt
+    trackEvent('ODDS_TRADE', {
+      event_category: 'odds',
+      event_label: `odds_trade_${tradeState.direction}_attempt`,
+      include_user_id: true,
+      custom_parameters: {
+        market_id: market.market_id,
+        outcome: selectedOutcome?.name || '',
+        direction: tradeState.direction,
+        trading_mode: tradingMode,
+        shares: sharesNum,
+        price: tradeState.price,
+      },
+    });
+
+    await triggerTrade(tradeData, {
+      onSuccess: () => {
+        // Track successful trade
+        trackEvent('ODDS_TRADE', {
+          event_category: 'odds',
+          event_label: `odds_trade_${tradeState.direction}_success`,
+          include_user_id: true,
+          custom_parameters: {
+            market_id: market.market_id,
+            outcome: selectedOutcome?.name || '',
+            direction: tradeState.direction,
+            shares: sharesNum,
+          },
+        });
+      },
+      onError: (error: Error) => {
+        // Track failed trade
+        trackEvent('ERROR_OCCURRED', {
+          event_category: 'odds',
+          event_label: `odds_trade_${tradeState.direction}_failed`,
+          error_message: error?.message || 'Unknown error',
+          include_user_id: true,
+          custom_parameters: {
+            market_id: market.market_id,
+            outcome: selectedOutcome?.name || '',
+            direction: tradeState.direction,
+          },
+        });
+      },
+    });
 
     setTradeState({
       ...tradeState,

@@ -1,8 +1,8 @@
 {
   "version": "3.2.0",
-  "gitHash": "cc501216",
-  "fullGitHash": "cc50121692a732ddef0bada8a06f1f9729db4b51",
-  "buildTimestamp": 1759998343592,
-  "buildDate": "2025-10-09T08:25:43.592Z",
-  "buildId": "3.2.2-cc501216-1759998343592"
+  "gitHash": "850eda5f",
+  "fullGitHash": "850eda5fe6b8541986da7516ecbdcdedcc289b9d",
+  "buildTimestamp": 1761220046011,
+  "buildDate": "2025-10-23T11:47:26.011Z",
+  "buildId": "3.3.0-850eda5f-1761220046011"
 }

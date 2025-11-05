@@ -1,8 +1,14 @@
 import { multiply } from 'safebase';
 
+
+
 import { useEffect, useMemo, useState } from 'react';
 
+
+
 import { MONAD } from '@/config/tokens';
+
+
 
 import { TokenDisplayCard } from '@/components/common/token-display-card';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
@@ -10,8 +16,11 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
+
+
 import { useNadFunSell } from '@/lib/data/use-nadfun-sell';
 import { useNadFunTokenMarketInfo } from '@/lib/data/use-nadfun-token-market-info';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { formatBig, parseBig, truncateNumber } from '@/lib/utils/number';
@@ -25,6 +34,7 @@ export function NadFunSellToken() {
   const { currentComponent } = useSideDrawerStore();
   const { handleBack } = useUrlPathDrawerChange('/nad-fun');
   const { token } = currentComponent?.props || { token: null };
+  const { trackEvent } = useEnhancedAnalytics();
 
   const balance = token?.balance ? formatBig(token.balance, token.decimals || 18) : '0';
 
@@ -69,6 +79,21 @@ export function NadFunSellToken() {
 
     const amountIn = parseBig(inputValue);
 
+    // Track sell token attempt
+    trackEvent('NAD_TOKEN_SELL', {
+      event_category: 'protocol_interaction',
+      event_label: 'nad_fun_sell_token_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'nad_fun',
+        action: 'sell_token',
+        token_address: token.address,
+        token_symbol: token.symbol,
+        amount_in: inputValue,
+        amount_out_expected: tokenOutDisplay,
+      },
+    });
+
     try {
       await sellToken(
         {
@@ -78,7 +103,35 @@ export function NadFunSellToken() {
         },
         {
           onSuccess: () => {
+            // Track successful sell
+            trackEvent('NAD_TOKEN_SELL', {
+              event_category: 'protocol_interaction',
+              event_label: 'nad_fun_sell_token_success',
+              include_user_id: true,
+              custom_parameters: {
+                protocol: 'nad_fun',
+                action: 'sell_token_success',
+                token_address: token.address,
+                token_symbol: token.symbol,
+                amount_in: inputValue,
+              },
+            });
             handleBack();
+          },
+          onError: (error: Error) => {
+            // Track failed sell
+            trackEvent('ERROR_OCCURRED', {
+              event_category: 'protocol_interaction',
+              event_label: 'nad_fun_sell_token_failed',
+              error_message: error?.message || 'Unknown error',
+              include_user_id: true,
+              custom_parameters: {
+                protocol: 'nad_fun',
+                action: 'sell_token_failed',
+                token_address: token.address,
+                token_symbol: token.symbol,
+              },
+            });
           },
         }
       );
