@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+
 import { cn } from '@/lib/utils';
 
 /**
@@ -10,7 +11,7 @@ import { cn } from '@/lib/utils';
 export interface ProjectConfig {
   id: string;
   name: string;
-  icon: string;
+  icon?: string;
 }
 
 /**
@@ -42,7 +43,9 @@ export function ProjectSelector<T extends ProjectConfig>({
   className,
 }: ProjectSelectorProps<T>) {
   return (
-    <div className={cn('flex gap-2 p-[4px] mb-6 md:mb-12 w-fit bg-[#F5F6F9] rounded-xl', className)}>
+    <div
+      className={cn('flex gap-2 p-[4px] mb-6 md:mb-12 w-fit bg-[#F5F6F9] rounded-xl', className)}
+    >
       {projectIds.map((projectId) => {
         const projectConfig = getProject(projectId);
         return (
@@ -56,7 +59,9 @@ export function ProjectSelector<T extends ProjectConfig>({
                 : 'bg-[#F5F5F5] text-[#A5ADC6] hover:bg-[#EBEBEB]'
             )}
           >
-            <Image src={projectConfig.icon} alt={projectConfig.name} width={20} height={20} />
+            {projectConfig.icon && (
+              <Image src={projectConfig.icon} alt={projectConfig.name} width={20} height={20} />
+            )}
             <span className="text-sm font-medium">{projectConfig.name}</span>
           </button>
         );

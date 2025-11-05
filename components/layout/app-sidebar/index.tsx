@@ -182,6 +182,20 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
       ),
     },
     {
+      href: getCurrentChainNameHref('/dex'),
+      label: 'DEX',
+      icon: <Image src="/icons/dex.svg" alt="dex" width={12} height={12} className="h-3 w-3" />,
+      rightIcon: (
+        <Image
+          src="/icons/dex-items-icon.svg"
+          alt="dex-items"
+          width={32}
+          height={16}
+          className="h-4 w-8"
+        />
+      ),
+    },
+    {
       href: getCurrentChainNameHref('/staking'),
       label: 'Staking',
       icon: (
