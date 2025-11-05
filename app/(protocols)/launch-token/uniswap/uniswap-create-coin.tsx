@@ -18,6 +18,7 @@ import { useUniswapCreateCoin } from '@/lib/data/use-uniswap-create-coin';
 import { useAccountStore } from '@/lib/state/account';
 import { cn } from '@/lib/utils';
 import { getTwitterInputError, isValidTwitterInput, toCanonicalXUrl } from '@/lib/utils/twitter';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 
 interface CreateCoinFormData {
   thumbnail: string | null;
@@ -40,6 +41,7 @@ interface FormErrors {
 
 export function UniswapCreateCoin() {
   const { currentAccountType } = useAccountStore();
+  const { trackEvent } = useEnhancedAnalytics();
   const [formData, setFormData] = useState<CreateCoinFormData>({
     thumbnail: null,
     tokenName: '',
@@ -554,7 +556,21 @@ export function UniswapCreateCoin() {
       return;
     }
 
-    createCoin({
+    // Track create token attempt (align event name with existing)
+    trackEvent('UNISWAP_POSITION_CREATE', {
+      event_category: 'protocol_interaction',
+      event_label: 'uniswap_create_token_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: 'uniswap',
+        action: 'create_token_attempt',
+        token_name: formData.tokenName,
+        token_symbol: formData.tickerName,
+        initial_supply: formData.totalSupply,
+      },
+    });
+
+    const payload = {
       wallet_type: currentAccountType,
       token_name: formData.tokenName,
       token_symbol: formData.tickerName,
@@ -564,6 +580,38 @@ export function UniswapCreateCoin() {
       telegram_link: formData.tgLink || '',
       website: formData.websiteLink || '',
       initial_supply: formData.totalSupply,
+    };
+
+    createCoin(payload, {
+      onSuccess: () => {
+        // Track successful token creation (align event name with existing)
+        trackEvent('UNISWAP_POSITION_CREATE', {
+          event_category: 'protocol_interaction',
+          event_label: 'uniswap_create_token_success',
+          include_user_id: true,
+          custom_parameters: {
+            protocol: 'uniswap',
+            action: 'create_token_success',
+            token_name: formData.tokenName,
+            token_symbol: formData.tickerName,
+            initial_supply: formData.totalSupply,
+          },
+        });
+      },
+      onError: (error: Error) => {
+        // Track failure and capture in Sentry
+        trackEvent('ERROR_OCCURRED', {
+          event_category: 'protocol_interaction',
+          event_label: 'uniswap_create_token_failed',
+          error_message: error?.message || 'Unknown error',
+          include_user_id: true,
+          custom_parameters: {
+            protocol: 'uniswap',
+            action: 'create_token_failed',
+            token_symbol: formData.tickerName,
+          },
+        });
+      },
     });
   };
 

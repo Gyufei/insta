@@ -17,6 +17,7 @@ import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { formatNumber } from '@/lib/utils/number';
 import { parseBig } from '@/lib/utils/number';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 
 import { type StakingProjectId, getStakingProject } from './staking-config';
 
@@ -48,6 +49,7 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
   const aprioriBalanceResult = useAprioriBalance();
   const magmaBalanceResult = useMagmaBalance();
   const { handleSetMax, handleInput } = useSetMax(inputValue, dsaBalance, handleInputChange);
+  const { trackEvent } = useEnhancedAnalytics();
 
   // 根据选择的项目使用对应的数据
   const balanceResults = {
@@ -64,9 +66,55 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
   const handleDeposit = () => {
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, selectedToken?.decimals);
+    // Determine event name based on selected project
+    const eventName = selectedProject === 'magma' ? 'MAGMA_STAKE' : 'APRIORI_STAKE';
+
+    // Track deposit attempt
+    trackEvent(eventName, {
+      event_category: 'protocol_interaction',
+      event_label:
+        selectedProject === 'magma' ? 'magma_deposit_attempt' : 'apriori_deposit_attempt',
+      include_user_id: true,
+      custom_parameters: {
+        protocol: selectedProject,
+        action: 'deposit',
+        token: selectedToken?.symbol,
+        amount: inputValue,
+        receive_token: selectedOutputToken?.symbol,
+        receive_amount: receiveAmount,
+      },
+    });
     deposit(amount.toString(), {
       onSuccess: () => {
-        // handleBack();
+        // Track successful deposit
+        trackEvent(eventName, {
+          event_category: 'protocol_interaction',
+          event_label:
+            selectedProject === 'magma' ? 'magma_deposit_success' : 'apriori_deposit_success',
+          include_user_id: true,
+          custom_parameters: {
+            protocol: selectedProject,
+            action: 'deposit_success',
+            token: selectedToken?.symbol,
+            amount: inputValue,
+          },
+        });
+      },
+      onError: (error: Error) => {
+        // Track failed deposit
+        trackEvent('ERROR_OCCURRED', {
+          event_category: 'protocol_interaction',
+          event_label:
+            selectedProject === 'magma' ? 'magma_deposit_failed' : 'apriori_deposit_failed',
+          error_message: error?.message || 'Unknown error',
+          include_user_id: true,
+          custom_parameters: {
+            protocol: selectedProject,
+            action: 'deposit_failed',
+            token: selectedToken?.symbol,
+            amount: inputValue,
+          },
+        });
       },
     });
   };
@@ -98,7 +146,7 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
           <TokenInput
             inputValue={inputValue}
             onInputChange={handleInput}
-            placeholder="Amount to deposit"
+            placeholder="0"
           />
         </div>
       </div>

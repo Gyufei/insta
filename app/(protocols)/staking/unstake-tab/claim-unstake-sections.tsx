@@ -9,6 +9,7 @@ import { useAprioriClaim } from '@/lib/data/use-apriori-claim';
 import { useGetAprioriClaim } from '@/lib/data/use-get-apriori-claim';
 import { formatNumber } from '@/lib/utils/number';
 import { formatBig } from '@/lib/utils/number';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 
 type ClaimAction = 'all' | 'ready-to-claim' | 'pending';
 
@@ -26,6 +27,7 @@ export function ClaimUnstakeSections() {
 
   // 获取claim操作的状态管理
   const { mutate: claimMutate, isPending: isClaimPending, error: claimError } = useAprioriClaim();
+  const { trackEvent } = useEnhancedAnalytics();
 
   // 处理checkbox选择
   const handleClaimSelection = (claimId: string, checked: boolean) => {
@@ -54,13 +56,59 @@ export function ClaimUnstakeSections() {
 
     // 批量处理所有有效的claim请求
     validClaimIds.forEach((requestId) => {
+      // 获取该请求的金额
+      const claimRecord = readyToClaimRecords.find(
+        (record) => String(record.request_id) === requestId
+      );
+      const claimAmount = claimRecord ? formatBig(String(claimRecord.token_amount)) : '0';
+
+      // Track claim attempt
+      trackEvent('APRIORI_CLAIM', {
+        event_category: 'protocol_interaction',
+        event_label: 'apriori_claim_attempt',
+        include_user_id: true,
+        custom_parameters: {
+          protocol: 'apriori',
+          action: 'claim',
+          request_id: requestId,
+          amount: claimAmount,
+          token: 'MON',
+        },
+      });
+
       claimMutate(requestId, {
         onSuccess: () => {
+          // Track successful claim
+          trackEvent('APRIORI_CLAIM', {
+            event_category: 'protocol_interaction',
+            event_label: 'apriori_claim_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'apriori',
+              action: 'claim_success',
+              request_id: requestId,
+              amount: claimAmount,
+            },
+          });
           // 成功后从选中列表中移除该项
           setSelectedClaimIds((prev) => {
             const newSet = new Set(prev);
             newSet.delete(requestId);
             return newSet;
+          });
+        },
+        onError: (error: Error) => {
+          // Track failed claim
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'protocol_interaction',
+            event_label: 'apriori_claim_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'apriori',
+              action: 'claim_failed',
+              request_id: requestId,
+            },
           });
         },
       });

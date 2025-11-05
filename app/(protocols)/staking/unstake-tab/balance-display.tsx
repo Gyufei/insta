@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 
 import { useAprioriWithdraw } from '@/lib/data/use-apriori-withdraw';
 import { useMagmaWithdraw } from '@/lib/data/use-magma-withdraw';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { formatNumber } from '@/lib/utils/number';
 import { parseBig } from '@/lib/utils/number';
 
@@ -50,6 +51,7 @@ export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps
   };
 
   const { mutate: withdraw, isPending } = withdrawHooks[selectedProject];
+  const { trackEvent } = useEnhancedAnalytics();
 
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
 
@@ -59,7 +61,58 @@ export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, selectedToken.decimals);
-    withdraw(amount.toString());
+    // Determine event name and labels based on project
+    const eventName = selectedProject === 'magma' ? 'MAGMA_UNSTAKE' : 'APRIORI_UNSTAKE';
+    const attemptLabel = selectedProject === 'magma' ? 'magma_withdraw_attempt' : 'apriori_withdraw_request_attempt';
+    const successLabel = selectedProject === 'magma' ? 'magma_withdraw_success' : 'apriori_withdraw_request_success';
+    const failedLabel = selectedProject === 'magma' ? 'magma_withdraw_failed' : 'apriori_withdraw_request_failed';
+
+    // Track withdraw attempt
+    trackEvent(eventName, {
+      event_category: 'protocol_interaction',
+      event_label: attemptLabel,
+      include_user_id: true,
+      custom_parameters: {
+        protocol: selectedProject,
+        action: selectedProject === 'magma' ? 'withdraw' : 'withdraw_request',
+        token: selectedToken.symbol,
+        amount: inputValue,
+        receive_token: monToken.symbol,
+        receive_amount: receiveAmount,
+      },
+    });
+
+    withdraw(amount.toString(), {
+      onSuccess: () => {
+        // Track successful withdraw
+        trackEvent(eventName, {
+          event_category: 'protocol_interaction',
+          event_label: successLabel,
+          include_user_id: true,
+          custom_parameters: {
+            protocol: selectedProject,
+            action: selectedProject === 'magma' ? 'withdraw_success' : 'withdraw_request_success',
+            token: selectedToken.symbol,
+            amount: inputValue,
+          },
+        });
+      },
+      onError: (error: Error) => {
+        // Track failed withdraw
+        trackEvent('ERROR_OCCURRED', {
+          event_category: 'protocol_interaction',
+          event_label: failedLabel,
+          error_message: error?.message || 'Unknown error',
+          include_user_id: true,
+          custom_parameters: {
+            protocol: selectedProject,
+            action: selectedProject === 'magma' ? 'withdraw_failed' : 'withdraw_request_failed',
+            token: selectedToken.symbol,
+            amount: inputValue,
+          },
+        });
+      },
+    });
   };
 
   return (
@@ -82,7 +135,7 @@ export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps
       <TokenInput
         inputValue={inputValue}
         onInputChange={handleInput}
-        placeholder="Amount to withdraw"
+        placeholder="0"
       />
       <Separator className="mt-6 mb-5" />
       <WithdrawEstReceive receiveToken={monToken} receiveAmount={receiveAmount} />
