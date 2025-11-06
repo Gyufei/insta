@@ -3,7 +3,7 @@
 import { CircleX, Loader } from 'lucide-react';
 import { divide } from 'safebase';
 import { toast } from 'sonner';
-import { SignTypedDataParameters } from 'viem';
+import { SignTypedDataParameters, isAddress } from 'viem';
 import { useAccount, useSignTypedData } from 'wagmi';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -35,6 +35,8 @@ import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
 
+import { DexProjectId } from './dex-config';
+
 function CovertPermitData(
   permitData: IUniswapQuote['permitData'],
   wallet: string
@@ -49,7 +51,8 @@ function CovertPermitData(
   return typeData as SignTypedDataParameters;
 }
 
-export function TradeContent() {
+export function TradeContent({ selectedProject }: { selectedProject: DexProjectId }) {
+  console.log('🚀 ~ TradeContent ~ selectedProject:', selectedProject);
   const { address: wallet } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
   const { data: accounts } = useAccounts();
@@ -303,6 +306,14 @@ export function TradeContent() {
         signature = await signTypedDataAsync(typeData);
       }
 
+      // If EOA chooses to receive to a custom address, validate it (Uniswap only)
+      if (selectedProject === 'uniswap' && receiveToCustom) {
+        if (!receiveCustomAddress || !isAddress(receiveCustomAddress as `0x${string}`)) {
+          toast.error('Invalid recipient address');
+          return;
+        }
+      }
+
       const args = {
         token_in: replaceNativeAddressUseBackend(sellToken.address),
         token_out: replaceNativeAddressUseBackend(buyToken.address),
@@ -310,6 +321,9 @@ export function TradeContent() {
         amount_in_decimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
         ...(permitData ? { permitData: permitData } : {}),
         ...(signature ? { signature } : {}),
+        ...(selectedProject === 'uniswap' && receiveToCustom && receiveCustomAddress
+          ? { recipient: receiveCustomAddress }
+          : {}),
       };
       eoaSwap(args);
     } else {
@@ -409,10 +423,26 @@ export function TradeContent() {
               fromTokenSymbol={sellToken?.symbol}
               disabled={true}
               justHasBalance={false}
-              customAddressEnabled={receiveToCustom}
-              onCustomAddressToggle={setReceiveToCustom}
-              customAddress={receiveCustomAddress}
-              onCustomAddressChange={setReceiveCustomAddress}
+              customAddressEnabled={
+                currentAccountType === 'EOA' && selectedProject === 'uniswap'
+                  ? receiveToCustom
+                  : false
+              }
+              onCustomAddressToggle={
+                currentAccountType === 'EOA' && selectedProject === 'uniswap'
+                  ? setReceiveToCustom
+                  : undefined
+              }
+              customAddress={
+                currentAccountType === 'EOA' && selectedProject === 'uniswap'
+                  ? receiveCustomAddress
+                  : undefined
+              }
+              onCustomAddressChange={
+                currentAccountType === 'EOA' && selectedProject === 'uniswap'
+                  ? setReceiveCustomAddress
+                  : undefined
+              }
             />
             {
               <div

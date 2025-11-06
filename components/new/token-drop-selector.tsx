@@ -96,7 +96,7 @@ export function TokenDropSelector({
         accountSelectLabel={accountSelectLabel}
       />
 
-      {onCustomAddressChange && (
+      {onCustomAddressToggle && (
         <div className="flex items-center justify-end gap-2">
           <span className="text-sm text-[#A5ADC6]">Custom Address</span>
           <Switch

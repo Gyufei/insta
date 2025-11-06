@@ -19,7 +19,7 @@ export function DexContent() {
           selectedProject={selectedProject}
           onProjectSelect={(projectId: string) => setSelectedProject(projectId as DexProjectId)}
         />
-        <TradeContent />
+        <TradeContent selectedProject={selectedProject} />
       </div>
     </div>
   );
