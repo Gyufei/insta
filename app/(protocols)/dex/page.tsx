@@ -5,7 +5,6 @@ import { MetaBaseHost } from '@/config/env-url';
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
 import { DexContent } from './dex-content';
-import { PositionsSection } from './positions/position-section';
 
 export const metadata: Metadata = {
   title: 'Dex',
@@ -28,7 +27,6 @@ export default function DexPage() {
   return (
     <CommonPageLayout title="DEX" iconSrc={null} titleClassName="pb-5 md:pb-6">
       <DexContent />
-      <PositionsSection />
     </CommonPageLayout>
   );
 }

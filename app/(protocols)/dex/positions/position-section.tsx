@@ -6,14 +6,16 @@ import { useState } from 'react';
 
 import { IToken } from '@/config/tokens';
 
-import { EmptyState } from '@/components/common/empty-state';
+import type { DexProjectId } from '../dex-config';
+
+import { PositionsEmpty } from './common/positions-empty';
 import { TitleH2 } from '@/components/common/title-h2';
 import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 
 import { PositionStatus, useUniswapPosition } from '@/lib/data/use-uniswap-position';
+import { useAmbientPosition } from '@/lib/data/use-ambient-position';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { isSameAddress } from '@/lib/utils';
 
@@ -32,18 +34,19 @@ function getToken(token: Omit<IToken, 'logo'>, tokens: IToken[]): IToken {
   return t;
 }
 
-export function PositionsSection() {
+export function PositionsSection({ selectedProject }: { selectedProject: DexProjectId }) {
   const { setCurrentComponent } = useSideDrawerStore();
-  const { data: positions, isLoading } = useUniswapPosition();
+  const { data: positions, isLoading: isUniswapLoading } = useUniswapPosition();
+  const { data: ambientData, isLoading: isAmbientLoading } = useAmbientPosition();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [hideClosedPositions, setHideClosedPositions] = useState(true);
 
-  const withFilter = hideClosedPositions || searchQuery;
+  const withFilter = Boolean(searchQuery);
+  const isUniswapSelected = selectedProject === 'uniswap' || selectedProject === 'auto-routing';
 
   const tokens = TOKENS;
   const filteredPositions = positions?.filter((position) => {
-    if (hideClosedPositions && position.status === PositionStatus.POSITION_STATUS_CLOSED) {
+    if (position.status === PositionStatus.POSITION_STATUS_CLOSED) {
       return false;
     }
 
@@ -63,8 +66,31 @@ export function PositionsSection() {
     return true;
   });
 
+  const ambientPositions = ambientData?.positions;
+  const filteredAmbientPositions = ambientPositions?.filter((position) => {
+    if (searchQuery) {
+      const token0 = tokens.find((t) => isSameAddress(t.address, position.base));
+      const token1 = tokens.find((t) => isSameAddress(t.address, position.quote));
+      const searchLower = searchQuery.toLowerCase();
+      return (
+        token0?.symbol.toLowerCase().includes(searchLower) ||
+        token1?.symbol.toLowerCase().includes(searchLower)
+      );
+    }
+    return true;
+  });
+
   function handleNewPosition() {
-    setCurrentComponent({ name: 'UniswapCreatePosition' });
+    // Auto Routing follows Uniswap behavior
+    if (selectedProject === 'uniswap' || selectedProject === 'auto-routing') {
+      setCurrentComponent({ name: 'UniswapCreatePosition' });
+      return;
+    }
+
+    if (selectedProject === 'ambient') {
+      setCurrentComponent({ name: 'AmbientCreatePosition' });
+      return;
+    }
   }
 
   return (
@@ -100,40 +126,37 @@ export function PositionsSection() {
       </div>
 
       <div className="mt-4 flex flex-grow flex-col gap-4 min-h-50">
-        {isLoading ? (
+        {(isUniswapSelected ? isUniswapLoading : isAmbientLoading) ? (
           <div className="py-20 rounded-sm bg-muted/80 flex items-center justify-center">
             <WithLoading isLoading={true} />
           </div>
-        ) : !positions?.length || (withFilter && !filteredPositions?.length) ? (
-          <EmptyState
-            message={
-              positions?.length === 0 ? (
-                <>
-                  You have no active positions. <br />
-                  Create a position to get started!
-                </>
-              ) : (
-                <>
-                  No positions found. <br />
-                </>
-              )
-            }
+        ) : isUniswapSelected ? (
+          !positions?.length || (withFilter && !filteredPositions?.length) ? (
+            <PositionsEmpty
+              isEmpty={(positions?.length || 0) === 0}
+              hasFilterApplied={withFilter}
+            />
+          ) : (
+            <>
+              {filteredPositions?.map((position) => (
+                <PositionItem key={position.v3Position.tokenId} protocol="uniswap" position={position} />
+              ))}
+            </>
+          )
+        ) : !ambientPositions?.length || (searchQuery && !filteredAmbientPositions?.length) ? (
+          <PositionsEmpty
+            isEmpty={(ambientPositions?.length || 0) === 0}
+            hasFilterApplied={Boolean(searchQuery)}
           />
         ) : (
           <>
-            {filteredPositions?.map((position) => (
-              <PositionItem key={position.v3Position.tokenId} position={position} />
+            {filteredAmbientPositions?.map((position) => (
+              <PositionItem key={position.positionId} protocol="ambient" position={position} />
             ))}
           </>
         )}
       </div>
 
-      <div className="mt-2 flex w-full items-center text-muted-foreground">
-        <div className="flex w-full items-center justify-end">
-          <div className="mr-4 cursor-pointer">Hide closed positions</div>
-          <Switch checked={hideClosedPositions} onCheckedChange={setHideClosedPositions} />
-        </div>
-      </div>
     </div>
   );
 }
