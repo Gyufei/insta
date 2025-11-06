@@ -34,7 +34,7 @@ import { usePositionDataFormat } from '../uni-common/use-position-data-format';
 export function UniswapAddLiquidity() {
   const { currentComponent } = useSideDrawerStore();
   const { mutate: addLiquidity, isPending } = useUniswapAddLiquidity();
-  const { handleBack } = useUrlPathDrawerChange('/uniswap');
+  const { handleBack } = useUrlPathDrawerChange(['/dex']);
   const { trackEvent } = useEnhancedAnalytics();
 
   const { uniswapPosition } =

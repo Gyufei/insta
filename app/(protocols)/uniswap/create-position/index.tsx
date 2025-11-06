@@ -68,7 +68,7 @@ export function UniswapCreatePosition() {
   const { showTokenSelector, setShowTokenSelector, handleTokenSelect } = useTokenSelector();
   const { trackEvent } = useEnhancedAnalytics();
 
-  const { handleBack } = useUrlPathDrawerChange('/uniswap');
+  const { handleBack } = useUrlPathDrawerChange(['/dex']);
 
   const { data: positionInfo } = useUniswapPositionInfo({
     token_a_address: replaceNativeAddressUseBackend(token0?.address || ''),

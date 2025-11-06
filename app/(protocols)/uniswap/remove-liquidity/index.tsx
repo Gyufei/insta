@@ -28,7 +28,7 @@ import { usePositionDataFormat } from '../uni-common/use-position-data-format';
 export function UniswapRemoveLiquidity() {
   const { currentComponent } = useSideDrawerStore();
   const { mutate: removeLiquidity, isPending } = useUniswapRemoveLiquidity();
-  const { handleBack } = useUrlPathDrawerChange('/uniswap');
+  const { handleBack } = useUrlPathDrawerChange(['/dex']);
   const { trackEvent } = useEnhancedAnalytics();
 
   const { uniswapPosition } =
