@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppKitNetwork } from '@reown/appkit/react';
-import { multiply } from 'safebase';
+// import { multiply } from 'safebase';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
@@ -18,7 +18,9 @@ import {
   MONAD_TESTNET_NAME,
   NetworkConfigs,
 } from '@/config/network-config';
-import { IToken, TokenPriceMap } from '@/config/tokens';
+import { IToken, 
+  // TokenPriceMap 
+} from '@/config/tokens';
 
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 import { Input } from '@/components/ui/input';
@@ -34,11 +36,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useApiBalance } from '@/lib/data/balance/use-api-balance';
 import type { IAccountTokenBalance } from '@/lib/data/balance/use-api-balance';
 import { useTokenInfo } from '@/lib/data/use-token-info';
-import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
+// import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
 import { truncateNumber } from '@/lib/utils/number';
+import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 
 interface TokenSelectProps {
   selectedToken?: IToken;
@@ -64,7 +67,6 @@ export function TokenSelect({
   const [tokens, setTokens] = useState(UNISWAP_TOKENS);
   const [searchQuery, setSearchQuery] = useState('');
   const { address: wallet } = useAccount();
-  const hasWallet = !!wallet;
 
   const NETWORKS: INetworkConfig[] = useMemo(() => {
     return (
@@ -85,6 +87,7 @@ export function TokenSelect({
     NETWORKS.find((n) => String(n?.id) === String(chainId)) || NETWORKS[0]
   );
   const [activeNetworkTab, setActiveNetworkTab] = useState<string>('All');
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (!chainId) return;
@@ -104,12 +107,12 @@ export function TokenSelect({
       ? undefined
       : tokenInfoData;
 
-  const { data: balanceData } = useApiBalance();
+  const { data: balanceData } = useApiBalance(isOpen);
   const { data: uniswapTokensData, isLoading: isUniswapTokensLoading } = useUniswapTokens();
-  const { data: priceData } = useTokenStationPrice();
+  // const { data: priceData } = useTokenStationPrice();
 
-  const ethPrice = priceData?.eth_price || '0';
-  const monPrice = priceData?.mon_price || '0';
+  // const ethPrice = priceData?.eth_price || '0';
+  // const monPrice = priceData?.mon_price || '0';
 
   const activeNetworkCode = useMemo(() => {
     if (String(activeNetwork?.id) === String(NetworkConfigs.monadTestnet.id)) return 'MON';
@@ -130,15 +133,15 @@ export function TokenSelect({
     return { byAddress, bySymbol };
   }, [balanceData, activeNetworkCode]);
 
-  function getPriceForTokenSymbol(symbol: string): string {
-    if (!symbol) return '0';
-    const upper = symbol.toUpperCase();
-    if (upper === 'ETH' || upper === 'METH') return ethPrice;
-    if (upper === 'MON' || upper === 'WMON') return monPrice;
-    if (upper === 'USDT' || upper === 'USDC' || upper === 'MONUSD') return '1';
-    if (TokenPriceMap[upper] !== undefined) return String(TokenPriceMap[upper]);
-    return '0';
-  }
+  // function getPriceForTokenSymbol(symbol: string): string {
+  //   if (!symbol) return '0';
+  //   const upper = symbol.toUpperCase();
+  //   if (upper === 'ETH' || upper === 'METH') return ethPrice;
+  //   if (upper === 'MON' || upper === 'WMON') return monPrice;
+  //   if (upper === 'USDT' || upper === 'USDC' || upper === 'MONUSD') return '1';
+  //   if (TokenPriceMap[upper] !== undefined) return String(TokenPriceMap[upper]);
+  //   return '0';
+  // }
 
   const allTokens = useMemo(() => {
     const uniswapTokens = uniswapTokensData?.map((token) => ({
@@ -198,6 +201,45 @@ export function TokenSelect({
     isSearchingAddress,
   ]);
 
+  function TokenQty({
+    wallet,
+    token,
+    bItem,
+    enabled,
+  }: {
+    wallet?: string;
+    token: IToken;
+    bItem?: IAccountTokenBalance;
+    enabled?: boolean;
+  }) {
+    const hasWalletAddr = !!wallet;
+    const bulkQty = truncateNumber(String(bItem?.formattedBalance ?? '0'), 6);
+    const needFallback = hasWalletAddr && (!bItem || Number(bulkQty) === 0);
+    const addr = needFallback ? wallet ?? '' : '';
+    const { balance, isBalancePending } = useAddressBalance(
+      addr,
+      token.address,
+      token.decimals,
+      enabled,
+      60_000
+    );
+
+    if (!hasWalletAddr) {
+      return <span className="text-sm text-[#131E40]">--</span>;
+    }
+
+    if (needFallback) {
+      if (enabled === false) {
+        return <span className="text-sm text-[#131E40]">...</span>;
+      }
+      return (
+        <span className="text-sm text-[#131E40]">{isBalancePending ? '...' : balance}</span>
+      );
+    }
+
+    return <span className="text-sm text-[#131E40]">{bulkQty}</span>;
+  }
+
   useEffect(() => {
     if (isSearchingAddress && tokenInfo) {
       const tokenAddress = (tokenInfo.address || '').toLowerCase();
@@ -217,8 +259,7 @@ export function TokenSelect({
           onTokenChange(selected);
         }
       }}
-      // open={true}
-      // onOpenChange={() => {}}
+      onOpenChange={(open) => setIsOpen(open)}
     >
       <SelectTrigger
         className={cn(
@@ -335,16 +376,19 @@ export function TokenSelect({
               const isNative =
                 isSameAddress(token.address, DEFAULT_NATIVE_ADDRESS) ||
                 isSameAddress(token.address, BACKEND_NATIVE_ADDRESS);
-              const bItem = isNative
-                ? balancesIndex.bySymbol.get('MON')
-                : balancesIndex.byAddress.get(token.address.toLowerCase()) ||
-                  balancesIndex.bySymbol.get(token.symbol);
-              const qty = truncateNumber(String(bItem?.formattedBalance || '0'), 6);
-              const price = getPriceForTokenSymbol(token.symbol);
-              const usd = truncateNumber(
-                multiply(String(bItem?.formattedBalance || '0'), price),
-                2
-              );
+              const nativeAddr = BACKEND_NATIVE_ADDRESS.toLowerCase();
+              const lookupAddr = isNative ? nativeAddr : token.address.toLowerCase();
+              const tokenSymbolUpper = token.symbol?.toUpperCase() || '';
+              const bItem =
+                balancesIndex.byAddress.get(lookupAddr) ||
+                balancesIndex.bySymbol.get(tokenSymbolUpper) ||
+                balancesIndex.bySymbol.get(token.symbol);
+              
+              // const price = getPriceForTokenSymbol(token.symbol);
+              // const usd = truncateNumber(
+              //   multiply(String(bItem?.formattedBalance || '0'), price),
+              //   2
+              // );
               const isSelected = isSameAddress(selectedToken?.address || '', token.address);
 
               return (
@@ -388,8 +432,9 @@ export function TokenSelect({
                     </div>
 
                     <div className="flex flex-col items-end">
-                      <span className="text-sm text-[#131E40]">{hasWallet ? qty : '--'}</span>
-                      <span className="text-xs text-[#A5ADC6]">{hasWallet ? `$${usd}` : '--'}</span>
+                      <TokenQty wallet={wallet} token={token} bItem={bItem} enabled={isOpen} />
+                      {/* <span className="text-xs text-[#A5ADC6]">{hasWallet ? `$${usd}` : '--'}</span> */}
+                      <span className="text-xs text-[#A5ADC6]">{'--'}</span>
                     </div>
                   </div>
                 </SelectItem>

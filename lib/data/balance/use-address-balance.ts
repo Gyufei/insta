@@ -14,7 +14,9 @@ import { useMonadTokenBalance } from './use-monad-token-balance';
 export function useAddressBalance(
   address: string,
   tokenAddress: string,
-  tokenDecimals: number = DEFAULT_TOKEN_DECIMALS
+  tokenDecimals: number = DEFAULT_TOKEN_DECIMALS,
+  enabled?: boolean,
+  staleTime?: number
 ) {
   const isNative =
     isSameAddress(tokenAddress, DEFAULT_NATIVE_ADDRESS) ||
@@ -24,13 +26,13 @@ export function useAddressBalance(
     balance: nativeBalance,
     isPending: isNativeBalancePending,
     refetch: refetchNativeBalance,
-  } = useRPCNativeBalance(NetworkConfigs.monadTestnet.id, address);
+  } = useRPCNativeBalance(NetworkConfigs.monadTestnet.id, address, enabled, staleTime);
 
   const {
     data: tokenBalance,
     isPending: isTokenBalancePending,
     refetch: refetchTokenBalance,
-  } = useMonadTokenBalance(address, tokenAddress, tokenDecimals);
+  } = useMonadTokenBalance(address, tokenAddress, tokenDecimals, enabled, staleTime);
 
   const balance = isNative
     ? truncateNumber(nativeBalance, 4)

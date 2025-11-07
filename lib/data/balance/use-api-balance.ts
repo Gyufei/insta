@@ -14,7 +14,7 @@ export interface IAccountTokenBalance {
   formattedBalance: string;
 }
 
-export function useApiBalance() {
+export function useApiBalance(enabled?: boolean) {
   const { address: wallet } = useAccount();
   const { currentAccountType } = useAccountStore();
 
@@ -40,6 +40,8 @@ export function useApiBalance() {
     },
     {
       withAccount: currentAccountType === 'EOA' ? false : true,
+      enabled,
+      staleTime: 60_000,
     }
   )();
 }

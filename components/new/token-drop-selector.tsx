@@ -1,11 +1,11 @@
 'use client';
 
-import AccountSelect from '@/components/common/account-select';
-import { divide, multiply } from 'safebase';
+import { divide } from 'safebase';
 import { isAddress } from 'viem';
 
 import { IToken, TokenPriceMap } from '@/config/tokens';
 
+import AccountSelect from '@/components/common/account-select';
 import { NumberInput } from '@/components/common/number-input';
 import { TokenSelect } from '@/components/common/token-select';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,7 @@ import { Switch } from '@/components/ui/switch';
 
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { cn } from '@/lib/utils';
-import { formatNumber, truncateIfExceeds, truncateNumber } from '@/lib/utils/number';
+import { formatNumber, truncateNumber } from '@/lib/utils/number';
 
 interface TokenSelectorProps {
   selectedToken?: IToken;
@@ -27,6 +27,7 @@ interface TokenSelectorProps {
   isBalancePending: boolean;
   label: string;
   fromTokenSymbol?: string;
+  fromTokenAmount?: string;
   placeholder?: string;
   disabled?: boolean;
   showMaxButton?: boolean;
@@ -55,6 +56,7 @@ export function TokenDropSelector({
   isBalancePending,
   label,
   fromTokenSymbol,
+  fromTokenAmount,
   placeholder,
   disabled = false,
   showMaxButton = false,
@@ -157,34 +159,48 @@ export function TokenDropSelector({
           <span className="text-sm text-[#A5ADC6]">
             {label?.toLowerCase() === 'from' ? (
               <>
-                $
+                {/* $
                 {truncateIfExceeds(
                   multiply(value || '0', getPriceForTokenSymbol(selectedToken?.symbol)),
                   2
-                )}
+                )} */}
               </>
             ) : label?.toLowerCase() === 'to' ? (
               (() => {
                 const fromSymbol = fromTokenSymbol || '';
                 const fromPrice = getPriceForTokenSymbol(fromSymbol);
                 const toPrice = getPriceForTokenSymbol(selectedToken?.symbol);
-                const usdApprox = truncateIfExceeds(fromPrice || '0', 2);
 
                 if (!fromSymbol || !selectedToken?.symbol) {
                   return null;
                 }
 
-                if (Number(toPrice) <= 0 || Number(fromPrice) <= 0) {
-                  // Fallback when price data is missing
-                  return <>~ ${usdApprox}</>;
+                // if (Number(toPrice) <= 0 || Number(fromPrice) <= 0) {
+                //   // Fallback when price data is missing
+                //   return <>~ ${usdApprox}</>;
+                // }
+
+                // Prefer live quote-based rate if amounts are available
+                const fromAmt = Number(fromTokenAmount || '');
+                const toAmt = Number(value || '');
+                if (isFinite(fromAmt) && isFinite(toAmt) && fromAmt > 0 && toAmt > 0) {
+                  const rateFromQuote = truncateNumber(divide(String(toAmt), String(fromAmt)), 6);
+                  return (
+                    <>
+                      1 {fromSymbol} = {rateFromQuote} {selectedToken.symbol}
+                    </>
+                  );
                 }
 
-                const rate = truncateNumber(divide(fromPrice, toPrice), 6);
-                return (
-                  <>
-                    1 {fromSymbol} = {rate} {selectedToken.symbol} ~ ${usdApprox}
-                  </>
-                );
+                const fNum = Number(fromPrice);
+                const tNum = Number(toPrice);
+                if (!isFinite(fNum) || !isFinite(tNum) || tNum <= 0 || fNum <= 0) {
+                  return (
+                    <>
+                      1 {fromSymbol} = -- {selectedToken.symbol}
+                    </>
+                  );
+                }
               })()
             ) : (
               <></>

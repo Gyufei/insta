@@ -193,6 +193,13 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     }
   }, [quoteData?.output, buyToken?.decimals]);
 
+  // 当卖出数量为 0 或空时，将买入数量重置为 0，避免保留旧的报价输出
+  useEffect(() => {
+    if (!sellValue || Number(sellValue) === 0) {
+      setBuyValue('0');
+    }
+  }, [sellValue]);
+
   useEffect(() => {
     if (quoteError) {
       if (!('message' in quoteError)) return;
@@ -395,12 +402,12 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
 
           <div
             className={cn(
-              'flex justify-center items-center md:px-2 px-0 py-2 md:py-0 md:-mx-[20px] mx-0 -my-[12px] z-10'
+              'flex justify-center items-center md:px-2 px-0 md:-mx-[20px] mx-0 -my-[12px] z-10'
             )}
           >
             <div
               className={cn(
-                'border select-none border-[#ebebeb] rounded-md h-10 w-10 flex items-center justify-center bg-white md:rotate-0 rotate-90 cursor-pointer'
+                'border select-none border-[#ebebeb] rounded-md h-10 w-10 flex items-center justify-center bg-white cursor-pointer'
               )}
               onClick={handleSwapTokens}
             >
@@ -421,6 +428,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
               label="To"
               placeholder="0.00"
               fromTokenSymbol={sellToken?.symbol}
+              fromTokenAmount={sellValue}
               disabled={true}
               justHasBalance={false}
               customAddressEnabled={
@@ -444,16 +452,6 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
                   : undefined
               }
             />
-            {
-              <div
-                className={cn(
-                  'text-sm leading-[140%] text-[#A5ADC6] transition-all duration-300',
-                  quoteData?.priceImpact ? 'h-[20px]' : 'h-0 overflow-hidden'
-                )}
-              >
-                Price impact: {quoteData?.priceImpact}
-              </div>
-            }
           </Card>
         </div>
 

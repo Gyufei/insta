@@ -178,6 +178,8 @@ export function createQueryHook<TResponse>(
   extraArgs: {
     withAccount: boolean;
     retry?: boolean;
+    enabled?: boolean;
+    staleTime?: number;
   }
 ) {
   return function useCustomQuery() {
@@ -193,11 +195,16 @@ export function createQueryHook<TResponse>(
       return fetchApiRequest<TResponse>(url.toString());
     }
 
+    const defaultEnabled = !extraArgs.withAccount || (extraArgs.withAccount && !!account);
+    const mergedEnabled =
+      extraArgs.enabled !== undefined ? extraArgs.enabled && defaultEnabled : defaultEnabled;
+
     const queryResult = useQuery({
       queryKey: buildQueryKey(extraArgs.withAccount ? account : undefined),
       queryFn: () => executeQuery(),
-      enabled: !extraArgs.withAccount || (extraArgs.withAccount && !!account),
+      enabled: mergedEnabled,
       retry: extraArgs.retry !== undefined ? extraArgs.retry : 3,
+      staleTime: extraArgs.staleTime,
     });
 
     return queryResult;
