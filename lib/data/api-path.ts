@@ -67,6 +67,14 @@ export const ApiPath = {
   magmaDeposit: `${ApiHost}/magma/deposit`,
   magmaWithdraw: `${ApiHost}/magma/withdraw`,
 
+  // Curvance Lending endpoints
+  curvanceMarkets: `${ApiHost}/curvance/markets`,
+  curvanceMarketUserInfo: `${ApiHost}/curvance/market_user_info`,
+  curvanceDeposit: `${ApiHost}/curvance/deposit`,
+  curvanceWithdraw: `${ApiHost}/curvance/withdraw`,
+  curvanceRepay: `${ApiHost}/curvance/repay`,
+  curvanceBorrow: `${ApiHost}/curvance/borrow`,
+
   uniswapV3Position: `${ApiHost}/uniswap_v3_position/all_positions`,
   uniswapPositionInfo: `${ApiHost}/uniswap_v3_position/position_info`,
   uniswapQuote: `${ApiHost}/uniswap_router02/quote`,

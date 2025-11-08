@@ -12,6 +12,8 @@ export const ERROR_MESSAGES = {
   WITHDRAW_FAILED: 'Withdrawal failed',
   DEPOSIT_FAILED: 'Deposit failed',
   CLAIM_FAILED: 'Claim failed',
+  REPAY_FAILED: 'Repay failed',
+  BORROW_FAILED: 'Borrow failed',
   TOKEN_CLAIM_FAILED: 'Token claim failed', //new
   REWARDS_CLAIM_FAILED: 'Rewards claim failed', //new
   CREATE_ACCOUNT_FAILED: 'Account creation failed',
@@ -46,6 +48,8 @@ export const SUCCESS_MESSAGES = {
   WITHDRAW_SUCCESS: 'Withdrawal successful',
   REQUEST_WITHDRAW_SUCCESS: 'Withdrawal request submitted',
   CLAIM_SUCCESS: 'Claimed successfully',
+  REPAY_SUCCESS: 'Repay successful',
+  BORROW_SUCCESS: 'Borrow successful',
   TOKEN_CLAIM_SUCCESS: 'Token claimed successfully', //new
   REWARDS_CLAIM_SUCCESS: 'Rewards claimed successfully', //new
   DEPOSIT_SUCCESS: 'Deposit successful',

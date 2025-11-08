@@ -26,6 +26,10 @@ import { NadNameSetPrimary } from '@/app/(protocols)/nad-name-service/nad-name-s
 import { NadNameTransfer } from '@/app/(protocols)/nad-name-service/nad-name-transfer';
 import { BadgeNftBuy } from '@/app/badge-gallery/badge-nft-buy';
 import { OddsMarketSellAndBuy } from '@/app/odds/market/market-sell-and-buy';
+import { LendingSupply } from '@/app/(protocols)/lending/supply';
+import { LendingWithdraw } from '@/app/(protocols)/lending/withdraw';
+import { LendingRepay } from '@/app/(protocols)/lending/repay';
+import { LendingBorrow } from '@/app/(protocols)/lending/borrow';
 
 
 
@@ -67,6 +71,10 @@ const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   AmbientRemoveLiquidity: AmbientRemoveLiquidity,
   OddsMarketSellAndBuy: OddsMarketSellAndBuy,
   BadgeNftBuy: BadgeNftBuy,
+  LendingSupply: LendingSupply,
+  LendingWithdraw: LendingWithdraw,
+  LendingRepay: LendingRepay,
+  LendingBorrow: LendingBorrow,
 } as const;
 
 const ANIMATION_CONFIG = {

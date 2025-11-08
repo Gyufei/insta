@@ -41,6 +41,12 @@ export const ANALYTICS_EVENTS = {
   MAGMA_STAKE: 'magma_stake',
   MAGMA_UNSTAKE: 'magma_unstake',
 
+  // Curvance Lending Events
+  LENDING_SUPPLY: 'lending_supply',
+  LENDING_WITHDRAW: 'lending_withdraw',
+  LENDING_REPAY: 'lending_repay',
+  LENDING_BORROW: 'lending_borrow',
+
   // NAD Fun Events
   NAD_TOKEN_CREATE: 'nad_token_create',
   NAD_TOKEN_BUY: 'nad_token_buy',
