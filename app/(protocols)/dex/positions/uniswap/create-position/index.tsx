@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
+import { useTokenSelector } from '@/app/(protocols)/dex/positions/uni-common/use-token-selector';
 
 import {
   BACKEND_NATIVE_ADDRESS,

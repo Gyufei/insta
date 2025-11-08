@@ -2,8 +2,8 @@ import { divide, multiply } from 'safebase';
 
 import { useState } from 'react';
 
-import { TwoTokenAmount } from '@/app/(protocols)/uniswap/uni-common/two-token-amount';
-import UniswapTokenInput from '@/app/(protocols)/uniswap/uni-common/uniswap-token-input';
+import { TwoTokenAmount } from '@/app/(protocols)/dex/positions/uni-common/two-token-amount';
+import UniswapTokenInput from '@/app/(protocols)/dex/positions/uni-common/uniswap-token-input';
 
 import { replaceNativeAddressUseBackend } from '@/config/network-config';
 

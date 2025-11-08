@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import Image from 'next/image';
 
-import { UNISWAP_TOKENS } from '@/app/(protocols)/uniswap/use-uniswap-token';
+import { TOKENS } from '@/app/(protocols)/dex/positions/use-token';
 
 import {
   BACKEND_NATIVE_ADDRESS,
@@ -18,8 +18,9 @@ import {
   MONAD_TESTNET_NAME,
   NetworkConfigs,
 } from '@/config/network-config';
-import { IToken, 
-  // TokenPriceMap 
+import {
+  IToken,
+  // TokenPriceMap
 } from '@/config/tokens';
 
 import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
@@ -33,6 +34,7 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useApiBalance } from '@/lib/data/balance/use-api-balance';
 import type { IAccountTokenBalance } from '@/lib/data/balance/use-api-balance';
 import { useTokenInfo } from '@/lib/data/use-token-info';
@@ -41,7 +43,6 @@ import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
 import { truncateNumber } from '@/lib/utils/number';
-import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 
 interface TokenSelectProps {
   selectedToken?: IToken;
@@ -64,7 +65,7 @@ export function TokenSelect({
   networks,
   label,
 }: TokenSelectProps) {
-  const [tokens, setTokens] = useState(UNISWAP_TOKENS);
+  const [tokens, setTokens] = useState(TOKENS);
   const [searchQuery, setSearchQuery] = useState('');
   const { address: wallet } = useAccount();
 
@@ -215,7 +216,7 @@ export function TokenSelect({
     const hasWalletAddr = !!wallet;
     const bulkQty = truncateNumber(String(bItem?.formattedBalance ?? '0'), 6);
     const needFallback = hasWalletAddr && (!bItem || Number(bulkQty) === 0);
-    const addr = needFallback ? wallet ?? '' : '';
+    const addr = needFallback ? (wallet ?? '') : '';
     const { balance, isBalancePending } = useAddressBalance(
       addr,
       token.address,
@@ -232,9 +233,7 @@ export function TokenSelect({
       if (enabled === false) {
         return <span className="text-sm text-[#131E40]">...</span>;
       }
-      return (
-        <span className="text-sm text-[#131E40]">{isBalancePending ? '...' : balance}</span>
-      );
+      return <span className="text-sm text-[#131E40]">{isBalancePending ? '...' : balance}</span>;
     }
 
     return <span className="text-sm text-[#131E40]">{bulkQty}</span>;
@@ -383,7 +382,7 @@ export function TokenSelect({
                 balancesIndex.byAddress.get(lookupAddr) ||
                 balancesIndex.bySymbol.get(tokenSymbolUpper) ||
                 balancesIndex.bySymbol.get(token.symbol);
-              
+
               // const price = getPriceForTokenSymbol(token.symbol);
               // const usd = truncateNumber(
               //   multiply(String(bItem?.formattedBalance || '0'), price),

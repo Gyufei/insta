@@ -4,7 +4,7 @@ import { isAddress } from 'viem';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { UNISWAP_TOKENS } from '@/app/(protocols)/uniswap/use-uniswap-token';
+import { TOKENS } from '@/app/(protocols)/dex/positions/use-token';
 
 import { IToken, MonUSD } from '@/config/tokens';
 
@@ -60,7 +60,7 @@ export function TokenDropSelector({
   justHasBalance = false,
   noMonUsd = false,
 }: TokenSelectorProps) {
-  const [tokens, setTokens] = useState(UNISWAP_TOKENS);
+  const [tokens, setTokens] = useState(TOKENS);
   const [searchQuery, setSearchQuery] = useState('');
 
   // 检查搜索查询是否为有效的合约地址

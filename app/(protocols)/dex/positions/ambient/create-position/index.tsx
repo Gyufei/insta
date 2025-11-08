@@ -4,8 +4,8 @@ import { toast } from 'sonner';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import TokenSelector from '@/app/(protocols)/uniswap/uni-common/token-selector';
-import { useTokenSelector } from '@/app/(protocols)/uniswap/uni-common/use-token-selector';
+import TokenSelector from '@/app/(protocols)/dex/positions/uni-common/token-selector';
+import { useTokenSelector } from '@/app/(protocols)/dex/positions/uni-common/use-token-selector';
 
 import { replaceNativeAddressUseBackend } from '@/config/network-config';
 import { IToken, MONAD } from '@/config/tokens';

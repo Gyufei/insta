@@ -176,10 +176,19 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
 
   const protocolItems: MenuItem[] = [
     {
-      href: getCurrentChainNameHref('/uniswap'),
-      label: 'Uniswap V3',
+      href: getCurrentChainNameHref('/lending'),
+      label: 'Lending',
       icon: (
-        <Image src="/icons/uniswap.svg" alt="uniswap" width={12} height={12} className="h-3 w-3" />
+        <Image src="/icons/lending.svg" alt="lending" width={12} height={12} className="h-3 w-3" />
+      ),
+      rightIcon: (
+        <Image
+          src="/icons/lending-items-icon.svg"
+          alt="lending-items"
+          width={32}
+          height={16}
+          className="h-4 w-8"
+        />
       ),
     },
     {
@@ -249,13 +258,6 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
           height={12}
           className="h-3 w-3"
         />
-      ),
-    },
-    {
-      href: getCurrentChainNameHref('/ambient'),
-      label: 'Ambient',
-      icon: (
-        <Image src="/icons/ambient.svg" alt="ambient" width={12} height={12} className="h-3 w-3" />
       ),
     },
   ];

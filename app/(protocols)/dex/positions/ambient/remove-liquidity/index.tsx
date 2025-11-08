@@ -1,8 +1,14 @@
 import { divide, multiply } from 'safebase';
 
+
+
 import { useMemo, useState } from 'react';
 
-import { TwoTokenAmount } from '@/app/(protocols)/uniswap/uni-common/two-token-amount';
+
+
+import { TwoTokenAmount } from '@/app/(protocols)/dex/positions/uni-common/two-token-amount';
+
+
 
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
@@ -10,14 +16,22 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { Button } from '@/components/ui/button';
 
+
+
 import { IAmbientPosition } from '@/lib/data/use-ambient-position';
 import { useAmbientRemoveLiquidity } from '@/lib/data/use-ambient-remove-liquidity';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 
+
+
 import { TokenPairAndStatus } from '../am-common/token-pair-and-status';
 import { useAmbientPositionFormat } from '../use-ambient-position-format';
+
+
+
+
 
 export function AmbientRemoveLiquidity() {
   const { currentComponent } = useSideDrawerStore();
