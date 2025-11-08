@@ -80,6 +80,11 @@ export const ApiPath = {
   uniswapLiquidityRatio: `${ApiHost}/uniswap_v3_position/liquidity_ratio`,
   uniswapTokens: `${ApiHost}/uniswap_v3_position/tokens`,
 
+  // DEX unified endpoints
+  dexQuote: `${ApiHost}/dex/quote`,
+  dexEOAExecute: `${ApiHost}/dex/execute_by_eoa`,
+  dexDSAExecute: `${ApiHost}/dex/execute_by_dsa`,
+
   ambientPosition: `${ApiHost}/ambient_finance/positions`,
   ambientPositionInfo: `${ApiHost}/ambient_finance/position_info`,
   ambientCreatePosition: `${ApiHost}/ambient_finance/create_pool_and_add_liquidity`,

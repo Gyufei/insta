@@ -1,63 +1,64 @@
 'use client';
 
 import { CircleX, Loader } from 'lucide-react';
-import { divide } from 'safebase';
 import { toast } from 'sonner';
-import { SignTypedDataParameters, isAddress } from 'viem';
-import { useAccount, useSignTypedData } from 'wagmi';
+import { isAddress } from 'viem';
+import { useAccount } from 'wagmi';
+
+
 
 import { useEffect, useMemo, useState } from 'react';
 
+
+
 import Image from 'next/image';
 
-import {
-  DEFAULT_NATIVE_ADDRESS,
-  DEFAULT_TOKEN_DECIMALS,
-  UniversalRouterAddressPermit,
-  replaceNativeAddressUseBackend,
-} from '@/config/network-config';
+
+
+import { DEFAULT_NATIVE_ADDRESS, DEFAULT_TOKEN_DECIMALS, UniversalRouterAddressPermit, replaceNativeAddressUseBackend } from '@/config/network-config';
 import { IToken, MonUSD } from '@/config/tokens';
+
+
 
 import { TokenDropSelector } from '@/components/new/token-drop-selector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
+
+
 import { trackEvent, trackTrade } from '@/lib/analytics';
 import { useAccounts } from '@/lib/data/account-address/use-account';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
+import { useDexDSASwap } from '@/lib/data/use-dex-dsa-swap';
+import { useDexEOASwap } from '@/lib/data/use-dex-eoa-swap';
+import { IDexQuoteResponse, useDexQuote } from '@/lib/data/use-dex-quote';
 import { useCheckMonadAllowance } from '@/lib/data/use-monad-allowance';
-import { useUniswapDSASwap } from '@/lib/data/use-uniswap-dsa-swap';
-import { useUniswapEOASwap } from '@/lib/data/use-uniswap-eoa-swap';
-import { IUniswapQuote, useUniswapQuote } from '@/lib/data/use-uniswap-quote';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
+import { formatBig, parseBig } from '@/lib/utils/number';
 
 import { DexProjectId } from './dex-config';
 
-function CovertPermitData(
-  permitData: IUniswapQuote['permitData'],
-  wallet: string
-): SignTypedDataParameters {
-  const typeData = {
-    ...permitData,
-    primaryType: 'PermitSingle',
-    account: wallet as `0x${string}`,
-    message: permitData.values,
-  };
-
-  return typeData as SignTypedDataParameters;
+// 根据项目选择映射后端路由名
+function mapRouterName(project: DexProjectId) {
+  switch (project) {
+    case 'uniswap':
+      return 'Uniswap v3';
+    case 'ambient':
+      return 'Ambient';
+    default:
+      return 'Uniswap v3';
+  }
 }
 
 export function TradeContent({ selectedProject }: { selectedProject: DexProjectId }) {
-  console.log('🚀 ~ TradeContent ~ selectedProject:', selectedProject);
   const { address: wallet } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
   const { data: accounts } = useAccounts();
   const { currentAccountType, setCurrentAccountType, setCurrentAccountAddress } = useAccountStore();
-  const { signTypedDataAsync } = useSignTypedData();
 
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -89,38 +90,37 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
   const quoteParams = useMemo(() => {
     return sellToken && buyToken && sellValue && Number(sellValue) > 0
       ? {
-          tokenIn: replaceNativeAddressUseBackend(sellToken.address),
-          tokenOut: replaceNativeAddressUseBackend(buyToken.address),
-          amountIn: sellValue,
-          amountInDecimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
-          ...(currentAccountType === 'EOA' && wallet ? { wallet } : {}),
+          token_in: replaceNativeAddressUseBackend(sellToken.address),
+          token_out: replaceNativeAddressUseBackend(buyToken.address),
+          amount_in: sellValue,
+          amount_in_decimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
+          amount_out_decimals: buyToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
+          swap_router_name: mapRouterName(selectedProject),
         }
       : undefined;
-  }, [sellToken, buyToken, sellValue, currentAccountType, wallet]);
+  }, [sellToken, buyToken, sellValue, selectedProject]);
 
   const {
     data: quoteDataRes,
     isLoading: isQuoteLoading,
     error: quoteErrorRes,
-  } = useUniswapQuote(quoteParams);
+  } = useDexQuote(quoteParams);
 
-  const quoteData = useMemo(() => {
+  const quoteData: IDexQuoteResponse | null = useMemo(() => {
     if (!quoteDataRes) return null;
 
     if ('status' in quoteDataRes && !quoteDataRes.status) {
       return null;
     }
-
     return quoteDataRes;
   }, [quoteDataRes]);
 
-  const quoteError = useMemo(() => {
+  const quoteError = useMemo((): unknown | IDexQuoteResponse | null => {
     if (!quoteDataRes) return null;
 
     if ('status' in quoteDataRes && !quoteDataRes.status) {
       return quoteDataRes;
     }
-
     return quoteErrorRes;
   }, [quoteDataRes, quoteErrorRes]);
 
@@ -131,8 +131,8 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     isApproving: isFromApproving,
   } = useCheckMonadAllowance(sellToken?.address || '', UniversalRouterAddressPermit);
 
-  const { mutate: eoaSwap, isPending: isEOASwapPending } = useUniswapEOASwap();
-  const { mutate: dsaSwap, isPending: isDSASwapPending } = useUniswapDSASwap();
+  const { mutate: eoaSwap, isPending: isEOASwapPending } = useDexEOASwap();
+  const { mutate: dsaSwap, isPending: isDSASwapPending } = useDexDSASwap();
   const isSwapPending = currentAccountType === 'EOA' ? isEOASwapPending : isDSASwapPending;
 
   const shouldApprove = useMemo(() => {
@@ -185,13 +185,21 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     }
   };
 
+  // 从新接口响应中提取输出的 wei 和路径
+  const quoteOutWei = useMemo(() => {
+    return quoteData?.amountOut;
+  }, [quoteData]);
+
+  const quotePath = useMemo(() => {
+    return quoteData?.path ?? [];
+  }, [quoteData]);
+
   useEffect(() => {
-    if (quoteData?.output) {
-      setBuyValue(
-        divide(quoteData.output, String(10 ** (buyToken?.decimals || DEFAULT_TOKEN_DECIMALS)))
-      );
+    if (quoteOutWei && buyToken) {
+      // 使用 formatBig 支持十进制与十六进制（0x）字符串
+      setBuyValue(formatBig(quoteOutWei, buyToken?.decimals || DEFAULT_TOKEN_DECIMALS));
     }
-  }, [quoteData?.output, buyToken?.decimals]);
+  }, [quoteOutWei, buyToken?.decimals, buyToken]);
 
   // 当卖出数量为 0 或空时，将买入数量重置为 0，避免保留旧的报价输出
   useEffect(() => {
@@ -200,21 +208,28 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     }
   }, [sellValue]);
 
+  function extractMessage(x: unknown): string | null {
+    if (typeof x !== 'object' || x === null) return null;
+    const m = (x as Record<string, unknown>).message;
+    return typeof m === 'string' ? m : null;
+  }
+
   useEffect(() => {
     if (quoteError) {
-      if (!('message' in quoteError)) return;
+      const msg = extractMessage(quoteError);
+      if (!msg) return;
 
-      if (quoteError.message.includes(`Cannot read properties of undefined (reading 'quote')`)) {
+      if (msg.includes(`Cannot read properties of undefined (reading 'quote')`)) {
         const errorMsg = 'Insufficient liquidity, please try again later';
         setLiquidityError({
           showError: true,
           errorMessage: errorMsg,
         });
       } else {
-        if (quoteError.message.includes('token pair')) {
-          toast.warning(quoteError.message);
+        if (msg.includes('token pair')) {
+          toast.warning(msg);
         } else {
-          toast.error(quoteError.message);
+          toast.error(msg);
         }
       }
     }
@@ -296,8 +311,8 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     // Track trade initiation
     trackTrade('initiated', sellToken.symbol || '', buyToken.symbol || '', sellValue);
 
-    const isSellTokenEth = sellToken.address === DEFAULT_NATIVE_ADDRESS;
-    const isBuyTokenEth = buyToken.address === DEFAULT_NATIVE_ADDRESS;
+    const isSellTokenNative = sellToken.address === DEFAULT_NATIVE_ADDRESS;
+    const isBuyTokenNative = buyToken.address === DEFAULT_NATIVE_ADDRESS;
 
     // 清除之前的错误
     setLiquidityError({
@@ -305,15 +320,20 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
       errorMessage: '',
     });
 
-    if (currentAccountType === 'EOA') {
-      let signature;
-      const permitData = quoteData.permitData;
-      if (permitData) {
-        const typeData = CovertPermitData(permitData, wallet || '');
-        signature = await signTypedDataAsync(typeData);
-      }
+    const routerName = mapRouterName(selectedProject);
+    const amountInWei = parseBig(
+      sellValue,
+      sellToken.decimals ?? DEFAULT_TOKEN_DECIMALS
+    ).toString();
+    const amountOutWei = (quoteOutWei as string) ?? '0';
+    const fallbackPath = [
+      replaceNativeAddressUseBackend(sellToken.address),
+      replaceNativeAddressUseBackend(buyToken.address),
+    ];
+    const path = quotePath && quotePath.length > 0 ? quotePath : fallbackPath;
 
-      // If EOA chooses to receive to a custom address, validate it (Uniswap only)
+    if (currentAccountType === 'EOA') {
+      // EOA 自定义收款地址校验（保持与原逻辑一致，仅在 Uniswap 下开启）
       if (selectedProject === 'uniswap' && receiveToCustom) {
         if (!receiveCustomAddress || !isAddress(receiveCustomAddress as `0x${string}`)) {
           toast.error('Invalid recipient address');
@@ -321,24 +341,25 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
         }
       }
 
-      const args = {
-        token_in: replaceNativeAddressUseBackend(sellToken.address),
-        token_out: replaceNativeAddressUseBackend(buyToken.address),
-        amount_in: sellValue,
-        amount_in_decimals: sellToken.decimals?.toString() || DEFAULT_TOKEN_DECIMALS.toString(),
-        ...(permitData ? { permitData: permitData } : {}),
-        ...(signature ? { signature } : {}),
-        ...(selectedProject === 'uniswap' && receiveToCustom && receiveCustomAddress
-          ? { recipient: receiveCustomAddress }
-          : {}),
-      };
-      eoaSwap(args);
+      eoaSwap({
+        swap_router_name: routerName,
+        path,
+        token_in_is_mon: isSellTokenNative,
+        token_out_is_mon: isBuyTokenNative,
+        amount_in_wei: amountInWei,
+        amount_out_wei: amountOutWei,
+        // 最小可接受的输出（滑点保护），暂用 "0"，后续可接入滑点设置
+        min_amount_out_wei: '0',
+        recipient_address: receiveCustomAddress
+      });
     } else {
       dsaSwap({
-        token_in_is_eth: isSellTokenEth,
-        token_out_is_eth: isBuyTokenEth,
-        slippage: (Number(1) * 1e16).toString(),
-        route: quoteData.route[0],
+        swap_router_name: routerName,
+        path,
+        token_in_is_mon: isSellTokenNative,
+        token_out_is_mon: isBuyTokenNative,
+        amount_in_wei: amountInWei,
+        amount_out_wei: amountOutWei,
       });
     }
   }
