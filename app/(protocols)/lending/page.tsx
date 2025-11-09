@@ -1,218 +1,33 @@
 'use client';
 
-import Image from 'next/image';
+import { useMemo, useState } from 'react';
 
-import { TitleH2 } from '@/components/common/title-h2';
+
+
+import InlineMarketsSection from '@/app/(protocols)/lending/components/InlineMarketsSection';
+
+
+
+import { ProjectSelector } from '@/components/common/project-selector';
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
-import {
-  ICurvanceMarketUserItem,
-  useCurvanceMarketUserInfo,
-} from '@/lib/data/use-curvance-market-user-info';
+
+
+import { ICurvanceMarketUserItem, useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
 import { ICurvanceMarketInfo, useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
-import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { cn } from '@/lib/utils';
 
-function MarketRow({
-  market,
-  user,
-}: {
-  market: ICurvanceMarketInfo;
-  user?: ICurvanceMarketUserItem;
-}) {
-  const { setCurrentComponent } = useSideDrawerStore();
 
-  const token0Logo = market?.token0?.wrapper_address ? '/icons/curvance.svg' : '/icons/lending.svg';
-  const token1Logo = market?.token1?.wrapper_address ? '/icons/curvance.svg' : '/icons/lending.svg';
 
-  const token0Shares = user?.token0?.user_share_display_balance || '0';
-  const token1Debt = user?.token1?.user_debt_display_balance || '0';
+import InlineMarketDetails from './components/inline-market-details';
+import { LENDING_PROJECT_IDS, type LendingProjectId, getLendingProject } from './lending-config';
 
-  const borrowLimitDisplay = (() => {
-    const maxDebtUSD = parseFloat(user?.total_max_debt_in_usd || '0');
-    const totalDebtUSD = parseFloat(user?.total_debt_in_usd || '0');
-    const price1 = parseFloat(market?.token1?.price || '0');
-    const availableUSD = Math.max((maxDebtUSD || 0) - (totalDebtUSD || 0), 0);
-    const tokens = price1 > 0 ? availableUSD / price1 : 0;
-    return String(tokens || 0);
-  })();
 
-  const handleSupplyToken0 = () => {
-    setCurrentComponent({
-      name: 'LendingSupply',
-      props: {
-        market_address: market.market_address,
-        base_token: {
-          address: market.token0.address,
-          name: market.token0.name,
-          symbol: market.token0.symbol,
-          decimals: market.token0.decimals,
-          logo: token0Logo,
-        },
-        base_c_token: {
-          address: market.token0.wrapper_address || '',
-          decimals: market.token0.wrapper_decimals || market.token0.decimals,
-        },
-      },
-    });
-  };
 
-  const handleWithdrawToken0 = () => {
-    setCurrentComponent({
-      name: 'LendingWithdraw',
-      props: {
-        market_address: market.market_address,
-        base_token: {
-          address: market.token0.address,
-          name: market.token0.name,
-          symbol: market.token0.symbol,
-          decimals: market.token0.decimals,
-          logo: token0Logo,
-        },
-        base_c_token: {
-          address: market.token0.wrapper_address || '',
-          decimals: market.token0.wrapper_decimals || market.token0.decimals,
-        },
-        user_share_display_balance: token0Shares,
-      },
-    });
-  };
 
-  const handleRepayToken1 = () => {
-    setCurrentComponent({
-      name: 'LendingRepay',
-      props: {
-        market_address: market.market_address,
-        borrowable_token: {
-          address: market.token1.address,
-          name: market.token1.name,
-          symbol: market.token1.symbol,
-          decimals: market.token1.decimals,
-          logo: token1Logo,
-        },
-        borrowable_c_token: {
-          address: market.token1.wrapper_address || '',
-          decimals: market.token1.wrapper_decimals || market.token1.decimals,
-        },
-        user_debt_display_balance: token1Debt,
-      },
-    });
-  };
 
-  const handleBorrowToken1 = () => {
-    setCurrentComponent({
-      name: 'LendingBorrow',
-      props: {
-        market_address: market.market_address,
-        borrowable_token: {
-          address: market.token1.address,
-          name: market.token1.name,
-          symbol: market.token1.symbol,
-          decimals: market.token1.decimals,
-          logo: token1Logo,
-        },
-        borrowable_c_token: {
-          address: market.token1.wrapper_address || '',
-          decimals: market.token1.wrapper_decimals || market.token1.decimals,
-        },
-        user_max_borrow_display_amount: borrowLimitDisplay,
-      },
-    });
-  };
 
-  return (
-    <div className="border rounded-lg bg-white p-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Image src={token0Logo} alt={market.token0.symbol} width={24} height={24} />
-          <div className="font-medium">{market.market_name}</div>
-        </div>
-        <div className="text-sm text-gray-500">{market.chain_name}</div>
-      </div>
 
-      <div className="grid md:grid-cols-3 grid-cols-1 gap-4 mt-4">
-        <div className="border rounded-md p-3">
-          <div className="flex items-center gap-2">
-            <Image src={token0Logo} alt={market.token0.symbol} width={20} height={20} />
-            <div className="font-medium">{market.token0.symbol}</div>
-          </div>
-          <div className="mt-2 text-sm text-gray-600">
-            Supply APY: {market.token0.supply_rate || '0'}%
-          </div>
-          <div className="mt-1 text-sm text-gray-600">
-            Utilization: {market.utilization_rate || '0'}%
-          </div>
-          <div className="mt-3 flex gap-2">
-            <button
-              onClick={handleSupplyToken0}
-              className={cn(
-                'px-3 py-2 rounded-md text-sm',
-                'bg-gray-900 text-white hover:bg-gray-800'
-              )}
-            >
-              Supply
-            </button>
-            <button
-              onClick={handleWithdrawToken0}
-              className={cn(
-                'px-3 py-2 rounded-md text-sm',
-                'bg-gray-100 text-gray-900 hover:bg-gray-200'
-              )}
-            >
-              Withdraw
-            </button>
-          </div>
-          <div className="mt-2 text-xs text-gray-500">Your Shares: {token0Shares}</div>
-        </div>
 
-        <div className="border rounded-md p-3">
-          <div className="flex items-center gap-2">
-            <Image src={token1Logo} alt={market.token1.symbol} width={20} height={20} />
-            <div className="font-medium">{market.token1.symbol}</div>
-          </div>
-          <div className="mt-2 text-sm text-gray-600">
-            Borrow APY: {market.token1.borrow_rate || '0'}%
-          </div>
-          <div className="mt-1 text-sm text-gray-600">
-            Utilization: {market.utilization_rate || '0'}%
-          </div>
-          <div className="mt-3 flex gap-2">
-            <button
-              onClick={handleRepayToken1}
-              className={cn(
-                'px-3 py-2 rounded-md text-sm',
-                'bg-gray-900 text-white hover:bg-gray-800'
-              )}
-            >
-              Repay
-            </button>
-            <button
-              onClick={handleBorrowToken1}
-              className={cn(
-                'px-3 py-2 rounded-md text-sm',
-                'bg-gray-100 text-gray-900 hover:bg-gray-200'
-              )}
-            >
-              Borrow
-            </button>
-          </div>
-          <div className="mt-2 text-xs text-gray-500">Your Debt: {token1Debt}</div>
-          <div className="mt-1 text-xs text-gray-500">Borrow Limit: {borrowLimitDisplay}</div>
-        </div>
-
-        <div className="border rounded-md p-3">
-          <div className="text-sm text-gray-600">TVL: ${market.total_supply_in_usd || '0'}</div>
-          <div className="mt-1 text-sm text-gray-600">
-            Available: ${market.available_supply_in_usd || '0'}
-          </div>
-          <div className="mt-1 text-sm text-gray-600">
-            Borrow Rate: {market.borrow_rate || '0'}%
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function Lending() {
   const {
@@ -222,8 +37,8 @@ export default function Lending() {
   } = useCurvanceMarkets(true);
   const {
     data: userInfo,
-    isLoading: userLoading,
-    error: userError,
+    isLoading: _userLoading,
+    error: _userError,
   } = useCurvanceMarketUserInfo(true);
 
   const byMarket: Record<string, ICurvanceMarketUserItem | undefined> = {};
@@ -232,24 +47,118 @@ export default function Lending() {
     if (u?.market_address) byMarket[u.market_address] = u;
   });
 
+  const [selectedProject, setSelectedProject] = useState<LendingProjectId>('curvance');
+  const [actionMode, setActionMode] = useState<'supply' | 'borrow'>('supply');
+  const [selectedMarketAddress, setSelectedMarketAddress] = useState<string | null>(null);
+
+  const isCurvanceSelected = selectedProject === 'curvance';
+
+  const sortedMarkets: ICurvanceMarketInfo[] = useMemo(() => {
+    const list = (markets || []) as ICurvanceMarketInfo[];
+    // Basic sort by TVL desc if available
+    return list.slice().sort((a, b) => {
+      const av = parseFloat(a?.total_supply_in_usd || '0');
+      const bv = parseFloat(b?.total_supply_in_usd || '0');
+      return bv - av;
+    });
+  }, [markets]);
+
+  const selectedMarket = useMemo(() => {
+    if (!selectedMarketAddress) return undefined;
+    return sortedMarkets.find(
+      (m) => m.market_address?.toLowerCase() === selectedMarketAddress.toLowerCase()
+    );
+  }, [sortedMarkets, selectedMarketAddress]);
+
+  const selectedUser = useMemo(() => {
+    if (!selectedMarketAddress) return undefined;
+    return byMarket[selectedMarketAddress];
+  }, [byMarket, selectedMarketAddress]);
+
   return (
-    <CommonPageLayout title="Lending" iconSrc="/icons/lending.svg">
-      <div className="mt-0 mb-6 flex w-full flex-shrink-0 justify-between px-4 2xl:px-12">
-        <TitleH2>Curvance Markets</TitleH2>
+    <CommonPageLayout title="Lending" iconSrc={null} titleClassName="pb-5 md:pb-6">
+      <div className="w-full px-4 md:pl-12 flex items-start justify-between">
+        <div className="w-full md:max-w-md">
+          <ProjectSelector
+            projectIds={LENDING_PROJECT_IDS}
+            getProject={(id: string) => getLendingProject(id as LendingProjectId)}
+            selectedProject={selectedProject}
+            onProjectSelect={(projectId: string) =>
+              setSelectedProject(projectId as LendingProjectId)
+            }
+          />
+        </div>
+        {/* 右侧 Supply/Borrow 单选胶囊 */}
+        <fieldset className="flex items-center gap-3" aria-label="Action Mode" role="radiogroup">
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="radio"
+              name="lending-action"
+              className="peer sr-only"
+              checked={actionMode === 'supply'}
+              onChange={() => setActionMode('supply')}
+            />
+            <span
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-[6px] border text-sm bg-white select-none transition-colors
+              border-[#E6E8F2] text-[var(--color-pro-gray)] hover:bg-slate-50 [--dot-opacity:0] [--ring-color:#E6E8F2]
+              peer-checked:border-[var(--color-pro-blue)] peer-checked:text-[var(--color-pro-blue)] peer-checked:[--dot-opacity:1]
+              peer-checked:[--ring-color:var(--color-pro-blue)]"
+            >
+              <span
+                className="relative inline-flex items-center justify-center w-[14px] h-[14px] rounded-full border-2
+                border-[var(--ring-color)] after:content-[''] after:absolute after:w-[6px] after:h-[6px]
+                after:rounded-full after:bg-[var(--color-pro-blue)] after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2
+                after:opacity-[var(--dot-opacity)]"
+              ></span>
+              Supply
+            </span>
+          </label>
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="radio"
+              name="lending-action"
+              className="peer sr-only"
+              checked={actionMode === 'borrow'}
+              onChange={() => setActionMode('borrow')}
+            />
+            <span
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-[6px] border text-sm bg-white select-none transition-colors
+              border-[#E6E8F2] text-[var(--color-pro-gray)] hover:bg-slate-50 [--dot-opacity:0] [--ring-color:#E6E8F2]
+              peer-checked:border-[var(--color-pro-blue)] peer-checked:text-[var(--color-pro-blue)] peer-checked:[--dot-opacity:1]
+              peer-checked:[--ring-color:var(--color-pro-blue)]"
+            >
+              <span
+                className="relative inline-flex items-center justify-center w-[14px] h-[14px] rounded-full border-2
+                border-[var(--ring-color)] after:content-[''] after:absolute after:w-[6px] after:h-[6px]
+                after:rounded-full after:bg-[var(--color-pro-blue)] after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2
+                after:opacity-[var(--dot-opacity)]"
+              ></span>
+              Borrow
+            </span>
+          </label>
+        </fieldset>
       </div>
 
-      <div className="px-4 2xl:px-12 space-y-4">
-        {(marketsError || userError) && (
-          <div className="text-sm text-red-600">Failed to load data.</div>
-        )}
-        {marketsLoading || userLoading ? (
-          <div className="text-sm text-gray-600">Loading...</div>
-        ) : (
-          (markets ?? []).map((m) => (
-            <MarketRow key={m.market_address} market={m} user={byMarket[m.market_address]} />
-          ))
-        )}
-      </div>
+      {/* 市场列表或内嵌详情 */}
+      {!selectedMarket && (
+        <InlineMarketsSection
+          isCurvanceSelected={isCurvanceSelected}
+          marketsLoading={marketsLoading}
+          marketsError={!!marketsError}
+          sortedMarkets={sortedMarkets}
+          byMarket={byMarket}
+          onDetails={(addr: string) => setSelectedMarketAddress(addr)}
+        />
+      )}
+
+      {selectedMarket && (
+        <InlineMarketDetails
+          market={selectedMarket}
+          user={selectedUser}
+          actionMode={actionMode}
+          onBack={() => setSelectedMarketAddress(null)}
+        />
+      )}
     </CommonPageLayout>
   );
 }

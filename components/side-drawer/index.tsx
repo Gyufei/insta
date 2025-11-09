@@ -30,6 +30,7 @@ import { LendingSupply } from '@/app/(protocols)/lending/supply';
 import { LendingWithdraw } from '@/app/(protocols)/lending/withdraw';
 import { LendingRepay } from '@/app/(protocols)/lending/repay';
 import { LendingBorrow } from '@/app/(protocols)/lending/borrow';
+import { LendingMarketInfo } from '@/app/(protocols)/lending/market-info';
 
 
 
@@ -75,6 +76,7 @@ const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   LendingWithdraw: LendingWithdraw,
   LendingRepay: LendingRepay,
   LendingBorrow: LendingBorrow,
+  LendingMarketInfo: LendingMarketInfo,
 } as const;
 
 const ANIMATION_CONFIG = {

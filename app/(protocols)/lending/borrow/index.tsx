@@ -5,19 +5,19 @@ import { useMemo } from 'react';
 import { IToken } from '@/config/tokens';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
-import { SetMax } from '@/components/side-drawer/common/set-max';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
-import { TokenDisplay } from '@/components/side-drawer/common/token-display';
-import { TokenInput } from '@/components/side-drawer/common/token-input';
+import { NumberInput } from '@/components/common/number-input';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
-import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
+import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
 
 import { useCurvanceBorrow } from '@/lib/data/use-curvance-borrow';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
-import { parseBig } from '@/lib/utils/number';
+import { formatNumber, parseBig } from '@/lib/utils/number';
+import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
+import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
 
 type LendingBorrowProps = {
   market_address: string;
@@ -52,7 +52,7 @@ export function LendingBorrow() {
 
   const borrowLimit = props?.user_max_borrow_display_amount || '0';
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(borrowLimit);
-  const { isMax, handleSetMax, handleInput } = useSetMax(
+  const { isMax: _isMax, handleSetMax, handleInput } = useSetMax(
     inputValue,
     borrowLimit,
     handleInputChange
@@ -61,6 +61,30 @@ export function LendingBorrow() {
 
   const { mutate: borrow, isPending } = useCurvanceBorrow();
   const { trackEvent } = useEnhancedAnalytics();
+
+  // 获取市场价格以显示美元等值（Borrow 对应 token1）
+  const marketsQuery = useCurvanceMarkets(true);
+  const market = useMemo(() => {
+    const list = marketsQuery.data || [];
+    return list.find((m) => String(m.market_address).toLowerCase() === String(props?.market_address).toLowerCase());
+  }, [marketsQuery.data, props?.market_address]);
+  const tokenPrice = useMemo(() => {
+    const p = parseFloat(market?.token1?.price || '0');
+    return Number.isFinite(p) ? p : 0;
+  }, [market?.token1?.price]);
+  const usdValue = useMemo(() => {
+    const amount = parseFloat(inputValue || '0');
+    const usd = amount * (tokenPrice || 0);
+    if (!Number.isFinite(usd)) return '0.00';
+    return usd.toFixed(4);
+  }, [inputValue, tokenPrice]);
+
+  // 用户在该市场的摘要数据
+  const userInfoQuery = useCurvanceMarketUserInfo(true);
+  const userItem = useMemo(() => {
+    const list = userInfoQuery.data || [];
+    return list.find((u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase());
+  }, [userInfoQuery.data, props?.market_address]);
 
   const handleBorrow = () => {
     if (!inputValue || btnDisabled || isPending) return;
@@ -119,29 +143,69 @@ export function LendingBorrow() {
 
   return (
     <>
-      <SideDrawerBackHeader title={`Borrow ${token.symbol}`} onClick={handleBack} />
       <SideDrawerLayout>
         <div className="pt-2 pb-10 sm:pt-4">
-          <TokenDisplay
-            isPending={false}
-            token={token}
-            balance={borrowLimit}
-            balanceLabel="Borrow Limit"
-          />
-          <TokenInput
-            inputValue={inputValue}
-            onInputChange={handleInput}
-            placeholder={`Amount to borrow`}
-          />
-          <SetMax checked={isMax} onChange={handleSetMax} />
-          <ActionButton
-            disabled={btnDisabled}
-            onClick={handleBorrow}
-            isPending={isPending}
-            error={errorData}
-          >
-            Borrow
-          </ActionButton>
+          {/* 主卡片：标题 + 大号数字输入 + 余额/Max + 操作按钮 */}
+          <div className="rounded-lg border border-[#EBEBEB] bg-white p-5 shadow-sm dark:bg-secondary">
+            <div className="text-sm font-medium text-[#131E40]">{`Borrow ${token.symbol}`}</div>
+
+            <div className="mt-3 flex flex-col gap-3">
+              {/* 第一行：输入框 + Token 图标 */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <NumberInput
+                    className="!text-[32px] !font-semibold bg-transparent border-none p-0 shadow-none focus-visible:ring-0 w-full text-[#131E40]"
+                    placeholder="0.00"
+                    value={inputValue}
+                    onChange={handleInput}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={token.logo || '/icons/token.svg'}
+                    alt={`${token.symbol} logo`}
+                    className="h-7 w-7 rounded-full ring-2 ring-white"
+                  />
+                </div>
+              </div>
+
+              {/* 第二行：美元等值 + 可借额度/Max（右侧顶部对齐） */}
+              <div className="flex items-start justify-between w-full">
+                <div className="text-xs text-[#A5ADC6]">{`$${usdValue}`}</div>
+                <div className="text-right text-xs text-[#A5ADC6] whitespace-nowrap w-full">
+                  <div className="flex items-start justify-end w-full">
+                    <span>
+                      Available: <span className="text-[#131E40]">{formatNumber(borrowLimit)}</span>
+                    </span>
+                    <button
+                      type="button"
+                      className="ml-2 text-[#6E75F9] font-medium"
+                      onClick={() => handleSetMax(true)}
+                      aria-label="Set max borrow amount"
+                    >
+                      Max
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 主操作按钮 */}
+            <ActionButton
+              disabled={btnDisabled}
+              onClick={handleBorrow}
+              isPending={isPending}
+              error={errorData}
+              className="mt-6"
+            >
+              {`Borrow ${token.symbol}`}
+            </ActionButton>
+          </div>
+
+          {/* 复用的持仓摘要卡片 */}
+          <div className="mt-4">
+            <PositionSummaryCard market={market} user={userItem} />
+          </div>
         </div>
       </SideDrawerLayout>
     </>

@@ -32,7 +32,8 @@ export type SideDrawerComponent =
   | 'LendingSupply'
   | 'LendingWithdraw'
   | 'LendingRepay'
-  | 'LendingBorrow';
+  | 'LendingBorrow'
+  | 'LendingMarketInfo';
 
 type CurrentComponent = {
   name: SideDrawerComponent | null;
