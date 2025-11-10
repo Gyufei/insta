@@ -11,6 +11,7 @@ import Image from 'next/image';
 
 import {
   DEFAULT_NATIVE_ADDRESS,
+  BACKEND_NATIVE_ADDRESS,
   DEFAULT_TOKEN_DECIMALS,
   UniversalRouterAddressPermit,
   replaceNativeAddressUseBackend,
@@ -36,6 +37,7 @@ import { cn, isSameAddress } from '@/lib/utils';
 import { formatBig, parseBig } from '@/lib/utils/number';
 
 import { DexProjectId } from './dex-config';
+import { WMONAD_TOKEN } from './positions/use-token';
 
 // 根据项目选择映射后端路由名
 function mapRouterName(project: DexProjectId) {
@@ -81,6 +83,16 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
   );
 
   const _isBuyMonUsd = isSameAddress(buyToken?.address || '', MonUSD.address);
+
+  // 判断是否为 MON <=> WMON 代币对
+  const isNativeToken = (t?: IToken) =>
+    isSameAddress(t?.address || '', DEFAULT_NATIVE_ADDRESS) ||
+    isSameAddress(t?.address || '', BACKEND_NATIVE_ADDRESS);
+  const isWMonToken = (t?: IToken) => isSameAddress(t?.address || '', WMONAD_TOKEN.address);
+  const isMonWmonPair = useMemo(
+    () => (isNativeToken(sellToken) && isWMonToken(buyToken)) || (isNativeToken(buyToken) && isWMonToken(sellToken)),
+    [sellToken, buyToken]
+  );
 
   // Disable actions when the entered sell amount exceeds available balance
   const isInsufficientBalance = useMemo(() => {
@@ -188,7 +200,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
 
   // 从新接口响应中提取输出的 wei 和路径
   const quoteOutWei = useMemo(() => {
-    return quoteData?.amountOut;
+    return quoteData?.amountOutWei;
   }, [quoteData]);
 
   const quotePath = useMemo(() => {
@@ -334,8 +346,8 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     const path = quotePath && quotePath.length > 0 ? quotePath : fallbackPath;
 
     if (currentAccountType === 'EOA') {
-      // EOA 自定义收款地址校验（保持与原逻辑一致，仅在 Uniswap 下开启）
-      if (selectedProject === 'uniswap' && receiveToCustom) {
+      // EOA 自定义收款地址校验（保持与原逻辑一致，仅在 Uniswap 下开启；排除 MON<=>WMON）
+      if (selectedProject === 'uniswap' && receiveToCustom && !isMonWmonPair) {
         if (!receiveCustomAddress || !isAddress(receiveCustomAddress as `0x${string}`)) {
           toast.error('Invalid recipient address');
           return;
@@ -353,7 +365,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
           amount_out_wei: amountOutWei,
           // 最小可接受的输出（滑点保护），暂用 "0"，后续可接入滑点设置
           min_amount_out_wei: '0',
-          recipient_address: receiveCustomAddress,
+          recipient_address: !isMonWmonPair ? receiveCustomAddress : undefined,
         },
         {
           onSuccess: () => {
@@ -474,22 +486,22 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
               disabled={true}
               justHasBalance={false}
               customAddressEnabled={
-                currentAccountType === 'EOA' && selectedProject === 'uniswap'
+                currentAccountType === 'EOA' && selectedProject === 'uniswap' && !isMonWmonPair
                   ? receiveToCustom
                   : false
               }
               onCustomAddressToggle={
-                currentAccountType === 'EOA' && selectedProject === 'uniswap'
+                currentAccountType === 'EOA' && selectedProject === 'uniswap' && !isMonWmonPair
                   ? setReceiveToCustom
                   : undefined
               }
               customAddress={
-                currentAccountType === 'EOA' && selectedProject === 'uniswap'
+                currentAccountType === 'EOA' && selectedProject === 'uniswap' && !isMonWmonPair
                   ? receiveCustomAddress
                   : undefined
               }
               onCustomAddressChange={
-                currentAccountType === 'EOA' && selectedProject === 'uniswap'
+                currentAccountType === 'EOA' && selectedProject === 'uniswap' && !isMonWmonPair
                   ? setReceiveCustomAddress
                   : undefined
               }
