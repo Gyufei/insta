@@ -69,7 +69,7 @@ export const ApiPath = {
 
   // Curvance Lending endpoints
   curvanceMarkets: `${ApiHost}/curvance/markets`,
-  curvanceMarketUserInfo: `${ApiHost}/curvance/market_user_info`,
+  curvanceMarketUserInfo: `${ApiHost}/curvance/positions`,
   curvanceDeposit: `${ApiHost}/curvance/deposit`,
   curvanceWithdraw: `${ApiHost}/curvance/withdraw`,
   curvanceRepay: `${ApiHost}/curvance/repay`,

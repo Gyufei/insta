@@ -5,26 +5,21 @@ import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
-
-
 import { useEffect, useMemo, useState } from 'react';
-
-
 
 import Image from 'next/image';
 
-
-
-import { DEFAULT_NATIVE_ADDRESS, DEFAULT_TOKEN_DECIMALS, UniversalRouterAddressPermit, replaceNativeAddressUseBackend } from '@/config/network-config';
+import {
+  DEFAULT_NATIVE_ADDRESS,
+  DEFAULT_TOKEN_DECIMALS,
+  UniversalRouterAddressPermit,
+  replaceNativeAddressUseBackend,
+} from '@/config/network-config';
 import { IToken, MonUSD } from '@/config/tokens';
-
-
 
 import { TokenDropSelector } from '@/components/new/token-drop-selector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-
-
 
 import { trackEvent, trackTrade } from '@/lib/analytics';
 import { useAccounts } from '@/lib/data/account-address/use-account';
@@ -46,11 +41,11 @@ import { DexProjectId } from './dex-config';
 function mapRouterName(project: DexProjectId) {
   switch (project) {
     case 'uniswap':
-      return 'Uniswap v3';
+      return 'Uniswap V3';
     case 'ambient':
       return 'Ambient';
     default:
-      return 'Uniswap v3';
+      return 'Uniswap V3';
   }
 }
 
@@ -86,6 +81,12 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
   );
 
   const _isBuyMonUsd = isSameAddress(buyToken?.address || '', MonUSD.address);
+
+  // Disable actions when the entered sell amount exceeds available balance
+  const isInsufficientBalance = useMemo(() => {
+    if (!sellValue) return false;
+    return Number(sellValue) > Number(fromBalance);
+  }, [sellValue, fromBalance]);
 
   const quoteParams = useMemo(() => {
     return sellToken && buyToken && sellValue && Number(sellValue) > 0
@@ -204,7 +205,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
   // 当卖出数量为 0 或空时，将买入数量重置为 0，避免保留旧的报价输出
   useEffect(() => {
     if (!sellValue || Number(sellValue) === 0) {
-      setBuyValue('0');
+      setBuyValue('0.00');
     }
   }, [sellValue]);
 
@@ -341,26 +342,46 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
         }
       }
 
-      eoaSwap({
-        swap_router_name: routerName,
-        path,
-        token_in_is_mon: isSellTokenNative,
-        token_out_is_mon: isBuyTokenNative,
-        amount_in_wei: amountInWei,
-        amount_out_wei: amountOutWei,
-        // 最小可接受的输出（滑点保护），暂用 "0"，后续可接入滑点设置
-        min_amount_out_wei: '0',
-        recipient_address: receiveCustomAddress
-      });
+      eoaSwap(
+        {
+          // 优先使用报价返回的路由名
+          swap_router_name: quoteData?.swapRouterName || routerName,
+          path,
+          token_in_is_mon: isSellTokenNative,
+          token_out_is_mon: isBuyTokenNative,
+          amount_in_wei: amountInWei,
+          amount_out_wei: amountOutWei,
+          // 最小可接受的输出（滑点保护），暂用 "0"，后续可接入滑点设置
+          min_amount_out_wei: '0',
+          recipient_address: receiveCustomAddress,
+        },
+        {
+          onSuccess: () => {
+            // 交易成功后置空输入，并让报价与显示重置
+            setSellValue('');
+            setBuyValue('0.00');
+          },
+        }
+      );
     } else {
-      dsaSwap({
-        swap_router_name: routerName,
-        path,
-        token_in_is_mon: isSellTokenNative,
-        token_out_is_mon: isBuyTokenNative,
-        amount_in_wei: amountInWei,
-        amount_out_wei: amountOutWei,
-      });
+      dsaSwap(
+        {
+          // 优先使用报价返回的路由名
+          swap_router_name: quoteData?.swapRouterName || routerName,
+          path,
+          token_in_is_mon: isSellTokenNative,
+          token_out_is_mon: isBuyTokenNative,
+          amount_in_wei: amountInWei,
+          amount_out_wei: amountOutWei,
+        },
+        {
+          onSuccess: () => {
+            // 交易成功后置空输入，并让报价与显示重置
+            setSellValue('');
+            setBuyValue('0.00');
+          },
+        }
+      );
     }
   }
 
@@ -498,7 +519,14 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
               className="min-w-40 w-full h-12 text-xl font-medium flex leading-[24px] items-center justify-center rounded-md bg-[#6E75F9] text-white hover:bg-[#6E75F990]"
               onClick={handleSwap}
               disabled={
-                !sellValue || isQuoteLoading || isSwapPending || shouldApprove || isFromApproving
+                !sellValue ||
+                Number(sellValue) <= 0 ||
+                isQuoteLoading ||
+                isSwapPending ||
+                shouldApprove ||
+                isFromApproving ||
+                !!quoteError ||
+                isInsufficientBalance
               }
             >
               {isFromAllowanceLoading && wallet ? (

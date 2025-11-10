@@ -36,13 +36,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useApiBalance } from '@/lib/data/balance/use-api-balance';
-import type { IAccountTokenBalance } from '@/lib/data/balance/use-api-balance';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
+import { useAccountStore } from '@/lib/state/account';
 import { useTokenInfo } from '@/lib/data/use-token-info';
 // import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
-import { truncateNumber } from '@/lib/utils/number';
 
 interface TokenSelectProps {
   selectedToken?: IToken;
@@ -68,6 +68,10 @@ export function TokenSelect({
   const [tokens, setTokens] = useState(TOKENS);
   const [searchQuery, setSearchQuery] = useState('');
   const { address: wallet } = useAccount();
+  const { data: selectedAccount } = useSelectedAccount();
+  const { currentAccountType } = useAccountStore();
+  const selectedAddress =
+    currentAccountType === 'EOA' ? wallet || '' : selectedAccount?.sandbox_account || '';
 
   const NETWORKS: INetworkConfig[] = useMemo(() => {
     return (
@@ -115,24 +119,10 @@ export function TokenSelect({
   // const ethPrice = priceData?.eth_price || '0';
   // const monPrice = priceData?.mon_price || '0';
 
-  const activeNetworkCode = useMemo(() => {
-    if (String(activeNetwork?.id) === String(NetworkConfigs.monadTestnet.id)) return 'MON';
-    if (String(activeNetwork?.id) === String(NetworkConfigs.eth.id)) return 'ETH';
-    if (String(activeNetwork?.id) === String(NetworkConfigs.base.id)) return 'BASE';
-    return 'MON';
-  }, [activeNetwork?.id]);
 
-  const balancesIndex = useMemo(() => {
-    const byAddress = new Map<string, IAccountTokenBalance>();
-    const bySymbol = new Map<string, IAccountTokenBalance>();
-    (balanceData || []).forEach((b) => {
-      if (b.network === activeNetworkCode) {
-        byAddress.set(b.address.toLowerCase(), b);
-        bySymbol.set(b.token, b);
-      }
-    });
-    return { byAddress, bySymbol };
-  }, [balanceData, activeNetworkCode]);
+
+  // Keep useApiBalance for optional filtering but do not use it for display
+  // Removed balancesIndex used for dropdown display to avoid unused variable warning.
 
   // function getPriceForTokenSymbol(symbol: string): string {
   //   if (!symbol) return '0';
@@ -203,40 +193,34 @@ export function TokenSelect({
   ]);
 
   function TokenQty({
-    wallet,
+    address,
     token,
-    bItem,
     enabled,
   }: {
-    wallet?: string;
+    address?: string;
     token: IToken;
-    bItem?: IAccountTokenBalance;
     enabled?: boolean;
   }) {
-    const hasWalletAddr = !!wallet;
-    const bulkQty = truncateNumber(String(bItem?.formattedBalance ?? '0'), 6);
-    const needFallback = hasWalletAddr && (!bItem || Number(bulkQty) === 0);
-    const addr = needFallback ? (wallet ?? '') : '';
+    const hasAddr = !!address;
     const { balance, isBalancePending } = useAddressBalance(
-      addr,
+      address || '',
       token.address,
       token.decimals,
       enabled,
       60_000
     );
 
-    if (!hasWalletAddr) {
+    if (!hasAddr) {
       return <span className="text-sm text-[#131E40]">--</span>;
     }
 
-    if (needFallback) {
-      if (enabled === false) {
-        return <span className="text-sm text-[#131E40]">...</span>;
-      }
-      return <span className="text-sm text-[#131E40]">{isBalancePending ? '...' : balance}</span>;
+    if (enabled === false) {
+      return <span className="text-sm text-[#131E40]">...</span>;
     }
 
-    return <span className="text-sm text-[#131E40]">{bulkQty}</span>;
+    return (
+      <span className="text-sm text-[#131E40]">{isBalancePending ? '...' : balance}</span>
+    );
   }
 
   useEffect(() => {
@@ -372,17 +356,6 @@ export function TokenSelect({
             <div className="p-3 text-center text-sm text-gray-500">No token found</div>
           ) : (
             filteredTokens.map((token) => {
-              const isNative =
-                isSameAddress(token.address, DEFAULT_NATIVE_ADDRESS) ||
-                isSameAddress(token.address, BACKEND_NATIVE_ADDRESS);
-              const nativeAddr = BACKEND_NATIVE_ADDRESS.toLowerCase();
-              const lookupAddr = isNative ? nativeAddr : token.address.toLowerCase();
-              const tokenSymbolUpper = token.symbol?.toUpperCase() || '';
-              const bItem =
-                balancesIndex.byAddress.get(lookupAddr) ||
-                balancesIndex.bySymbol.get(tokenSymbolUpper) ||
-                balancesIndex.bySymbol.get(token.symbol);
-
               // const price = getPriceForTokenSymbol(token.symbol);
               // const usd = truncateNumber(
               //   multiply(String(bItem?.formattedBalance || '0'), price),
@@ -431,7 +404,7 @@ export function TokenSelect({
                     </div>
 
                     <div className="flex flex-col items-end">
-                      <TokenQty wallet={wallet} token={token} bItem={bItem} enabled={isOpen} />
+                      <TokenQty address={selectedAddress} token={token} enabled={isOpen} />
                       {/* <span className="text-xs text-[#A5ADC6]">{hasWallet ? `$${usd}` : '--'}</span> */}
                       <span className="text-xs text-[#A5ADC6]">{'--'}</span>
                     </div>
