@@ -27,6 +27,7 @@ export function useMagmaWithdraw() {
       checkAddress: true,
       checkAccount: true,
       refreshQueryKey: [
+        ['monad', 'token', 'balance'],
         ['magma', 'balance'],
         ['account', 'balance'],
       ],

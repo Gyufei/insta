@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 
 import { useAprioriWithdraw } from '@/lib/data/use-apriori-withdraw';
 import { useMagmaWithdraw } from '@/lib/data/use-magma-withdraw';
+import { useDSAMonadNativeBalance } from '@/lib/data/balance/use-dsa-monad-native-balance';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { formatNumber } from '@/lib/utils/number';
 import { parseBig } from '@/lib/utils/number';
@@ -22,13 +23,14 @@ import { WithdrawEstReceive } from './withdraw-est-receive';
 interface BalanceDisplayProps {
   selectedProject: StakingProjectId;
   balance: string;
+  refetchBalance?: () => void;
 }
 
 /**
  * Balance Display Component - Shows token balance and withdrawal button
  * Displays the current staked token balance with project-specific token information
  */
-export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps) {
+export function BalanceDisplay({ selectedProject, balance, refetchBalance }: BalanceDisplayProps) {
   const monToken = MONAD;
   const project = getStakingProject(selectedProject);
   
@@ -52,6 +54,7 @@ export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps
 
   const { mutate: withdraw, isPending } = withdrawHooks[selectedProject];
   const { trackEvent } = useEnhancedAnalytics();
+  const { refetch: refetchDsaBalance } = useDSAMonadNativeBalance();
 
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
 
@@ -96,6 +99,13 @@ export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps
             amount: inputValue,
           },
         });
+        // Clear input after success and force balance refresh
+        handleInputChange('');
+        // Refresh LST balance and DSA MON balance immediately
+        refetchBalance?.();
+        refetchDsaBalance?.();
+        // Optional second refresh to smooth eventual consistency
+        setTimeout(() => refetchBalance?.(), 2000);
       },
       onError: (error: Error) => {
         // Track failed withdraw
@@ -132,20 +142,24 @@ export function BalanceDisplay({ selectedProject, balance }: BalanceDisplayProps
         </div>
       </div>
 
-      <TokenInput
-        inputValue={inputValue}
-        onInputChange={handleInput}
-        placeholder="0"
-      />
-      <Separator className="mt-6 mb-5" />
-      <WithdrawEstReceive receiveToken={monToken} receiveAmount={receiveAmount} />
+  <TokenInput
+    inputValue={inputValue}
+    onInputChange={handleInput}
+    placeholder="0"
+  />
+      {selectedProject !== 'magma' && (
+        <>
+          <Separator className="mt-6 mb-5" />
+          <WithdrawEstReceive receiveToken={monToken} receiveAmount={receiveAmount} />
+        </>
+      )}
       <ActionButton
         disabled={btnDisabled}
         onClick={handleWithdraw}
         isPending={isPending}
         error={errorData}
       >
-        Submit Withdraw
+        Withdraw
       </ActionButton>
     </div>
   );

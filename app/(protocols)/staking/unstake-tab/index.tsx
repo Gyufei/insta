@@ -37,7 +37,11 @@ export function UnstakeTab({ selectedProject }: UnstakeTabProps) {
   return (
     <div className="w-full space-y-6">
       {/* Balance Display Card */}
-      <BalanceDisplay selectedProject={selectedProject} balance={balance} />
+      <BalanceDisplay
+        selectedProject={selectedProject}
+        balance={balance}
+        refetchBalance={currentBalanceResult.refetch}
+      />
 
       {/* Claim and Unstake Sections */}
       {selectedProject === 'apriori' && <ClaimUnstakeSections />}

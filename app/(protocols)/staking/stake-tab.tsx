@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
+
+
 import { type IToken, MONAD } from '@/config/tokens';
 
 import { TokenSelectorDropdown } from '@/components/common/token-selector-dropdown';
@@ -15,11 +17,18 @@ import { useDSAMonadNativeBalance } from '@/lib/data/balance/use-dsa-monad-nativ
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
+import { useMagmaDeposit } from '@/lib/data/use-magma-deposit';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { formatNumber } from '@/lib/utils/number';
 import { parseBig } from '@/lib/utils/number';
-import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
+
+
 
 import { type StakingProjectId, getStakingProject } from './staking-config';
+
+
+
+
 
 interface StakeTabProps {
   selectedProject: StakingProjectId;
@@ -42,8 +51,15 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
     setSelectedOutputToken(project.token);
   }, [selectedProject, project.token]);
 
-  const { mutate: deposit, isPending } = useAprioriDeposit();
-  const { balance: dsaBalance, isPending: isDsaBalanceLoading } = useDSAMonadNativeBalance();
+  const aprioriDeposit = useAprioriDeposit();
+  const magmaDeposit = useMagmaDeposit();
+  const { mutate: deposit, isPending } =
+    selectedProject === 'magma' ? magmaDeposit : aprioriDeposit;
+  const {
+    balance: dsaBalance,
+    isPending: isDsaBalanceLoading,
+    refetch: refetchDsaBalance,
+  } = useDSAMonadNativeBalance();
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(dsaBalance);
 
   const aprioriBalanceResult = useAprioriBalance();
@@ -99,6 +115,11 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
             amount: inputValue,
           },
         });
+        // Clear input after success and force balance refresh
+        handleInputChange('');
+        currentBalanceResult.refetch?.();
+        refetchDsaBalance?.();
+        setTimeout(() => currentBalanceResult.refetch?.(), 2000);
       },
       onError: (error: Error) => {
         // Track failed deposit
@@ -143,11 +164,7 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
 
         {/* Amount Display */}
         <div className="text-2xl font-semibold text-black mb-1">
-          <TokenInput
-            inputValue={inputValue}
-            onInputChange={handleInput}
-            placeholder="0"
-          />
+          <TokenInput inputValue={inputValue} onInputChange={handleInput} placeholder="0" />
         </div>
       </div>
 

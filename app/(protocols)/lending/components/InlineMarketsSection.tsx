@@ -73,7 +73,10 @@ export default function InlineMarketsSection({
         {isCurvanceSelected && (
           <div>
             {marketsLoading && (
-              <div className="text-sm text-gray-600">Loading markets...</div>
+              <div className="py-8 text-center">
+                <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-2"></div>
+                <div className="text-gray-500">Loading markets...</div>
+              </div>
             )}
             {marketsError && (
               <div className="text-sm text-red-600">Failed to load markets.</div>

@@ -22,6 +22,14 @@ export function useAprioriWithdraw() {
     },
     SUCCESS_MESSAGES.REQUEST_WITHDRAW_SUCCESS,
     ERROR_MESSAGES.WITHDRAW_FAILED,
-    { checkAddress: true, checkAccount: true, refreshQueryKey: ['aprior', 'balance'] }
+    {
+      checkAddress: true,
+      checkAccount: true,
+      refreshQueryKey: [
+        ['monad', 'token', 'balance'],
+        ['apriori', 'balance'],
+        ['account', 'balance'],
+      ],
+    }
   )();
 }

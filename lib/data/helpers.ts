@@ -154,10 +154,12 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
         if (extraArgs?.refreshQueryKey?.length > 0) {
           if (Array.isArray(extraArgs.refreshQueryKey[0])) {
             extraArgs.refreshQueryKey.forEach((key) => {
-              queryClient.invalidateQueries({ queryKey: key as readonly unknown[] });
+              // Actively refetch matching queries to ensure immediate UI updates
+              queryClient.refetchQueries({ queryKey: key as readonly unknown[], type: 'active' });
             });
           } else {
-            queryClient.invalidateQueries({ queryKey: extraArgs.refreshQueryKey });
+            // Actively refetch matching queries to ensure immediate UI updates
+            queryClient.refetchQueries({ queryKey: extraArgs.refreshQueryKey, type: 'active' });
           }
         }
       },

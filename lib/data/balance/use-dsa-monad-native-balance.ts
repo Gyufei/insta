@@ -9,8 +9,12 @@ import { useMemo } from 'react';
 import { useSelectedAccount } from '../account-address/use-selected-account';
 import { useApiBalance } from './use-api-balance';
 
+
+
+
+
 export function useDSAMonadNativeBalance() {
-  const { data: balanceData, isPending } = useApiBalance();
+  const { data: balanceData, isPending, refetch } = useApiBalance();
   const { isLoading: isAccountLoading } = useSelectedAccount();
 
   const monadBalanceRes = balanceData?.find(
@@ -31,5 +35,6 @@ export function useDSAMonadNativeBalance() {
   return {
     balance,
     isPending: isPending && !isAccountLoading,
+    refetch,
   };
 }
