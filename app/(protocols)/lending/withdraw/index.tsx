@@ -1,21 +1,25 @@
 import { useMemo } from 'react';
 
+
+
 import { IToken } from '@/config/tokens';
 
-import { ActionButton } from '@/components/side-drawer/common/action-button';
-import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
+
+
 import { NumberInput } from '@/components/common/number-input';
+import { ActionButton } from '@/components/new/action-button';
+import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
+import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
 
+import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
+import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
 import { useCurvanceWithdraw } from '@/lib/data/use-curvance-withdraw';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { formatNumber, parseBig } from '@/lib/utils/number';
-import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
-import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
 
 type LendingWithdrawProps = {
   market_address: string;
@@ -60,7 +64,9 @@ export function LendingWithdraw() {
   const marketsQuery = useCurvanceMarkets(true);
   const market = useMemo(() => {
     const list = marketsQuery.data || [];
-    return list.find((m) => String(m.market_address).toLowerCase() === String(props?.market_address).toLowerCase());
+    return list.find(
+      (m) => String(m.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
+    );
   }, [marketsQuery.data, props?.market_address]);
   const tokenPrice = useMemo(() => {
     const p = parseFloat(market?.token0?.price || '0');
@@ -77,7 +83,9 @@ export function LendingWithdraw() {
   const userInfoQuery = useCurvanceMarketUserInfo(true);
   const userItem = useMemo(() => {
     const list = userInfoQuery.data || [];
-    return list.find((u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase());
+    return list.find(
+      (u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
+    );
   }, [userInfoQuery.data, props?.market_address]);
 
   const handleWithdraw = () => {
@@ -149,7 +157,7 @@ export function LendingWithdraw() {
                 <div className="flex-1 min-w-0">
                   <NumberInput
                     className="!text-[32px] !font-semibold bg-transparent border-none p-0 shadow-none focus-visible:ring-0 w-full text-[#131E40]"
-                    placeholder="0.00"
+                    placeholder="0.0000"
                     value={inputValue}
                     onChange={handleInput}
                   />

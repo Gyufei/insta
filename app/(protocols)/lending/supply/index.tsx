@@ -1,25 +1,31 @@
 import { useAccount } from 'wagmi';
 
+
+
 import { useMemo } from 'react';
 
 import { NetworkConfigs } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
-import { ActionButton } from '@/components/side-drawer/common/action-button';
-import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { NumberInput } from '@/components/common/number-input';
+import { ActionButton } from '@/components/new/action-button';
+import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
+import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
 
 import { useRPCTokenBalance } from '@/lib/data/balance/use-rpc-token-balance';
 import { useCurvanceDeposit } from '@/lib/data/use-curvance-deposit';
+import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
+import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { formatNumber, parseBig } from '@/lib/utils/number';
-import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
-import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
+
+
+
+
 
 type LendingSupplyProps = {
   market_address: string;
@@ -160,7 +166,7 @@ export function LendingSupply() {
                 <div className="flex-1 min-w-0">
                   <NumberInput
                     className="!text-[32px] !font-semibold bg-transparent border-none p-0 shadow-none focus-visible:ring-0 w-full text-[#131E40]"
-                    placeholder="0"
+                    placeholder="0.0000"
                     value={inputValue}
                     onChange={handleInput}
                   />

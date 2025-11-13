@@ -2,9 +2,9 @@
 
 import Image from 'next/image';
 // import Link from 'next/link';
-import { APR_MONAD, MONAD, G_MONAD, MonUSD } from '@/config/tokens';
 
 import { TitleH2 } from '@/components/common/title-h2';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
 import { ICurvanceMarketUserItem } from '@/lib/data/use-curvance-market-user-info';
 
@@ -43,15 +43,7 @@ function formatPct(v?: string) {
   return `${n.toFixed(2)}%`;
 }
 
-function tokenLogo(symbol?: string) {
-  const s = (symbol || '').toUpperCase();
-  if (s === 'ETH') return '/icons/eth.svg';
-  if (s === MONAD.symbol.toUpperCase()) return MONAD.logo;
-  if (s === APR_MONAD.symbol.toUpperCase()) return APR_MONAD.logo;
-  if (s === G_MONAD.symbol.toUpperCase()) return G_MONAD.logo;
-  if (s === MonUSD.symbol.toUpperCase()) return MonUSD.logo;
-  return '/icons/token.svg';
-}
+
 
 export default function InlineMarketsSection({
   isCurvanceSelected,
@@ -72,12 +64,6 @@ export default function InlineMarketsSection({
         )}
         {isCurvanceSelected && (
           <div>
-            {marketsLoading && (
-              <div className="py-8 text-center">
-                <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-2"></div>
-                <div className="text-gray-500">Loading markets...</div>
-              </div>
-            )}
             {marketsError && (
               <div className="text-sm text-red-600">Failed to load markets.</div>
             )}
@@ -93,7 +79,40 @@ export default function InlineMarketsSection({
                 <div className="text-right">&nbsp;</div>
               </div>
               <div className="divide-y divide-slate-200">
-                {sortedMarkets.map((m) => {
+                {marketsLoading
+                  ? Array.from({ length: 6 }).map((_, i) => (
+                      <div
+                        key={`skeleton-row-${i}`}
+                        className="grid grid-cols-[280px_1fr_1fr_1fr_140px] items-center px-6 py-4"
+                      >
+                        <div className="flex items-center gap-3">
+                          {/* Pair token icons skeleton */}
+                          <div className="flex -space-x-2">
+                            <Skeleton className="inline-block h-7 w-7 rounded-full" />
+                            <Skeleton className="inline-block h-7 w-7 rounded-full" />
+                          </div>
+                          <div>
+                            <Skeleton className="h-4 w-32 mb-2" />
+                            <Skeleton className="h-3 w-24" />
+                          </div>
+                        </div>
+                        <div>
+                          <Skeleton className="h-4 w-20 mb-2" />
+                          <Skeleton className="h-3 w-24" />
+                        </div>
+                        <div>
+                          <Skeleton className="h-4 w-16" />
+                        </div>
+                        <div>
+                          <Skeleton className="h-4 w-20 mb-2" />
+                          <Skeleton className="h-3 w-24" />
+                        </div>
+                        <div className="text-right">
+                          <Skeleton className="h-8 w-20 rounded-md inline-block" />
+                        </div>
+                      </div>
+                    ))
+                  : sortedMarkets.map((m) => {
                   const user = byMarket[m.market_address] as ICurvanceMarketUserItem | undefined;
                   const price0 = parseFloat(m.token0.price || '0');
                   const totalUSD = formatUSD(
@@ -116,11 +135,27 @@ export default function InlineMarketsSection({
 
                   return (
                     <div key={m.market_address} className="grid grid-cols-[280px_1fr_1fr_1fr_140px] items-center px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Image src={tokenLogo(m.token0.symbol)} alt={m.token0.symbol} width={24} height={24} />
+                      <div className="flex items-center gap-3">
+                        {/* Pair token icons stacked */}
+                        <div className="flex -space-x-2">
+                          <Image
+                            src={m.token0.logoURI}
+                            alt={m.token0.symbol}
+                            width={28}
+                            height={28}
+                            className="inline-block h-7 w-7 rounded-full ring-2 ring-white"
+                          />
+                          <Image
+                            src={m.token1.logoURI}
+                            alt={m.token1.symbol}
+                            width={28}
+                            height={28}
+                            className="inline-block h-7 w-7 rounded-full ring-2 ring-white"
+                          />
+                        </div>
                         <div>
-                          <div className="text-sm font-semibold text-slate-900 whitespace-nowrap">{m.token0.name || m.market_name}</div>
-                          <div className="text-xs text-slate-500 whitespace-nowrap">{m.token0.symbol}</div>
+                          <div className="text-sm font-semibold text-slate-900 whitespace-nowrap">{`${m.token0.symbol} & ${m.token1.symbol}`}</div>
+                          <div className="text-xs text-slate-500 whitespace-nowrap">{m.chain_name || 'Monad Testnet'}</div>
                         </div>
                       </div>
                       <div>

@@ -1,10 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useSideDrawerStore } from "@/lib/state/side-drawer";
-import type { ICurvanceMarketInfo } from "@/lib/data/use-curvance-markets";
-import type { ICurvanceMarketUserItem } from "@/lib/data/use-curvance-market-user-info";
-import { APR_MONAD, MONAD, G_MONAD, MonUSD } from "@/config/tokens";
+import { useAccount } from 'wagmi';
+
+import { useEffect } from 'react';
+
+
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
+import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
+import type { ICurvanceMarketUserItem } from '@/lib/data/use-curvance-market-user-info';
+import type { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
+import { useAccountStore } from '@/lib/state/account';
+import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { truncateIfExceeds } from '@/lib/utils/number';
 
 type InlineMarketDetailsProps = {
   market: ICurvanceMarketInfo;
@@ -14,42 +21,59 @@ type InlineMarketDetailsProps = {
 };
 
 function formatUSD(value?: string | number) {
-  const num = typeof value === "string" ? parseFloat(value) : value || 0;
-  if (!isFinite(num)) return "$0";
+  const num = typeof value === 'string' ? parseFloat(value) : value || 0;
+  if (!isFinite(num)) return '$0';
   return num >= 1_000_000_000
     ? `$${(num / 1_000_000_000).toFixed(2)}B`
     : num >= 1_000_000
-    ? `$${(num / 1_000_000).toFixed(2)}M`
-    : num >= 1_000
-    ? `$${(num / 1_000).toFixed(2)}K`
-    : `$${num.toFixed(2)}`;
+      ? `$${(num / 1_000_000).toFixed(2)}M`
+      : num >= 1_000
+        ? `$${(num / 1_000).toFixed(2)}K`
+        : `$${num.toFixed(2)}`;
 }
 
 function formatPct(value?: string | number) {
-  const num = typeof value === "string" ? parseFloat(value) : value || 0;
-  if (!isFinite(num)) return "0%";
+  const num = typeof value === 'string' ? parseFloat(value) : value || 0;
+  if (!isFinite(num)) return '0%';
   return `${num.toFixed(2)}%`;
 }
 
-export default function InlineMarketDetails({ market, user, onBack, actionMode = 'supply' }: InlineMarketDetailsProps) {
+export default function InlineMarketDetails({
+  market,
+  user,
+  onBack,
+  actionMode = 'supply',
+}: InlineMarketDetailsProps) {
   const { setCurrentComponent } = useSideDrawerStore();
+  const { address } = useAccount();
+  const { currentAccountType } = useAccountStore();
+  const { data: accountInfo } = useSelectedAccount();
 
   const token0 = market.token0;
-  const walletBalanceDisplay = user?.token0?.user_asset_display_balance || "0";
+  const token1 = market.token1;
+  const walletAddress =
+    currentAccountType === 'EOA' ? address || '' : accountInfo?.sandbox_account || '';
+  const { balance: walletBalanceRaw } = useAddressBalance(
+    walletAddress,
+    token0.address,
+    token0.decimals,
+    !!walletAddress
+  );
+  const walletBalanceDisplay = walletBalanceRaw || '0';
 
-  function tokenLogo(symbol?: string) {
-    const s = (symbol || '').toUpperCase();
-    if (s === 'ETH') return '/icons/eth.svg';
-    if (s === MONAD.symbol.toUpperCase()) return MONAD.logo;
-    if (s === APR_MONAD.symbol.toUpperCase()) return APR_MONAD.logo;
-    if (s === G_MONAD.symbol.toUpperCase()) return G_MONAD.logo;
-    if (s === MonUSD.symbol.toUpperCase()) return MonUSD.logo;
-    return '/icons/token.svg';
-  }
+  const { balance: walletBalanceRaw1 } = useAddressBalance(
+    walletAddress,
+    token1.address,
+    token1.decimals,
+    !!walletAddress
+  );
+  const walletBalanceDisplay1 = walletBalanceRaw1 || '0';
+
+
 
   const openSupply = () => {
     setCurrentComponent({
-      name: "LendingSupply",
+      name: 'LendingSupply',
       props: {
         market_address: market.market_address,
         base_token: {
@@ -57,10 +81,10 @@ export default function InlineMarketDetails({ market, user, onBack, actionMode =
           name: token0.name,
           symbol: token0.symbol,
           decimals: token0.decimals,
-          logo: tokenLogo(token0.symbol),
+          logo: token0.logoURI,
         },
         base_c_token: {
-          address: token0.wrapper_address || "",
+          address: token0.wrapper_address || '',
           decimals: token0.wrapper_decimals || token0.decimals,
         },
       },
@@ -69,7 +93,7 @@ export default function InlineMarketDetails({ market, user, onBack, actionMode =
 
   const openWithdraw = () => {
     setCurrentComponent({
-      name: "LendingWithdraw",
+      name: 'LendingWithdraw',
       props: {
         market_address: market.market_address,
         base_token: {
@@ -77,13 +101,13 @@ export default function InlineMarketDetails({ market, user, onBack, actionMode =
           name: token0.name,
           symbol: token0.symbol,
           decimals: token0.decimals,
-          logo: tokenLogo(token0.symbol),
+          logo: token0.logoURI,
         },
         base_c_token: {
-          address: token0.wrapper_address || "",
+          address: token0.wrapper_address || '',
           decimals: token0.wrapper_decimals || token0.decimals,
         },
-        user_share_display_balance: user?.token0?.user_share_display_balance || "0",
+        user_share_display_balance: user?.token0?.user_share_display_balance || '0',
       },
     });
   };
@@ -99,7 +123,7 @@ export default function InlineMarketDetails({ market, user, onBack, actionMode =
           name: token1.name,
           symbol: token1.symbol,
           decimals: token1.decimals,
-          logo: tokenLogo(token1.symbol),
+          logo: token1.logoURI,
         },
         borrowable_c_token: {
           address: token1.wrapper_address || '',
@@ -127,7 +151,7 @@ export default function InlineMarketDetails({ market, user, onBack, actionMode =
           name: token1.name,
           symbol: token1.symbol,
           decimals: token1.decimals,
-          logo: tokenLogo(token1.symbol),
+          logo: token1.logoURI,
         },
         borrowable_c_token: {
           address: token1.wrapper_address || '',
@@ -142,16 +166,16 @@ export default function InlineMarketDetails({ market, user, onBack, actionMode =
 
   // On mount: show market info in the side drawer; on unmount: reset to Balance
   useEffect(() => {
-    setCurrentComponent({ name: "LendingMarketInfo", props: { market, user } });
+    setCurrentComponent({ name: 'LendingMarketInfo', props: { market, user } });
     return () => {
-      setCurrentComponent({ name: "Balance" });
+      setCurrentComponent({ name: 'Balance' });
     };
   }, [market, user, setCurrentComponent]);
 
   return (
-    <div className="w-full">
+    <div className="w-full px-4 md:px-12">
       {/* Breadcrumb */}
-      <div className="mt-2 mb-4 px-4 2xl:px-12 text-sm text-gray-600">
+      <div className="mt-2 mb-4 text-sm text-gray-600">
         <button className="hover:underline" onClick={onBack}>
           Markets
         </button>
@@ -160,26 +184,38 @@ export default function InlineMarketDetails({ market, user, onBack, actionMode =
       </div>
 
       {/* Header info card */}
-      <div className="px-4 2xl:px-12">
-        <div className="rounded-lg border bg-white dark:bg-secondary p-5 shadow-sm">
+      <div className="">
+        <div className="rounded-lg border bg-white dark:bg-secondary p-5">
           <div className="flex items-center gap-3">
-            <img src={tokenLogo(token0.symbol)} alt={token0.symbol} className="h-10 w-10 rounded-full" />
+            <img
+              src={token0.logoURI}
+              alt={token0.symbol}
+              className="h-10 w-10 rounded-full"
+            />
             <div className="flex flex-col">
               <span className="text-xs text-gray-500">{token0.name}</span>
-              <span className="font-medium text-base text-gray-900 dark:text-gray-100">{token0.symbol}</span>
+              <span className="font-medium text-base text-gray-900 dark:text-gray-100">
+                {token0.symbol}
+              </span>
             </div>
             <div className="ml-auto grid grid-cols-3 gap-8 text-sm">
               <div className="text-right">
                 <div className="text-gray-500">Reserve Size</div>
-                <div className="mt-1 text-lg font-semibold">{formatUSD(market.total_supply_in_usd)}</div>
+                <div className="mt-1 text-lg font-semibold">
+                  {formatUSD(market.total_supply_in_usd)}
+                </div>
               </div>
               <div className="text-right">
                 <div className="text-gray-500">Available Liquidity</div>
-                <div className="mt-1 text-lg font-semibold">{formatUSD(market.available_supply_in_usd)}</div>
+                <div className="mt-1 text-lg font-semibold">
+                  {formatUSD(market.available_supply_in_usd)}
+                </div>
               </div>
               <div className="text-right">
                 <div className="text-gray-500">Utilization Rate</div>
-                <div className="mt-1 text-lg font-semibold">{formatPct(market.utilization_rate)}</div>
+                <div className="mt-1 text-lg font-semibold">
+                  {formatPct(market.utilization_rate)}
+                </div>
               </div>
             </div>
           </div>
@@ -187,58 +223,114 @@ export default function InlineMarketDetails({ market, user, onBack, actionMode =
           <div className="mt-4">
             <div className="text-gray-500">Balance</div>
             <div className="mt-2 text-3xl font-semibold tracking-tight">
-              ${Number(user?.total_collateral_in_usd || 0).toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}
+              $
+              {Number(user?.total_max_debt_in_usd || 0).toLocaleString(undefined, {
+                minimumFractionDigits: 4,
+                maximumFractionDigits: 4,
+              })}
             </div>
           </div>
         </div>
       </div>
 
       {/* Middle content with left main; right info moved into SideDrawer */}
-      <div className="px-4 2xl:px-12 mt-4 grid grid-cols-1 xl:grid-cols-3 gap-4">
+      <div className="mt-4 gap-4">
         {/* Left main */}
-        <div className="xl:col-span-2 space-y-4">
+        <div className="">
           {/* Balance */}
           {/* Balance 已合并至头部信息卡片中 */}
 
-          {/* Asset list */}
-          <div className="rounded-md border bg-white dark:bg-secondary">
-            <div className="grid grid-cols-12 items-center px-4 py-3 text-xs text-gray-500">
-              <div className="col-span-7">Collateral Asset</div>
-              <div className="col-span-5 text-right">Protocol Balance</div>
-            </div>
-            <div className="border-t px-4 py-3">
-              <div className="flex items-center gap-3">
-                <img src={tokenLogo(token0.symbol)} className="h-8 w-8 rounded-full" alt={token0.symbol} />
-                <div className="flex-1">
-                  <div className="font-medium">{token0.name}</div>
-                  <div className="text-xs text-gray-500">
-                    {token0.symbol} - {walletBalanceDisplay} in wallet
-                  </div>
-                </div>
-                <div className="ml-auto flex items-center gap-3">
-                  <div className="text-right">
-                    <div className="font-medium">
-                      {user?.token0?.user_share_display_balance || "0.0000"}
+          {/* Collateral Asset row: only show in Supply mode */}
+          {actionMode === 'supply' && (
+            <div className="rounded-md border bg-white dark:bg-secondary">
+              <div className="grid grid-cols-12 items-center px-4 py-3 text-xs text-gray-500">
+                <div className="col-span-7">Collateral Asset</div>
+                <div className="col-span-5 text-right">Protocol Balance</div>
+              </div>
+              <div className="border-t px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={token0.logoURI}
+                    className="h-8 w-8 rounded-full"
+                    alt={token0.symbol}
+                  />
+                  <div className="flex-1">
+                    <div className="font-medium">{token0.name}</div>
+                    <div className="text-xs text-gray-500">
+                      {token0.symbol} - {truncateIfExceeds(walletBalanceDisplay || '0', 4)} in wallet
                     </div>
                   </div>
-                  <button
-                    className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
-                    onClick={() => (actionMode === 'borrow' ? openBorrow() : openSupply())}
-                    aria-label={actionMode === 'borrow' ? 'Borrow' : 'Supply'}
-                  >
-                    +
-                  </button>
-                  <button
-                    className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
-                    onClick={() => (actionMode === 'borrow' ? openRepay() : openWithdraw())}
-                    aria-label={actionMode === 'borrow' ? 'Repay' : 'Withdraw'}
-                  >
-                    -
-                  </button>
+                  <div className="ml-auto flex items-center gap-3">
+                    <div className="text-right">
+                      <div className="font-medium">
+                        {truncateIfExceeds(user?.token0?.user_share_display_balance || '0.0000', 4)}
+                      </div>
+                    </div>
+                    <button
+                      className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
+                      onClick={openSupply}
+                      aria-label={'Supply'}
+                    >
+                      +
+                    </button>
+                    <button
+                      className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
+                      onClick={openWithdraw}
+                      aria-label={'Withdraw'}
+                    >
+                      -
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Borrow asset row: only show in Borrow mode */}
+          {actionMode === 'borrow' && (
+            <div className="mt-3 rounded-md border bg-white dark:bg-secondary">
+              <div className="grid grid-cols-12 items-center px-4 py-3 text-xs text-gray-500">
+                <div className="col-span-7">Borrow Asset</div>
+                <div className="col-span-5 text-right">Protocol Debt</div>
+              </div>
+              <div className="border-t px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={token1.logoURI}
+                    className="h-8 w-8 rounded-full"
+                    alt={token1.symbol}
+                  />
+                  <div className="flex-1">
+                    <div className="font-medium">{token1.name}</div>
+                    <div className="text-xs text-gray-500">
+                      {token1.symbol} - {truncateIfExceeds(walletBalanceDisplay1 || '0', 4)} in wallet
+                    </div>
+                  </div>
+                  <div className="ml-auto flex items-center gap-3">
+                    <div className="text-right">
+                      <div className="font-medium">
+                        {truncateIfExceeds(user?.token1?.user_debt_display_balance || '0.0000', 4)}
+                      </div>
+                    </div>
+                    <button
+                      className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
+                      onClick={openBorrow}
+                      aria-label={'Borrow'}
+                    >
+                      +
+                    </button>
+                    <button
+                      className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
+                      onClick={openRepay}
+                      aria-label={'Repay'}
+                    >
+                      -
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

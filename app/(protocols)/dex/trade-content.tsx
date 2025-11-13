@@ -5,22 +5,27 @@ import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
+
+
 import { useEffect, useMemo, useState } from 'react';
+
+
 
 import Image from 'next/image';
 
-import {
-  DEFAULT_NATIVE_ADDRESS,
-  BACKEND_NATIVE_ADDRESS,
-  DEFAULT_TOKEN_DECIMALS,
-  UniversalRouterAddressPermit,
-  replaceNativeAddressUseBackend,
-} from '@/config/network-config';
+
+
+import { BACKEND_NATIVE_ADDRESS, DEFAULT_NATIVE_ADDRESS, DEFAULT_TOKEN_DECIMALS, UniversalRouterAddressPermit, replaceNativeAddressUseBackend } from '@/config/network-config';
 import { IToken, MonUSD } from '@/config/tokens';
+import { WMONAD_TOKEN } from '@/config/tokens';
+
+
 
 import { TokenDropSelector } from '@/components/new/token-drop-selector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+
+
 
 import { trackEvent, trackTrade } from '@/lib/analytics';
 import { useAccounts } from '@/lib/data/account-address/use-account';
@@ -36,8 +41,13 @@ import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
 import { formatBig, parseBig } from '@/lib/utils/number';
 
+
+
 import { DexProjectId } from './dex-config';
-import { WMONAD_TOKEN } from './positions/use-token';
+
+
+
+
 
 // 根据项目选择映射后端路由名
 function mapRouterName(project: DexProjectId) {

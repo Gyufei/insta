@@ -19,7 +19,7 @@ import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useMagmaDeposit } from '@/lib/data/use-magma-deposit';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
-import { formatNumber } from '@/lib/utils/number';
+import { formatNumber, truncateIfExceeds } from '@/lib/utils/number';
 import { parseBig } from '@/lib/utils/number';
 
 
@@ -198,7 +198,7 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
         </div>
 
         {/* Amount Display */}
-        <div className="text-[32px] font-medium text-black mb-1">{formatNumber(receiveAmount)}</div>
+        <div className="text-[32px] font-medium text-black mb-1">{truncateIfExceeds(String(receiveAmount || '0'), 4)}</div>
       </div>
       <ActionButton
         disabled={btnDisabled}

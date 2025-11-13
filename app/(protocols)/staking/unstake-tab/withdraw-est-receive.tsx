@@ -1,4 +1,5 @@
 import { IToken } from '@/config/tokens';
+import { truncateIfExceeds } from '@/lib/utils/number';
 
 import { Card } from '@/components/ui/card';
 
@@ -28,7 +29,7 @@ export function WithdrawEstReceive({
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium text-gray-300">You receive:</p>
               <p className="text-blue text-xs font-medium">
-                {receiveAmount} {receiveToken.symbol}
+                {truncateIfExceeds(receiveAmount || '0', 4)} {receiveToken.symbol}
               </p>
             </div>
           </div>

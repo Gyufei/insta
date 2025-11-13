@@ -12,6 +12,7 @@ import {
   replaceNativeAddressUseBackend,
 } from '@/config/network-config';
 import { IToken, MONAD, MonUSD } from '@/config/tokens';
+import { WMONAD_TOKEN } from '@/config/tokens';
 
 import { ActionButton } from '@/components/side-drawer/common/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
@@ -25,7 +26,6 @@ import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateNumber } from '@/lib/utils/number';
 
 import TokenSelector from '../../uni-common/token-selector';
-import { WMONAD_TOKEN } from '../../use-token';
 import { INFINITY_PRICE } from './price-range-selector';
 import { SelectTokenAndFeeTier } from './select-token-and-fee-tier';
 import { SetPriceAndAmount } from './set-price-and-amount';
