@@ -147,6 +147,7 @@ export default function Lending() {
           marketsError={!!marketsError}
           sortedMarkets={sortedMarkets}
           byMarket={byMarket}
+          actionMode={actionMode}
           onDetails={(addr: string) => setSelectedMarketAddress(addr)}
         />
       )}

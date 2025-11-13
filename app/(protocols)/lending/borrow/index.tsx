@@ -21,7 +21,7 @@ import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
-import { formatNumber, parseBig } from '@/lib/utils/number';
+import { formatBig, formatNumber, parseBig } from '@/lib/utils/number';
 
 type LendingBorrowProps = {
   market_address: string;
@@ -54,19 +54,12 @@ export function LendingBorrow() {
     [props?.borrowable_token]
   );
 
-  const borrowLimit = props?.user_max_borrow_display_amount || '0';
-  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(borrowLimit);
-  const {
-    isMax: _isMax,
-    handleSetMax,
-    handleInput,
-  } = useSetMax(inputValue, borrowLimit, handleInputChange);
   const { handleBack } = useUrlPathDrawerChange('/lending');
 
   const { mutate: borrow, isPending } = useCurvanceBorrow();
   const { trackEvent } = useEnhancedAnalytics();
 
-  // 获取市场价格以显示美元等值（Borrow 对应 token1）
+  // 获取市场价格（Borrow 对应 token1）
   const marketsQuery = useCurvanceMarkets(true);
   const market = useMemo(() => {
     const list = marketsQuery.data || [];
@@ -78,14 +71,8 @@ export function LendingBorrow() {
     const p = parseFloat(market?.token1?.price || '0');
     return Number.isFinite(p) ? p : 0;
   }, [market?.token1?.price]);
-  const usdValue = useMemo(() => {
-    const amount = parseFloat(inputValue || '0');
-    const usd = amount * (tokenPrice || 0);
-    if (!Number.isFinite(usd)) return '0.00';
-    return usd.toFixed(4);
-  }, [inputValue, tokenPrice]);
 
-  // 用户在该市场的摘要数据
+  // 用户在该市场的摘要数据（/curvance/positions）
   const userInfoQuery = useCurvanceMarketUserInfo(true);
   const userItem = useMemo(() => {
     const list = userInfoQuery.data || [];
@@ -93,6 +80,29 @@ export function LendingBorrow() {
       (u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
     );
   }, [userInfoQuery.data, props?.market_address]);
+
+  // Remaining Credit 采用 total_max_debt_in_usd（18位精度）/ price 得到代币数量
+  const borrowLimit = useMemo(() => {
+    const maxDebtUSD = parseFloat(formatBig(String(userItem?.total_max_debt_in_usd || '0'), 18));
+    const tokens = tokenPrice > 0 ? maxDebtUSD / tokenPrice : 0;
+    if (Number.isFinite(tokens) && tokens > 0) return String(tokens);
+    // 回退到 props 提供的约束
+    return props?.user_max_borrow_display_amount || '0';
+  }, [userItem?.total_max_debt_in_usd, tokenPrice, props?.user_max_borrow_display_amount]);
+
+  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(borrowLimit);
+  const {
+    isMax: _isMax,
+    handleSetMax,
+    handleInput,
+  } = useSetMax(inputValue, borrowLimit, handleInputChange);
+
+  const usdValue = useMemo(() => {
+    const amount = parseFloat(inputValue || '0');
+    const usd = amount * (tokenPrice || 0);
+    if (!Number.isFinite(usd)) return '0.00';
+    return usd.toFixed(4);
+  }, [inputValue, tokenPrice]);
 
   const handleBorrow = () => {
     if (!inputValue || btnDisabled || isPending) return;
@@ -183,7 +193,7 @@ export function LendingBorrow() {
                 <div className="text-right text-xs text-[#A5ADC6] whitespace-nowrap w-full">
                   <div className="flex items-start justify-end w-full">
                     <span>
-                      Available: <span className="text-[#131E40]">{formatNumber(borrowLimit)}</span>
+                    Available: <span className="text-[#131E40]">{formatNumber(borrowLimit)}</span>
                     </span>
                     <button
                       type="button"

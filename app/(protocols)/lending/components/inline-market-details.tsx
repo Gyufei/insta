@@ -11,7 +11,7 @@ import type { ICurvanceMarketUserItem } from '@/lib/data/use-curvance-market-use
 import type { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
 import { useAccountStore } from '@/lib/state/account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
-import { truncateIfExceeds } from '@/lib/utils/number';
+import { formatBig, truncateIfExceeds } from '@/lib/utils/number';
 
 type InlineMarketDetailsProps = {
   market: ICurvanceMarketInfo;
@@ -51,6 +51,16 @@ export default function InlineMarketDetails({
 
   const token0 = market.token0;
   const token1 = market.token1;
+  const isBorrow = actionMode === 'borrow';
+  const mainToken = isBorrow ? token1 : token0;
+  // 根据需求：Supply 显示 total_collateral_in_usd，Borrow 显示 total_debt_in_usd；两者均为 18 位美元精度
+  const displayUSDStr = isBorrow
+    ? formatBig(String(user?.total_debt_in_usd || '0'), 18)
+    : formatBig(String(user?.total_collateral_in_usd || '0'), 18);
+  const displayUSDNum = parseFloat(displayUSDStr || '0');
+  // 近似代币数量：用 /curvance/markets 接口的 price 计算
+  const price = parseFloat(isBorrow ? token1.price || '0' : token0.price || '0');
+  const approxTokenAmount = price > 0 ? displayUSDNum / price : 0;
   const walletAddress =
     currentAccountType === 'EOA' ? address || '' : accountInfo?.sandbox_account || '';
   const { balance: walletBalanceRaw } = useAddressBalance(
@@ -166,11 +176,11 @@ export default function InlineMarketDetails({
 
   // On mount: show market info in the side drawer; on unmount: reset to Balance
   useEffect(() => {
-    setCurrentComponent({ name: 'LendingMarketInfo', props: { market, user } });
+    setCurrentComponent({ name: 'LendingMarketInfo', props: { market, user, actionMode } });
     return () => {
       setCurrentComponent({ name: 'Balance' });
     };
-  }, [market, user, setCurrentComponent]);
+  }, [market, user, actionMode, setCurrentComponent]);
 
   return (
     <div className="w-full px-4 md:px-12">
@@ -188,35 +198,60 @@ export default function InlineMarketDetails({
         <div className="rounded-lg border bg-white dark:bg-secondary p-5">
           <div className="flex items-center gap-3">
             <img
-              src={token0.logoURI}
-              alt={token0.symbol}
+              src={mainToken.logoURI}
+              alt={mainToken.symbol}
               className="h-10 w-10 rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-xs text-gray-500">{token0.name}</span>
+              <span className="text-xs text-gray-500">{mainToken.name}</span>
               <span className="font-medium text-base text-gray-900 dark:text-gray-100">
-                {token0.symbol}
+                {mainToken.symbol}
               </span>
             </div>
             <div className="ml-auto grid grid-cols-3 gap-8 text-sm">
-              <div className="text-right">
-                <div className="text-gray-500">Reserve Size</div>
-                <div className="mt-1 text-lg font-semibold">
-                  {formatUSD(market.total_supply_in_usd)}
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-gray-500">Available Liquidity</div>
-                <div className="mt-1 text-lg font-semibold">
-                  {formatUSD(market.available_supply_in_usd)}
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-gray-500">Utilization Rate</div>
-                <div className="mt-1 text-lg font-semibold">
-                  {formatPct(market.utilization_rate)}
-                </div>
-              </div>
+              {isBorrow ? (
+                <>
+                  <div className="text-right">
+                    <div className="text-gray-500">Total Debt</div>
+                    <div className="mt-1 text-lg font-semibold">
+                      {formatUSD(token1.total_debt_in_usd)}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-gray-500">Available Liquidity</div>
+                    <div className="mt-1 text-lg font-semibold">
+                      {formatUSD(market.available_supply_in_usd)}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-gray-500">Borrow vAPY</div>
+                    <div className="mt-1 text-lg font-semibold">
+                      {formatPct(market.borrow_rate)}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="text-right">
+                    <div className="text-gray-500">Reserve Size</div>
+                    <div className="mt-1 text-lg font-semibold">
+                      {formatUSD(market.total_supply_in_usd)}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-gray-500">Available Liquidity</div>
+                    <div className="mt-1 text-lg font-semibold">
+                      {formatUSD(market.available_supply_in_usd)}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-gray-500">Utilization Rate</div>
+                    <div className="mt-1 text-lg font-semibold">
+                      {formatPct(market.utilization_rate)}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <div className="mt-4 border-t border-gray-200 dark:border-gray-700" />
@@ -224,10 +259,13 @@ export default function InlineMarketDetails({
             <div className="text-gray-500">Balance</div>
             <div className="mt-2 text-3xl font-semibold tracking-tight">
               $
-              {Number(user?.total_max_debt_in_usd || 0).toLocaleString(undefined, {
+              {Number(displayUSDNum).toLocaleString(undefined, {
                 minimumFractionDigits: 4,
                 maximumFractionDigits: 4,
               })}
+            </div>
+            <div className="mt-1 text-xs text-gray-500">
+              ~ {truncateIfExceeds(String(approxTokenAmount || 0), 4)} {isBorrow ? token1.symbol : token0.symbol}
             </div>
           </div>
         </div>

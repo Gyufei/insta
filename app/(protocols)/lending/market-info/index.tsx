@@ -26,10 +26,12 @@ export function LendingMarketInfo() {
   const props = (currentComponent?.props || {}) as {
     market?: ICurvanceMarketInfo;
     user?: ICurvanceMarketUserItem;
+    actionMode?: 'supply' | 'borrow';
   };
 
   const market = props.market as ICurvanceMarketInfo | undefined;
   const user = props.user as ICurvanceMarketUserItem | undefined;
+  const actionMode = props.actionMode || 'supply';
 
   // Hooks must be called unconditionally
   const { address } = useAccount();
@@ -37,36 +39,43 @@ export function LendingMarketInfo() {
   const { data: accountInfo } = useSelectedAccount();
   const walletAddress =
     currentAccountType === 'EOA' ? address || '' : accountInfo?.sandbox_account || '';
-  const token0Address = market?.token0?.address || '';
-  const token0Decimals = market?.token0?.decimals ?? DEFAULT_TOKEN_DECIMALS;
+  const token0 = market?.token0;
+  const token1 = market?.token1;
+  const isBorrow = actionMode === 'borrow';
+  const baseToken = isBorrow ? token1 : token0;
+  const tokenAddress = baseToken?.address || '';
+  const tokenDecimals = baseToken?.decimals ?? DEFAULT_TOKEN_DECIMALS;
   const { balance: walletBalanceRaw } = useAddressBalance(
     walletAddress,
-    token0Address,
-    token0Decimals,
-    !!walletAddress && !!token0Address
+    tokenAddress,
+    tokenDecimals,
+    !!walletAddress && !!tokenAddress
   );
 
   if (!market) return null;
-
-  const token0 = market.token0;
-  const token1 = market.token1;
+  // token references after null-check
+  const t0 = market.token0;
+  const t1 = market.token1;
   const walletBalanceDisplay = walletBalanceRaw || '0';
-  const supplyRate = token0?.supply_rate || '0';
-  const borrowRate = token1?.borrow_rate || '0';
-  const displaySymbol0 = token0?.wrapper_symbol || token0?.symbol || token0?.name || '';
-
-  const token0Logo = token0?.logoURI || '/icons/token.svg';
+  const supplyRate = t0?.supply_rate || '0';
+  const borrowRate = t1?.borrow_rate || '0';
+  const displaySymbol = baseToken?.symbol || baseToken?.name || '';
+  const tokenLogo = baseToken?.logoURI || '/icons/token.svg';
 
   return (
     <div className="p-4 space-y-4">
-      {/* Wallet balance card */}
+      {/* Wallet balance card - show token1 in borrow mode */}
       <div className="rounded-lg border border-[#EBEBEB] bg-white dark:bg-secondary p-5 shadow-sm">
-        <div className="text-xs text-black">{displaySymbol0} Wallet Balance</div>
+        <div className="text-xs text-black">{displaySymbol} Wallet Balance</div>
         <div className="mt-2 flex items-center justify-between">
           <div className="text-2xl font-semibold tracking-tight text-[#131E40]">
             {truncateIfExceeds(walletBalanceDisplay || '0', 4)}
           </div>
-          <img src={token0Logo} alt={`${token0.symbol} logo`} className="h-6 w-6" />
+          <img
+            src={tokenLogo}
+            alt={`${baseToken?.symbol || ''} logo`}
+            className="h-6 w-6 rounded-full"
+          />
         </div>
         <div className="mt-4 border-t border-[#EBEBEB]" />
         <div className="mt-4 flex justify-between gap-6">
