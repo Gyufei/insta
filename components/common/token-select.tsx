@@ -92,7 +92,7 @@ export function TokenSelect({
     NETWORKS.find((n) => String(n?.id) === String(chainId)) || NETWORKS[0]
   );
   const [activeNetworkTab, setActiveNetworkTab] = useState<string>('All');
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setOpen] = useState(false);
 
   useEffect(() => {
     if (!chainId) return;
@@ -242,7 +242,7 @@ export function TokenSelect({
           onTokenChange(selected);
         }
       }}
-      onOpenChange={(open) => setIsOpen(open)}
+      onOpenChange={(open) => setOpen(open)}
     >
       <SelectTrigger
         className={cn(

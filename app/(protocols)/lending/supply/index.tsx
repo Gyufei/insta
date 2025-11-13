@@ -58,7 +58,7 @@ export function LendingSupply() {
   );
 
   const { address } = useAccount();
-  const { balance, isPending: isBalancePending } = useRPCTokenBalance(
+  const { balance, isPending: isBalancePending, refetch: refetchWalletBalance } = useRPCTokenBalance(
     NetworkConfigs.monadTestnet.id,
     address || '',
     token.address,
@@ -68,7 +68,7 @@ export function LendingSupply() {
 
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
   const { handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
-  const { handleBack } = useUrlPathDrawerChange('/lending');
+  const { handleBack: _handleBack } = useUrlPathDrawerChange('/lending');
 
   const { mutate: deposit, isPending } = useCurvanceDeposit();
   const { trackEvent } = useEnhancedAnalytics();
@@ -133,7 +133,14 @@ export function LendingSupply() {
             amount: inputValue,
           },
         });
-        handleBack();
+        // 保持抽屉打开：清空输入并刷新余额/持仓
+        handleInput('');
+        try {
+          refetchWalletBalance?.();
+        } catch {}
+        try {
+          userInfoQuery.refetch?.();
+        } catch {}
       },
       onError: (error: Error) => {
         trackEvent('LENDING_SUPPLY', {
@@ -196,13 +203,15 @@ export function LendingSupply() {
               </div>
             </div>
 
+            <div className="mt-4 border-t border-[#EBEBEB] dark:border-[#323C52]" />
+
             {/* 主操作按钮 */}
             <ActionButton
               disabled={btnDisabled}
               onClick={handleDeposit}
               isPending={isPending}
               error={errorData}
-              className="mt-6"
+              className="mt-0"
             >
               {`Supply ${token.symbol}`}
             </ActionButton>

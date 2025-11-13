@@ -54,7 +54,7 @@ export function LendingBorrow() {
     [props?.borrowable_token]
   );
 
-  const { handleBack } = useUrlPathDrawerChange('/lending');
+  const { handleBack: _handleBack } = useUrlPathDrawerChange('/lending');
 
   const { mutate: borrow, isPending } = useCurvanceBorrow();
   const { trackEvent } = useEnhancedAnalytics();
@@ -104,6 +104,16 @@ export function LendingBorrow() {
     return usd.toFixed(4);
   }, [inputValue, tokenPrice]);
 
+  // 首次借款且输入金额的美元等值低于 10 美元时提示
+  const isFirstBorrow = useMemo(() => {
+    const debt = parseFloat(userItem?.token1?.user_debt_display_balance || '0');
+    return Number.isFinite(debt) ? debt <= 0 : false;
+  }, [userItem?.token1?.user_debt_display_balance]);
+  const isBelowMinFirstBorrow = useMemo(() => {
+    const usd = parseFloat(usdValue || '0');
+    return isFirstBorrow && usd > 0 && usd < 10;
+  }, [isFirstBorrow, usdValue]);
+
   const handleBorrow = () => {
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, token.decimals);
@@ -140,7 +150,11 @@ export function LendingBorrow() {
             amount: inputValue,
           },
         });
-        handleBack();
+        // 保持抽屉打开：清空输入并刷新持仓可借额度
+        handleInput('');
+        try {
+          userInfoQuery.refetch?.();
+        } catch {}
       },
       onError: (error: Error) => {
         trackEvent('LENDING_BORROW', {
@@ -208,16 +222,26 @@ export function LendingBorrow() {
               </div>
             </div>
 
+            <div className="mt-4 border-t border-[#EBEBEB] dark:border-[#323C52]" />
+
             {/* 主操作按钮 */}
             <ActionButton
               disabled={btnDisabled}
               onClick={handleBorrow}
               isPending={isPending}
               error={errorData}
-              className="mt-6"
+              className="mt-0"
             >
               {`Borrow ${token.symbol}`}
             </ActionButton>
+
+            {!isBelowMinFirstBorrow && (
+              <div className="mt-2 rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2">
+                <div className="text-xs font-medium text-red-700 dark:text-red-300">
+                  First borrow must exceed $10
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 复用的持仓摘要卡片 */}

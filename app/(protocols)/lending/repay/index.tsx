@@ -57,7 +57,7 @@ export function LendingRepay() {
   );
 
   const { address } = useAccount();
-  const { balance: walletBalance, isPending: isWalletPending } = useRPCTokenBalance(
+  const { balance: walletBalance, isPending: isWalletPending, refetch: refetchWalletBalance } = useRPCTokenBalance(
     NetworkConfigs.monadTestnet.id,
     address || '',
     token.address,
@@ -65,7 +65,14 @@ export function LendingRepay() {
     true
   );
 
-  const debtBalance = props?.user_debt_display_balance || '0';
+  const userInfoQuery = useCurvanceMarketUserInfo(true);
+  const userItem = useMemo(() => {
+    const list = userInfoQuery.data || [];
+    return list.find(
+      (u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
+    );
+  }, [userInfoQuery.data, props?.market_address]);
+  const debtBalance = userItem?.token1?.user_debt_display_balance || props?.user_debt_display_balance || '0';
 
   // Use the smaller of wallet vs debt as the input constraint
   const inputConstraintBalance = useMemo(() => {
@@ -81,7 +88,7 @@ export function LendingRepay() {
     handleSetMax,
     handleInput,
   } = useSetMax(inputValue, inputConstraintBalance, handleInputChange);
-  const { handleBack } = useUrlPathDrawerChange('/lending');
+  const { handleBack: _handleBack } = useUrlPathDrawerChange('/lending');
 
   const { mutate: repay, isPending } = useCurvanceRepay();
   const { trackEvent } = useEnhancedAnalytics();
@@ -105,14 +112,7 @@ export function LendingRepay() {
     return usd.toFixed(4);
   }, [inputValue, tokenPrice]);
 
-  // 用户在该市场的摘要数据
-  const userInfoQuery = useCurvanceMarketUserInfo(true);
-  const userItem = useMemo(() => {
-    const list = userInfoQuery.data || [];
-    return list.find(
-      (u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
-    );
-  }, [userInfoQuery.data, props?.market_address]);
+  // 用户在该市场的摘要数据（已在上方声明 userInfoQuery 与 userItem）
 
   const handleRepay = () => {
     if (!inputValue || btnDisabled || isPending) return;
@@ -150,7 +150,14 @@ export function LendingRepay() {
             amount: inputValue,
           },
         });
-        handleBack();
+        // 保持抽屉打开：清空输入并刷新钱包和持仓数据
+        handleInput('');
+        try {
+          refetchWalletBalance?.();
+        } catch {}
+        try {
+          userInfoQuery.refetch?.();
+        } catch {}
       },
       onError: (error: Error) => {
         trackEvent('LENDING_REPAY', {
@@ -222,12 +229,13 @@ export function LendingRepay() {
             </div>
 
             {/* 主操作按钮 */}
+            <div className="mt-4 border-t border-[#EBEBEB] dark:border-[#323C52]" />
             <ActionButton
               disabled={btnDisabled}
               onClick={handleRepay}
               isPending={isPending}
               error={errorData}
-              className="mt-6"
+              className="mt-0"
             >
               {`Repay ${token.symbol}`}
             </ActionButton>

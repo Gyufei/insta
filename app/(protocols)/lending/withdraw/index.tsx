@@ -52,11 +52,18 @@ export function LendingWithdraw() {
     [props?.base_token, props?.base_c_token]
   );
 
-  const sharesBalance = props?.user_share_display_balance || '0';
+  const userInfoQuery = useCurvanceMarketUserInfo(true);
+  const userItem = useMemo(() => {
+    const list = userInfoQuery.data || [];
+    return list.find(
+      (u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
+    );
+  }, [userInfoQuery.data, props?.market_address]);
+  const sharesBalance = userItem?.token0?.user_share_display_balance || props?.user_share_display_balance || '0';
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(sharesBalance);
   const { handleSetMax, handleInput } = useSetMax(inputValue, sharesBalance, handleInputChange);
 
-  const { handleBack } = useUrlPathDrawerChange('/lending');
+  const { handleBack: _handleBack } = useUrlPathDrawerChange('/lending');
   const { mutate: withdraw, isPending } = useCurvanceWithdraw();
   const { trackEvent } = useEnhancedAnalytics();
 
@@ -79,14 +86,7 @@ export function LendingWithdraw() {
     return usd.toFixed(4);
   }, [inputValue, tokenPrice]);
 
-  // 用户在该市场的摘要数据
-  const userInfoQuery = useCurvanceMarketUserInfo(true);
-  const userItem = useMemo(() => {
-    const list = userInfoQuery.data || [];
-    return list.find(
-      (u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
-    );
-  }, [userInfoQuery.data, props?.market_address]);
+  // 用户在该市场的摘要数据（已上移声明）
 
   const handleWithdraw = () => {
     if (!inputValue || btnDisabled || isPending) return;
@@ -124,7 +124,11 @@ export function LendingWithdraw() {
             amount: inputValue,
           },
         });
-        handleBack();
+        // 保持抽屉打开：清空输入并刷新持仓/余额
+        handleInput('');
+        try {
+          userInfoQuery.refetch?.();
+        } catch {}
       },
       onError: (error: Error) => {
         trackEvent('LENDING_WITHDRAW', {
@@ -188,12 +192,13 @@ export function LendingWithdraw() {
             </div>
 
             {/* 主操作按钮 */}
+            <div className="mt-4 border-t border-[#EBEBEB] dark:border-[#323C52]" />
             <ActionButton
               disabled={btnDisabled}
               onClick={handleWithdraw}
               isPending={isPending}
               error={errorData}
-              className="mt-6"
+              className="mt-0"
             >
               {`Withdraw ${props?.base_token?.symbol || 'Token'}`}
             </ActionButton>
