@@ -235,7 +235,7 @@ export function LendingBorrow() {
               {`Borrow ${token.symbol}`}
             </ActionButton>
 
-            {!isBelowMinFirstBorrow && (
+            {isBelowMinFirstBorrow && (
               <div className="mt-2 rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2">
                 <div className="text-xs font-medium text-red-700 dark:text-red-300">
                   First borrow must exceed $10

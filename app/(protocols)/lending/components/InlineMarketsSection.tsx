@@ -58,175 +58,197 @@ export default function InlineMarketsSection({
 }: InlineMarketsSectionProps) {
   return (
     <>
-      <div className="mt-4 mb-6 flex w-full flex-shrink-0 justify-between px-4 2xl:px-12">
+      <div className="mt-4 mb-6 flex w-full flex-shrink-0 justify-between px-4 md:px-12">
         <TitleH2>Markets</TitleH2>
       </div>
-      <div className="px-4 2xl:px-12">
+      <div className="px-4 md:px-12">
         {!isCurvanceSelected && (
           <div className="text-sm text-gray-600">Select a project to view markets.</div>
         )}
         {isCurvanceSelected && (
           <div>
             {marketsError && (
-              <div className="text-sm text-red-600">Failed to load markets.</div>
-            )}
-            {!marketsLoading && !marketsError && sortedMarkets.length === 0 && (
-              <div className="text-sm text-gray-600">No markets available.</div>
-            )}
-            <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
-              <div className="grid grid-cols-[280px_1fr_1fr_1fr_140px] px-6 py-3 text-xs text-slate-500">
-                <div>Asset</div>
-                {actionMode === 'borrow' ? (
-                  <>
-                    <div>Total Borrowed</div>
-                    <div>Borrow APY</div>
-                    <div>MY Debt</div>
-                  </>
-                ) : (
-                  <>
-                    <div>Total Supplied</div>
-                    <div>Supply APY</div>
-                    <div>MY Supplies</div>
-                  </>
-                )}
-                <div className="text-right">&nbsp;</div>
+              <div className="my-10 flex w-full items-center justify-center">
+                <div className="text-center text-sm text-red-600">Failed to load markets.</div>
               </div>
-              <div className="divide-y divide-slate-200">
-                {marketsLoading
-                  ? Array.from({ length: 6 }).map((_, i) => (
-                      <div
-                        key={`skeleton-row-${i}`}
-                        className="grid grid-cols-[280px_1fr_1fr_1fr_140px] items-center px-6 py-4"
-                      >
-                        <div className="flex items-center gap-3">
-                          {/* Pair token icons skeleton */}
-                          <div className="flex -space-x-2">
-                            <Skeleton className="inline-block h-7 w-7 rounded-full" />
-                            <Skeleton className="inline-block h-7 w-7 rounded-full" />
-                          </div>
-                          <div>
-                            <Skeleton className="h-4 w-32 mb-2" />
-                            <Skeleton className="h-3 w-24" />
-                          </div>
-                        </div>
-                        <div>
-                          <Skeleton className="h-4 w-20 mb-2" />
-                          <Skeleton className="h-3 w-24" />
-                        </div>
-                        <div>
-                          <Skeleton className="h-4 w-16" />
-                        </div>
-                        <div>
-                          <Skeleton className="h-4 w-20 mb-2" />
-                          <Skeleton className="h-3 w-24" />
-                        </div>
-                        <div className="text-right">
-                          <Skeleton className="h-8 w-20 rounded-md inline-block" />
-                        </div>
-                      </div>
-                    ))
-                  : sortedMarkets.map((m) => {
-                  const user = byMarket[m.market_address] as ICurvanceMarketUserItem | undefined;
-                  const price0 = parseFloat(m.token0.price || '0');
-                  const price1 = parseFloat(m.token1.price || '0');
-                  // Supply totals (for Supply mode)
-                  const supplyUSD = formatUSD(
-                    m.token0.total_supply_in_usd || m.total_supply_in_usd || '0'
-                  );
-                  let supplyTokensRaw = parseFloat(m.token0.total_supply || '0');
-                  if (!isFinite(supplyTokensRaw) || supplyTokensRaw === 0) {
-                    const supplyUSDNum = parseFloat(
-                      m.token0.total_supply_in_usd || m.total_supply_in_usd || '0'
-                    );
-                    supplyTokensRaw = price0 > 0 ? supplyUSDNum / price0 : 0;
-                  }
-                  const supplyTokens = formatAbbr(String(supplyTokensRaw));
-
-                  // Borrow totals (for Borrow mode)
-                  const borrowUSDNum = parseFloat(m.token1.total_debt_in_usd || '0');
-                  const borrowUSD = formatUSD(String(borrowUSDNum));
-                  let borrowTokensRaw = parseFloat(m.token1.total_debt || '0');
-                  if (!isFinite(borrowTokensRaw) || borrowTokensRaw === 0) {
-                    borrowTokensRaw = price1 > 0 ? borrowUSDNum / price1 : 0;
-                  }
-                  const borrowTokens = formatAbbr(String(borrowTokensRaw));
-                  const supplyApy = formatPct(m.token0.supply_rate || m.supply_rate || '0');
-                  const borrowApy = formatPct(m.token1.borrow_rate || m.borrow_rate || '0');
-                  const maxDebtUSDNum = parseFloat(
-                    formatBig(String(user?.total_debt_in_usd || '0'), 18)
-                  );
-                  const remainingUSD = formatUSD(String(maxDebtUSDNum));
-                  const remainingTokens = formatAbbr(
-                    String(price1 > 0 ? maxDebtUSDNum / price1 : 0)
-                  );
-                  const myTokens = formatAbbr(user?.token0?.user_asset_display_balance || '0');
-                  const myUSD = formatUSD(
-                    String(price0 * parseFloat(user?.token0?.user_asset_display_balance || '0'))
-                  );
-
-                  return (
-                    <div key={m.market_address} className="grid grid-cols-[280px_1fr_1fr_1fr_140px] items-center px-6 py-4">
+            )}
+            {marketsLoading && !marketsError && (
+              <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                <div className="grid grid-cols-[280px_1fr_1fr_1fr_140px] px-6 py-3 text-xs text-slate-500">
+                  <div>Asset</div>
+                  {actionMode === 'borrow' ? (
+                    <>
+                      <div>Total Borrowed</div>
+                      <div>Borrow APY</div>
+                      <div>MY Debt</div>
+                    </>
+                  ) : (
+                    <>
+                      <div>Total Supplied</div>
+                      <div>Supply APY</div>
+                      <div>MY Supplies</div>
+                    </>
+                  )}
+                  <div className="text-right">&nbsp;</div>
+                </div>
+                <div className="divide-y divide-slate-200">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="grid grid-cols-[280px_1fr_1fr_1fr_140px] items-center px-6 py-4">
                       <div className="flex items-center gap-3">
-                        {/* Pair token icons stacked */}
                         <div className="flex -space-x-2">
-                          <Image
-                            src={m.token0.logoURI || '/icons/token.svg'}
-                            alt={m.token0.symbol}
-                            width={28}
-                            height={28}
-                            className="inline-block h-7 w-7 rounded-full ring-2 ring-white"
-                          />
-                          <Image
-                            src={m.token1.logoURI || '/icons/token.svg'}
-                            alt={m.token1.symbol}
-                            width={28}
-                            height={28}
-                            className="inline-block h-7 w-7 rounded-full ring-2 ring-white"
-                          />
+                          <Skeleton className="inline-block h-7 w-7 rounded-full" />
+                          <Skeleton className="inline-block h-7 w-7 rounded-full" />
                         </div>
                         <div>
-                          <div className="text-sm font-semibold text-slate-900 whitespace-nowrap">{`${m.token0.symbol} & ${m.token1.symbol}`}</div>
-                          <div className="text-xs text-slate-500 whitespace-nowrap">{m.chain_name || 'Monad Testnet'}</div>
+                          <Skeleton className="h-4 w-24 mb-1" />
+                          <Skeleton className="h-3 w-16" />
                         </div>
                       </div>
                       <div>
-                        {actionMode === 'borrow' ? (
-                          <>
-                            <div className="text-sm font-semibold text-slate-900">{borrowTokens}</div>
-                            <div className="text-xs text-slate-500">{borrowUSD}</div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="text-sm font-semibold text-slate-900">{supplyTokens}</div>
-                            <div className="text-xs text-slate-500">{supplyUSD}</div>
-                          </>
-                        )}
+                        <Skeleton className="h-4 w-16 mb-1" />
+                        <Skeleton className="h-3 w-24" />
                       </div>
-                      <div className="text-sm font-semibold text-slate-900">{actionMode === 'borrow' ? borrowApy : supplyApy}</div>
-                      {actionMode === 'borrow' ? (
-                        <div>
-                          <div className="text-sm font-semibold text-slate-900">{remainingTokens}</div>
-                          <div className="text-xs text-slate-500">{remainingUSD}</div>
-                        </div>
-                      ) : (
-                        <div>
-                          <div className="text-sm font-semibold text-slate-900">{myTokens}</div>
-                          <div className="text-xs text-slate-500">{myUSD}</div>
-                        </div>
-                      )}
+                      <Skeleton className="h-4 w-12" />
+                      <div>
+                        <Skeleton className="h-4 w-16 mb-1" />
+                        <Skeleton className="h-3 w-24" />
+                      </div>
                       <div className="text-right">
-                        <button
-                          onClick={() => onDetails?.(m.market_address)}
-                          className="inline-flex items-center px-4 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-sm text-slate-700"
-                        >
-                          Details
-                        </button>
+                        <Skeleton className="h-7 w-20 rounded-md" />
                       </div>
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+            {!marketsLoading && !marketsError && sortedMarkets.length === 0 && (
+              <div className="my-10 flex w-full items-center justify-center">
+                <div className="text-center text-sm text-gray-600">No markets available.</div>
+              </div>
+            )}
+            {!marketsLoading && !marketsError && sortedMarkets.length > 0 && (
+              <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                <div className="grid grid-cols-[280px_1fr_1fr_1fr_140px] px-6 py-3 text-xs text-slate-500">
+                  <div>Asset</div>
+                  {actionMode === 'borrow' ? (
+                    <>
+                      <div>Total Borrowed</div>
+                      <div>Borrow APY</div>
+                      <div>MY Debt</div>
+                    </>
+                  ) : (
+                    <>
+                      <div>Total Supplied</div>
+                      <div>Supply APY</div>
+                      <div>MY Supplies</div>
+                    </>
+                  )}
+                  <div className="text-right">&nbsp;</div>
+                </div>
+                <div className="divide-y divide-slate-200">
+                  {sortedMarkets.map((m) => {
+                    const user = byMarket[m.market_address] as ICurvanceMarketUserItem | undefined;
+                    const price0 = parseFloat(m.token0.price || '0');
+                    const price1 = parseFloat(m.token1.price || '0');
+                    // Supply totals (for Supply mode)
+                    const supplyUSD = formatUSD(
+                      m.token0.total_supply_in_usd || m.total_supply_in_usd || '0'
+                    );
+                    let supplyTokensRaw = parseFloat(m.token0.total_supply || '0');
+                    if (!isFinite(supplyTokensRaw) || supplyTokensRaw === 0) {
+                      const supplyUSDNum = parseFloat(
+                        m.token0.total_supply_in_usd || m.total_supply_in_usd || '0'
+                      );
+                      supplyTokensRaw = price0 > 0 ? supplyUSDNum / price0 : 0;
+                    }
+                    const supplyTokens = formatAbbr(String(supplyTokensRaw));
+
+                    // Borrow totals (for Borrow mode)
+                    const borrowUSDNum = parseFloat(m.token1.total_debt_in_usd || '0');
+                    const borrowUSD = formatUSD(String(borrowUSDNum));
+                    let borrowTokensRaw = parseFloat(m.token1.total_debt || '0');
+                    if (!isFinite(borrowTokensRaw) || borrowTokensRaw === 0) {
+                      borrowTokensRaw = price1 > 0 ? borrowUSDNum / price1 : 0;
+                    }
+                    const borrowTokens = formatAbbr(String(borrowTokensRaw));
+                    const supplyApy = formatPct(m.token0.supply_rate || m.supply_rate || '0');
+                    const borrowApy = formatPct(m.token1.borrow_rate || m.borrow_rate || '0');
+                    const maxDebtUSDNum = parseFloat(
+                      formatBig(String(user?.total_debt_in_usd || '0'), 18)
+                    );
+                    const remainingUSD = formatUSD(String(maxDebtUSDNum));
+                    const remainingTokens = formatAbbr(
+                      String(price1 > 0 ? maxDebtUSDNum / price1 : 0)
+                    );
+                    const myTokens = formatAbbr(user?.token0?.user_asset_display_balance || '0');
+                    const myUSD = formatUSD(
+                      String(price0 * parseFloat(user?.token0?.user_asset_display_balance || '0'))
+                    );
+
+                    return (
+                      <div key={m.market_address} className="grid grid-cols-[280px_1fr_1fr_1fr_140px] items-center px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          {/* Pair token icons stacked */}
+                          <div className="flex -space-x-2">
+                            <Image
+                              src={m.token0.logoURI || '/icons/token.svg'}
+                              alt={m.token0.symbol}
+                              width={28}
+                              height={28}
+                              className="inline-block h-7 w-7 rounded-full ring-2 ring-white"
+                            />
+                            <Image
+                              src={m.token1.logoURI || '/icons/token.svg'}
+                              alt={m.token1.symbol}
+                              width={28}
+                              height={28}
+                              className="inline-block h-7 w-7 rounded-full ring-2 ring-white"
+                            />
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold text-slate-900 whitespace-nowrap">{`${m.token0.symbol} & ${m.token1.symbol}`}</div>
+                            <div className="text-xs text-slate-500 whitespace-nowrap">{m.chain_name || 'Monad Testnet'}</div>
+                          </div>
+                        </div>
+                        <div>
+                          {actionMode === 'borrow' ? (
+                            <>
+                              <div className="text-sm font-semibold text-slate-900">{borrowTokens}</div>
+                              <div className="text-xs text-slate-500">{borrowUSD}</div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="text-sm font-semibold text-slate-900">{supplyTokens}</div>
+                              <div className="text-xs text-slate-500">{supplyUSD}</div>
+                            </>
+                          )}
+                        </div>
+                        <div className="text-sm font-semibold text-slate-900">{actionMode === 'borrow' ? borrowApy : supplyApy}</div>
+                        {actionMode === 'borrow' ? (
+                          <div>
+                            <div className="text-sm font-semibold text-slate-900">{remainingTokens}</div>
+                            <div className="text-xs text-slate-500">{remainingUSD}</div>
+                          </div>
+                        ) : (
+                          <div>
+                            <div className="text-sm font-semibold text-slate-900">{myTokens}</div>
+                            <div className="text-xs text-slate-500">{myUSD}</div>
+                          </div>
+                        )}
+                        <div className="text-right">
+                          <button
+                            onClick={() => onDetails?.(m.market_address)}
+                            className="inline-flex items-center px-4 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-sm text-slate-700"
+                          >
+                            Details
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

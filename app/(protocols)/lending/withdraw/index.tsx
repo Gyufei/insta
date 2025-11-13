@@ -1,10 +1,6 @@
-import { useMemo } from 'react';
-
-
+import { useEffect, useMemo, useState } from 'react';
 
 import { IToken } from '@/config/tokens';
-
-
 
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/new/action-button';
@@ -59,7 +55,8 @@ export function LendingWithdraw() {
       (u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
     );
   }, [userInfoQuery.data, props?.market_address]);
-  const sharesBalance = userItem?.token0?.user_share_display_balance || props?.user_share_display_balance || '0';
+  const sharesBalance =
+    userItem?.token0?.user_share_display_balance || props?.user_share_display_balance || '0';
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(sharesBalance);
   const { handleSetMax, handleInput } = useSetMax(inputValue, sharesBalance, handleInputChange);
 
@@ -88,8 +85,46 @@ export function LendingWithdraw() {
 
   // 用户在该市场的摘要数据（已上移声明）
 
+  // 冷却期逻辑：解析 cooldown 字段，禁用按钮并提示剩余时间
+  const cooldownRaw = userItem?.cooldown || '';
+  // 优化：后端返回为“绝对 Unix 秒级时间戳”，示例 1763030948
+  const cooldownEndMs = useMemo(() => {
+    const num = Number(cooldownRaw);
+    if (!Number.isFinite(num) || num <= 0) return 0;
+    return num * 1000; // 将秒转为毫秒
+  }, [cooldownRaw]);
+  const [nowTs, setNowTs] = useState<number>(() => Date.now());
+  useEffect(() => {
+    if (!cooldownEndMs) return;
+    const id = setInterval(() => setNowTs(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [cooldownEndMs]);
+  const remainingMs = useMemo(() => {
+    if (!cooldownEndMs) return 0;
+    return Math.max(cooldownEndMs - nowTs, 0);
+  }, [cooldownEndMs, nowTs]);
+  const isCooldownActive = remainingMs > 0;
+  const formattedCooldown = useMemo(() => {
+    let s = Math.floor(remainingMs / 1000);
+    const d = Math.floor(s / 86400);
+    s -= d * 86400;
+    const h = Math.floor(s / 3600);
+    s -= h * 3600;
+    const m = Math.floor(s / 60);
+    const sec = s - m * 60;
+    const pad = (n: number) => String(n).padStart(2, '0');
+    if (d > 0) return `${d}d ${pad(h)}:${pad(m)}:${pad(sec)}`;
+    return `${pad(h)}:${pad(m)}:${pad(sec)}`;
+  }, [remainingMs]);
+  const unlockAtLocal = useMemo(() => {
+    if (!cooldownEndMs) return '';
+    const d = new Date(cooldownEndMs);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }, [cooldownEndMs]);
+
   const handleWithdraw = () => {
-    if (!inputValue || btnDisabled || isPending) return;
+    if (!inputValue || btnDisabled || isPending || isCooldownActive) return;
     const shares = parseBig(inputValue, token.decimals);
 
     const payload = {
@@ -193,8 +228,17 @@ export function LendingWithdraw() {
 
             {/* 主操作按钮 */}
             <div className="mt-4 border-t border-[#EBEBEB] dark:border-[#323C52]" />
+            {isCooldownActive && (
+              <div className="mt-3 rounded-sm bg-yellow-400/15 dark:bg-yellow-500/10 p-2">
+                <div className="text-xs font-medium leading-4 text-yellow-700 dark:text-yellow-300">
+                  <ul className="list-disc pl-4">
+                    <li>{`Withdrawal in cooldown. Remaining: ${formattedCooldown}. Estimated unlock at ${unlockAtLocal}`}</li>
+                  </ul>
+                </div>
+              </div>
+            )}
             <ActionButton
-              disabled={btnDisabled}
+              disabled={btnDisabled || isCooldownActive}
               onClick={handleWithdraw}
               isPending={isPending}
               error={errorData}

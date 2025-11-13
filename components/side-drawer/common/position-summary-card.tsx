@@ -1,8 +1,9 @@
 'use client';
 
+import { divide, subtract } from 'safebase';
 import type { ICurvanceMarketUserItem } from '@/lib/data/use-curvance-market-user-info';
 import type { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
-import { truncateIfExceeds } from '@/lib/utils/number';
+import { formatBig, truncateIfExceeds } from '@/lib/utils/number';
 
 interface PositionSummaryCardProps {
   market?: ICurvanceMarketInfo;
@@ -20,8 +21,15 @@ export function PositionSummaryCard({ market, user }: PositionSummaryCardProps) 
   // 按图片说明展示：存了多少/借了多少
   const suppliedToken0 = user?.token0?.user_asset_display_balance || '0';
   const borrowedToken0 = user?.token0?.user_debt_display_balance || '0';
-  const suppliedToken1 = user?.token1?.user_asset_display_balance || '0';
-  const borrowedToken1 = user?.token1?.user_debt_display_balance || '0';
+  // 借款能力与可借额度：按 USD 18 位精度解码后再按 token1 价格换算
+  const priceToken1Str = token1?.price || '0';
+  const isPricePositive = Number(priceToken1Str) > 0;
+  const totalMaxDebtUSDDec = formatBig(user?.total_max_debt_in_usd || '0', 18);
+  const totalDebtUSDDec = formatBig(user?.total_debt_in_usd || '0', 18);
+  const remainingUSDDecRaw = subtract(totalMaxDebtUSDDec, totalDebtUSDDec);
+  const remainingUSDDec = String(remainingUSDDecRaw).startsWith('-') ? '0' : remainingUSDDecRaw;
+  const borrowCapacityToken1 = isPricePositive ? divide(totalMaxDebtUSDDec, priceToken1Str) : '0';
+  const availableToBorrowToken1 = isPricePositive ? divide(remainingUSDDec, priceToken1Str) : '0';
 
   return (
     <div className="rounded-lg border border-[#EBEBEB] bg-white dark:bg-secondary p-5 shadow-sm">
@@ -42,13 +50,13 @@ export function PositionSummaryCard({ market, user }: PositionSummaryCardProps) 
         <div className="flex items-center justify-between">
           <div className="text-xs text-[#A5ADC6]">Borrow Capacity</div>
           <div className="text-sm font-medium text-[#131E40]">
-            {truncateIfExceeds(suppliedToken1, 4)} {displaySymbol1}
+            {truncateIfExceeds(String(borrowCapacityToken1), 4)} {displaySymbol1}
           </div>
         </div>
         <div className="flex items-center justify-between">
           <div className="text-xs text-[#A5ADC6]">Available to Borrow</div>
           <div className="text-sm font-medium text-[#131E40]">
-            {truncateIfExceeds(borrowedToken1, 4)} {displaySymbol1}
+            {truncateIfExceeds(String(availableToBorrowToken1), 4)} {displaySymbol1}
           </div>
         </div>
       </div>
