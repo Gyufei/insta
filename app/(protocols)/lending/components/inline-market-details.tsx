@@ -190,7 +190,7 @@ export default function InlineMarketDetails({
           Markets
         </button>
         <span className="mx-2">&gt;</span>
-        <span className="text-gray-900 dark:text-gray-100 font-medium">{token0.name}</span>
+        <span className="text-gray-900 dark:text-gray-100 font-medium">{market.market_name}</span>
       </div>
 
       {/* Header info card */}
@@ -203,10 +203,10 @@ export default function InlineMarketDetails({
               className="h-10 w-10 rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-xs text-gray-500">{mainToken.name}</span>
               <span className="font-medium text-base text-gray-900 dark:text-gray-100">
                 {mainToken.symbol}
               </span>
+              <span className="text-xs text-gray-500">{market.market_name}</span>
             </div>
             <div className="ml-auto grid grid-cols-3 gap-8 text-sm">
               {isBorrow ? (
@@ -265,7 +265,7 @@ export default function InlineMarketDetails({
               })}
             </div>
             <div className="mt-1 text-xs text-gray-500">
-              ~ {truncateIfExceeds(String(approxTokenAmount || 0), 4)} {isBorrow ? token1.symbol : token0.symbol}
+              {truncateIfExceeds(String(approxTokenAmount || 0), 4)} {isBorrow ? token1.symbol : token0.symbol}
             </div>
           </div>
         </div>

@@ -127,8 +127,8 @@ export default function InlineMarketsSection({
               </div>
             )}
             {!marketsLoading && !marketsError && sortedMarkets.length > 0 && (
-              <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
-                <div className="grid grid-cols-[280px_1fr_1fr_1fr_140px] px-6 py-3 text-xs text-slate-500">
+              <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden px-6">
+                <div className="grid grid-cols-[280px_1fr_1fr_1fr_140px] py-3 text-xs text-slate-500 border-b border-slate-200">
                   <div>Asset</div>
                   {actionMode === 'borrow' ? (
                     <>
@@ -186,7 +186,19 @@ export default function InlineMarketsSection({
                     );
 
                     return (
-                      <div key={m.market_address} className="grid grid-cols-[280px_1fr_1fr_1fr_140px] items-center px-6 py-4">
+                      <div
+                        key={m.market_address}
+                        className="grid grid-cols-[280px_1fr_1fr_1fr_140px] items-center py-4 hover:bg-slate-50 cursor-pointer dark:hover:bg-secondary/80"
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => onDetails?.(m.market_address)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            onDetails?.(m.market_address);
+                          }
+                        }}
+                      >
                         <div className="flex items-center gap-3">
                           {/* Pair token icons stacked */}
                           <div className="flex -space-x-2">
@@ -237,7 +249,10 @@ export default function InlineMarketsSection({
                         )}
                         <div className="text-right">
                           <button
-                            onClick={() => onDetails?.(m.market_address)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDetails?.(m.market_address);
+                            }}
                             className="inline-flex items-center px-4 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-sm text-slate-700"
                           >
                             Details
