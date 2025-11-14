@@ -174,9 +174,16 @@ export default function InlineMarketDetails({
 
   // Borrow/Repay 交互已移至抽屉组件。
 
-  // On mount: show market info in the side drawer; on unmount: reset to Balance
+  // On mount: only open market info in side drawer on desktop; keep closed on mobile
   useEffect(() => {
-    setCurrentComponent({ name: 'LendingMarketInfo', props: { market, user, actionMode } });
+    // Detect viewport width directly to avoid initial flicker from mobile hook
+    const isMobileViewport = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+    if (!isMobileViewport) {
+      setCurrentComponent({ name: 'LendingMarketInfo', props: { market, user, actionMode } });
+    } else {
+      // Ensure drawer is not opened on mobile
+      setCurrentComponent({ name: 'Balance' });
+    }
     return () => {
       setCurrentComponent({ name: 'Balance' });
     };
@@ -196,7 +203,8 @@ export default function InlineMarketDetails({
       {/* Header info card */}
       <div className="">
         <div className="rounded-lg border bg-white dark:bg-secondary p-5">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col md:flex-row md:items-center gap-3">
+            <div className="flex items-center gap-3">
             <img
               src={mainToken.logoURI}
               alt={mainToken.symbol}
@@ -208,47 +216,50 @@ export default function InlineMarketDetails({
               </span>
               <span className="text-xs text-gray-500">{market.market_name}</span>
             </div>
-            <div className="ml-auto grid grid-cols-3 gap-8 text-sm">
+            </div>
+            {/* 移动端在标题与指标之间增加分割线 */}
+            <div className="md:hidden w-full border-t border-gray-200 dark:border-gray-700 mt-3" />
+            <div className="w-full md:w-auto md:ml-auto grid grid-cols-3 gap-8 text-sm mt-3 md:mt-0">
               {isBorrow ? (
                 <>
-                  <div className="text-right">
-                    <div className="text-gray-500">Total Debt</div>
-                    <div className="mt-1 text-lg font-semibold">
+                  <div className="md:text-right text-center flex flex-col">
+                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
                       {formatUSD(token1.total_debt_in_usd)}
                     </div>
+                    <div className="order-2 md:order-1 text-gray-500">Total Debt</div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-gray-500">Available Liquidity</div>
-                    <div className="mt-1 text-lg font-semibold">
+                  <div className="md:text-right text-center flex flex-col">
+                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
                       {formatUSD(market.available_supply_in_usd)}
                     </div>
+                    <div className="order-2 md:order-1 text-gray-500">Available Liquidity</div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-gray-500">Borrow vAPY</div>
-                    <div className="mt-1 text-lg font-semibold">
+                  <div className="md:text-right text-center flex flex-col">
+                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
                       {formatPct(market.borrow_rate)}
                     </div>
+                    <div className="order-2 md:order-1 text-gray-500">Borrow vAPY</div>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="text-right">
-                    <div className="text-gray-500">Reserve Size</div>
-                    <div className="mt-1 text-lg font-semibold">
+                  <div className="md:text-right text-center flex flex-col">
+                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
                       {formatUSD(market.total_supply_in_usd)}
                     </div>
+                    <div className="order-2 md:order-1 text-gray-500">Reserve Size</div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-gray-500">Available Liquidity</div>
-                    <div className="mt-1 text-lg font-semibold">
+                  <div className="md:text-right text-center flex flex-col">
+                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
                       {formatUSD(market.available_supply_in_usd)}
                     </div>
+                    <div className="order-2 md:order-1 text-gray-500">Available Liquidity</div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-gray-500">Utilization Rate</div>
-                    <div className="mt-1 text-lg font-semibold">
+                  <div className="md:text-right text-center flex flex-col">
+                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
                       {formatPct(market.utilization_rate)}
                     </div>
+                    <div className="order-2 md:order-1 text-gray-500">Utilization Rate</div>
                   </div>
                 </>
               )}
@@ -281,11 +292,13 @@ export default function InlineMarketDetails({
           {/* Collateral Asset row: only show in Supply mode */}
           {actionMode === 'supply' && (
             <div className="rounded-md border bg-white dark:bg-secondary">
-              <div className="grid grid-cols-12 items-center px-4 py-3 text-xs text-gray-500">
+              {/* Desktop header */}
+              <div className="hidden md:grid grid-cols-12 items-center px-4 py-3 text-xs text-gray-500">
                 <div className="col-span-7">Collateral Asset</div>
                 <div className="col-span-5 text-right">Protocol Balance</div>
               </div>
-              <div className="border-t px-4 py-3">
+              {/* Desktop row content */}
+              <div className="hidden md:block border-t px-4 py-3">
                 <div className="flex items-center gap-3">
                   <img
                     src={token0.logoURI}
@@ -321,53 +334,142 @@ export default function InlineMarketDetails({
                   </div>
                 </div>
               </div>
+
+              {/* Mobile card layout */}
+              <div className="md:hidden px-4 py-4">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={token0.logoURI}
+                    className="h-12 w-12 rounded-full"
+                    alt={token0.symbol}
+                  />
+                  <div className="flex-1">
+                    <div className="text-2xl font-semibold tracking-tight text-[#131E40]">
+                      {token0.name}
+                    </div>
+                    <div className="text-sm text-[#A5ADC6]">
+                      {token0.symbol} - {truncateIfExceeds(walletBalanceDisplay || '0', 4)} in wallet
+                    </div>
+                  </div>
+                </div>
+                <div className="my-4 border-t border-gray-200" />
+                <div className="text-center">
+                  <span className="text-3xl font-semibold tracking-tight text-[#131E40]">
+                    {truncateIfExceeds(user?.token0?.user_share_display_balance || '0.0000', 4)}
+                  </span>
+                  <span className="ml-2 text-lg text-[#A5ADC6]">Protocol Balance</span>
+                </div>
+                <div className="my-4 border-t border-gray-200" />
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    className="w-full inline-flex items-center justify-center px-4 py-4 rounded-md border border-slate-200 bg-white text-2xl text-slate-700"
+                    onClick={openWithdraw}
+                    aria-label={'Withdraw'}
+                  >
+                    -
+                  </button>
+                  <button
+                    className="w-full inline-flex items-center justify-center px-4 py-4 rounded-md border border-slate-200 bg-white text-2xl text-slate-700"
+                    onClick={openSupply}
+                    aria-label={'Supply'}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
           {/* Borrow asset row: only show in Borrow mode */}
           {actionMode === 'borrow' && (
-            <div className="mt-3 rounded-md border bg-white dark:bg-secondary">
-              <div className="grid grid-cols-12 items-center px-4 py-3 text-xs text-gray-500">
-                <div className="col-span-7">Borrow Asset</div>
-                <div className="col-span-5 text-right">Protocol Debt</div>
-              </div>
-              <div className="border-t px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={token1.logoURI}
-                    className="h-8 w-8 rounded-full"
-                    alt={token1.symbol}
-                  />
-                  <div className="flex-1">
-                    <div className="font-medium">{token1.name}</div>
-                    <div className="text-xs text-gray-500">
-                      {token1.symbol} - {truncateIfExceeds(walletBalanceDisplay1 || '0', 4)} in wallet
-                    </div>
-                  </div>
-                  <div className="ml-auto flex items-center gap-3">
-                    <div className="text-right">
-                      <div className="font-medium">
-                        {truncateIfExceeds(user?.token1?.user_debt_display_balance || '0.0000', 4)}
+            <>
+              {/* Desktop layout */}
+              <div className="mt-3 rounded-md border bg-white dark:bg-secondary hidden md:block">
+                <div className="grid grid-cols-12 items-center px-4 py-3 text-xs text-gray-500">
+                  <div className="col-span-7">Borrow Asset</div>
+                  <div className="col-span-5 text-right">Protocol Debt</div>
+                </div>
+                <div className="border-t px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={token1.logoURI}
+                      className="h-8 w-8 rounded-full"
+                      alt={token1.symbol}
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium">{token1.name}</div>
+                      <div className="text-xs text-gray-500">
+                        {token1.symbol} - {truncateIfExceeds(walletBalanceDisplay1 || '0', 4)} in wallet
                       </div>
                     </div>
-                    <button
-                      className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
-                      onClick={openBorrow}
-                      aria-label={'Borrow'}
-                    >
-                      +
-                    </button>
-                    <button
-                      className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
-                      onClick={openRepay}
-                      aria-label={'Repay'}
-                    >
-                      -
-                    </button>
+                    <div className="ml-auto flex items-center gap-3">
+                      <div className="text-right">
+                        <div className="font-medium">
+                          {truncateIfExceeds(user?.token1?.user_debt_display_balance || '0.0000', 4)}
+                        </div>
+                      </div>
+                      <button
+                        className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
+                        onClick={openBorrow}
+                        aria-label={'Borrow'}
+                      >
+                        +
+                      </button>
+                      <button
+                        className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
+                        onClick={openRepay}
+                        aria-label={'Repay'}
+                      >
+                        -
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+
+              {/* Mobile card layout */}
+              <div className="md:hidden px-4 py-4">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={token1.logoURI}
+                    className="h-12 w-12 rounded-full"
+                    alt={token1.symbol}
+                  />
+                  <div className="flex-1">
+                    <div className="text-2xl font-semibold tracking-tight text-[#131E40]">
+                      {token1.name}
+                    </div>
+                    <div className="text-sm text-[#A5ADC6]">
+                      {token1.symbol} - {truncateIfExceeds(walletBalanceDisplay1 || '0', 4)} in wallet
+                    </div>
+                  </div>
+                </div>
+                <div className="my-4 border-t border-gray-200" />
+                <div className="text-center">
+                  <span className="text-3xl font-semibold tracking-tight text-[#131E40]">
+                    {truncateIfExceeds(user?.token1?.user_debt_display_balance || '0.0000', 4)}
+                  </span>
+                  <span className="ml-2 text-lg text-[#A5ADC6]">Protocol Debt</span>
+                </div>
+                <div className="my-4 border-t border-gray-200" />
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    className="w-full inline-flex items-center justify-center px-4 py-4 rounded-md border border-slate-200 bg-white text-2xl text-slate-700"
+                    onClick={openRepay}
+                    aria-label={'Repay'}
+                  >
+                    -
+                  </button>
+                  <button
+                    className="w-full inline-flex items-center justify-center px-4 py-4 rounded-md border border-slate-200 bg-white text-2xl text-slate-700"
+                    onClick={openBorrow}
+                    aria-label={'Borrow'}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>

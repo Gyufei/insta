@@ -12,6 +12,7 @@ import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/new/action-button';
 import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
@@ -177,6 +178,10 @@ export function LendingBorrow() {
     <>
       <SideDrawerLayout>
         <div className="pt-2 pb-10 sm:pt-4">
+          {/* Mobile back header */}
+          <div className="md:hidden">
+            <SideDrawerBackHeader title={`Borrow ${token.symbol}`} onClick={_handleBack} />
+          </div>
           {/* 主卡片：标题 + 大号数字输入 + 余额/Max + 操作按钮 */}
           <div className="rounded-lg border border-[#EBEBEB] bg-white p-5 shadow-sm dark:bg-secondary">
             <div className="text-sm font-medium text-[#131E40]">{`Borrow ${token.symbol}`}</div>

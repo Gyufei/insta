@@ -2,32 +2,19 @@
 
 import { useMemo, useState } from 'react';
 
-
-
 import InlineMarketsSection from '@/app/(protocols)/lending/components/InlineMarketsSection';
-
-
 
 import { ProjectSelector } from '@/components/common/project-selector';
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
-
-
-import { ICurvanceMarketUserItem, useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
+import {
+  ICurvanceMarketUserItem,
+  useCurvanceMarketUserInfo,
+} from '@/lib/data/use-curvance-market-user-info';
 import { ICurvanceMarketInfo, useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
-
-
 
 import InlineMarketDetails from './components/inline-market-details';
 import { LENDING_PROJECT_IDS, type LendingProjectId, getLendingProject } from './lending-config';
-
-
-
-
-
-
-
-
 
 export default function Lending() {
   const {
@@ -77,7 +64,7 @@ export default function Lending() {
 
   return (
     <CommonPageLayout title="Lending" iconSrc={null} titleClassName="pb-5 md:pb-6">
-      <div className="w-full px-4 md:px-12 flex items-start justify-between">
+      <div className="w-full px-4 md:px-12 flex flex-col md:flex-row items-start justify-between gap-3 md:gap-0">
         <div className="w-full md:max-w-md">
           <ProjectSelector
             projectIds={LENDING_PROJECT_IDS}
@@ -89,7 +76,11 @@ export default function Lending() {
           />
         </div>
         {/* 右侧 Supply/Borrow 单选胶囊 */}
-        <fieldset className="flex items-center gap-3" aria-label="Action Mode" role="radiogroup">
+        <fieldset
+          className="w-full md:w-auto mt-3 md:mt-0 flex items-center gap-3 justify-start"
+          aria-label="Action Mode"
+          role="radiogroup"
+        >
           <label className="inline-flex items-center cursor-pointer">
             <input
               type="radio"
