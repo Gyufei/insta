@@ -303,7 +303,7 @@ export default function InlineMarketsSection({
                 </div>
 
                 {/* Mobile: separate card list */}
-                <div className="md:hidden space-y-4">
+                <div className="md:hidden space-y-3">
                   {sortedMarkets.map((m) => {
                     const user = byMarket[m.market_address] as ICurvanceMarketUserItem | undefined;
                     const price0 = parseFloat(m.token0.price || '0');
@@ -339,7 +339,7 @@ export default function InlineMarketsSection({
                     return (
                       <div
                         key={m.market_address}
-                        className="rounded-2xl border border-slate-200 bg-white overflow-hidden px-6 py-4 cursor-pointer dark:bg-secondary/80"
+                        className="rounded-xl border border-slate-200 bg-white overflow-hidden px-6 py-4 cursor-pointer dark:bg-secondary/80"
                         role="button"
                         tabIndex={0}
                         onClick={() => onDetails?.(m.market_address)}
@@ -377,36 +377,37 @@ export default function InlineMarketsSection({
 
                         {/* metrics grid with vertical dividers */}
                         <div className="grid grid-cols-3 divide-x divide-slate-200 w-full mt-1">
-                          <div className="px-4">
+                          <div className="px-4 text-center">
                             {actionMode === 'borrow' ? (
                               <>
-                                <div className="text-sm font-semibold text-slate-900">{borrowTokens}</div>
                                 <div className="text-xs text-slate-500">{borrowUSD}</div>
+                                <div className="text-sm font-semibold text-slate-900">{borrowTokens}</div>
                                 <div className="text-xs text-slate-500 mt-1">Total Borrowed</div>
                               </>
                             ) : (
                               <>
-                                <div className="text-sm font-semibold text-slate-900">{supplyTokens}</div>
                                 <div className="text-xs text-slate-500">{supplyUSD}</div>
+                                <div className="text-sm font-semibold text-slate-900">{supplyTokens}</div>
                                 <div className="text-xs text-slate-500 mt-1">Total Supplied</div>
                               </>
                             )}
                           </div>
-                          <div className="px-4">
+                          <div className="px-4 text-center">
+                            <div className="text-xs text-slate-500">-</div>
                             <div className="text-sm font-semibold text-slate-900">{actionMode === 'borrow' ? borrowApy : supplyApy}</div>
                             <div className="text-xs text-slate-500 mt-1">{actionMode === 'borrow' ? 'Borrow APY' : 'Supply APY'}</div>
                           </div>
-                          <div className="px-4">
+                          <div className="px-4 text-center">
                             {actionMode === 'borrow' ? (
                               <>
-                                <div className="text-sm font-semibold text-slate-900">{remainingTokens}</div>
                                 <div className="text-xs text-slate-500">{remainingUSD}</div>
+                                <div className="text-sm font-semibold text-slate-900">{remainingTokens}</div>
                                 <div className="text-xs text-slate-500 mt-1">MY Debt</div>
                               </>
                             ) : (
                               <>
-                                <div className="text-sm font-semibold text-slate-900">{myTokens}</div>
                                 <div className="text-xs text-slate-500">{myUSD}</div>
+                                <div className="text-sm font-semibold text-slate-900">{myTokens}</div>
                                 <div className="text-xs text-slate-500 mt-1">MY Supplies</div>
                               </>
                             )}

@@ -64,7 +64,7 @@ export default function Lending() {
 
   return (
     <CommonPageLayout title="Lending" iconSrc={null} titleClassName="pb-5 md:pb-6">
-      <div className="w-full px-4 md:px-12 flex flex-col md:flex-row items-start justify-between gap-3 md:gap-0">
+      <div className="w-full px-4 md:px-12 flex flex-col md:flex-row items-start justify-between ">
         <div className="w-full md:max-w-md">
           <ProjectSelector
             projectIds={LENDING_PROJECT_IDS}
@@ -77,7 +77,7 @@ export default function Lending() {
         </div>
         {/* 右侧 Supply/Borrow 单选胶囊 */}
         <fieldset
-          className="w-full md:w-auto mt-3 md:mt-0 flex items-center gap-3 justify-start"
+          className="w-full md:w-auto mt-0 flex items-center gap-3 justify-start"
           aria-label="Action Mode"
           role="radiogroup"
         >

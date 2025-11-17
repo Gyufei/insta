@@ -44,7 +44,7 @@ export function ProjectSelector<T extends ProjectConfig>({
 }: ProjectSelectorProps<T>) {
   return (
     <div
-      className={cn('flex gap-2 p-[4px] mb-6 md:mb-12 w-fit bg-[#F5F6F9] rounded-xl', className)}
+      className={cn('flex gap-2 p-[4px] mb-5 md:mb-12 w-fit bg-[#F5F6F9] rounded-xl', className)}
     >
       {projectIds.map((projectId) => {
         const projectConfig = getProject(projectId);

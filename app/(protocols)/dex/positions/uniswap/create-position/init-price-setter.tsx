@@ -78,7 +78,7 @@ export default function InitialPriceSetter({
 
       <div className="bg-gray-100 p-2 rounded-xl flex flex-col gap-1 cursor-pointer">
         <div className="flex justify-between items-center">
-          <span className="text-xs font-semibold text-gray-500">Initial price</span>
+          <span className="text-xs font-semibold text-[#A5ADC6]">Initial price</span>
           <Tabs value="token0" onValueChange={handleTabChange}>
             <TabsList className="bg-transparent border border-gray-300 rounded-full">
               <TabsTrigger
@@ -135,7 +135,7 @@ export default function InitialPriceSetter({
 
         {otherToken && displayToken && (
           <div className="flex justify-between items-center sm:flex-row flex-col">
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-[#A5ADC6]">
               {otherToken?.symbol} = 1 {displayToken?.symbol}
             </span>
           </div>

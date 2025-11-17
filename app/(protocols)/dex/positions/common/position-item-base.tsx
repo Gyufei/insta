@@ -58,38 +58,38 @@ export function PositionItemBase(props: PositionItemBaseProps) {
             <span className="text-base font-medium text-primary">
               ${formatNumber(totalLiquidityUsd)}
             </span>
-            <span className="block text-sm text-gray-500 truncate">Position</span>
+            <span className="block text-sm text-[#A5ADC6] truncate">Position</span>
           </div>
           <div className="flex-1 basis-0">
             <span className="text-base font-medium text-primary">
               {formatPrice(displayPrice) || '-'}
             </span>
-            <span className="block text-sm text-gray-500 truncate">Current Price</span>
+            <span className="block text-sm text-[#A5ADC6] truncate">Current Price</span>
           </div>
           <div className="flex-1 basis-0 flex flex-col items-end sm:items-start">
             <span className="text-base font-medium text-primary">
               ${formatNumber(totalLiquidityUsd)}
             </span>
-            <span className="block text-sm text-gray-500 truncate">Value</span>
+            <span className="block text-sm text-[#A5ADC6] truncate">Value</span>
           </div>
         </div>
 
         {/* 移动端：按图片 UI，每项一行，标题在左，数值在右 */}
         <div className="flex md:hidden flex-col gap-2 flex-grow mr-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">Position</span>
+            <span className="text-sm text-[#A5ADC6]">Position</span>
             <span className="text-base font-medium text-primary">
               ${formatNumber(totalLiquidityUsd)}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">Current Price</span>
+            <span className="text-sm text-[#A5ADC6]">Current Price</span>
             <span className="text-base font-medium text-primary">
               {formatPrice(displayPrice) || '-'}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">Value</span>
+            <span className="text-sm text-[#A5ADC6]">Value</span>
             <span className="text-base font-medium text-primary">
               ${formatNumber(totalLiquidityUsd)}
             </span>
@@ -99,17 +99,17 @@ export function PositionItemBase(props: PositionItemBaseProps) {
         {/* 桌面端区间展示：保持原样 */}
         <div className="hidden md:block">
           {range.isFullRange ? (
-            <span className="text-sm text-gray-500 truncate">Full range</span>
+            <span className="text-sm text-[#A5ADC6] truncate">Full range</span>
           ) : (
             <div className="flex flex-col gap-1">
               <div>
-                <span className="text-gray-500">Min: </span>
+                <span className="text-[#A5ADC6]">Min: </span>
                 <span>
                   {formatPrice(range.minPrice || '-')} {range.token1Symbol} / {range.token0Symbol}
                 </span>
               </div>
               <div>
-                <span className="text-gray-500">Max: </span>
+                <span className="text-[#A5ADC6]">Max: </span>
                 <span className="max-w-[140px] truncate">
                   {formatPrice(range.maxPrice || '-')} {range.token1Symbol} / {range.token0Symbol}
                 </span>
@@ -122,19 +122,19 @@ export function PositionItemBase(props: PositionItemBaseProps) {
         <div className="md:hidden flex flex-col gap-2">
           {range.isFullRange ? (
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">Range</span>
-              <span className="text-sm text-gray-500">Full range</span>
+              <span className="text-sm text-[#A5ADC6]">Range</span>
+              <span className="text-sm text-[#A5ADC6]">Full range</span>
             </div>
           ) : (
             <>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Min</span>
+                <span className="text-sm text-[#A5ADC6]">Min</span>
                 <span className="text-base text-primary">
                   {formatPrice(range.minPrice || '-')} {range.token1Symbol} / {range.token0Symbol}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Max</span>
+                <span className="text-sm text-[#A5ADC6]">Max</span>
                 <span className="text-base text-primary">
                   {formatPrice(range.maxPrice || '-')} {range.token1Symbol} / {range.token0Symbol}
                 </span>

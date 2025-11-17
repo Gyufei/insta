@@ -151,7 +151,7 @@ export function UniswapRemoveLiquidity() {
         />
 
         <div className="bg-white rounded-2xl shadow-none px-6 py-5 flex flex-col gap-4 items-center mt-6">
-          <span className="text-gray-500 text-base font-semibold mb-2">Withdrawal amount</span>
+          <span className="text-[#A5ADC6] text-base font-semibold mb-2">Withdrawal amount</span>
           <div className="relative flex items-center justify-center w-36">
             <NumberInput
               className="!text-2xl font-bold text-center w-full pr-8 bg-transparent outline-none transition border-none shadow-none focus-visible:ring-0"

@@ -18,7 +18,7 @@ export function ErrorMessage({ show, message, className }: ErrorMessageProps) {
   }
 
   return (
-    <div className={cn('mt-6 rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2', className)}>
+    <div className={cn('mt-1 rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2', className)}>
       <div className="flex">
         <div className="flex-shrink-0">
           <CircleX className="h-5 w-5 text-red-500 dark:text-red-400" />

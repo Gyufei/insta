@@ -211,7 +211,7 @@ export function ClaimUnstakeSections() {
           <span className="font-semibold text-lg">Unstake MON</span>
         </div>
         <div className="text-sm text-[#999999] flex items-center justify-center">
-          <span className="text-gray-500">Available to claim</span>
+          <span className="text-[#A5ADC6]">Available to claim</span>
           <span className="text-[#6E75F9] ml-2">{availableToClaim} MON</span>
         </div>
       </div>
@@ -292,7 +292,7 @@ export function ClaimUnstakeSections() {
                           {formatNumber(parseFloat(formatBig(claim.token_amount)))} MON
                         </div>
                       </div>
-                      <p className="text-xs text-gray-500 ml-7">
+                      <p className="text-xs text-[#A5ADC6] ml-7">
                         Available in ~{remainingMinutes} minutes
                       </p>
                       <span className="text-xs px-2 py-1 rounded-[8px] bg-[#6E75F9] text-white opacity-50">
@@ -359,7 +359,7 @@ export function ClaimUnstakeSections() {
                           {formatNumber(parseFloat(formatBig(claim.token_amount)))} MON
                         </div>
                       </div>
-                      <p className="text-xs text-gray-500 ml-7">
+                      <p className="text-xs text-[#A5ADC6] ml-7">
                         Available in ~{remainingMinutes} minutes
                       </p>
                       <span className="text-xs px-2 py-1 rounded-[8px] bg-[#6E75F9] text-white opacity-50">

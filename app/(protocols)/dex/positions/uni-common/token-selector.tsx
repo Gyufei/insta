@@ -130,7 +130,7 @@ export default function TokenSelector({
       </div>
       <div className="flex-1">
         {isSearchingAddress && (isTokenInfoLoading || isUniswapTokensLoading) ? (
-          <div className="p-3 text-center text-sm text-gray-500">
+          <div className="p-3 text-center text-sm text-[#A5ADC6]">
             <Skeleton className="w-full h-8 mb-2" />
             <span>Loading...</span>
           </div>

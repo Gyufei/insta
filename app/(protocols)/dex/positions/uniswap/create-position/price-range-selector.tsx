@@ -86,7 +86,7 @@ export default function PriceRangeSelector({
       <div className="flex flex-col lg:flex-row gap-2">
         <div className="flex-grow flex-shrink relative bg-gray-100 p-2 justify-between overflow-hidden rounded-lg">
           <div className="flex flex-col gap-1 overflow-hidden flex-grow">
-            <span className="text-sm text-gray-500">Min price</span>
+            <span className="text-sm text-[#A5ADC6]">Min price</span>
             <NumberInput
               placeholder="0"
               value={priceRangeMin}
@@ -95,7 +95,7 @@ export default function PriceRangeSelector({
               className="font-normal !text-lg !bg-transparent text-black shadow-none focus-visible:ring-0 border-none outline-none p-0 w-full"
             />
             {token0Symbol && token1Symbol && (
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[#A5ADC6]">
                 {mainTokenIsToken0
                   ? `${token1Symbol} = 1 ${token0Symbol}`
                   : `${token0Symbol} = 1 ${token1Symbol}`}
@@ -106,7 +106,7 @@ export default function PriceRangeSelector({
 
         <div className="flex-grow flex-shrink relative bg-gray-100 p-2 justify-between overflow-hidden rounded-lg">
           <div className="flex flex-col gap-1 overflow-hidden flex-grow">
-            <span className="text-sm text-gray-500">Max price</span>
+            <span className="text-sm text-[#A5ADC6]">Max price</span>
             <NumberInput
               inputMode="decimal"
               placeholder="∞"
@@ -116,7 +116,7 @@ export default function PriceRangeSelector({
               className="font-normal !text-lg !bg-transparent text-black shadow-none focus-visible:ring-0 border-none outline-none p-0 w-full"
             />
             {token0Symbol && token1Symbol && (
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[#A5ADC6]">
                 {mainTokenIsToken0
                   ? `${token1Symbol} = 1 ${token0Symbol}`
                   : `${token0Symbol} = 1 ${token1Symbol}`}

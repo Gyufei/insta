@@ -51,7 +51,7 @@ export default function FeeTierSelector({ selectedTier = '0.3', onChange }: FeeT
         <div className="flex flex-row justify-between items-center px-4 py-2">
           <div className="flex-grow flex-shrink min-w-0 flex flex-col gap-1">
             <span className="text-sm text-primary">{selectedTier}% fee tier</span>
-            <span className="text-xs font-semibold text-gray-500">The % you will earn in fees</span>
+            <span className="text-xs font-semibold text-[#A5ADC6]">The % you will earn in fees</span>
           </div>
           <button
             onClick={handleToggleExpand}
