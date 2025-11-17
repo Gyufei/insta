@@ -152,7 +152,10 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     isLoading: isFromAllowanceLoading,
     handleApprove: handleFromApprove,
     isApproving: isFromApproving,
-  } = useCheckMonadAllowance(sellToken?.address || '', UniversalRouterAddressPermit);
+  } = useCheckMonadAllowance(
+    sellToken?.address || '',
+    quoteData?.dexRouter || UniversalRouterAddressPermit
+  );
 
   const { mutate: eoaSwap, isPending: isEOASwapPending } = useDexEOASwap();
   const { mutate: dsaSwap, isPending: isDSASwapPending } = useDexDSASwap();
@@ -171,6 +174,17 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
 
     return Number(fromAllowance) < Number(sellValue);
   }, [fromAllowance, sellValue, sellToken, currentAccountType, wallet]);
+
+  // Approve 后立即切换到 Swap 的覆盖状态（不等待额度刷新）
+  const [overrideShouldApprove, setOverrideShouldApprove] = useState(false);
+  useEffect(() => {
+    // 输入或账户变化时重置覆盖
+    setOverrideShouldApprove(false);
+  }, [sellToken, sellValue, currentAccountType]);
+  const shouldApproveUI = useMemo(
+    () => shouldApprove && !overrideShouldApprove,
+    [shouldApprove, overrideShouldApprove]
+  );
 
   useEffect(() => {
     // initialize selected pay account based on current account type
@@ -300,13 +314,15 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
   }, []);
 
   async function handleSwap() {
-    if (shouldApprove) {
+    if (shouldApproveUI) {
       trackEvent('TOKEN_APPROVE', {
         event_category: 'trading',
         token_symbol: sellToken?.symbol,
         token_address: sellToken?.address,
       });
-      handleFromApprove();
+      await handleFromApprove();
+      // 发送 Approve 后，直接展示 Swap 按钮
+      setOverrideShouldApprove(true);
       return;
     }
 
@@ -545,7 +561,6 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
                 Number(sellValue) <= 0 ||
                 isQuoteLoading ||
                 isSwapPending ||
-                shouldApprove ||
                 isFromApproving ||
                 !!quoteError ||
                 isInsufficientBalance
@@ -553,7 +568,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
             >
               {isFromAllowanceLoading && wallet ? (
                 <Loader className="w-6 h-6 animate-spin" />
-              ) : shouldApprove ? (
+              ) : shouldApproveUI ? (
                 <span className="flex items-center">
                   {isFromApproving ? <Loader className="w-6 h-6 mr-1 animate-spin" /> : 'Approve'}
                 </span>

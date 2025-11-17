@@ -21,7 +21,7 @@ interface DexDSASwapParams {
   token_in_is_mon: boolean;
   token_out_is_mon: boolean;
   amount_in_wei: string;
-  amount_out_wei: string;
+  min_amount_out_wei: string;
   sandbox_account: string;
   wallet_address: string;
   [key: string]: unknown;
@@ -39,7 +39,7 @@ export function useDexDSASwap() {
         token_in_is_mon: p.token_in_is_mon,
         token_out_is_mon: p.token_out_is_mon,
         amount_in_wei: p.amount_in_wei,
-        amount_out_wei: p.amount_out_wei ?? '0',
+        min_amount_out_wei: p.amount_out_wei ?? '0',
         sandbox_account: account,
         wallet_address: address,
       };
