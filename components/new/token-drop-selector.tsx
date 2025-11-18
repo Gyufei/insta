@@ -3,7 +3,7 @@
 import { divide } from 'safebase';
 import { isAddress } from 'viem';
 
-import { IToken, TokenPriceMap } from '@/config/tokens';
+import { IToken } from '@/config/tokens';
 
 import AccountSelect from '@/components/common/account-select';
 import { NumberInput } from '@/components/common/number-input';
@@ -14,7 +14,6 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 
-import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { cn } from '@/lib/utils';
 import { formatNumber, truncateNumber } from '@/lib/utils/number';
 
@@ -73,20 +72,6 @@ export function TokenDropSelector({
   customAddress,
   onCustomAddressChange,
 }: TokenSelectorProps) {
-  const { data: priceData } = useTokenStationPrice();
-  const ethPrice = priceData?.eth_price || '0';
-  const monPrice = priceData?.mon_price || '0';
-
-  function getPriceForTokenSymbol(symbol?: string): string {
-    if (!symbol) return '0';
-    const upper = symbol.toUpperCase();
-    if (upper === 'ETH' || upper === 'METH') return ethPrice;
-    if (upper === 'MON' || upper === 'WMON') return monPrice;
-    if (upper === 'USDT' || upper === 'USDC' || upper === 'MONUSD') return '1';
-    if (TokenPriceMap[upper] !== undefined) return String(TokenPriceMap[upper]);
-    return '0';
-  }
-
   // 使用通用工具：当小数超过 2 位时截断，否则保持原样
   return (
     <div className={cn('flex flex-col gap-[10px]', className)}>
@@ -168,8 +153,6 @@ export function TokenDropSelector({
             ) : label?.toLowerCase() === 'to' ? (
               (() => {
                 const fromSymbol = fromTokenSymbol || '';
-                const fromPrice = getPriceForTokenSymbol(fromSymbol);
-                const toPrice = getPriceForTokenSymbol(selectedToken?.symbol);
 
                 if (!fromSymbol || !selectedToken?.symbol) {
                   return null;
@@ -192,15 +175,7 @@ export function TokenDropSelector({
                   );
                 }
 
-                const fNum = Number(fromPrice);
-                const tNum = Number(toPrice);
-                if (!isFinite(fNum) || !isFinite(tNum) || tNum <= 0 || fNum <= 0) {
-                  return (
-                    <>
-                      1 {fromSymbol} = -- {selectedToken.symbol}
-                    </>
-                  );
-                }
+                return null;
               })()
             ) : (
               <></>

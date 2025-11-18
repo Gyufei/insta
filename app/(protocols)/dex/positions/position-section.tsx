@@ -110,18 +110,20 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
               <Search className="search-icon absolute h-4 w-4" style={{ left: '12px' }} />
             </div>
           </div>
-          <div className="ml-3">
-            <Button
-              size="sm"
-              className="flex bg-pro-blue text-white hover:bg-pro-blue/80 flex-shrink-0 select-none items-center justify-center"
-              onClick={handleNewPosition}
-            >
-              <div className="flex items-center justify-center">
-                <Plus className="mr-2 h-3 w-3" />
-                New Position
-              </div>
-            </Button>
-          </div>
+          {selectedProject !== 'auto-routing' && (
+            <div className="ml-3">
+              <Button
+                size="sm"
+                className="flex bg-pro-blue text-white hover:bg-pro-blue/80 flex-shrink-0 select-none items-center justify-center"
+                onClick={handleNewPosition}
+              >
+                <div className="flex items-center justify-center">
+                  <Plus className="mr-2 h-3 w-3" />
+                  New Position
+                </div>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 

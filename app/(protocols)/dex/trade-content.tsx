@@ -250,6 +250,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
 
   useEffect(() => {
     if (quoteError) {
+      setBuyValue('');
       const msg = extractMessage(quoteError);
       if (!msg) return;
 
@@ -261,7 +262,12 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
         });
       } else {
         if (msg.includes('token pair')) {
-          toast.warning(msg);
+          // Display unsupported token pair error inline and via toast
+          setLiquidityError({
+            showError: true,
+            errorMessage: msg,
+          });
+          // toast.warning(msg);
         } else {
           toast.error(msg);
         }
@@ -556,7 +562,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
         </div>
 
         <div className="flex md:flex-row flex-col md:justify-between md:items-center mt-5 gap-2 md:gap-0">
-          <div className="w-full flex flex-col md:items-center md:flex-row gap-2 md:gap-1 justify-end">
+          <div className="w-full flex flex-col gap-2 justify-end">
             {liquidityError.showError && (
               <div className={cn('rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2 mt-0')}>
                 <div className="flex">

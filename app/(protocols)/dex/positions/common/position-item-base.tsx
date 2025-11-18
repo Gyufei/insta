@@ -1,7 +1,11 @@
 import { Ellipsis, Minus, Plus } from 'lucide-react';
+import numbro from 'numbro';
 
 import { useState } from 'react';
 
+import { IToken } from '@/config/tokens';
+
+import { LogoWithPlaceholder } from '@/components/common/logo-placeholder';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -25,6 +29,12 @@ export interface PositionItemBaseProps {
     token0Symbol?: string;
     token1Symbol?: string;
   };
+  itemInfo: {
+    token0Amount: number;
+    token1Amount: number;
+    wrapToken0: IToken;
+    wrapToken1: IToken;
+  };
   onAddLiquidity: () => void;
   onRemoveLiquidity: () => void;
 }
@@ -43,9 +53,30 @@ function formatPrice(price: number | string) {
   }
 }
 
+function formatAmount(amount: number) {
+  if (amount.toString().startsWith('<')) {
+    return amount;
+  }
+
+  return numbro(amount).format({
+    thousandSeparated: true,
+    average: true,
+    mantissa: 2,
+    trimMantissa: true,
+    roundingFunction: Math.floor,
+  });
+}
+
 export function PositionItemBase(props: PositionItemBaseProps) {
-  const { header, displayPrice, totalLiquidityUsd, range, onAddLiquidity, onRemoveLiquidity } =
-    props;
+  const {
+    header,
+    displayPrice,
+    totalLiquidityUsd,
+    range,
+    itemInfo,
+    onAddLiquidity,
+    onRemoveLiquidity,
+  } = props;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -55,10 +86,26 @@ export function PositionItemBase(props: PositionItemBaseProps) {
         {/* 桌面端：保持原三列布局不变 */}
         <div className="hidden md:flex flex-row md:flex-nowrap flex-wrap md:justify-start justify-between gap-3 flex-grow mr-2">
           <div className="flex-1 basis-0">
-            <span className="text-base font-medium text-primary">
-              ${formatNumber(totalLiquidityUsd)}
-            </span>
-            <span className="block text-sm text-[#A5ADC6] truncate">Position</span>
+            <div className="text-base font-medium text-primary flex items-center gap-1">
+              <span>{formatAmount(itemInfo.token0Amount)}</span>
+              <LogoWithPlaceholder
+                src={itemInfo.wrapToken0.logo}
+                name={itemInfo.wrapToken0.symbol}
+                width={16}
+                className="rounded-full text-xs"
+                height={16}
+              />
+              <span>/</span>
+              <span>{formatAmount(itemInfo.token1Amount)}</span>
+              <LogoWithPlaceholder
+                src={itemInfo.wrapToken1.logo}
+                name={itemInfo.wrapToken1.symbol}
+                className="rounded-full text-xs"
+                width={16}
+                height={16}
+              />
+            </div>
+            <span className="block text-sm text-[#A5ADC6] truncate">Amount</span>
           </div>
           <div className="flex-1 basis-0">
             <span className="text-base font-medium text-primary">
@@ -77,9 +124,25 @@ export function PositionItemBase(props: PositionItemBaseProps) {
         {/* 移动端：按图片 UI，每项一行，标题在左，数值在右 */}
         <div className="flex md:hidden flex-col gap-2 flex-grow mr-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-[#A5ADC6]">Position</span>
-            <span className="text-base font-medium text-primary">
-              ${formatNumber(totalLiquidityUsd)}
+            <span className="text-sm text-[#A5ADC6]">Amount</span>
+            <span className="text-base font-medium text-primary flex items-center gap-1">
+              <span>{formatAmount(itemInfo.token0Amount)}</span>
+              <LogoWithPlaceholder
+                src={itemInfo.wrapToken0.logo}
+                name={itemInfo.wrapToken0.symbol}
+                width={16}
+                className="rounded-full text-xs"
+                height={16}
+              />
+              <span>/</span>
+              <span>{formatAmount(itemInfo.token1Amount)}</span>
+              <LogoWithPlaceholder
+                src={itemInfo.wrapToken1.logo}
+                name={itemInfo.wrapToken1.symbol}
+                className="rounded-full text-xs"
+                width={16}
+                height={16}
+              />
             </span>
           </div>
           <div className="flex items-center justify-between">
