@@ -492,8 +492,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
               placeholder="0.00"
               showMaxButton={true}
               onMaxClick={handleMaxClick}
-              justHasBalance={true}
-              noMonUsd={true}
+              justHasBalance={false}
               accountOptions={accountsOptions}
               selectedAccount={selectedPayAccount || ''}
               onAccountChange={handlePayAccountChange}

@@ -5,7 +5,7 @@ import { useAppKitNetwork } from '@reown/appkit/react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -34,13 +34,13 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useApiBalance } from '@/lib/data/balance/use-api-balance';
-import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
-import { useAccountStore } from '@/lib/state/account';
 import { useTokenInfo } from '@/lib/data/use-token-info';
 // import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
+import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
 
@@ -93,6 +93,7 @@ export function TokenSelect({
   );
   const [activeNetworkTab, setActiveNetworkTab] = useState<string>('All');
   const [isOpen, setOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!chainId) return;
@@ -101,6 +102,16 @@ export function TokenSelect({
       setActiveNetwork(net);
     }
   }, [chainId, NETWORKS, activeNetwork?.id]);
+
+  // 保证每次打开下拉面板时，自动把焦点放到搜索输入框
+  useEffect(() => {
+    if (isOpen) {
+      const el = searchInputRef.current;
+      if (el) {
+        requestAnimationFrame(() => el.focus({ preventScroll: true }));
+      }
+    }
+  }, [isOpen]);
 
   const isSearchingAddress = isAddress(searchQuery.trim());
   const { data: tokenInfoData, isLoading: isTokenInfoLoading } = useTokenInfo(
@@ -118,8 +129,6 @@ export function TokenSelect({
 
   // const ethPrice = priceData?.eth_price || '0';
   // const monPrice = priceData?.mon_price || '0';
-
-
 
   // Keep useApiBalance for optional filtering but do not use it for display
   // Removed balancesIndex used for dropdown display to avoid unused variable warning.
@@ -218,9 +227,7 @@ export function TokenSelect({
       return <span className="text-sm text-[#131E40]">...</span>;
     }
 
-    return (
-      <span className="text-sm text-[#131E40]">{isBalancePending ? '...' : balance}</span>
-    );
+    return <span className="text-sm text-[#131E40]">{isBalancePending ? '...' : balance}</span>;
   }
 
   useEffect(() => {
@@ -291,7 +298,23 @@ export function TokenSelect({
           )}
         </div>
       </SelectTrigger>
-      <SelectContent className="w-[398px] max-h-[360px] border border-[#EBEBEB] rounded-[12px] bg-white p-0">
+      <SelectContent
+        className="w-[398px] max-h-[360px] border border-[#EBEBEB] rounded-[12px] bg-white p-0"
+        onCloseAutoFocus={(e: Event) => e.preventDefault()}
+        onKeyDownCapture={(e) => {
+          // 阻止 Radix Select 的类型搜索在下拉内部抢占键盘事件
+          if ((e as React.KeyboardEvent).key !== 'Escape') {
+            e.stopPropagation();
+          }
+        }}
+        onFocusCapture={(e) => {
+          // 下拉打开期间，如果焦点从搜索框移走，强制把焦点拉回搜索框
+          const el = searchInputRef.current;
+          if (isOpen && el && e.target !== el) {
+            requestAnimationFrame(() => el.focus({ preventScroll: true }));
+          }
+        }}
+      >
         {showNetworkTabs && (
           <div className="px-5 pt-5 pb-4 border-b border-[#EBEBEB]">
             <div className="flex items-center gap-2 overflow-x-auto">
@@ -342,8 +365,25 @@ export function TokenSelect({
             className="w-full h-10 text-sm"
             onClick={(e) => e.stopPropagation()}
             onFocus={(e) => e.stopPropagation()}
-            onBlur={(e) => e.stopPropagation()}
+            onBlur={(e) => {
+              e.stopPropagation();
+              // 任何情况下立即把焦点还原到输入框
+              const el = searchInputRef.current;
+              if (el) {
+                requestAnimationFrame(() => el.focus({ preventScroll: true }));
+              }
+            }}
             onKeyDown={(e) => e.stopPropagation()}
+            onKeyDownCapture={(e) => {
+              // 阻止 Radix Select 的类型搜索与游标焦点迁移
+              if (e.key !== 'Escape') {
+                e.stopPropagation();
+              }
+            }}
+            onFocusCapture={(e) => e.stopPropagation()}
+            onBlurCapture={(e) => e.stopPropagation()}
+            onPointerDownCapture={(e) => e.stopPropagation()}
+            ref={searchInputRef}
           />
         </div>
         <div className="max-h-[312px] overflow-y-auto px-5">
