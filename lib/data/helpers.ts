@@ -154,10 +154,12 @@ export function createMutationHook<TParams extends Record<string, unknown>>(
         if (extraArgs?.refreshQueryKey?.length > 0) {
           if (Array.isArray(extraArgs.refreshQueryKey[0])) {
             extraArgs.refreshQueryKey.forEach((key) => {
-              queryClient.invalidateQueries({ queryKey: key as readonly unknown[] });
+              // Actively refetch matching queries to ensure immediate UI updates
+              queryClient.refetchQueries({ queryKey: key as readonly unknown[], type: 'active' });
             });
           } else {
-            queryClient.invalidateQueries({ queryKey: extraArgs.refreshQueryKey });
+            // Actively refetch matching queries to ensure immediate UI updates
+            queryClient.refetchQueries({ queryKey: extraArgs.refreshQueryKey, type: 'active' });
           }
         }
       },
@@ -178,6 +180,8 @@ export function createQueryHook<TResponse>(
   extraArgs: {
     withAccount: boolean;
     retry?: boolean;
+    enabled?: boolean;
+    staleTime?: number;
   }
 ) {
   return function useCustomQuery() {
@@ -193,11 +197,16 @@ export function createQueryHook<TResponse>(
       return fetchApiRequest<TResponse>(url.toString());
     }
 
+    const defaultEnabled = !extraArgs.withAccount || (extraArgs.withAccount && !!account);
+    const mergedEnabled =
+      extraArgs.enabled !== undefined ? extraArgs.enabled && defaultEnabled : defaultEnabled;
+
     const queryResult = useQuery({
       queryKey: buildQueryKey(extraArgs.withAccount ? account : undefined),
       queryFn: () => executeQuery(),
-      enabled: !extraArgs.withAccount || (extraArgs.withAccount && !!account),
+      enabled: mergedEnabled,
       retry: extraArgs.retry !== undefined ? extraArgs.retry : 3,
+      staleTime: extraArgs.staleTime,
     });
 
     return queryResult;

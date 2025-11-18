@@ -2,13 +2,20 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 
+
+
 import useOnclickOutside from 'react-cool-onclickoutside';
 
-import { AmbientAddLiquidity } from '@/app/(protocols)/ambient/add-liquidity';
-import { AmbientCreatePosition } from '@/app/(protocols)/ambient/create-position';
-import { AmbientRemoveLiquidity } from '@/app/(protocols)/ambient/remove-liquidity';
+
+
 import { AprioriDeposit } from '@/app/(protocols)/apriori/apriori-deposit';
 import { AprioriWithdraw } from '@/app/(protocols)/apriori/apriori-withdraw';
+import { AmbientAddLiquidity } from '@/app/(protocols)/dex/positions/ambient/add-liquidity';
+import { AmbientCreatePosition } from '@/app/(protocols)/dex/positions/ambient/create-position';
+import { AmbientRemoveLiquidity } from '@/app/(protocols)/dex/positions/ambient/remove-liquidity';
+import { UniswapAddLiquidity } from '@/app/(protocols)/dex/positions/uniswap/add-liquidity';
+import { UniswapCreatePosition } from '@/app/(protocols)/dex/positions/uniswap/create-position';
+import { UniswapRemoveLiquidity } from '@/app/(protocols)/dex/positions/uniswap/remove-liquidity';
 import { MagmaDeposit } from '@/app/(protocols)/magma/magma-deposit';
 import { MagmaWithdraw } from '@/app/(protocols)/magma/magma-withdraw';
 import { NadFunCreateToken } from '@/app/(protocols)/nad-fun/nad-fun-create-token';
@@ -17,20 +24,30 @@ import { NadFunSellToken } from '@/app/(protocols)/nad-fun/nadfun-sell-token';
 import { NadNameRegister } from '@/app/(protocols)/nad-name-service/nad-name-register';
 import { NadNameSetPrimary } from '@/app/(protocols)/nad-name-service/nad-name-set-primary';
 import { NadNameTransfer } from '@/app/(protocols)/nad-name-service/nad-name-transfer';
-import { UniswapAddLiquidity } from '@/app/(protocols)/uniswap/add-liquidity';
-import { UniswapCreatePosition } from '@/app/(protocols)/uniswap/create-position';
-import { UniswapRemoveLiquidity } from '@/app/(protocols)/uniswap/remove-liquidity';
 import { BadgeNftBuy } from '@/app/badge-gallery/badge-nft-buy';
 import { OddsMarketSellAndBuy } from '@/app/odds/market/market-sell-and-buy';
+import { LendingSupply } from '@/app/(protocols)/lending/supply';
+import { LendingWithdraw } from '@/app/(protocols)/lending/withdraw';
+import { LendingRepay } from '@/app/(protocols)/lending/repay';
+import { LendingBorrow } from '@/app/(protocols)/lending/borrow';
+import { LendingMarketInfo } from '@/app/(protocols)/lending/market-info';
+
+
 
 import { SideDrawerComponent, useSideDrawerStore } from '@/lib/state/side-drawer';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/lib/utils/use-mobile';
 
+
+
 import { AccountSetting } from './account-setting';
 import { Balance } from './balance';
 import { DepositToken } from './deposit-token';
 import { WithdrawToken } from './withdraw-token';
+
+
+
+
 
 const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   Balance: Balance,
@@ -55,6 +72,11 @@ const COMPONENT_MAP: Record<SideDrawerComponent, React.ComponentType> = {
   AmbientRemoveLiquidity: AmbientRemoveLiquidity,
   OddsMarketSellAndBuy: OddsMarketSellAndBuy,
   BadgeNftBuy: BadgeNftBuy,
+  LendingSupply: LendingSupply,
+  LendingWithdraw: LendingWithdraw,
+  LendingRepay: LendingRepay,
+  LendingBorrow: LendingBorrow,
+  LendingMarketInfo: LendingMarketInfo,
 } as const;
 
 const ANIMATION_CONFIG = {

@@ -4,7 +4,9 @@ import { usePathname } from 'next/navigation';
 
 import { useSideDrawerStore } from './side-drawer';
 
-export function useUrlPathDrawerChange(checkPath: string) {
+// Allow checking multiple path prefixes so drawer doesn't auto-close
+// when invoked from aggregated routes like `/dex`.
+export function useUrlPathDrawerChange(checkPath: string | string[]) {
   const pathname = usePathname();
   const { currentComponent, setIsOpen } = useSideDrawerStore();
 
@@ -13,7 +15,9 @@ export function useUrlPathDrawerChange(checkPath: string) {
       return;
     }
 
-    if (!pathname.startsWith(checkPath)) {
+    const paths = Array.isArray(checkPath) ? checkPath : [checkPath];
+    const onAllowedPath = paths.some((p) => pathname.startsWith(p));
+    if (!onAllowedPath) {
       setIsOpen(false);
     }
   }, [pathname, checkPath, currentComponent?.name, setIsOpen]);

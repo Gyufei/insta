@@ -114,3 +114,29 @@ export function toNonExponential(num: number | string) {
     return basis.padEnd(index + 1, '0');
   }
 }
+
+// 当小数位数超过 precision 时仅截断；否则补零到指定精度，不四舍五入
+export function truncateIfExceeds(result: string, precision: number): string {
+  const s = String(result ?? '');
+  const zeros = precision > 0 ? '0'.repeat(precision) : '';
+  if (!s || s === 'NaN') return precision > 0 ? `0.${zeros}` : '0.00';
+
+  // 处理科学计数法为普通字符串
+  const normalized = toNonExponential(s);
+  const str = String(normalized);
+  if (!str.includes('.')) {
+    // 无小数，补零到指定精度
+    return precision > 0 ? `${str}.${zeros}` : str;
+  }
+
+  const [intPart = '0', fracPart = ''] = str.split('.');
+  if (fracPart.length <= precision) {
+    // 不超过精度，补零到指定精度
+    const padded = fracPart.padEnd(precision, '0');
+    return precision > 0 ? `${intPart}.${padded}` : intPart;
+  }
+
+  // 超过精度，仅做截断，不做补零/四舍五入
+  const truncated = fracPart.slice(0, precision);
+  return precision > 0 ? `${intPart}.${truncated}` : intPart;
+}

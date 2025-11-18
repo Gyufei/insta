@@ -57,6 +57,7 @@ type MenuItem = {
   label: string;
   icon: React.ReactNode;
   hoverIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 };
 
 type MenuGroup = {
@@ -175,17 +176,62 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
 
   const protocolItems: MenuItem[] = [
     {
-      href: getCurrentChainNameHref('/uniswap'),
-      label: 'Uniswap V3',
-      icon: (
-        <Image src="/icons/uniswap.svg" alt="uniswap" width={12} height={12} className="h-3 w-3" />
+      href: getCurrentChainNameHref('/dex'),
+      label: 'DEX',
+      icon: <Image src="/icons/dex.svg" alt="dex" width={12} height={12} className="h-3 w-3" />,
+      rightIcon: (
+        <Image
+          src="/icons/dex-items-icon.svg"
+          alt="dex-items"
+          width={32}
+          height={16}
+          className="h-4 w-8"
+        />
       ),
     },
     {
-      href: getCurrentChainNameHref('/apriori'),
-      label: 'Apriori',
+      href: getCurrentChainNameHref('/staking'),
+      label: 'Staking',
       icon: (
-        <Image src="/icons/apriori.svg" alt="aprior" width={12} height={12} className="h-3 w-3" />
+        <Image src="/icons/staking.svg" alt="staking" width={12} height={12} className="h-3 w-3" />
+      ),
+      rightIcon: (
+        <Image
+          src="/icons/staking-items-icon.svg"
+          alt="staking-items"
+          width={32}
+          height={16}
+          className="h-4 w-8"
+        />
+      ),
+    },
+    {
+      href: getCurrentChainNameHref('/launch-token'),
+      label: 'Launch Token',
+      icon: (
+        <Image
+          src="/icons/launch-token.svg"
+          alt="launch-token"
+          width={12}
+          height={12}
+          className="h-3 w-3"
+        />
+      ),
+    },
+    {
+      href: getCurrentChainNameHref('/lending'),
+      label: 'Lending',
+      icon: (
+        <Image src="/icons/lending.svg" alt="lending" width={12} height={12} className="h-3 w-3" />
+      ),
+      rightIcon: (
+        <Image
+          src="/icons/lending-items-icon.svg"
+          alt="lending-items"
+          width={32}
+          height={16}
+          className="h-4 w-8"
+        />
       ),
     },
     {
@@ -195,19 +241,6 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
         <Image
           src="/icons/nad-fun.svg"
           alt="nad-fun"
-          width={12}
-          height={12}
-          className="h-3 w-3 rounded-full"
-        />
-      ),
-    },
-    {
-      href: getCurrentChainNameHref('/magma'),
-      label: 'Magma',
-      icon: (
-        <Image
-          src="/icons/magma.jpg"
-          alt="magma"
           width={12}
           height={12}
           className="h-3 w-3 rounded-full"
@@ -225,13 +258,6 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
           height={12}
           className="h-3 w-3"
         />
-      ),
-    },
-    {
-      href: getCurrentChainNameHref('/ambient'),
-      label: 'Ambient',
-      icon: (
-        <Image src="/icons/ambient.svg" alt="ambient" width={12} height={12} className="h-3 w-3" />
       ),
     },
   ];
@@ -333,6 +359,7 @@ const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean })
       />
       {isActive || isHover ? item.hoverIcon || item.icon : item.icon}
       <span className="ml-2 text-xs font-medium">{item.label}</span>
+      {item.rightIcon && <div className="ml-auto">{item.rightIcon}</div>}
     </Link>
   );
 };
@@ -461,6 +488,7 @@ const CollapsedMenuGroup = ({
               <Link href={item.href} className="flex items-center">
                 {groupIsActive ? item.hoverIcon || item.icon : item.icon}
                 <span className="ml-2">{item.label}</span>
+                {item.rightIcon && <div className="ml-auto">{item.rightIcon}</div>}
               </Link>
             </DropdownMenuItem>
           ))}

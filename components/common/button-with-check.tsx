@@ -10,6 +10,7 @@ interface ButtonWithCheckProps {
   activeTab: string;
   onClick: () => void;
   className?: string;
+  showIcon?: boolean;
 }
 
 export function ButtonWithCheck({
@@ -18,6 +19,7 @@ export function ButtonWithCheck({
   activeTab,
   onClick,
   className,
+  showIcon = true,
 }: ButtonWithCheckProps) {
   const isActive = activeTab === value;
 
@@ -33,7 +35,7 @@ export function ButtonWithCheck({
         onClick={onClick}
       >
         <p className="leading-none font-medium">{label}</p>
-        {isActive && (
+        {showIcon && isActive && (
           <Image
             alt="check"
             src="/icons/check.svg"

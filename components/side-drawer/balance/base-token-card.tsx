@@ -32,11 +32,13 @@ export function BaseTokenCard({
   const router = useRouter();
 
   function handleTrade() {
-    if (pathname.includes('/trade')) {
+    // When already on /dex, publish event to prefill tokens directly
+    if (pathname.includes('/dex')) {
       eventBus.publish('trade-token', { name: 'TradeToken', props: { token } });
     } else {
       sessionStorage.setItem('token', JSON.stringify(token));
-      router.push(`/trade`);
+      // Navigate to the DEX trading page and let it read sessionStorage
+      router.push(`/dex`);
     }
   }
 

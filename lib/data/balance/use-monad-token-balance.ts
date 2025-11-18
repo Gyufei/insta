@@ -19,7 +19,9 @@ export interface IUniswapTokenBalance {
 export function useMonadTokenBalance(
   address: string,
   tokenAddress: string,
-  decimals: number = DEFAULT_TOKEN_DECIMALS
+  decimals: number = DEFAULT_TOKEN_DECIMALS,
+  enabled?: boolean,
+  staleTime?: number
 ) {
   function formatBalance(balance: string) {
     return divide(balance, String(10 ** decimals));
@@ -51,7 +53,8 @@ export function useMonadTokenBalance(
   const res = useQuery({
     queryKey: ['monad', 'token', 'balance', tokenAddress ?? '', address ?? ''],
     queryFn: () => queryFunc(new URL(ApiPath.monadTokenBalance)),
-    enabled: !!tokenAddress && !!address,
+    enabled: (enabled ?? true) && !!tokenAddress && !!address,
+    staleTime: staleTime ?? 60_000,
   });
 
   return res;

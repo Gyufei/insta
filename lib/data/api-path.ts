@@ -67,6 +67,14 @@ export const ApiPath = {
   magmaDeposit: `${ApiHost}/magma/deposit`,
   magmaWithdraw: `${ApiHost}/magma/withdraw`,
 
+  // Curvance Lending endpoints
+  curvanceMarkets: `${ApiHost}/curvance/markets`,
+  curvanceMarketUserInfo: `${ApiHost}/curvance/positions`,
+  curvanceDeposit: `${ApiHost}/curvance/deposit`,
+  curvanceWithdraw: `${ApiHost}/curvance/withdraw`,
+  curvanceRepay: `${ApiHost}/curvance/repay`,
+  curvanceBorrow: `${ApiHost}/curvance/borrow`,
+
   uniswapV3Position: `${ApiHost}/uniswap_v3_position/all_positions`,
   uniswapPositionInfo: `${ApiHost}/uniswap_v3_position/position_info`,
   uniswapQuote: `${ApiHost}/uniswap_router02/quote`,
@@ -79,6 +87,11 @@ export const ApiPath = {
   uniswapRemoveLiquidity: `${ApiHost}/uniswap_v3_position/withdraw`,
   uniswapLiquidityRatio: `${ApiHost}/uniswap_v3_position/liquidity_ratio`,
   uniswapTokens: `${ApiHost}/uniswap_v3_position/tokens`,
+
+  // DEX unified endpoints
+  dexQuote: `${ApiHost}/dex/quote`,
+  dexEOAExecute: `${ApiHost}/dex/execute_by_eoa`,
+  dexDSAExecute: `${ApiHost}/dex/execute_by_dsa`,
 
   ambientPosition: `${ApiHost}/ambient_finance/positions`,
   ambientPositionInfo: `${ApiHost}/ambient_finance/position_info`,

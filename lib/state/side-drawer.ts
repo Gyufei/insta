@@ -28,7 +28,12 @@ export type SideDrawerComponent =
   | 'AmbientAddLiquidity'
   | 'AmbientRemoveLiquidity'
   | 'OddsMarketSellAndBuy'
-  | 'BadgeNftBuy';
+  | 'BadgeNftBuy'
+  | 'LendingSupply'
+  | 'LendingWithdraw'
+  | 'LendingRepay'
+  | 'LendingBorrow'
+  | 'LendingMarketInfo';
 
 type CurrentComponent = {
   name: SideDrawerComponent | null;

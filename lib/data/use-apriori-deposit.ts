@@ -27,6 +27,7 @@ export function useAprioriDeposit() {
       checkAddress: true,
       checkAccount: true,
       refreshQueryKey: [
+        ['monad', 'token', 'balance'],
         ['apriori', 'balance'],
         ['account', 'balance'],
       ],
