@@ -1,35 +1,35 @@
 'use client';
 
+import { useAppKitNetwork } from '@reown/appkit/react';
+import * as Sentry from '@sentry/nextjs';
 import { CircleX, Loader } from 'lucide-react';
 import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
-
-
 import { useEffect, useMemo, useState } from 'react';
-
-
 
 import Image from 'next/image';
 
-
-
-import { BACKEND_NATIVE_ADDRESS, DEFAULT_NATIVE_ADDRESS, DEFAULT_TOKEN_DECIMALS, UniversalRouterAddressPermit, replaceNativeAddressUseBackend } from '@/config/network-config';
+import {
+  BACKEND_NATIVE_ADDRESS,
+  DEFAULT_NATIVE_ADDRESS,
+  DEFAULT_TOKEN_DECIMALS,
+  NetworkConfigs,
+  UniversalRouterAddressPermit,
+  replaceNativeAddressUseBackend,
+} from '@/config/network-config';
 import { IToken, MonUSD } from '@/config/tokens';
 import { WMONAD_TOKEN } from '@/config/tokens';
-
-
 
 import { TokenDropSelector } from '@/components/new/token-drop-selector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
-
-
 import { trackEvent, trackTrade } from '@/lib/analytics';
 import { useAccounts } from '@/lib/data/account-address/use-account';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
+import { isProduction } from '@/lib/data/api-path';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useDexDSASwap } from '@/lib/data/use-dex-dsa-swap';
 import { useDexEOASwap } from '@/lib/data/use-dex-eoa-swap';
@@ -41,13 +41,7 @@ import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
 import { formatBig, parseBig } from '@/lib/utils/number';
 
-
-
 import { DexProjectId } from './dex-config';
-
-
-
-
 
 // 根据项目选择映射后端路由名
 function mapRouterName(project: DexProjectId) {
@@ -66,6 +60,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
   const { data: accountInfo } = useSelectedAccount();
   const { data: accounts } = useAccounts();
   const { currentAccountType, setCurrentAccountType, setCurrentAccountAddress } = useAccountStore();
+  const { chainId } = useAppKitNetwork();
 
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -100,7 +95,9 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     isSameAddress(t?.address || '', BACKEND_NATIVE_ADDRESS);
   const isWMonToken = (t?: IToken) => isSameAddress(t?.address || '', WMONAD_TOKEN.address);
   const isMonWmonPair = useMemo(
-    () => (isNativeToken(sellToken) && isWMonToken(buyToken)) || (isNativeToken(buyToken) && isWMonToken(sellToken)),
+    () =>
+      (isNativeToken(sellToken) && isWMonToken(buyToken)) ||
+      (isNativeToken(buyToken) && isWMonToken(sellToken)),
     [sellToken, buyToken]
   );
 
@@ -314,6 +311,30 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
   }, []);
 
   async function handleSwap() {
+    // 检查是否为 Monad Testnet 网络
+    if (chainId !== NetworkConfigs.monadTestnet.id) {
+      const targetNetworkLabel = isProduction ? 'Monad Testnet' : 'Monad Testnet';
+      try {
+        // // 尝试切换到 Monad Testnet
+        // await switchNetwork(NetworkConfigs.monadTestnet);
+
+        // toast.success('Successfully switched to Monad Testnet');
+        toast.error(
+          `Wrong network detected in your wallet! Switch to ${targetNetworkLabel} to avoid loss.`
+        );
+        return; // 切换成功后返回，用户需要再次点击交易
+      } catch (error) {
+        // 网络切换失败
+        Sentry.captureException(error, {
+          tags: { page: 'trade', error_type: 'network_switch' },
+          extra: { current_chain_id: chainId },
+        });
+        toast.error(
+          `Wrong network detected in your wallet! Switch to ${targetNetworkLabel} to avoid loss.`
+        );
+        return;
+      }
+    }
     if (shouldApproveUI) {
       trackEvent('TOKEN_APPROVE', {
         event_category: 'trading',
