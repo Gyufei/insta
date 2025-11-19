@@ -12,9 +12,11 @@ import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/new/action-button';
 import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
-import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
+
+
 
 import { useCurvanceBorrow } from '@/lib/data/use-curvance-borrow';
 import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
@@ -23,6 +25,10 @@ import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { formatBig, formatNumber, parseBig } from '@/lib/utils/number';
+
+
+
+
 
 type LendingBorrowProps = {
   market_address: string;
@@ -72,6 +78,16 @@ export function LendingBorrow() {
     const p = parseFloat(market?.token1?.price || '0');
     return Number.isFinite(p) ? p : 0;
   }, [market?.token1?.price]);
+
+  // 基于 /curvance/markets 的 token1.total_debt 估算池子可借规模（单位：token）
+  const poolBorrowableTokens = useMemo(() => {
+    const debtTokens = parseFloat(market?.token1?.total_debt || '0');
+    if (Number.isFinite(debtTokens) && debtTokens > 0) return debtTokens;
+    const debtUSD = parseFloat(market?.token1?.total_debt_in_usd || '0');
+    const price = parseFloat(market?.token1?.price || '0');
+    const tokens = price > 0 ? debtUSD / price : 0;
+    return Number.isFinite(tokens) && tokens > 0 ? tokens : 0;
+  }, [market?.token1?.total_debt, market?.token1?.total_debt_in_usd, market?.token1?.price]);
 
   // 用户在该市场的摘要数据（/curvance/positions）
   const userInfoQuery = useCurvanceMarketUserInfo(true);
@@ -247,6 +263,24 @@ export function LendingBorrow() {
                 </div>
               </div>
             )}
+
+            {/* 池子里不足借用的提示：基于 token1.total_debt 估算的池子可借规模，与用户输入比较 */}
+            {(() => {
+              const inputAmt = parseFloat(inputValue || '0');
+              const insufficient = Number.isFinite(inputAmt) && inputAmt > 0 && inputAmt > (poolBorrowableTokens || 0);
+              if (!insufficient) return null;
+              return (
+                <div className="mt-2 rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2">
+                  <div className="text-xs font-medium text-red-700 dark:text-red-300">
+                    <ul className="list-disc pl-4">
+                      <li>
+                        {`Insufficient pool liquidity: current cap ~ ${formatNumber(String(poolBorrowableTokens || 0))} ${token.symbol}`}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* 复用的持仓摘要卡片 */}

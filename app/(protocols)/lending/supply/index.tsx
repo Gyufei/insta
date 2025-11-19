@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { useAccount } from 'wagmi';
 
 
@@ -108,6 +109,17 @@ export function LendingSupply() {
       deposit_amount: amount.toString(),
     };
 
+    Sentry.addBreadcrumb({
+      category: 'action',
+      message: 'click_lending_supply',
+      level: 'info',
+      data: {
+        market: props?.market_address,
+        token: token.symbol,
+        amount: inputValue,
+      },
+    });
+
     trackEvent('LENDING_SUPPLY', {
       event_category: 'protocol_interaction',
       event_label: 'lending_supply_attempt',
@@ -121,43 +133,79 @@ export function LendingSupply() {
       },
     });
 
-    deposit(payload, {
-      onSuccess: () => {
-        trackEvent('LENDING_SUPPLY', {
-          event_category: 'protocol_interaction',
-          event_label: 'lending_supply_success',
-          include_user_id: true,
-          custom_parameters: {
-            protocol: 'lending',
-            action: 'supply_success',
-            token: token.symbol,
-            amount: inputValue,
-          },
-        });
-        // 保持抽屉打开：清空输入并刷新余额/持仓
-        handleInput('');
-        try {
-          refetchWalletBalance?.();
-        } catch {}
-        try {
-          userInfoQuery.refetch?.();
-        } catch {}
-      },
-      onError: (error: Error) => {
-        trackEvent('LENDING_SUPPLY', {
-          event_category: 'protocol_interaction',
-          event_label: 'lending_supply_failed',
-          error_message: error?.message || 'Unknown error',
-          include_user_id: true,
-          custom_parameters: {
-            protocol: 'lending',
-            action: 'supply_failed',
-            token: token.symbol,
-            amount: inputValue,
-          },
-        });
-      },
-    });
+    try {
+      deposit(payload, {
+        onSuccess: () => {
+          Sentry.addBreadcrumb({
+            category: 'action',
+            message: 'lending_supply_success',
+            level: 'info',
+            data: {
+              token: token.symbol,
+              amount: inputValue,
+              market: props?.market_address,
+            },
+          });
+
+          trackEvent('LENDING_SUPPLY', {
+            event_category: 'protocol_interaction',
+            event_label: 'lending_supply_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'lending',
+              action: 'supply_success',
+              token: token.symbol,
+              amount: inputValue,
+            },
+          });
+          // 保持抽屉打开：清空输入并刷新余额/持仓
+          handleInput('');
+          try {
+            refetchWalletBalance?.();
+          } catch {}
+          try {
+            userInfoQuery.refetch?.();
+          } catch {}
+        },
+        onError: (error: Error) => {
+          Sentry.captureException(error, {
+            tags: {
+              page: 'lending',
+              protocol: 'curvance',
+              error_type: 'supply',
+            },
+            extra: {
+              market: props?.market_address,
+              token: token.symbol,
+              amount: inputValue,
+            },
+          });
+
+          trackEvent('LENDING_SUPPLY', {
+            event_category: 'protocol_interaction',
+            event_label: 'lending_supply_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'lending',
+              action: 'supply_failed',
+              token: token.symbol,
+              amount: inputValue,
+            },
+          });
+        },
+      });
+    } catch (err) {
+      Sentry.captureException(err, {
+        tags: {
+          page: 'lending',
+          protocol: 'curvance',
+          error_type: 'supply_exception',
+        },
+        extra: payload,
+      });
+      throw err;
+    }
   };
 
   return (

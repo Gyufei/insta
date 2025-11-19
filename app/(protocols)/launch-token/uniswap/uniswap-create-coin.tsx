@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
@@ -553,8 +554,33 @@ export function UniswapCreateCoin() {
     setShowErrors(true);
 
     if (!validateForm()) {
+      Sentry.addBreadcrumb({
+        category: 'validation',
+        message: 'create_token_validation_failed',
+        level: 'warning',
+        data: {
+          errors: errors,
+          token_name: formData.tokenName,
+          token_symbol: formData.tickerName,
+        },
+      });
       return;
     }
+
+    Sentry.addBreadcrumb({
+      category: 'action',
+      message: 'click_create_token',
+      level: 'info',
+      data: {
+        token_name: formData.tokenName,
+        token_symbol: formData.tickerName,
+        initial_supply: formData.totalSupply,
+        has_thumbnail: !!formData.thumbnail,
+        has_x_link: !!formData.xLink,
+        has_tg_link: !!formData.tgLink,
+        has_website: !!formData.websiteLink,
+      },
+    });
 
     // Track create token attempt (align event name with existing)
     trackEvent('UNISWAP_POSITION_CREATE', {
@@ -582,37 +608,75 @@ export function UniswapCreateCoin() {
       initial_supply: formData.totalSupply,
     };
 
-    createCoin(payload, {
-      onSuccess: () => {
-        // Track successful token creation (align event name with existing)
-        trackEvent('UNISWAP_POSITION_CREATE', {
-          event_category: 'protocol_interaction',
-          event_label: 'uniswap_create_token_success',
-          include_user_id: true,
-          custom_parameters: {
-            protocol: 'uniswap',
-            action: 'create_token_success',
-            token_name: formData.tokenName,
-            token_symbol: formData.tickerName,
-            initial_supply: formData.totalSupply,
-          },
-        });
-      },
-      onError: (error: Error) => {
-        // Track failure and capture in Sentry
-        trackEvent('ERROR_OCCURRED', {
-          event_category: 'protocol_interaction',
-          event_label: 'uniswap_create_token_failed',
-          error_message: error?.message || 'Unknown error',
-          include_user_id: true,
-          custom_parameters: {
-            protocol: 'uniswap',
-            action: 'create_token_failed',
-            token_symbol: formData.tickerName,
-          },
-        });
-      },
-    });
+    try {
+      createCoin(payload, {
+        onSuccess: () => {
+          Sentry.addBreadcrumb({
+            category: 'action',
+            message: 'create_token_success',
+            level: 'info',
+            data: {
+              token_name: formData.tokenName,
+              token_symbol: formData.tickerName,
+              initial_supply: formData.totalSupply,
+            },
+          });
+
+          // Track successful token creation (align event name with existing)
+          trackEvent('UNISWAP_POSITION_CREATE', {
+            event_category: 'protocol_interaction',
+            event_label: 'uniswap_create_token_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'uniswap',
+              action: 'create_token_success',
+              token_name: formData.tokenName,
+              token_symbol: formData.tickerName,
+              initial_supply: formData.totalSupply,
+            },
+          });
+        },
+        onError: (error: Error) => {
+          // Capture error in Sentry
+          Sentry.captureException(error, {
+            tags: {
+              page: 'launch-token',
+              protocol: 'uniswap',
+              error_type: 'create_token',
+            },
+            extra: {
+              token_name: formData.tokenName,
+              token_symbol: formData.tickerName,
+              initial_supply: formData.totalSupply,
+              account_type: currentAccountType,
+            },
+          });
+
+          // Track failure and capture in Sentry
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'protocol_interaction',
+            event_label: 'uniswap_create_token_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: 'uniswap',
+              action: 'create_token_failed',
+              token_symbol: formData.tickerName,
+            },
+          });
+        },
+      });
+    } catch (err) {
+      Sentry.captureException(err, {
+        tags: {
+          page: 'launch-token',
+          protocol: 'uniswap',
+          error_type: 'create_token_exception',
+        },
+        extra: payload,
+      });
+      throw err;
+    }
   };
 
   const hasErrors =

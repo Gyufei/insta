@@ -1,5 +1,7 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
+
 import { useEffect, useState } from 'react';
 
 
@@ -85,6 +87,18 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
     // Determine event name based on selected project
     const eventName = selectedProject === 'magma' ? 'MAGMA_STAKE' : 'APRIORI_STAKE';
 
+    Sentry.addBreadcrumb({
+      category: 'action',
+      message: `click_${selectedProject}_stake`,
+      level: 'info',
+      data: {
+        protocol: selectedProject,
+        token: selectedToken?.symbol,
+        amount: inputValue,
+        receive_token: selectedOutputToken?.symbol,
+      },
+    });
+
     // Track deposit attempt
     trackEvent(eventName, {
       event_category: 'protocol_interaction',
@@ -100,44 +114,83 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
         receive_amount: receiveAmount,
       },
     });
-    deposit(amount.toString(), {
-      onSuccess: () => {
-        // Track successful deposit
-        trackEvent(eventName, {
-          event_category: 'protocol_interaction',
-          event_label:
-            selectedProject === 'magma' ? 'magma_deposit_success' : 'apriori_deposit_success',
-          include_user_id: true,
-          custom_parameters: {
-            protocol: selectedProject,
-            action: 'deposit_success',
-            token: selectedToken?.symbol,
-            amount: inputValue,
-          },
-        });
-        // Clear input after success and force balance refresh
-        handleInputChange('');
-        currentBalanceResult.refetch?.();
-        refetchDsaBalance?.();
-        setTimeout(() => currentBalanceResult.refetch?.(), 2000);
-      },
-      onError: (error: Error) => {
-        // Track failed deposit
-        trackEvent('ERROR_OCCURRED', {
-          event_category: 'protocol_interaction',
-          event_label:
-            selectedProject === 'magma' ? 'magma_deposit_failed' : 'apriori_deposit_failed',
-          error_message: error?.message || 'Unknown error',
-          include_user_id: true,
-          custom_parameters: {
-            protocol: selectedProject,
-            action: 'deposit_failed',
-            token: selectedToken?.symbol,
-            amount: inputValue,
-          },
-        });
-      },
-    });
+
+    try {
+      deposit(amount.toString(), {
+        onSuccess: () => {
+          Sentry.addBreadcrumb({
+            category: 'action',
+            message: `${selectedProject}_stake_success`,
+            level: 'info',
+            data: {
+              protocol: selectedProject,
+              token: selectedToken?.symbol,
+              amount: inputValue,
+            },
+          });
+
+          // Track successful deposit
+          trackEvent(eventName, {
+            event_category: 'protocol_interaction',
+            event_label:
+              selectedProject === 'magma' ? 'magma_deposit_success' : 'apriori_deposit_success',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: selectedProject,
+              action: 'deposit_success',
+              token: selectedToken?.symbol,
+              amount: inputValue,
+            },
+          });
+          // Clear input after success and force balance refresh
+          handleInputChange('');
+          currentBalanceResult.refetch?.();
+          refetchDsaBalance?.();
+          setTimeout(() => currentBalanceResult.refetch?.(), 2000);
+        },
+        onError: (error: Error) => {
+          Sentry.captureException(error, {
+            tags: {
+              page: 'staking',
+              protocol: selectedProject,
+              error_type: 'stake',
+            },
+            extra: {
+              token: selectedToken?.symbol,
+              amount: inputValue,
+            },
+          });
+
+          // Track failed deposit
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'protocol_interaction',
+            event_label:
+              selectedProject === 'magma' ? 'magma_deposit_failed' : 'apriori_deposit_failed',
+            error_message: error?.message || 'Unknown error',
+            include_user_id: true,
+            custom_parameters: {
+              protocol: selectedProject,
+              action: 'deposit_failed',
+              token: selectedToken?.symbol,
+              amount: inputValue,
+            },
+          });
+        },
+      });
+    } catch (err) {
+      Sentry.captureException(err, {
+        tags: {
+          page: 'staking',
+          protocol: selectedProject,
+          error_type: 'stake_exception',
+        },
+        extra: {
+          token: selectedToken?.symbol,
+          amount: inputValue,
+        },
+      });
+      throw err;
+    }
   };
 
   return (

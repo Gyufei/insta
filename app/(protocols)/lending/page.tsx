@@ -1,22 +1,33 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import * as Sentry from '@sentry/nextjs';
+import { useAccount } from 'wagmi';
+
+import { useEffect, useMemo, useState } from 'react';
 
 import InlineMarketsSection from '@/app/(protocols)/lending/components/InlineMarketsSection';
+import { useOddsUserInfo } from '@/app/odds/common/use-user-info';
 
 import { ProjectSelector } from '@/components/common/project-selector';
 import { CommonPageLayout } from '@/components/layout/common-page-layout';
 
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import {
   ICurvanceMarketUserItem,
   useCurvanceMarketUserInfo,
 } from '@/lib/data/use-curvance-market-user-info';
 import { ICurvanceMarketInfo, useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
+import { useAccountStore } from '@/lib/state/account';
 
 import InlineMarketDetails from './components/inline-market-details';
 import { LENDING_PROJECT_IDS, type LendingProjectId, getLendingProject } from './lending-config';
 
 export default function Lending() {
+  const { address: wallet } = useAccount();
+  const { data: accountInfo } = useSelectedAccount();
+  const { currentAccountType } = useAccountStore();
+  const { data: oddsUserInfo } = useOddsUserInfo();
+
   const {
     data: markets,
     isLoading: marketsLoading,
@@ -39,6 +50,70 @@ export default function Lending() {
   const [selectedMarketAddress, setSelectedMarketAddress] = useState<string | null>(null);
 
   const isCurvanceSelected = selectedProject === 'curvance';
+
+  // Initialize Sentry user/environment context
+  useEffect(() => {
+    try {
+      const userId = oddsUserInfo?.user_id || wallet || undefined;
+      const userName = oddsUserInfo?.user_name || wallet || undefined;
+      if (userId || userName) {
+        Sentry.setUser({ id: userId, username: userName });
+      } else {
+        Sentry.setUser(null);
+      }
+      Sentry.setTag('wallet', wallet || '');
+      if (oddsUserInfo?.user_id) Sentry.setTag('user_id', oddsUserInfo.user_id);
+      if (oddsUserInfo?.user_name) Sentry.setTag('user_name', oddsUserInfo.user_name);
+
+      Sentry.setTag('page', 'lending');
+      Sentry.setTag('lending_project', selectedProject);
+      Sentry.setTag('action_mode', actionMode);
+      Sentry.setTag('account_type', currentAccountType);
+
+      Sentry.setContext('account', {
+        account_type: currentAccountType,
+        eoa_address: wallet || undefined,
+        dsa_address: accountInfo?.sandbox_account || undefined,
+      });
+
+      Sentry.setContext('user_profile', {
+        user_id: oddsUserInfo?.user_id,
+        user_name: oddsUserInfo?.user_name,
+      });
+
+      if (typeof window !== 'undefined') {
+        Sentry.setContext('environment', {
+          userAgent: window.navigator.userAgent,
+          language: window.navigator.language,
+          platform: window.navigator.platform,
+          screen: {
+            width: window.screen?.width,
+            height: window.screen?.height,
+          },
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          referrer: document.referrer,
+          url: window.location.href,
+        });
+      }
+    } catch {}
+  }, [wallet, currentAccountType, accountInfo?.sandbox_account, oddsUserInfo?.user_id, oddsUserInfo?.user_name, selectedProject, actionMode]);
+
+  // Breadcrumb for wallet changes
+  useEffect(() => {
+    try {
+      Sentry.addBreadcrumb({
+        category: 'wallet',
+        message: wallet ? 'wallet_connected' : 'wallet_disconnected',
+        level: 'info',
+        data: {
+          wallet: wallet || '',
+          account_type: currentAccountType,
+          dsa_address: accountInfo?.sandbox_account || '',
+          lending_project: selectedProject,
+        },
+      });
+    } catch {}
+  }, [wallet, currentAccountType, accountInfo?.sandbox_account, selectedProject]);
 
   const sortedMarkets: ICurvanceMarketInfo[] = useMemo(() => {
     const list = (markets || []) as ICurvanceMarketInfo[];
