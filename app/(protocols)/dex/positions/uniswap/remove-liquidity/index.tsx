@@ -1,6 +1,7 @@
 import { divide, multiply } from 'safebase';
 
 import { useState } from 'react';
+import { useAppKitNetwork } from '@reown/appkit/react';
 
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
@@ -14,12 +15,14 @@ import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateNumber } from '@/lib/utils/number';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 
 import { TokenPairAndStatus } from '../../uni-common/token-pair-and-status';
 import { TwoTokenAmount } from '../../uni-common/two-token-amount';
 import { usePositionDataFormat } from '../../uni-common/use-position-data-format';
 
 export function UniswapRemoveLiquidity() {
+  const { chainId } = useAppKitNetwork();
   const { currentComponent } = useSideDrawerStore();
   const { mutate: removeLiquidity, isPending } = useUniswapRemoveLiquidity();
   const { handleBack } = useUrlPathDrawerChange(['/dex']);
@@ -40,6 +43,11 @@ export function UniswapRemoveLiquidity() {
   const [liquidity, setLiquidity] = useState('');
 
   const handleConfirm = () => {
+    const ok = ensureMonadNetworkSync({
+      chainId,
+    });
+    if (!ok) return;
+
     if (!uniswapPosition) return;
 
     // Track remove liquidity attempt

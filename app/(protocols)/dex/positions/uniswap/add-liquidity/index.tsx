@@ -1,6 +1,7 @@
 import { divide, multiply } from 'safebase';
 
 import { useState } from 'react';
+import { useAppKitNetwork } from '@reown/appkit/react';
 
 import { replaceNativeAddressUseBackend } from '@/config/network-config';
 
@@ -16,6 +17,7 @@ import { ErrorVO } from '@/lib/model/error-vo';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateNumber } from '@/lib/utils/number';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 
 import { TokenPairAndStatus } from '../../uni-common/token-pair-and-status';
 import { TwoTokenAmount } from '../../uni-common/two-token-amount';
@@ -24,6 +26,7 @@ import { usePositionDataFormat } from '../../uni-common/use-position-data-format
 import { INFINITY_PRICE } from '../create-position/price-range-selector';
 
 export function UniswapAddLiquidity() {
+  const { chainId } = useAppKitNetwork();
   const { currentComponent } = useSideDrawerStore();
   const { mutate: addLiquidity, isPending } = useUniswapAddLiquidity();
   const { handleBack } = useUrlPathDrawerChange(['/dex']);
@@ -90,6 +93,11 @@ export function UniswapAddLiquidity() {
   };
 
   const handleConfirm = () => {
+    const ok = ensureMonadNetworkSync({
+      chainId,
+    });
+    if (!ok) return;
+
     if (!uniswapPosition) return;
 
     // Track add liquidity attempt

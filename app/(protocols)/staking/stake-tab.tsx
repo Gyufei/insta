@@ -3,6 +3,7 @@
 import * as Sentry from '@sentry/nextjs';
 
 import { useEffect, useState } from 'react';
+import { useAppKitNetwork } from '@reown/appkit/react';
 
 
 
@@ -23,6 +24,7 @@ import { useMagmaDeposit } from '@/lib/data/use-magma-deposit';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { formatNumber, truncateIfExceeds } from '@/lib/utils/number';
 import { parseBig } from '@/lib/utils/number';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 
 
 
@@ -37,6 +39,7 @@ interface StakeTabProps {
 }
 
 export function StakeTab({ selectedProject }: StakeTabProps) {
+  const { chainId } = useAppKitNetwork();
   // 根据项目配置可选择的代币
   const availableTokens: IToken[] = [MONAD];
   const [selectedToken, setSelectedToken] = useState<IToken>(MONAD);
@@ -82,6 +85,11 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
   const receiveAmount = inputValue || '0';
 
   const handleDeposit = () => {
+    const ok = ensureMonadNetworkSync({
+      chainId,
+    });
+    if (!ok) return;
+
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, selectedToken?.decimals);
     // Determine event name based on selected project

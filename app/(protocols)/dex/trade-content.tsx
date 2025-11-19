@@ -7,17 +7,24 @@ import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
+
+
 import { useEffect, useMemo, useState } from 'react';
+
+
 
 import Image from 'next/image';
 
+
+
 import { useOddsUserInfo } from '@/app/odds/common/use-user-info';
+
+
 
 import {
   BACKEND_NATIVE_ADDRESS,
   DEFAULT_NATIVE_ADDRESS,
   DEFAULT_TOKEN_DECIMALS,
-  NetworkConfigs,
   UniversalRouterAddressPermit,
   replaceNativeAddressUseBackend,
 } from '@/config/network-config';
@@ -30,7 +37,7 @@ import { Card } from '@/components/ui/card';
 
 import { useAccounts } from '@/lib/data/account-address/use-account';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
-import { isProduction } from '@/lib/data/api-path';
+// removed unused isProduction import after network guard refactor
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useDexDSASwap } from '@/lib/data/use-dex-dsa-swap';
 import { useDexEOASwap } from '@/lib/data/use-dex-eoa-swap';
@@ -41,6 +48,7 @@ import { ErrorVO } from '@/lib/model/error-vo';
 import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, isSameAddress } from '@/lib/utils';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 import { formatBig, parseBig } from '@/lib/utils/number';
 
 import { DexProjectId } from './dex-config';
@@ -442,30 +450,12 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
       },
     });
 
-    // 检查是否为 Monad Testnet 网络
-    if (chainId !== NetworkConfigs.monadTestnet.id) {
-      const targetNetworkLabel = isProduction ? 'Monad Testnet' : 'Monad Testnet';
-      try {
-        // // 尝试切换到 Monad Testnet
-        // await switchNetwork(NetworkConfigs.monadTestnet);
-
-        // toast.success('Successfully switched to Monad Testnet');
-        toast.error(
-          `Wrong network detected in your wallet! Switch to ${targetNetworkLabel} to avoid loss.`
-        );
-        return; // 切换成功后返回，用户需要再次点击交易
-      } catch (error) {
-        // 网络切换失败
-        Sentry.captureException(error, {
-          tags: { page: 'dex', dex_project: selectedProject, error_type: 'network_switch' },
-          extra: { current_chain_id: chainId },
-        });
-        toast.error(
-          `Wrong network detected in your wallet! Switch to ${targetNetworkLabel} to avoid loss.`
-        );
-        return;
-      }
-    }
+    const okNetwork = ensureMonadNetworkSync({
+      chainId,
+      sentryTags: { page: 'dex', dex_project: selectedProject },
+      sentryExtra: { current_chain_id: chainId || undefined },
+    });
+    if (!okNetwork) return;
     if (shouldApproveUI) {
       trackEnhancedEvent('TOKEN_APPROVE', {
         event_category: 'trading',

@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useAppKitNetwork } from '@reown/appkit/react';
 
 
 
@@ -25,6 +26,7 @@ import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { formatBig, formatNumber, parseBig } from '@/lib/utils/number';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 
 
 
@@ -47,6 +49,7 @@ type LendingBorrowProps = {
 };
 
 export function LendingBorrow() {
+  const { chainId } = useAppKitNetwork();
   const { currentComponent } = useSideDrawerStore();
   const props = (currentComponent?.props || {}) as LendingBorrowProps;
 
@@ -132,6 +135,11 @@ export function LendingBorrow() {
   }, [isFirstBorrow, usdValue]);
 
   const handleBorrow = () => {
+    const ok = ensureMonadNetworkSync({
+      chainId,
+    });
+    if (!ok) return;
+
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, token.decimals);
 

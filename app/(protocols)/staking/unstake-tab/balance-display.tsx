@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAppKitNetwork } from '@reown/appkit/react';
 
 import { MONAD, type IToken } from '@/config/tokens';
 
@@ -16,6 +17,7 @@ import { useDSAMonadNativeBalance } from '@/lib/data/balance/use-dsa-monad-nativ
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { formatNumber } from '@/lib/utils/number';
 import { parseBig } from '@/lib/utils/number';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 
 import { type StakingProjectId, getStakingProject } from '../staking-config';
 import { WithdrawEstReceive } from './withdraw-est-receive';
@@ -31,6 +33,7 @@ interface BalanceDisplayProps {
  * Displays the current staked token balance with project-specific token information
  */
 export function BalanceDisplay({ selectedProject, balance, refetchBalance }: BalanceDisplayProps) {
+  const { chainId } = useAppKitNetwork();
   const monToken = MONAD;
   const project = getStakingProject(selectedProject);
   
@@ -62,6 +65,11 @@ export function BalanceDisplay({ selectedProject, balance, refetchBalance }: Bal
   const receiveAmount = inputValue || '0';
 
   const handleWithdraw = () => {
+    const ok = ensureMonadNetworkSync({
+      chainId,
+    });
+    if (!ok) return;
+
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, selectedToken.decimals);
     // Determine event name and labels based on project

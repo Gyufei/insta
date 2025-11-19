@@ -2,6 +2,7 @@
 
 import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
+import { useAppKitNetwork } from '@reown/appkit/react';
 
 import { useEffect, useState } from 'react';
 
@@ -20,6 +21,7 @@ import { useAccountStore } from '@/lib/state/account';
 import { cn } from '@/lib/utils';
 import { getTwitterInputError, isValidTwitterInput, toCanonicalXUrl } from '@/lib/utils/twitter';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 
 interface CreateCoinFormData {
   thumbnail: string | null;
@@ -41,6 +43,7 @@ interface FormErrors {
 }
 
 export function UniswapCreateCoin() {
+  const { chainId } = useAppKitNetwork();
   const { currentAccountType } = useAccountStore();
   const { trackEvent } = useEnhancedAnalytics();
   const [formData, setFormData] = useState<CreateCoinFormData>({
@@ -607,6 +610,20 @@ export function UniswapCreateCoin() {
       website: formData.websiteLink || '',
       initial_supply: formData.totalSupply,
     };
+
+    // 网络检测：确保在 Monad Testnet 上执行创建操作
+    const canProceed = ensureMonadNetworkSync({
+      chainId,
+    });
+    if (!canProceed) {
+      Sentry.addBreadcrumb({
+        category: 'warning',
+        message: 'wrong_network_create_token',
+        level: 'warning',
+        data: { chain_id: chainId },
+      });
+      return;
+    }
 
     try {
       createCoin(payload, {

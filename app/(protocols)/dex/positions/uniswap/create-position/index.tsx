@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { divide, multiply } from 'safebase';
 import { toast } from 'sonner';
+import { useAppKitNetwork } from '@reown/appkit/react';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -44,6 +46,7 @@ export enum CreatePositionStep {
 }
 
 export function UniswapCreatePosition() {
+  const { chainId } = useAppKitNetwork();
   const [token0, setToken0] = useState<IToken>();
   const [token1, setToken1] = useState<IToken>();
   const [feeTier, setFeeTier] = useState<string>('0.3');
@@ -149,6 +152,11 @@ export function UniswapCreatePosition() {
   };
 
   function handleNewPosition() {
+    const ok = ensureMonadNetworkSync({
+      chainId,
+    });
+    if (!ok) return;
+
     if (!token0 || !token1) return;
 
     if (!priceRangeMin || !priceRangeMax) {

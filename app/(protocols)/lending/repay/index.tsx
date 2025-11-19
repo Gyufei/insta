@@ -1,10 +1,7 @@
+import { useAppKitNetwork } from '@reown/appkit/react';
 import { useAccount } from 'wagmi';
 
-
-
 import { useMemo } from 'react';
-
-
 
 import { NetworkConfigs } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
@@ -13,8 +10,8 @@ import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/new/action-button';
 import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
-import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
 import { useRPCTokenBalance } from '@/lib/data/balance/use-rpc-token-balance';
@@ -24,6 +21,7 @@ import { useCurvanceRepay } from '@/lib/data/use-curvance-repay';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 import { formatNumber, parseBig } from '@/lib/utils/number';
 
 type LendingRepayProps = {
@@ -43,6 +41,7 @@ type LendingRepayProps = {
 };
 
 export function LendingRepay() {
+  const { chainId } = useAppKitNetwork();
   const { currentComponent } = useSideDrawerStore();
   const props = (currentComponent?.props || {}) as LendingRepayProps;
 
@@ -58,7 +57,11 @@ export function LendingRepay() {
   );
 
   const { address } = useAccount();
-  const { balance: walletBalance, isPending: isWalletPending, refetch: refetchWalletBalance } = useRPCTokenBalance(
+  const {
+    balance: walletBalance,
+    isPending: isWalletPending,
+    refetch: refetchWalletBalance,
+  } = useRPCTokenBalance(
     NetworkConfigs.monadTestnet.id,
     address || '',
     token.address,
@@ -73,7 +76,8 @@ export function LendingRepay() {
       (u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
     );
   }, [userInfoQuery.data, props?.market_address]);
-  const debtBalance = userItem?.token1?.user_debt_display_balance || props?.user_debt_display_balance || '0';
+  const debtBalance =
+    userItem?.token1?.user_debt_display_balance || props?.user_debt_display_balance || '0';
 
   // Use the smaller of wallet vs debt as the input constraint
   const inputConstraintBalance = useMemo(() => {
@@ -116,6 +120,11 @@ export function LendingRepay() {
   // 用户在该市场的摘要数据（已在上方声明 userInfoQuery 与 userItem）
 
   const handleRepay = () => {
+    const ok = ensureMonadNetworkSync({
+      chainId,
+    });
+    if (!ok) return;
+
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, token.decimals);
 

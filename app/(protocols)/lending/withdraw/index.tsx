@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useAppKitNetwork } from '@reown/appkit/react';
 
 import { IToken } from '@/config/tokens';
 
@@ -17,6 +18,7 @@ import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { formatNumber, parseBig } from '@/lib/utils/number';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 
 type LendingWithdrawProps = {
   market_address: string;
@@ -35,6 +37,7 @@ type LendingWithdrawProps = {
 };
 
 export function LendingWithdraw() {
+  const { chainId } = useAppKitNetwork();
   const { currentComponent } = useSideDrawerStore();
   const props = (currentComponent?.props || {}) as LendingWithdrawProps;
 
@@ -125,6 +128,11 @@ export function LendingWithdraw() {
   }, [cooldownEndMs]);
 
   const handleWithdraw = () => {
+    const ok = ensureMonadNetworkSync({
+      chainId,
+    });
+    if (!ok) return;
+
     if (!inputValue || btnDisabled || isPending || isCooldownActive) return;
     const shares = parseBig(inputValue, token.decimals);
 

@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/nextjs';
 import { useAccount } from 'wagmi';
+import { useAppKitNetwork } from '@reown/appkit/react';
 
 
 
@@ -24,6 +25,7 @@ import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { formatNumber, parseBig } from '@/lib/utils/number';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 
 
 
@@ -45,6 +47,7 @@ type LendingSupplyProps = {
 };
 
 export function LendingSupply() {
+  const { chainId } = useAppKitNetwork();
   const { currentComponent } = useSideDrawerStore();
   const props = (currentComponent?.props || {}) as LendingSupplyProps;
 
@@ -100,6 +103,12 @@ export function LendingSupply() {
   }, [userInfoQuery.data, props?.market_address]);
 
   const handleDeposit = () => {
+    const ok = ensureMonadNetworkSync({
+      chainId,
+      toastMessage: 'Switch to Monad Testnet to supply.',
+    });
+    if (!ok) return;
+
     if (!inputValue || btnDisabled || isPending) return;
     const amount = parseBig(inputValue, token.decimals);
 

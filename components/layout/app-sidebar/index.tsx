@@ -12,10 +12,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { DEX_PROJECTS, DEX_PROJECT_IDS } from '@/app/(protocols)/dex/dex-config';
+import { LENDING_PROJECTS, LENDING_PROJECT_IDS } from '@/app/(protocols)/lending/lending-config';
+import { STAKING_PROJECTS, STAKING_PROJECT_IDS } from '@/app/(protocols)/staking/staking-config';
+
 import { BaseNetUrlPath } from '@/config/env-url';
 // Internal imports
 import { NetworkConfigs } from '@/config/network-config';
 
+import { ProjectLogoStack } from '@/components/common/project-logo-stack';
 // UI components
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -180,11 +185,9 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
       label: 'DEX',
       icon: <Image src="/icons/dex.svg" alt="dex" width={12} height={12} className="h-3 w-3" />,
       rightIcon: (
-        <Image
-          src="/icons/dex-items-icon.svg"
-          alt="dex-items"
-          width={32}
-          height={16}
+        <ProjectLogoStack
+          logos={DEX_PROJECT_IDS.map((id) => DEX_PROJECTS[id].icon).filter(Boolean) as string[]}
+          size={16}
           className="h-4 w-8"
         />
       ),
@@ -196,11 +199,9 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
         <Image src="/icons/staking.svg" alt="staking" width={12} height={12} className="h-3 w-3" />
       ),
       rightIcon: (
-        <Image
-          src="/icons/staking-items-icon.svg"
-          alt="staking-items"
-          width={32}
-          height={16}
+        <ProjectLogoStack
+          logos={STAKING_PROJECT_IDS.map((id) => STAKING_PROJECTS[id].icon)}
+          size={16}
           className="h-4 w-8"
         />
       ),
@@ -225,12 +226,12 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
         <Image src="/icons/lending.svg" alt="lending" width={12} height={12} className="h-3 w-3" />
       ),
       rightIcon: (
-        <Image
-          src="/icons/lending-items-icon.svg"
-          alt="lending-items"
-          width={32}
-          height={16}
-          className="h-4 w-8"
+        <ProjectLogoStack
+          logos={
+            LENDING_PROJECT_IDS.map((id) => LENDING_PROJECTS[id].icon).filter(Boolean) as string[]
+          }
+          size={16}
+          className="h-4 w-6"
         />
       ),
     },

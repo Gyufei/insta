@@ -171,7 +171,7 @@ export default function InlineMarketsSection({
               <>
                 {/* Desktop: table style container */}
                 <div className="hidden md:block rounded-2xl border border-slate-200 bg-white overflow-hidden px-6">
-                  <div className="grid grid-cols-[280px_1fr_1fr_1fr_140px] py-3 text-xs text-slate-500 border-b border-slate-200">
+                  <div className="grid grid-cols-[220px_1fr_1fr_1fr_80px] py-3 text-xs text-slate-500 border-b border-slate-200">
                     <div>Asset</div>
                     {actionMode === 'borrow' ? (
                       <>
@@ -225,7 +225,7 @@ export default function InlineMarketsSection({
                       return (
                         <div
                           key={m.market_address}
-                          className="grid grid-cols-[280px_1fr_1fr_1fr_140px] items-center py-4 hover:bg-slate-50 cursor-pointer dark:hover:bg-secondary/80"
+                          className="grid grid-cols-[220px_1fr_1fr_1fr_80px] items-center py-4 hover:bg-slate-50 cursor-pointer dark:hover:bg-secondary/80"
                           role="button"
                           tabIndex={0}
                           onClick={() => onDetails?.(m.market_address)}
