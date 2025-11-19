@@ -2,6 +2,7 @@ import { NetworkConfigs } from '@/config/network-config';
 
 import { ApiPath } from './api-path';
 import { createQueryHook } from './helpers';
+import { toNonExponential } from '@/lib/utils/number';
 
 export interface IDexQuoteParams {
   token_in: string;
@@ -44,7 +45,7 @@ export function useDexQuote(params?: IDexQuoteParams) {
       url.searchParams.set('chain_id', chainId);
       url.searchParams.set('token_in', params.token_in);
       url.searchParams.set('token_out', params.token_out);
-      url.searchParams.set('amount_in', params.amount_in);
+      url.searchParams.set('amount_in', toNonExponential(params.amount_in));
       url.searchParams.set('amount_in_decimals', params.amount_in_decimals);
       url.searchParams.set('amount_out_decimals', params.amount_out_decimals);
       url.searchParams.set('swap_router_name', params.swap_router_name);

@@ -11,6 +11,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import Image from 'next/image';
 
+import { useOddsUserInfo } from '@/app/odds/common/use-user-info';
+
 import {
   BACKEND_NATIVE_ADDRESS,
   DEFAULT_NATIVE_ADDRESS,
@@ -26,7 +28,6 @@ import { TokenDropSelector } from '@/components/new/token-drop-selector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
-import { trackEvent, trackTrade } from '@/lib/analytics';
 import { useAccounts } from '@/lib/data/account-address/use-account';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { isProduction } from '@/lib/data/api-path';
@@ -35,6 +36,7 @@ import { useDexDSASwap } from '@/lib/data/use-dex-dsa-swap';
 import { useDexEOASwap } from '@/lib/data/use-dex-eoa-swap';
 import { IDexQuoteResponse, useDexQuote } from '@/lib/data/use-dex-quote';
 import { useCheckMonadAllowance } from '@/lib/data/use-monad-allowance';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useAccountStore } from '@/lib/state/account';
 import { eventBus } from '@/lib/state/eventBus';
@@ -61,6 +63,8 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
   const { data: accounts } = useAccounts();
   const { currentAccountType, setCurrentAccountType, setCurrentAccountAddress } = useAccountStore();
   const { chainId } = useAppKitNetwork();
+  const { trackEvent: trackEnhancedEvent, trackTrade: trackEnhancedTrade } = useEnhancedAnalytics();
+  const { data: oddsUserInfo } = useOddsUserInfo();
 
   const [sellToken, setSellToken] = useState<IToken | undefined>(undefined);
   const [buyToken, setBuyToken] = useState<IToken | undefined>(undefined);
@@ -272,6 +276,28 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
           toast.error(msg);
         }
       }
+
+      // Report quote related errors to Sentry with context
+      try {
+        Sentry.captureMessage('DEX Quote Error', {
+          level: 'warning',
+          tags: {
+            page: 'dex',
+            dex_project: selectedProject,
+            error_type: 'quote',
+          },
+          extra: {
+            message: msg,
+            sell_token: sellToken?.symbol,
+            sell_address: sellToken?.address,
+            buy_token: buyToken?.symbol,
+            buy_address: buyToken?.address,
+            sell_value: sellValue,
+            chain_id: chainId,
+            selected_project: selectedProject,
+          },
+        });
+      } catch {}
     }
 
     if (!quoteError) {
@@ -316,7 +342,106 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     return () => unsubscribe();
   }, []);
 
+  // Initialize Sentry user/environment context on mount and when deps change
+  useEffect(() => {
+    try {
+      // User context with custom UID/Alias bound to wallet
+      const userId = oddsUserInfo?.user_id || wallet || undefined;
+      const userName = oddsUserInfo?.user_name || wallet || undefined;
+      if (userId || userName) {
+        Sentry.setUser({ id: userId, username: userName });
+      } else {
+        Sentry.setUser(null);
+      }
+      Sentry.setTag('wallet', wallet || '');
+      if (oddsUserInfo?.user_id) Sentry.setTag('user_id', oddsUserInfo.user_id);
+      if (oddsUserInfo?.user_name) Sentry.setTag('user_name', oddsUserInfo.user_name);
+
+      // Tags for quick filtering
+      Sentry.setTag('page', 'dex');
+      Sentry.setTag('dex_project', selectedProject);
+      Sentry.setTag('account_type', currentAccountType);
+      if (chainId != null) Sentry.setTag('chain_id', String(chainId));
+
+      // Account context (EOA / DSA addresses)
+      Sentry.setContext('account', {
+        account_type: currentAccountType,
+        eoa_address: wallet || undefined,
+        dsa_address: accountInfo?.sandbox_account || undefined,
+      });
+
+      // Bind custom UID/Alias context
+      Sentry.setContext('user_profile', {
+        user_id: oddsUserInfo?.user_id,
+        user_name: oddsUserInfo?.user_name,
+      });
+
+      // Environment context
+      if (typeof window !== 'undefined') {
+        Sentry.setContext('environment', {
+          userAgent: window.navigator.userAgent,
+          language: window.navigator.language,
+          platform: window.navigator.platform,
+          screen: {
+            width: window.screen?.width,
+            height: window.screen?.height,
+          },
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          referrer: document.referrer,
+          url: window.location.href,
+        });
+      }
+    } catch {}
+  }, [
+    wallet,
+    currentAccountType,
+    chainId,
+    accountInfo?.sandbox_account,
+    oddsUserInfo?.user_id,
+    oddsUserInfo?.user_name,
+    selectedProject,
+  ]);
+
+  // Breadcrumb for wallet changes (connect/disconnect or switch)
+  useEffect(() => {
+    try {
+      Sentry.addBreadcrumb({
+        category: 'wallet',
+        message: wallet ? 'wallet_connected' : 'wallet_disconnected',
+        level: 'info',
+        data: {
+          wallet: wallet || '',
+          account_type: currentAccountType,
+          dsa_address: accountInfo?.sandbox_account || '',
+          user_id: oddsUserInfo?.user_id || '',
+          user_name: oddsUserInfo?.user_name || '',
+          dex_project: selectedProject,
+        },
+      });
+    } catch {}
+  }, [
+    wallet,
+    currentAccountType,
+    accountInfo?.sandbox_account,
+    oddsUserInfo?.user_id,
+    oddsUserInfo?.user_name,
+    selectedProject,
+  ]);
+
   async function handleSwap() {
+    Sentry.addBreadcrumb({
+      category: 'action',
+      message: 'click_swap',
+      level: 'info',
+      data: {
+        sell_token: sellToken?.symbol,
+        buy_token: buyToken?.symbol,
+        sell_value: sellValue,
+        should_approve: shouldApproveUI,
+        dex_project: selectedProject,
+      },
+    });
+
     // 检查是否为 Monad Testnet 网络
     if (chainId !== NetworkConfigs.monadTestnet.id) {
       const targetNetworkLabel = isProduction ? 'Monad Testnet' : 'Monad Testnet';
@@ -332,7 +457,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
       } catch (error) {
         // 网络切换失败
         Sentry.captureException(error, {
-          tags: { page: 'trade', error_type: 'network_switch' },
+          tags: { page: 'dex', dex_project: selectedProject, error_type: 'network_switch' },
           extra: { current_chain_id: chainId },
         });
         toast.error(
@@ -342,10 +467,24 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
       }
     }
     if (shouldApproveUI) {
-      trackEvent('TOKEN_APPROVE', {
+      trackEnhancedEvent('TOKEN_APPROVE', {
         event_category: 'trading',
         token_symbol: sellToken?.symbol,
         token_address: sellToken?.address,
+        include_user_id: true,
+        custom_parameters: {
+          dex_project: selectedProject,
+        },
+      });
+      Sentry.addBreadcrumb({
+        category: 'action',
+        message: 'click_approve',
+        level: 'info',
+        data: {
+          token_symbol: sellToken?.symbol,
+          token_address: sellToken?.address,
+          dex_project: selectedProject,
+        },
       });
       await handleFromApprove();
       // 发送 Approve 后，直接展示 Swap 按钮
@@ -355,6 +494,10 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
 
     if (!wallet) {
       toast.error('Please connect your wallet to trade');
+      Sentry.captureMessage('DEX Swap blocked: wallet not connected', {
+        level: 'info',
+        tags: { page: 'dex', dex_project: selectedProject },
+      });
       return;
     }
 
@@ -362,20 +505,31 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
 
     if (Number(sellValue) > Number(fromBalance)) {
       toast.error('Insufficient balance');
-      trackEvent('ERROR_OCCURRED', {
+      trackEnhancedEvent('ERROR_OCCURRED', {
         event_category: 'trading',
         error_message: 'Insufficient balance',
+        include_user_id: true,
         custom_parameters: {
           sell_token: sellToken.symbol,
           requested_amount: sellValue,
           available_balance: fromBalance,
+          dex_project: selectedProject,
+        },
+      });
+      Sentry.captureMessage('DEX Swap blocked: insufficient balance', {
+        level: 'warning',
+        tags: { page: 'dex', dex_project: selectedProject },
+        extra: {
+          requested_amount: sellValue,
+          available_balance: fromBalance,
+          sell_token: sellToken.symbol,
         },
       });
       return;
     }
 
     // Track trade initiation
-    trackTrade('initiated', sellToken.symbol || '', buyToken.symbol || '', sellValue);
+    trackEnhancedTrade('initiated', sellToken.symbol || '', buyToken.symbol || '', sellValue);
 
     const isSellTokenNative = sellToken.address === DEFAULT_NATIVE_ADDRESS;
     const isBuyTokenNative = buyToken.address === DEFAULT_NATIVE_ADDRESS;
@@ -407,50 +561,72 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
         }
       }
 
-      eoaSwap(
-        {
-          // 优先使用报价返回的路由名
-          swap_router_name: quoteData?.swapRouterName || routerName,
-          path,
-          token_in_is_mon: isSellTokenNative,
-          token_out_is_mon: isBuyTokenNative,
-          amount_in_wei: amountInWei,
-          amount_out_wei: amountOutWei,
-          // 最小可接受的输出（滑点保护），暂用 "0"，后续可接入滑点设置
-          min_amount_out_wei: '0',
-          recipient_address: !isMonWmonPair ? receiveCustomAddress : undefined,
-        },
-        {
+      const args = {
+        // 优先使用报价返回的路由名
+        swap_router_name: quoteData?.swapRouterName || routerName,
+        path,
+        token_in_is_mon: isSellTokenNative,
+        token_out_is_mon: isBuyTokenNative,
+        amount_in_wei: amountInWei,
+        amount_out_wei: amountOutWei,
+        // 最小可接受的输出（滑点保护），暂用 "0"，后续可接入滑点设置
+        min_amount_out_wei: '0',
+        recipient_address: !isMonWmonPair ? receiveCustomAddress : undefined,
+      };
+      try {
+        eoaSwap(args, {
           onSuccess: () => {
             // 交易成功后置空输入，并让报价与显示重置
             setSellValue('');
             setBuyValue('0.00');
           },
-        }
-      );
+        });
+      } catch (err) {
+        Sentry.captureException(err, {
+          tags: { page: 'dex', dex_project: selectedProject, error_type: 'eoa_swap' },
+          extra: args,
+        });
+        throw err;
+      }
     } else {
-      dsaSwap(
-        {
-          // 优先使用报价返回的路由名
-          swap_router_name: quoteData?.swapRouterName || routerName,
-          path,
-          token_in_is_mon: isSellTokenNative,
-          token_out_is_mon: isBuyTokenNative,
-          amount_in_wei: amountInWei,
-          amount_out_wei: amountOutWei,
-        },
-        {
+      const args = {
+        // 优先使用报价返回的路由名
+        swap_router_name: quoteData?.swapRouterName || routerName,
+        path,
+        token_in_is_mon: isSellTokenNative,
+        token_out_is_mon: isBuyTokenNative,
+        amount_in_wei: amountInWei,
+        amount_out_wei: amountOutWei,
+      };
+      try {
+        dsaSwap(args, {
           onSuccess: () => {
             // 交易成功后置空输入，并让报价与显示重置
             setSellValue('');
             setBuyValue('0.00');
           },
-        }
-      );
+        });
+      } catch (err) {
+        Sentry.captureException(err, {
+          tags: { page: 'dex', dex_project: selectedProject, error_type: 'dsa_swap' },
+          extra: args,
+        });
+        throw err;
+      }
     }
   }
 
   const handleSwapTokens = () => {
+    Sentry.addBreadcrumb({
+      category: 'action',
+      message: 'swap_tokens',
+      level: 'info',
+      data: {
+        from_token: sellToken?.symbol,
+        to_token: buyToken?.symbol,
+        dex_project: selectedProject,
+      },
+    });
     setRotateTimes((rotateTimes % 2) + 1);
 
     const tempToken = sellToken;
@@ -462,17 +638,29 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     setBuyValue(tempValue);
 
     // Track token swap action
-    trackEvent('SWAP_TOKENS', {
+    trackEnhancedEvent('SWAP_TOKENS', {
       event_category: 'trading',
       event_label: 'token_pair_swap',
+      include_user_id: true,
       custom_parameters: {
         from_token: sellToken?.symbol,
         to_token: buyToken?.symbol,
+        dex_project: selectedProject,
       },
     });
   };
 
   const handleMaxClick = () => {
+    Sentry.addBreadcrumb({
+      category: 'action',
+      message: 'click_max',
+      level: 'info',
+      data: {
+        token: sellToken?.symbol,
+        balance: fromBalance,
+        dex_project: selectedProject,
+      },
+    });
     if (sellToken) {
       setSellValue(fromBalance);
     }

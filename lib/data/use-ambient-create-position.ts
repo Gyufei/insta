@@ -1,6 +1,7 @@
 import { ApiPath } from './api-path';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { createMutationHook } from './helpers';
+import { toNonExponential } from '@/lib/utils/number';
 
 interface AmbientCreatePositionParams {
   wallet: string;
@@ -37,10 +38,10 @@ export function useAmbientCreatePosition() {
         sandbox_account: account,
         token_a: params.token_a,
         token_b: params.token_b,
-        price_current: params.price_current,
-        price_lower: params.price_lower,
-        price_upper: params.price_upper,
-        token_a_amount: params.token_a_amount,
+        price_current: toNonExponential(params.price_current),
+        price_lower: toNonExponential(params.price_lower),
+        price_upper: toNonExponential(params.price_upper),
+        token_a_amount: toNonExponential(params.token_a_amount),
         token_a_decimals: params.token_a_decimals,
         token_b_decimals: params.token_b_decimals,
       };
@@ -49,4 +50,4 @@ export function useAmbientCreatePosition() {
     ERROR_MESSAGES.CREATE_POSITION_FAILED,
     { checkAddress: true, checkAccount: true, refreshQueryKey: ['ambient', 'position'] }
   )();
-} 
+}

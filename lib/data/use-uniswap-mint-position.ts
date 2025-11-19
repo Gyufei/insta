@@ -2,6 +2,7 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
+import { toNonExponential } from '@/lib/utils/number';
 
 export interface UniswapMintPositionParams {
   wallet: string;
@@ -43,11 +44,11 @@ export function useUniswapMintPosition() {
         token_a_address: params.token_a_address,
         token_b_address: params.token_b_address,
         fee: params.fee,
-        price_lower: params.price_lower,
-        price_upper: params.price_upper,
-        amount_a: params.amount_a,
-        amount_b: params.amount_b,
-        slippage: params.slippage,
+        price_lower: toNonExponential(params.price_lower),
+        price_upper: toNonExponential(params.price_upper),
+        amount_a: toNonExponential(params.amount_a),
+        amount_b: toNonExponential(params.amount_b),
+        slippage: toNonExponential(params.slippage),
         decimals_a: params.decimals_a,
         decimals_b: params.decimals_b,
       };

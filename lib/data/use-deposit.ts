@@ -1,6 +1,7 @@
 import { ApiPath } from './api-path';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { createMutationHook } from './helpers';
+import { toNonExponential } from '@/lib/utils/number';
 import { useBalance } from 'wagmi';
 
 interface DepositParams {
@@ -19,7 +20,7 @@ export function useDeposit() {
       return {
         wallet: address,
         sandbox_account: account,
-        amount,
+        amount: toNonExponential(amount),
       };
     },
     SUCCESS_MESSAGES.DEPOSIT_SUCCESS,

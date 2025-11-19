@@ -2,6 +2,7 @@ import { NetworkConfigs } from '@/config/network-config';
 
 import { ApiPath } from './api-path';
 import { createQueryHook } from './helpers';
+import { toNonExponential } from '@/lib/utils/number';
 
 export interface IUniswapQuote {
   input: string;
@@ -115,7 +116,7 @@ export function useUniswapQuote(params?: IUniswapQuoteParams) {
       url.searchParams.set('chain_id', chainId);
       url.searchParams.set('token_in', params.tokenIn);
       url.searchParams.set('token_out', params.tokenOut);
-      url.searchParams.set('amount_in', params.amountIn);
+      url.searchParams.set('amount_in', toNonExponential(params.amountIn));
       url.searchParams.set('amount_in_decimals', params.amountInDecimals);
       if (params.wallet) {
         url.searchParams.set('wallet', params.wallet);

@@ -3,6 +3,7 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
 import { UniswapMintPositionArgs, UniswapMintPositionParams } from './use-uniswap-mint-position';
+import { toNonExponential } from '@/lib/utils/number';
 
 type UniswapNewPoolMintPositionParams = UniswapMintPositionParams & {
   price_current: string;
@@ -25,12 +26,12 @@ export function useUniswapNewPoolMintPosition() {
         token_a_address: params.token_a_address,
         token_b_address: params.token_b_address,
         fee: params.fee,
-        price_current: params.price_current,
-        price_lower: params.price_lower,
-        price_upper: params.price_upper,
-        amount_a: params.amount_a,
-        amount_b: params.amount_b,
-        slippage: params.slippage,
+        price_current: toNonExponential(params.price_current),
+        price_lower: toNonExponential(params.price_lower),
+        price_upper: toNonExponential(params.price_upper),
+        amount_a: toNonExponential(params.amount_a),
+        amount_b: toNonExponential(params.amount_b),
+        slippage: toNonExponential(params.slippage),
         decimals_a: params.decimals_a,
         decimals_b: params.decimals_b,
       };

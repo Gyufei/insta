@@ -1,6 +1,7 @@
 import { ApiPath } from './api-path';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { createMutationHook } from './helpers';
+import { toNonExponential } from '@/lib/utils/number';
 
 interface AprioriWithdrawParams {
   wallet: string;
@@ -17,7 +18,7 @@ export function useAprioriWithdraw() {
       return {
         wallet: address,
         sandbox_account: account,
-        shares: amount,
+        shares: toNonExponential(amount),
       };
     },
     SUCCESS_MESSAGES.REQUEST_WITHDRAW_SUCCESS,

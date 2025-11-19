@@ -1,4 +1,5 @@
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+import { toNonExponential } from '@/lib/utils/number';
 
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
@@ -28,7 +29,7 @@ export function useCurvanceDeposit() {
         sandbox_account: account,
         base_token: p.base_token,
         base_c_token: p.base_c_token,
-        deposit_amount: p.deposit_amount,
+        deposit_amount: toNonExponential(p.deposit_amount),
       };
     },
     SUCCESS_MESSAGES.DEPOSIT_SUCCESS,

@@ -1,5 +1,6 @@
 import { ApiPath } from './api-path';
 import { createQueryHook } from './helpers';
+import { toNonExponential } from '@/lib/utils/number';
 
 export interface ICalcImpact {
   baseFlow: string;
@@ -29,8 +30,8 @@ export function useAmbientCalcImpact(params: ICalcImpactParams) {
       url.searchParams.set('quote_token', params.quote_token);
       url.searchParams.set('pool_idx', params.pool_idx.toString());
       url.searchParams.set('sell_base', params.sell_base.toString());
-      url.searchParams.set('token_amount', params.token_amount.toString());
-      url.searchParams.set('pool_tip', params.pool_tip.toString());
+      url.searchParams.set('token_amount', toNonExponential(params.token_amount));
+      url.searchParams.set('pool_tip', toNonExponential(params.pool_tip));
       return url;
     },
     {

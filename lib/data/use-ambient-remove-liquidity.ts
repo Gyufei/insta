@@ -2,6 +2,7 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
+import { toNonExponential } from '@/lib/utils/number';
 
 export interface AmbientRemoveLiquidityParams {
   wallet: string;
@@ -34,7 +35,7 @@ export function useAmbientRemoveLiquidity() {
         quote_token: params.quote_token,
         bid_tick: params.bid_tick,
         ask_tick: params.ask_tick,
-        liquidity: params.liquidity,
+        liquidity: toNonExponential(params.liquidity),
       };
     },
     SUCCESS_MESSAGES.REMOVE_LIQUIDITY_SUCCESS,

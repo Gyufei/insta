@@ -1,4 +1,5 @@
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+import { toNonExponential } from '@/lib/utils/number';
 
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
@@ -18,7 +19,7 @@ export function useMagmaDeposit() {
       return {
         wallet: address,
         sandbox_account: account,
-        deposit_amount: amount,
+        deposit_amount: toNonExponential(amount),
       };
     },
     SUCCESS_MESSAGES.DEPOSIT_SUCCESS,

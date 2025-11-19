@@ -1,4 +1,5 @@
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+import { toNonExponential } from '@/lib/utils/number';
 
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
@@ -18,7 +19,7 @@ export function useMagmaWithdraw() {
       return {
         wallet: address,
         sandbox_account: account,
-        withdraw_amount: amount,
+        withdraw_amount: toNonExponential(amount),
       };
     },
     SUCCESS_MESSAGES.WITHDRAW_SUCCESS,

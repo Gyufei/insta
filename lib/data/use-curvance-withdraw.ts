@@ -1,4 +1,5 @@
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+import { toNonExponential } from '@/lib/utils/number';
 
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
@@ -28,7 +29,7 @@ export function useCurvanceWithdraw() {
         sandbox_account: account,
         base_token: p.base_token,
         base_c_token: p.base_c_token,
-        withdraw_shares: p.withdraw_shares,
+        withdraw_shares: toNonExponential(p.withdraw_shares),
       };
     },
     SUCCESS_MESSAGES.WITHDRAW_SUCCESS,

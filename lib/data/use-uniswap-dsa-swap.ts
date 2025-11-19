@@ -3,6 +3,7 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
 import { IUniswapQuote } from './use-uniswap-quote';
+import { toNonExponential } from '@/lib/utils/number';
 
 interface UniswapSwapParams {
   wallet: string;
@@ -31,7 +32,7 @@ export function useUniswapDSASwap() {
         sandbox_account: account,
         token_in_is_eth: params.token_in_is_eth,
         token_out_is_eth: params.token_out_is_eth,
-        slippage: params.slippage,
+        slippage: toNonExponential(params.slippage),
         route: params.route,
       };
     },

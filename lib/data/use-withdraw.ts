@@ -1,6 +1,7 @@
 import { useBalance } from 'wagmi';
 
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+import { toNonExponential } from '@/lib/utils/number';
 
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
@@ -23,7 +24,7 @@ export function useWithdraw() {
         wallet: address,
         sandbox_account: account,
         token_address: tokenAddress,
-        amount,
+        amount: toNonExponential(amount),
       };
     },
     SUCCESS_MESSAGES.WITHDRAW_SUCCESS,

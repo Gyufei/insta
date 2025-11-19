@@ -1,4 +1,5 @@
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
+import { toNonExponential } from '@/lib/utils/number';
 
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
@@ -28,7 +29,7 @@ export function useCurvanceBorrow() {
         sandbox_account: account,
         borrowable_token: p.borrowable_token,
         borrowable_c_token: p.borrowable_c_token,
-        borrow_amount: p.borrow_amount,
+        borrow_amount: toNonExponential(p.borrow_amount),
       };
     },
     SUCCESS_MESSAGES.BORROW_SUCCESS,

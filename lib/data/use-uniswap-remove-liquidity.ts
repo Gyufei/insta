@@ -2,6 +2,7 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/config/const-msg';
 
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
+import { toNonExponential } from '@/lib/utils/number';
 
 export interface UniswapRemoveLiquidityParams {
   wallet: string;
@@ -33,9 +34,9 @@ export function useUniswapRemoveLiquidity() {
         wallet: address,
         sandbox_account: account,
         token_id: params.token_id,
-        liquidity: params.liquidity,
-        token0_amount_min: params.token0_amount_min,
-        token1_amount_min: params.token1_amount_min,
+        liquidity: toNonExponential(params.liquidity),
+        token0_amount_min: toNonExponential(params.token0_amount_min),
+        token1_amount_min: toNonExponential(params.token1_amount_min),
         token0_decimals: params.token0_decimals,
         token1_decimals: params.token1_decimals,
       };

@@ -3,6 +3,7 @@ import { NetworkConfigs } from '@/config/network-config';
 
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
+import { toNonExponential } from '@/lib/utils/number';
 
 interface DexDSASwapArgs {
   swap_router_name: string;
@@ -38,8 +39,8 @@ export function useDexDSASwap() {
         path: p.path,
         token_in_is_mon: p.token_in_is_mon,
         token_out_is_mon: p.token_out_is_mon,
-        amount_in_wei: p.amount_in_wei,
-        min_amount_out_wei: p.amount_out_wei ?? '0',
+        amount_in_wei: toNonExponential(p.amount_in_wei),
+        min_amount_out_wei: toNonExponential(p.amount_out_wei ?? '0'),
         sandbox_account: account,
         wallet_address: address,
       };

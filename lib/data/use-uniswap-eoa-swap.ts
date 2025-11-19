@@ -4,6 +4,7 @@ import { NetworkConfigs } from '@/config/network-config';
 import { ApiPath } from './api-path';
 import { createMutationHook } from './helpers';
 import { IUniswapQuote } from './use-uniswap-quote';
+import { toNonExponential } from '@/lib/utils/number';
 
 interface UniswapSwapParams {
   wallet: string;
@@ -33,7 +34,7 @@ export function useUniswapEOASwap() {
         chain_id: NetworkConfigs.monadTestnet.id.toString(),
         token_in: params.token_in,
         token_out: params.token_out,
-        amount_in: params.amount_in,
+        amount_in: toNonExponential(params.amount_in),
         amount_in_decimals: params.amount_in_decimals,
         wallet: address,
         ...(params.permitData ? { permitData: params.permitData } : {}),
