@@ -196,7 +196,7 @@ export function LendingRepay() {
           </div>
           {/* 主卡片：标题 + 大号数字输入 + 可用/Max + 操作按钮 */}
           <div className="rounded-lg border border-[#EBEBEB] bg-white p-5 shadow-sm dark:bg-secondary">
-            <div className="text-sm font-medium text-[#131E40]">{`Repay ${token.symbol}`}</div>
+            <div className="text-base font-medium text-[#131E40]">{`Repay ${token.symbol}`}</div>
 
             <div className="mt-3 flex flex-col gap-3">
               {/* 第一行：输入框 + Token 图标 */}
@@ -220,8 +220,8 @@ export function LendingRepay() {
 
               {/* 第二行：美元等值 + 可用/Max（右侧顶部对齐） */}
               <div className="flex items-start justify-between w-full">
-                <div className="text-xs text-[#A5ADC6]">{`$${usdValue}`}</div>
-                <div className="text-right text-xs text-[#A5ADC6] whitespace-nowrap w-full">
+                <div className="text-sm text-[#A5ADC6]">{`$${usdValue}`}</div>
+                <div className="text-right text-sm text-[#A5ADC6] whitespace-nowrap w-full">
                   <div className="flex items-start justify-end w-full">
                     <span>
                       Available:{' '}

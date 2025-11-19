@@ -2,33 +2,19 @@
 
 import { useAccount } from 'wagmi';
 
-
-
 import { useEffect, useMemo, useState } from 'react';
-
-
 
 import { ERROR_MESSAGES } from '@/config/const-msg';
 
-
-
 import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
-
-
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useAccountStore } from '@/lib/state/account';
 import { cn } from '@/lib/utils';
 
-
-
 import { ErrorMessage } from './error-message';
-
-
-
-
 
 interface ActionButtonProps {
   disabled: boolean;
@@ -38,6 +24,8 @@ interface ActionButtonProps {
   error?: ErrorVO | undefined;
   className?: string;
   exchangeRate?: string;
+  // Button height: discrete sizes to ensure Tailwind safelist
+  height?: 'sm' | 'md' | 'lg' | 'xl';
   checkFlag?:
     | {
         address: boolean;
@@ -57,6 +45,7 @@ export function ActionButton({
   checkFlag = { address: true, accountInfo: true, onlyDSA: true },
   className,
   exchangeRate,
+  height = 'md',
   ...rest
 }: ActionButtonProps) {
   const { address } = useAccount();
@@ -135,7 +124,12 @@ export function ActionButton({
           disabled={isDisabled}
           onClick={handleClick}
           className={cn(
-            'w-full bg-[#6E75F9] hover:bg-[#5A61E8] text-white font-medium py-3 h-12 rounded-lg mb-3 mt-5'
+            'w-full bg-[#6E75F9] hover:bg-[#5A61E8] text-white font-medium py-3 rounded-lg mb-3 mt-5 text-base',
+            // Map height to Tailwind classes so they are statically present in the safelist
+            height === 'sm' && 'h-10',
+            height === 'md' && 'h-12',
+            height === 'lg' && 'h-14',
+            height === 'xl' && 'h-16'
           )}
           variant="default"
           size="sm"

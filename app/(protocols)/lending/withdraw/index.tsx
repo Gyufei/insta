@@ -201,7 +201,7 @@ export function LendingWithdraw() {
           </div>
           {/* 主卡片：标题 + 大号数字输入 + 可用/Max + 操作按钮 */}
           <div className="rounded-lg border border-[#EBEBEB] bg-white p-5 shadow-sm dark:bg-secondary">
-            <div className="text-sm font-medium text-[#131E40]">{`Withdraw ${props?.base_token?.symbol || 'Token'}`}</div>
+            <div className="text-base font-medium text-[#131E40]">{`Withdraw ${props?.base_token?.symbol || 'Token'}`}</div>
 
             <div className="mt-3 flex flex-col gap-3">
               {/* 第一行：输入框 + Token 图标 */}
@@ -225,8 +225,8 @@ export function LendingWithdraw() {
 
               {/* 第二行：美元等值 + 可用余额/Max（右侧顶部对齐） */}
               <div className="flex items-start justify-between w-full">
-                <div className="text-xs text-[#A5ADC6]">{`$${usdValue}`}</div>
-                <div className="text-right text-xs text-[#A5ADC6] whitespace-nowrap">
+                <div className="text-sm text-[#A5ADC6]">{`$${usdValue}`}</div>
+                <div className="text-right text-sm text-[#A5ADC6] whitespace-nowrap">
                   Available: <span className="text-[#131E40]">{formatNumber(sharesBalance)}</span>
                   <button
                     type="button"

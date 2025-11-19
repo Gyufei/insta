@@ -1,13 +1,10 @@
 'use client';
 
-import { useMemo } from 'react';
 import { useAppKitNetwork } from '@reown/appkit/react';
 
-
+import { useMemo } from 'react';
 
 import { IToken } from '@/config/tokens';
-
-
 
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/new/action-button';
@@ -17,20 +14,14 @@ import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
-
-
 import { useCurvanceBorrow } from '@/lib/data/use-curvance-borrow';
 import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
 import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
-import { formatBig, formatNumber, parseBig } from '@/lib/utils/number';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
-
-
-
-
+import { formatBig, formatNumber, parseBig } from '@/lib/utils/number';
 
 type LendingBorrowProps = {
   market_address: string;
@@ -208,7 +199,7 @@ export function LendingBorrow() {
           </div>
           {/* 主卡片：标题 + 大号数字输入 + 余额/Max + 操作按钮 */}
           <div className="rounded-lg border border-[#EBEBEB] bg-white p-5 shadow-sm dark:bg-secondary">
-            <div className="text-sm font-medium text-[#131E40]">{`Borrow ${token.symbol}`}</div>
+            <div className="text-base font-medium text-[#131E40]">{`Borrow ${token.symbol}`}</div>
 
             <div className="mt-3 flex flex-col gap-3">
               {/* 第一行：输入框 + Token 图标 */}
@@ -232,11 +223,11 @@ export function LendingBorrow() {
 
               {/* 第二行：美元等值 + 可借额度/Max（右侧顶部对齐） */}
               <div className="flex items-start justify-between w-full">
-                <div className="text-xs text-[#A5ADC6]">{`$${usdValue}`}</div>
-                <div className="text-right text-xs text-[#A5ADC6] whitespace-nowrap w-full">
+                <div className="text-sm text-[#A5ADC6]">{`$${usdValue}`}</div>
+                <div className="text-right text-sm text-[#A5ADC6] whitespace-nowrap w-full">
                   <div className="flex items-start justify-end w-full">
                     <span>
-                    Available: <span className="text-[#131E40]">{formatNumber(borrowLimit)}</span>
+                      Available: <span className="text-[#131E40]">{formatNumber(borrowLimit)}</span>
                     </span>
                     <button
                       type="button"
@@ -260,6 +251,7 @@ export function LendingBorrow() {
               isPending={isPending}
               error={errorData}
               className="mt-0"
+              height="sm"
             >
               {`Borrow ${token.symbol}`}
             </ActionButton>
@@ -275,7 +267,8 @@ export function LendingBorrow() {
             {/* 池子里不足借用的提示：基于 token1.total_debt 估算的池子可借规模，与用户输入比较 */}
             {(() => {
               const inputAmt = parseFloat(inputValue || '0');
-              const insufficient = Number.isFinite(inputAmt) && inputAmt > 0 && inputAmt > (poolBorrowableTokens || 0);
+              const insufficient =
+                Number.isFinite(inputAmt) && inputAmt > 0 && inputAmt > (poolBorrowableTokens || 0);
               if (!insufficient) return null;
               return (
                 <div className="mt-2 rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2">

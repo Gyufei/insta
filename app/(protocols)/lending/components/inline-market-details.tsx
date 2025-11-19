@@ -192,7 +192,7 @@ export default function InlineMarketDetails({
   return (
     <div className="w-full px-4 md:px-12">
       {/* Breadcrumb */}
-      <div className="mt-6 md:mt-2 mb-4 text-[20px] text-[#A5ADC6]">
+      <div className="mt-6 md:mt-0 mb-6 text-[20px] font-medium text-[#A5ADC6]">
         <button className="hover:underline" onClick={onBack}>
           Markets
         </button>
@@ -223,19 +223,19 @@ export default function InlineMarketDetails({
               {isBorrow ? (
                 <>
                   <div className="md:text-left text-center flex flex-col px-4">
-                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
+                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
                       {formatUSD(token1.total_debt_in_usd)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Total Debt</div>
                   </div>
                   <div className="md:text-left text-center flex flex-col px-4 ">
-                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
+                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
                       {formatUSD(market.available_supply_in_usd)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Available Liquidity</div>
                   </div>
                   <div className="md:text-left text-center flex flex-col">
-                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
+                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
                       {formatPct(market.borrow_rate)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Borrow vAPY</div>
@@ -244,19 +244,19 @@ export default function InlineMarketDetails({
               ) : (
                 <>
                   <div className="md:text-left text-center flex flex-col px-1">
-                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
+                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
                       {formatUSD(market.total_supply_in_usd)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Reserve Size</div>
                   </div>
                   <div className="md:text-left text-center flex flex-col px-1">
-                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
+                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
                       {formatUSD(market.available_supply_in_usd)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Available Liquidity</div>
                   </div>
                   <div className="md:text-left text-center flex flex-col px-1">
-                    <div className="order-1 md:order-2 text-lg font-semibold mb-1 md:mb-0 md:mt-1">
+                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
                       {formatPct(market.utilization_rate)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Utilization Rate</div>
@@ -267,8 +267,8 @@ export default function InlineMarketDetails({
           </div>
           <div className="mt-4 border-t border-gray-200 dark:border-gray-700" />
           <div className="mt-4">
-            <div className="text-[#A5ADC6]">Balance</div>
-            <div className="mt-2 text-3xl font-semibold tracking-tight">
+            <div className="text-[#131E40]">Balance</div>
+            <div className="mt-2 text-3xl font-medium tracking-tight">
               $
               {Number(displayUSDNum).toLocaleString(undefined, {
                 minimumFractionDigits: 4,
@@ -294,7 +294,7 @@ export default function InlineMarketDetails({
           {actionMode === 'supply' && (
             <div className="rounded-md border bg-white dark:bg-secondary">
               {/* Desktop header */}
-              <div className="hidden md:grid grid-cols-12 items-center px-4 py-3 text-xs text-[#A5ADC6]">
+              <div className="hidden md:grid grid-cols-12 items-center px-4 py-3 text-xs font-medium text-[#A5ADC6]">
                 <div className="col-span-7">Collateral Asset</div>
                 <div className="col-span-5 text-right">Protocol Balance</div>
               </div>
@@ -316,18 +316,18 @@ export default function InlineMarketDetails({
                       </div>
                     </div>
                     <button
-                      className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
+                      className="h-7 w-7 rounded-[4px] border border-slate-200 flex items-center justify-center"
                       onClick={openSupply}
                       aria-label={'Supply'}
                     >
-                      +
+                      <img src="/icons/plus.svg" alt="Supply" className="h-5 w-5" />
                     </button>
                     <button
-                      className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
+                      className="h-7 w-7 rounded-[4px] border border-slate-200 flex items-center justify-center"
                       onClick={openWithdraw}
                       aria-label={'Withdraw'}
                     >
-                      -
+                      <img src="/icons/minus.svg" alt="Withdraw" className="h-5 w-5" />
                     </button>
                   </div>
                 </div>
@@ -342,7 +342,7 @@ export default function InlineMarketDetails({
                     alt={token0.symbol}
                   />
                   <div className="flex-1">
-                    <div className="text-2xl font-semibold tracking-tight text-[#131E40]">
+                    <div className="text-2xl font-medium tracking-tight text-[#131E40]">
                       {token0.name}
                     </div>
                     <div className="text-sm text-[#A5ADC6]">
@@ -361,18 +361,18 @@ export default function InlineMarketDetails({
                 <div className="my-4 border-t border-gray-200" />
                 <div className="grid grid-cols-2 gap-4">
                   <button
-                    className="w-full inline-flex items-center justify-center px-4 py-[5px] rounded-md border border-slate-200 bg-white text-2xl text-slate-700"
+                    className="w-full inline-flex items-center justify-center px-4 py-[5px] rounded-md border border-slate-200 bg-white text-[#131E40]"
                     onClick={openWithdraw}
                     aria-label={'Withdraw'}
                   >
-                    -
+                    <img src="/icons/minus.svg" alt="Withdraw" className="h-5 w-5" />
                   </button>
                   <button
-                    className="w-full inline-flex items-center justify-center px-4 py-[5px] rounded-md border border-slate-200 bg-white text-2xl text-slate-700"
+                    className="w-full inline-flex items-center justify-center px-4 py-[5px] rounded-md border border-slate-200 bg-white text-[#131E40]"
                     onClick={openSupply}
                     aria-label={'Supply'}
                   >
-                    +
+                    <img src="/icons/plus.svg" alt="Supply" className="h-5 w-5" />
                   </button>
                 </div>
               </div>
@@ -412,18 +412,18 @@ export default function InlineMarketDetails({
                         </div>
                       </div>
                       <button
-                        className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
+                        className="h-7 w-7 rounded-[4px] border border-slate-200 flex items-center justify-center"
                         onClick={openBorrow}
                         aria-label={'Borrow'}
                       >
-                        +
+                        <img src="/icons/plus.svg" alt="Borrow" className="h-5 w-5" />
                       </button>
                       <button
-                        className="h-7 w-7 rounded-md border border-slate-200 bg-white text-slate-700 flex items-center justify-center text-base leading-none"
+                        className="h-7 w-7 rounded-[4px] border border-slate-200 flex items-center justify-center"
                         onClick={openRepay}
                         aria-label={'Repay'}
                       >
-                        -
+                        <img src="/icons/minus.svg" alt="Repay" className="h-5 w-5" />
                       </button>
                     </div>
                   </div>
@@ -450,7 +450,7 @@ export default function InlineMarketDetails({
                 </div>
                 <div className="my-4 border-t border-gray-200" />
                 <div className="text-left">
-                  <span className="text-3xl font-semibold tracking-tight text-[#131E40]">
+                  <span className="text-3xl font-medium tracking-tight text-[#131E40]">
                     {truncateIfExceeds(user?.token1?.user_debt_display_balance || '0.0000', 4)}
                   </span>
                   <span className="ml-2 text-lg text-[#A5ADC6]">Protocol Debt</span>
@@ -458,18 +458,18 @@ export default function InlineMarketDetails({
                 <div className="my-4 border-t border-gray-200" />
                 <div className="grid grid-cols-2 gap-4">
                   <button
-                    className="w-full inline-flex items-center justify-center px-4 py-[5px] rounded-md border border-slate-200 bg-white text-2xl text-slate-700"
+                    className="w-full inline-flex items-center justify-center px-4 py-[5px] rounded-md border border-slate-200 bg-white text-[#131E40]"
                     onClick={openRepay}
                     aria-label={'Repay'}
                   >
-                    -
+                    <img src="/icons/minus.svg" alt="Repay" className="h-6 w-6" />
                   </button>
                   <button
-                    className="w-full inline-flex items-center justify-center px-4 py-[5px] rounded-md border border-slate-200 bg-white text-2xl text-slate-700"
+                    className="w-full inline-flex items-center justify-center px-4 py-[5px] rounded-md border border-slate-200 bg-white text-[#131E40]"
                     onClick={openBorrow}
                     aria-label={'Borrow'}
                   >
-                    +
+                    <img src="/icons/plus.svg" alt="Borrow" className="h-6 w-6" />
                   </button>
                 </div>
               </div>

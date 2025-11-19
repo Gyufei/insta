@@ -32,7 +32,7 @@ export function PositionSummaryCard({ market, user }: PositionSummaryCardProps) 
 
   return (
     <div className="rounded-lg border border-[#EBEBEB] bg-white dark:bg-secondary p-5 shadow-sm">
-      <div className="text-sm font-medium text-[#131E40]">Position Summary</div>
+      <div className="text-base font-medium text-[#131E40]">Position Summary</div>
       <div className="mt-3 space-y-2">
         <div className="flex items-center justify-between">
           <div className="text-xs text-[#A5ADC6]">Collateral Value</div>

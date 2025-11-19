@@ -165,10 +165,10 @@ export default function Lending() {
               onChange={() => setActionMode('supply')}
             />
             <span
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-[6px] border text-sm bg-white select-none transition-colors
+              className="inline-flex items-center gap-2 px-2 py-2 rounded-[6px] border text-sm bg-white select-none transition-colors
               border-[#E6E8F2] text-[var(--color-pro-gray)] hover:bg-slate-50 [--dot-opacity:0] [--ring-color:#E6E8F2]
               peer-checked:border-[var(--color-pro-blue)] peer-checked:text-[var(--color-pro-blue)] peer-checked:[--dot-opacity:1]
-              peer-checked:[--ring-color:var(--color-pro-blue)]"
+              peer-checked:[--ring-color:var(--color-pro-blue)] leading-0"
             >
               <span
                 className="relative inline-flex items-center justify-center w-[14px] h-[14px] rounded-full border-2
@@ -188,10 +188,10 @@ export default function Lending() {
               onChange={() => setActionMode('borrow')}
             />
             <span
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-[6px] border text-sm bg-white select-none transition-colors
+              className="inline-flex items-center gap-2 px-2 py-2 rounded-[6px] border text-sm bg-white select-none transition-colors
               border-[#E6E8F2] text-[var(--color-pro-gray)] hover:bg-slate-50 [--dot-opacity:0] [--ring-color:#E6E8F2]
               peer-checked:border-[var(--color-pro-blue)] peer-checked:text-[var(--color-pro-blue)] peer-checked:[--dot-opacity:1]
-              peer-checked:[--ring-color:var(--color-pro-blue)]"
+              peer-checked:[--ring-color:var(--color-pro-blue)] leading-0"
             >
               <span
                 className="relative inline-flex items-center justify-center w-[14px] h-[14px] rounded-full border-2

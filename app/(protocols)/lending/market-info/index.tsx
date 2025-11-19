@@ -80,28 +80,28 @@ export function LendingMarketInfo() {
       </div>
       {/* Wallet balance card - show token1 in borrow mode */}
       <div className="rounded-lg border border-[#EBEBEB] bg-white dark:bg-secondary p-5 shadow-sm">
-        <div className="text-xs text-black">{displaySymbol} Wallet Balance</div>
+        <div className="text-[16px] font-medium text-[#131E40]">{displaySymbol} Wallet Balance</div>
         <div className="mt-2 flex items-center justify-between">
-          <div className="text-2xl font-semibold tracking-tight text-[#131E40]">
+          <div className="text-[32px] font-medium tracking-tight text-[#131E40]">
             {truncateIfExceeds(walletBalanceDisplay || '0', 4)}
           </div>
           <img
             src={tokenLogo}
             alt={`${baseToken?.symbol || ''} logo`}
-            className="h-6 w-6 rounded-full"
+            className="h-8 w-8 rounded-full"
           />
         </div>
         <div className="mt-4 border-t border-[#EBEBEB]" />
         <div className="mt-4 flex justify-between gap-6">
           <div>
-            <div className="text-xs text-[#A5ADC6]">Net Borrow APR</div>
-            <div className="mt-1 text-sm font-semibold text-[#131E40] underline">
+            <div className="text-sm text-[#A5ADC6]">Net Borrow APR</div>
+            <div className="mt-1 text-sm font-medium text-[#131E40] underline">
               {formatPct(borrowRate)}
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xs text-[#A5ADC6]">Net Supply APR</div>
-            <div className="mt-1 text-sm font-semibold text-[#131E40] underline">
+            <div className="text-sm text-[#A5ADC6]">Net Supply APR</div>
+            <div className="mt-1 text-sm font-medium text-[#131E40] underline">
               {formatPct(supplyRate)}
             </div>
           </div>

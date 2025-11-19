@@ -1,13 +1,23 @@
 'use client';
 
 import Image from 'next/image';
+
+
+
 // import Link from 'next/link';
 
 import { TitleH2 } from '@/components/common/title-h2';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
+
+
+
 import { ICurvanceMarketUserItem } from '@/lib/data/use-curvance-market-user-info';
+import { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
 import { formatBig } from '@/lib/utils/number';
+
+
+
+
 
 type InlineMarketsSectionProps = {
   isCurvanceSelected: boolean;
@@ -58,7 +68,7 @@ export default function InlineMarketsSection({
 }: InlineMarketsSectionProps) {
   return (
     <>
-      <div className="mt-4 mb-6 flex w-full flex-shrink-0 justify-between px-4 md:px-12">
+      <div className="mt-4 md:mt-0 mb-6 flex w-full flex-shrink-0 justify-between px-4 md:px-12">
         <TitleH2>Markets</TitleH2>
       </div>
       <div className="px-4 md:px-12">
@@ -170,8 +180,8 @@ export default function InlineMarketsSection({
             {!marketsLoading && !marketsError && sortedMarkets.length > 0 && (
               <>
                 {/* Desktop: table style container */}
-                <div className="hidden md:block rounded-2xl border border-slate-200 bg-white overflow-hidden px-6">
-                  <div className="grid grid-cols-[220px_1fr_1fr_1fr_80px] py-3 text-xs text-slate-500 border-b border-slate-200">
+                <div className="hidden md:block rounded-xl border border-slate-200 bg-white overflow-hidden px-[20px]">
+                  <div className="grid grid-cols-[220px_1fr_1fr_1fr_80px] pt-[16px] pb-[12px] text-xs font-medium text-[#A5ADC6] border-b border-slate-200">
                     <div>Asset</div>
                     {actionMode === 'borrow' ? (
                       <>
@@ -190,7 +200,9 @@ export default function InlineMarketsSection({
                   </div>
                   <div className="divide-y divide-slate-200">
                     {sortedMarkets.map((m) => {
-                      const user = byMarket[m.market_address] as ICurvanceMarketUserItem | undefined;
+                      const user = byMarket[m.market_address] as
+                        | ICurvanceMarketUserItem
+                        | undefined;
                       const price0 = parseFloat(m.token0.price || '0');
                       const price1 = parseFloat(m.token1.price || '0');
                       const supplyUSD = formatUSD(
@@ -218,9 +230,13 @@ export default function InlineMarketsSection({
                         formatBig(String(user?.total_debt_in_usd || '0'), 18)
                       );
                       const remainingUSD = formatUSD(String(maxDebtUSDNum));
-                      const remainingTokens = formatAbbr(String(price1 > 0 ? maxDebtUSDNum / price1 : 0));
+                      const remainingTokens = formatAbbr(
+                        String(price1 > 0 ? maxDebtUSDNum / price1 : 0)
+                      );
                       const myTokens = formatAbbr(user?.token0?.user_asset_display_balance || '0');
-                      const myUSD = formatUSD(String(price0 * parseFloat(user?.token0?.user_asset_display_balance || '0')));
+                      const myUSD = formatUSD(
+                        String(price0 * parseFloat(user?.token0?.user_asset_display_balance || '0'))
+                      );
 
                       return (
                         <div
@@ -254,33 +270,43 @@ export default function InlineMarketsSection({
                               />
                             </div>
                             <div>
-                              <div className="text-sm font-semibold text-slate-900 whitespace-nowrap">{`${m.token0.symbol} & ${m.token1.symbol}`}</div>
-                              <div className="text-xs text-slate-500 whitespace-nowrap">{m.chain_name || 'Monad Testnet'}</div>
+                              <div className="text-sm font-medium text-slate-900 whitespace-nowrap">{`${m.token0.symbol} & ${m.token1.symbol}`}</div>
+                              <div className="text-xs text-[#A5ADC6] whitespace-nowrap">
+                                {m.chain_name || 'Monad Testnet'}
+                              </div>
                             </div>
                           </div>
                           {/* Desktop metrics columns */}
                           <div>
                             {actionMode === 'borrow' ? (
                               <>
-                                <div className="text-sm font-semibold text-slate-900">{borrowTokens}</div>
+                                <div className="text-sm font-medium text-slate-900">
+                                  {borrowTokens}
+                                </div>
                                 <div className="text-xs text-slate-500">{borrowUSD}</div>
                               </>
                             ) : (
                               <>
-                                <div className="text-sm font-semibold text-slate-900">{supplyTokens}</div>
+                                <div className="text-sm font-medium text-slate-900">
+                                  {supplyTokens}
+                                </div>
                                 <div className="text-xs text-slate-500">{supplyUSD}</div>
                               </>
                             )}
                           </div>
-                          <div className="text-sm font-semibold text-slate-900">{actionMode === 'borrow' ? borrowApy : supplyApy}</div>
+                          <div className="text-sm font-medium text-slate-900">
+                            {actionMode === 'borrow' ? borrowApy : supplyApy}
+                          </div>
                           {actionMode === 'borrow' ? (
                             <div>
-                              <div className="text-sm font-semibold text-slate-900">{remainingTokens}</div>
+                              <div className="text-sm font-medium text-slate-900">
+                                {remainingTokens}
+                              </div>
                               <div className="text-xs text-slate-500">{remainingUSD}</div>
                             </div>
                           ) : (
                             <div>
-                              <div className="text-sm font-semibold text-slate-900">{myTokens}</div>
+                              <div className="text-sm font-medium text-slate-900">{myTokens}</div>
                               <div className="text-xs text-slate-500">{myUSD}</div>
                             </div>
                           )}
@@ -291,7 +317,7 @@ export default function InlineMarketsSection({
                                 e.stopPropagation();
                                 onDetails?.(m.market_address);
                               }}
-                              className="inline-flex items-center px-4 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-sm text-slate-700"
+                              className="inline-flex items-center px-4 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-xs text-[#131E40]"
                             >
                               Details
                             </button>
@@ -300,9 +326,11 @@ export default function InlineMarketsSection({
                       );
                     })}
                   </div>
-                </div>
+                </div>;
 
-                {/* Mobile: separate card list */}
+                {
+                  /* Mobile: separate card list */
+                }
                 <div className="md:hidden space-y-3">
                   {sortedMarkets.map((m) => {
                     const user = byMarket[m.market_address] as ICurvanceMarketUserItem | undefined;
@@ -332,9 +360,13 @@ export default function InlineMarketsSection({
                       formatBig(String(user?.total_debt_in_usd || '0'), 18)
                     );
                     const remainingUSD = formatUSD(String(maxDebtUSDNum));
-                    const remainingTokens = formatAbbr(String(price1 > 0 ? maxDebtUSDNum / price1 : 0));
+                    const remainingTokens = formatAbbr(
+                      String(price1 > 0 ? maxDebtUSDNum / price1 : 0)
+                    );
                     const myTokens = formatAbbr(user?.token0?.user_asset_display_balance || '0');
-                    const myUSD = formatUSD(String(price0 * parseFloat(user?.token0?.user_asset_display_balance || '0')));
+                    const myUSD = formatUSD(
+                      String(price0 * parseFloat(user?.token0?.user_asset_display_balance || '0'))
+                    );
 
                     return (
                       <div
@@ -368,8 +400,10 @@ export default function InlineMarketsSection({
                             />
                           </div>
                           <div>
-                            <div className="text-sm font-semibold text-slate-900 whitespace-nowrap">{`${m.token0.symbol} & ${m.token1.symbol}`}</div>
-                            <div className="text-xs text-slate-500 whitespace-nowrap">{m.chain_name || 'Monad Testnet'}</div>
+                            <div className="text-sm font-medium text-slate-900 whitespace-nowrap">{`${m.token0.symbol} & ${m.token1.symbol}`}</div>
+                            <div className="text-xs text-[#A5ADC6] whitespace-nowrap">
+                              {m.chain_name || 'Monad Testnet'}
+                            </div>
                           </div>
                         </div>
                         {/* divider between header and metrics */}
@@ -381,34 +415,44 @@ export default function InlineMarketsSection({
                             {actionMode === 'borrow' ? (
                               <>
                                 <div className="text-xs text-slate-500">{borrowUSD}</div>
-                                <div className="text-sm font-semibold text-slate-900">{borrowTokens}</div>
-                                <div className="text-xs text-slate-500 mt-1">Total Borrowed</div>
+                                <div className="text-sm font-medium text-slate-900">
+                                  {borrowTokens}
+                                </div>
+                                <div className="text-xs text-[#A5ADC6] mt-1">Total Borrowed</div>
                               </>
                             ) : (
                               <>
                                 <div className="text-xs text-slate-500">{supplyUSD}</div>
-                                <div className="text-sm font-semibold text-slate-900">{supplyTokens}</div>
-                                <div className="text-xs text-slate-500 mt-1">Total Supplied</div>
+                                <div className="text-sm font-medium text-slate-900">
+                                  {supplyTokens}
+                                </div>
+                                <div className="text-xs text-[#A5ADC6] mt-1">Total Supplied</div>
                               </>
                             )}
                           </div>
                           <div className="px-4 text-center">
                             <div className="text-xs text-slate-500">-</div>
-                            <div className="text-sm font-semibold text-slate-900">{actionMode === 'borrow' ? borrowApy : supplyApy}</div>
-                            <div className="text-xs text-slate-500 mt-1">{actionMode === 'borrow' ? 'Borrow APY' : 'Supply APY'}</div>
+                            <div className="text-sm font-medium text-slate-900">
+                              {actionMode === 'borrow' ? borrowApy : supplyApy}
+                            </div>
+                            <div className="text-xs text-[#A5ADC6] mt-1">
+                              {actionMode === 'borrow' ? 'Borrow APY' : 'Supply APY'}
+                            </div>
                           </div>
                           <div className="px-4 text-center">
                             {actionMode === 'borrow' ? (
                               <>
                                 <div className="text-xs text-slate-500">{remainingUSD}</div>
-                                <div className="text-sm font-semibold text-slate-900">{remainingTokens}</div>
-                                <div className="text-xs text-slate-500 mt-1">MY Debt</div>
+                                <div className="text-sm font-medium text-slate-900">
+                                  {remainingTokens}
+                                </div>
+                                <div className="text-xs text-[#A5ADC6] mt-1">MY Debt</div>
                               </>
                             ) : (
                               <>
                                 <div className="text-xs text-slate-500">{myUSD}</div>
-                                <div className="text-sm font-semibold text-slate-900">{myTokens}</div>
-                                <div className="text-xs text-slate-500 mt-1">MY Supplies</div>
+                                <div className="text-sm font-medium text-slate-900">{myTokens}</div>
+                                <div className="text-xs text-[#A5ADC6] mt-1">MY Supplies</div>
                               </>
                             )}
                           </div>
@@ -421,7 +465,7 @@ export default function InlineMarketsSection({
                               e.stopPropagation();
                               onDetails?.(m.market_address);
                             }}
-                            className="w-full inline-flex items-center justify-center px-4 py-2 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-sm text-slate-700"
+                            className="w-full inline-flex items-center justify-center px-4 py-2 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-sm text-[#131E40]"
                           >
                             Details
                           </button>
@@ -429,7 +473,7 @@ export default function InlineMarketsSection({
                       </div>
                     );
                   })}
-                </div>
+                </div>;
               </>
             )}
           </div>

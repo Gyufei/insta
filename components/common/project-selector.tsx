@@ -62,7 +62,7 @@ export function ProjectSelector<T extends ProjectConfig>({
             {projectConfig.icon && (
               <Image src={projectConfig.icon} alt={projectConfig.name} width={20} height={20} />
             )}
-            <span className="text-sm font-medium">{projectConfig.name}</span>
+            <span className="text-[20px] leading-[20px] font-medium">{projectConfig.name}</span>
           </button>
         );
       })}
