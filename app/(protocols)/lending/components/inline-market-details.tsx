@@ -43,7 +43,7 @@ export default function InlineMarketDetails({
   onBack,
   actionMode = 'supply',
 }: InlineMarketDetailsProps) {
-  const { setCurrentComponent } = useSideDrawerStore();
+  const { setCurrentComponent, setLendingContext } = useSideDrawerStore();
   const { address } = useAccount();
   const { currentAccountType } = useAccountStore();
   const { data: accountInfo } = useSelectedAccount();
@@ -175,6 +175,8 @@ export default function InlineMarketDetails({
   useEffect(() => {
     // Detect viewport width directly to avoid initial flicker from mobile hook
     const isMobileViewport = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+    // Persist lending context for header button
+    setLendingContext({ market, user, actionMode });
     if (!isMobileViewport) {
       setCurrentComponent({ name: 'LendingMarketInfo', props: { market, user, actionMode } });
     } else {
@@ -182,6 +184,7 @@ export default function InlineMarketDetails({
       setCurrentComponent({ name: 'Balance' });
     }
     return () => {
+      setLendingContext(null);
       setCurrentComponent({ name: 'Balance' });
     };
   }, [market, user, actionMode, setCurrentComponent]);

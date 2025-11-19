@@ -56,6 +56,16 @@ type SideDrawerState = {
   setIsOpen: (isOpen: boolean) => void;
   currentComponent: CurrentComponent | null;
   setCurrentComponent: (comp: CurrentComponent) => void;
+  lendingContext: {
+    market?: unknown;
+    user?: unknown;
+    actionMode?: 'supply' | 'borrow';
+  } | null;
+  setLendingContext: (ctx: {
+    market?: unknown;
+    user?: unknown;
+    actionMode?: 'supply' | 'borrow';
+  } | null) => void;
 };
 
 export const useSideDrawerStore = create<SideDrawerState>((set) => ({
@@ -73,4 +83,6 @@ export const useSideDrawerStore = create<SideDrawerState>((set) => ({
       set({ isOpen: true });
     }
   },
+  lendingContext: null,
+  setLendingContext: (ctx) => set({ lendingContext: ctx }),
 }));

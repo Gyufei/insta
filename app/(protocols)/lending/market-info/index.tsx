@@ -2,10 +2,18 @@
 
 import { useAccount } from 'wagmi';
 
+
+
 import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
+
+
+
 // 图标统一使用 markets 的 logoURI，不在本组件维护映射
 
 import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
+
+
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
@@ -13,6 +21,7 @@ import type { ICurvanceMarketUserItem } from '@/lib/data/use-curvance-market-use
 import type { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
 import { useAccountStore } from '@/lib/state/account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateIfExceeds } from '@/lib/utils/number';
 
 function formatPct(value?: string | number) {
@@ -28,6 +37,7 @@ export function LendingMarketInfo() {
     user?: ICurvanceMarketUserItem;
     actionMode?: 'supply' | 'borrow';
   };
+  const { handleBack: _handleBack } = useUrlPathDrawerChange('/lending');
 
   const market = props.market as ICurvanceMarketInfo | undefined;
   const user = props.user as ICurvanceMarketUserItem | undefined;
@@ -64,6 +74,10 @@ export function LendingMarketInfo() {
 
   return (
     <div className="p-4 space-y-4">
+      {/* Mobile back header */}
+      <div className="md:hidden">
+        <SideDrawerBackHeader title={`Wallet Balance`} onClick={_handleBack} />
+      </div>
       {/* Wallet balance card - show token1 in borrow mode */}
       <div className="rounded-lg border border-[#EBEBEB] bg-white dark:bg-secondary p-5 shadow-sm">
         <div className="text-xs text-black">{displaySymbol} Wallet Balance</div>

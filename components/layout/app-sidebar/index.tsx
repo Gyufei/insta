@@ -231,7 +231,7 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
             LENDING_PROJECT_IDS.map((id) => LENDING_PROJECTS[id].icon).filter(Boolean) as string[]
           }
           size={16}
-          className="h-4 w-6"
+          className="h-4 w-[22px]"
         />
       ),
     },

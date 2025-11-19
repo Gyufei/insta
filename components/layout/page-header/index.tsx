@@ -19,8 +19,7 @@ import NetworkSelect from './network-select';
 export function PageHeader() {
   const { disconnect } = useDisconnect();
   const { isConnected } = useAppKitAccount();
-
-  const { setIsOpen } = useSideDrawerStore();
+  const { setIsOpen, setCurrentComponent, lendingContext } = useSideDrawerStore();
   const isMobile = useIsMobile();
   const { openWeb3Modal } = useWalletConnect();
 
@@ -65,6 +64,18 @@ export function PageHeader() {
       <Image src="/icons/wallet.svg" alt="balance" width={20} height={20} />
     </Button>
   );
+  const LendingInfoBtn = () => (
+    <Button
+      onClick={() =>
+        setCurrentComponent({ name: 'LendingMarketInfo', props: lendingContext || {} })
+      }
+      variant="outline"
+      size="icon"
+      className="h-9 w-9 bg-transparent border-black/10"
+    >
+      <Image src="/icons/wallet-balance.svg" alt="lending-info" width={20} height={20} />
+    </Button>
+  );
 
   return (
     <header className="grid-header-nav bg-[#F5F6F9] md:bg-bg-gray border-[#ebebeb] flex items-center flex-nowrap pt-4">
@@ -79,7 +90,7 @@ export function PageHeader() {
 
             <div className="flex items-center gap-2">
               <ConnectBtn />
-              <BalanceBtn />
+              {lendingContext?.market ? <LendingInfoBtn /> : <BalanceBtn />}
               <NetworkSelect />
               <DisconnectBtn />
             </div>
