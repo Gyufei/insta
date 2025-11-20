@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useAppKitNetwork } from '@reown/appkit/react';
 
 
 
@@ -9,8 +10,11 @@ import { Button } from '@/components/ui/button';
 import { useBadgeClaim } from '@/lib/data/use-badge-claim';
 import { useBadgeWalletNfts } from '@/lib/data/use-badge-wallet-nfts';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
+import { ensureBaseNetwork } from '@/lib/utils/network-guard';
+import { eventBus } from '@/lib/state/eventBus';
 
 export function ClaimBtn() {
+  const { chainId } = useAppKitNetwork();
   const { data: userBadgeData } = useBadgeWalletNfts();
   const { trackEvent } = useEnhancedAnalytics();
 
@@ -24,7 +28,7 @@ export function ClaimBtn() {
     return userBadgeData?.claimInfo.is_available && !isAllClaimed;
   }, [userBadgeData, isAllClaimed]);
 
-  function handleClaim() {
+  async function handleClaim() {
     // Track badge claim attempt
     trackEvent('BADGE_CLAIM', {
       event_category: 'badge',
@@ -35,6 +39,13 @@ export function ClaimBtn() {
         claim_count: userBadgeData?.claimInfo.total_claim_count || 0,
       },
     });
+
+    const ok = await ensureBaseNetwork({
+      chainId,
+      switchNetwork: async (target) => Promise.resolve(eventBus.publish('toggle-network', target)),
+      sentryTags: { area: 'badge_gallery', action: 'claim' },
+    });
+    if (!ok) return;
 
     claim(undefined, {
       onSuccess: () => {

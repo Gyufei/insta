@@ -29,6 +29,7 @@ import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { eventBus } from '@/lib/state/eventBus';
 import { truncateNumber } from '@/lib/utils/number';
+import { ensureBaseNetwork } from '@/lib/utils/network-guard';
 
 import { BUY_TOKEN_CONFIG_BASE } from './buy-token-config';
 
@@ -128,10 +129,13 @@ export function PayWithToken({ selectedNft }: { selectedNft: IBadgeNft }) {
     eventBus.publish('toggle-network', net);
   }
 
-  function handlePay() {
-    if (chainId !== NetworkConfigs.base.id) {
-      toggleNetwork(NetworkConfigs.base);
-    }
+  async function handlePay() {
+    const ok = await ensureBaseNetwork({
+      chainId,
+      switchNetwork: async (target) => Promise.resolve(eventBus.publish('toggle-network', target)),
+      sentryTags: { area: 'badge_gallery', action: 'pay' },
+    });
+    if (!ok) return;
 
     if (shouldApprove) {
       handleApprove();

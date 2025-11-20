@@ -40,6 +40,7 @@ import { useTokenStationSwapCCIP } from '@/lib/data/use-token-station-swap-ccip'
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { eventBus } from '@/lib/state/eventBus';
 import { cn, formatAddress } from '@/lib/utils';
+import { ensureBaseNetwork, ensureEthNetwork } from '@/lib/utils/network-guard';
 import { formatNumber, truncateNumber } from '@/lib/utils/number';
 import { useIsMobile } from '@/lib/utils/use-mobile';
 
@@ -361,11 +362,33 @@ export function TokenStation() {
       return;
     }
 
-    if (shouldApprove) {
-      handleFromApprove();
-    } else {
-      handleSwap();
-    }
+    const switchNetwork = async (target: { id: number }) => {
+      return Promise.resolve(eventBus.publish('toggle-network', target));
+    };
+
+    const ensure = async () => {
+      if (mode === 'CCIP') {
+        return ensureEthNetwork({
+          chainId,
+          switchNetwork,
+          sentryTags: { area: 'token_station', action: 'confirm', mode: 'CCIP' },
+        });
+      }
+      return ensureBaseNetwork({
+        chainId,
+        switchNetwork,
+        sentryTags: { area: 'token_station', action: 'confirm', mode: 'BRIDGE' },
+      });
+    };
+
+    ensure().then((ok) => {
+      if (!ok) return;
+      if (shouldApprove) {
+        handleFromApprove();
+      } else {
+        handleSwap();
+      }
+    });
   }
 
   function handleSwap() {
@@ -379,73 +402,93 @@ export function TokenStation() {
       return;
     }
 
-    if (mode === 'CCIP' && chainId !== NetworkConfigs.eth.id) {
-      toggleNetwork(NetworkConfigs.eth);
-    } else if (mode === 'BRIDGE' && chainId !== NetworkConfigs.base.id) {
-      toggleNetwork(NetworkConfigs.base);
-    }
-
-    if (Number(fromAmount) > Number(fromBalance)) {
-      toast.error('Insufficient balance');
-      return;
-    }
-
-    // Track token bridge attempt
-    trackEvent('TOKEN_BRIDGE', {
-      event_category: 'token_station',
-      event_label: 'token_bridge_attempt',
-      include_user_id: true,
-      custom_parameters: {
-        mode: mode,
-        token_from: tokenFrom.symbol,
-        token_to: tokenTo.symbol,
-        amount_in: fromAmount,
-        min_amount_out: toAmount,
-        from_network: mode === 'CCIP' ? 'Ethereum' : 'Base',
-        to_network: 'Monad',
-        recipient: toAddress,
-      },
-    });
-
-    swap(
-      {
-        token_name: tokenFrom.symbol,
-        amount_in: fromAmount,
-        min_amount_out: toAmount,
-        recipient: toAddress,
-        token_out_name: tokenTo.symbol,
-      },
-      {
-        onSuccess: () => {
-          // Track successful bridge
-          trackEvent('TOKEN_BRIDGE', {
-            event_category: 'token_station',
-            event_label: 'token_bridge_success',
-            include_user_id: true,
-            custom_parameters: {
-              mode: mode,
-              token_from: tokenFrom.symbol,
-              token_to: tokenTo.symbol,
-              amount_in: fromAmount,
-            },
-          });
-        },
-        onError: (error: Error) => {
-          // Track failed bridge
-          trackEvent('ERROR_OCCURRED', {
-            event_category: 'token_station',
-            event_label: 'token_bridge_failed',
-            error_message: error?.message || 'Unknown error',
-            include_user_id: true,
-            custom_parameters: {
-              mode: mode,
-              token_from: tokenFrom.symbol,
-              token_to: tokenTo.symbol,
-            },
-          });
-        },
+    // Guard the required network strictly before swapping
+    const switchNetwork = async (target: { id: number }) => {
+      return Promise.resolve(eventBus.publish('toggle-network', target));
+    };
+    const ensure = async () => {
+      if (mode === 'CCIP') {
+        return ensureEthNetwork({
+          chainId,
+          switchNetwork,
+          sentryTags: { area: 'token_station', action: 'swap', mode: 'CCIP' },
+        });
       }
-    );
+      return ensureBaseNetwork({
+        chainId,
+        switchNetwork,
+        sentryTags: { area: 'token_station', action: 'swap', mode: 'BRIDGE' },
+      });
+    };
+    // Stop the flow if wrong network; user can click again after switch
+    // Note: approve flow already guarded in handleConfirm
+    // Using sync wait to keep existing function not async
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    ensure().then((ok) => {
+      if (!ok) return;
+
+      if (Number(fromAmount) > Number(fromBalance)) {
+        toast.error('Insufficient balance');
+        return;
+      }
+
+      // Track token bridge attempt
+      trackEvent('TOKEN_BRIDGE', {
+        event_category: 'token_station',
+        event_label: 'token_bridge_attempt',
+        include_user_id: true,
+        custom_parameters: {
+          mode: mode,
+          token_from: tokenFrom.symbol,
+          token_to: tokenTo.symbol,
+          amount_in: fromAmount,
+          min_amount_out: toAmount,
+          from_network: mode === 'CCIP' ? 'Ethereum' : 'Base',
+          to_network: 'Monad',
+          recipient: toAddress,
+        },
+      });
+
+      swap(
+        {
+          token_name: tokenFrom.symbol,
+          amount_in: fromAmount,
+          min_amount_out: toAmount,
+          recipient: toAddress,
+          token_out_name: tokenTo.symbol,
+        },
+        {
+          onSuccess: () => {
+            // Track successful bridge
+            trackEvent('TOKEN_BRIDGE', {
+              event_category: 'token_station',
+              event_label: 'token_bridge_success',
+              include_user_id: true,
+              custom_parameters: {
+                mode: mode,
+                token_from: tokenFrom.symbol,
+                token_to: tokenTo.symbol,
+                amount_in: fromAmount,
+              },
+            });
+          },
+          onError: (error: Error) => {
+            // Track failed bridge
+            trackEvent('ERROR_OCCURRED', {
+              event_category: 'token_station',
+              event_label: 'token_bridge_failed',
+              error_message: error?.message || 'Unknown error',
+              include_user_id: true,
+              custom_parameters: {
+                mode: mode,
+                token_from: tokenFrom.symbol,
+                token_to: tokenTo.symbol,
+              },
+            });
+          },
+        }
+      );
+    });
   }
 
   const ModeSwitch = () => {

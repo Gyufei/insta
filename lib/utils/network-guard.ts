@@ -72,3 +72,121 @@ export async function ensureMonadNetwork(
   }
   return true;
 }
+
+// ===== Base Network Guard =====
+export function ensureBaseNetworkSync(options: EnsureOptions): boolean {
+  const { chainId, toastMessage, onFailToast = true } = options || {};
+  const targetLabel = NetworkConfigs.base.name;
+  const targetId = NetworkConfigs.base.id;
+
+  if (!chainId || chainId !== targetId) {
+    if (onFailToast) {
+      toast.error(
+        toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
+      );
+    }
+    return false;
+  }
+  return true;
+}
+
+export async function ensureBaseNetwork(
+  options: EnsureOptions & {
+    switchNetwork?: (target: { id: number }) => Promise<void>;
+  }
+): Promise<boolean> {
+  const {
+    chainId,
+    toastMessage,
+    onFailToast = true,
+    switchNetwork,
+    sentryTags,
+    sentryExtra,
+  } = options || {};
+  const targetLabel = NetworkConfigs.base.name;
+  const targetId = NetworkConfigs.base.id;
+
+  if (!chainId || chainId !== targetId) {
+    try {
+      if (switchNetwork) {
+        await switchNetwork(NetworkConfigs.base);
+      }
+      if (onFailToast) {
+        toast.error(
+          toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
+        );
+      }
+    } catch (error) {
+      Sentry.captureException(error, {
+        tags: { ...(sentryTags || {}), error_type: 'network_switch' },
+        extra: { ...(sentryExtra || {}), current_chain_id: chainId },
+      });
+      if (onFailToast) {
+        toast.error(
+          toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
+        );
+      }
+    }
+    return false;
+  }
+  return true;
+}
+
+// ===== Ethereum Network Guard =====
+export function ensureEthNetworkSync(options: EnsureOptions): boolean {
+  const { chainId, toastMessage, onFailToast = true } = options || {};
+  const targetLabel = NetworkConfigs.eth.name;
+  const targetId = NetworkConfigs.eth.id;
+
+  if (!chainId || chainId !== targetId) {
+    if (onFailToast) {
+      toast.error(
+        toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
+      );
+    }
+    return false;
+  }
+  return true;
+}
+
+export async function ensureEthNetwork(
+  options: EnsureOptions & {
+    switchNetwork?: (target: { id: number }) => Promise<void>;
+  }
+): Promise<boolean> {
+  const {
+    chainId,
+    toastMessage,
+    onFailToast = true,
+    switchNetwork,
+    sentryTags,
+    sentryExtra,
+  } = options || {};
+  const targetLabel = NetworkConfigs.eth.name;
+  const targetId = NetworkConfigs.eth.id;
+
+  if (!chainId || chainId !== targetId) {
+    try {
+      if (switchNetwork) {
+        await switchNetwork(NetworkConfigs.eth);
+      }
+      if (onFailToast) {
+        toast.error(
+          toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
+        );
+      }
+    } catch (error) {
+      Sentry.captureException(error, {
+        tags: { ...(sentryTags || {}), error_type: 'network_switch' },
+        extra: { ...(sentryExtra || {}), current_chain_id: chainId },
+      });
+      if (onFailToast) {
+        toast.error(
+          toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
+        );
+      }
+    }
+    return false;
+  }
+  return true;
+}
