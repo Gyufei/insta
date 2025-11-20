@@ -91,7 +91,7 @@ export function StakingContent() {
   }, [wallet, currentAccountType, accountInfo?.sandbox_account, selectedProject]);
 
   return (
-    <div className="w-full px-4 md:pl-12 md:pr-0 flex justify-center md:justify-start">
+    <div className="w-full px-4 md:px-12 flex justify-center md:justify-start">
       <div className="w-full max-w-md">
         <ProjectSelector
           projectIds={STAKING_PROJECT_IDS}

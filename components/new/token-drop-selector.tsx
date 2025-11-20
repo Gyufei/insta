@@ -16,6 +16,8 @@ import { Switch } from '@/components/ui/switch';
 
 import { cn } from '@/lib/utils';
 import { formatNumber, truncateNumber } from '@/lib/utils/number';
+import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
+import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 
 interface TokenSelectorProps {
   selectedToken?: IToken;
@@ -73,6 +75,20 @@ export function TokenDropSelector({
   onCustomAddressChange,
 }: TokenSelectorProps) {
   // 使用通用工具：当小数超过 2 位时截断，否则保持原样
+  const hasValidCustomAddress = !!customAddressEnabled && !!customAddress && isAddress(customAddress);
+  const {
+    balance: customAddrBalance,
+    isBalancePending: isCustomAddrPending,
+  } = useAddressBalance(
+    customAddress || '',
+    selectedToken?.address || '',
+    selectedToken?.decimals ?? DEFAULT_TOKEN_DECIMALS,
+    hasValidCustomAddress
+  );
+
+  const effectiveBalance = hasValidCustomAddress ? customAddrBalance : balance;
+  const effectivePending = hasValidCustomAddress ? isCustomAddrPending : isBalancePending;
+
   return (
     <div className={cn('flex flex-col gap-[10px]', className)}>
       {/* Account / Wallet selector (move to top as per UI) */}
@@ -129,7 +145,7 @@ export function TokenDropSelector({
               '!text-[32px] !font-medium bg-transparent border-none h-10 p-0 shadow-none focus-visible:ring-0 w-full',
               disabled
                 ? '!text-[#131E40] disabled:text-[#131E40] disabled:opacity-100'
-                : Number(value) < Number(balance)
+                : Number(value) < Number(effectiveBalance)
                   ? '!text-red'
                   : '!text-[#131E40]'
             )}
@@ -183,10 +199,10 @@ export function TokenDropSelector({
           </span>
           <span className="text-sm flex items-center gap-1 text-[#A5ADC6]">
             {selectedToken && <span>{selectedToken?.symbol}: </span>}
-            {isBalancePending ? (
+            {effectivePending ? (
               <Skeleton className="w-10 h-4" />
             ) : (
-              <span>{formatNumber(balance)}</span>
+              <span>{formatNumber(effectiveBalance)}</span>
             )}
             {showMaxButton && onMaxClick && (
               <span className="text-[#6E75F9] cursor-pointer ml-1 font-medium" onClick={onMaxClick}>

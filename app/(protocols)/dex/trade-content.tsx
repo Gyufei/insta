@@ -656,6 +656,13 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     }
   };
 
+  // 当启用自定义收款地址但地址不合法时，禁用 Swap 并在按钮区提示
+  const isRecipientInvalid = useMemo(() => {
+    const needRecipient = currentAccountType === 'EOA' && selectedProject === 'uniswap' && !isMonWmonPair && receiveToCustom;
+    if (!needRecipient) return false;
+    return !receiveCustomAddress || !isAddress(receiveCustomAddress as `0x${string}`);
+  }, [currentAccountType, selectedProject, isMonWmonPair, receiveToCustom, receiveCustomAddress]);
+
   return (
     <>
       <div className="">
@@ -767,7 +774,8 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
                 isSwapPending ||
                 isFromApproving ||
                 !!quoteError ||
-                isInsufficientBalance
+                isInsufficientBalance ||
+                isRecipientInvalid
               }
             >
               {isFromAllowanceLoading && wallet ? (
@@ -788,6 +796,13 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
                 </span>
               )}
             </Button>
+            {isRecipientInvalid && (
+              <div className="rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2 mt-2">
+                <div className="text-xs leading-5 font-medium text-red-700 dark:text-red-300">
+                  Please enter a valid custom address
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

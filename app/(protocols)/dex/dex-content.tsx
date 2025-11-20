@@ -13,14 +13,15 @@ export function DexContent() {
   
   return (
     <>
-      <div className="w-full px-4 md:pl-12 md:pr-0 flex justify-center md:justify-start">
-        <div className="w-full max-w-md">
-          <ProjectSelector
+      <div className="w-full px-4 md:pl-12 md:pr-0 flex justify-center flex-col md:justify-start">
+        <ProjectSelector
             projectIds={DEX_PROJECT_IDS}
             getProject={(id: string) => getDexProject(id as DexProjectId)}
             selectedProject={selectedProject}
             onProjectSelect={(projectId: string) => setSelectedProject(projectId as DexProjectId)}
           />
+        <div className="w-full max-w-md">
+          
           <TradeContent selectedProject={selectedProject} />
         </div>
       </div>

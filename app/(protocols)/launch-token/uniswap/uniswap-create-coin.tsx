@@ -42,6 +42,50 @@ interface FormErrors {
   description?: string;
 }
 
+const MAX_TOTAL_SUPPLY = 1_000_000_000_000;
+
+function getTickerNameError(v: string): string | undefined {
+  const x = v.trim();
+  if (!x) return 'Please enter the ticker name';
+  if (x.length < 2 || x.length > 10) return 'Ticker must be 2-10 characters';
+  if (!/^[A-Z0-9]+$/.test(x)) return 'Ticker allows only A-Z and digits';
+  return undefined;
+}
+
+function getTotalSupplyError(v: string): string | undefined {
+  const x = v.trim();
+  if (!x) return 'Please enter the total supply';
+  if (!/^\d+$/.test(x)) return 'Total supply must be an integer';
+  const n = Number(x);
+  if (n <= 0) return 'Total supply must be greater than 0';
+  if (n > MAX_TOTAL_SUPPLY) return `Total supply must be ≤ ${MAX_TOTAL_SUPPLY.toLocaleString()}`;
+  return undefined;
+}
+
+function getTokenNameError(v: string): string | undefined {
+  const x = v;
+  const t = x.trim();
+  if (!t) return 'Please enter the token name';
+  if (t.length < 3 || t.length > 50) return 'Token name must be 3-50 characters';
+  if (!/^[A-Za-z]/.test(t)) return 'Token name must start with a letter';
+  if (!/^[A-Za-z0-9 _-]+$/.test(t))
+    return 'Only letters, digits, space, hyphen(-), underscore(_)';
+  if (t !== x) return 'No leading or trailing spaces';
+  if (/\s{2,}/.test(t)) return 'No consecutive spaces';
+  return undefined;
+}
+
+function getDescriptionError(v: string): string | undefined {
+  const x = v;
+  const t = x.trim();
+  if (!t) return 'Please enter the token description';
+  if (t.length > 256) return 'Description must be ≤ 256 characters';
+  if (!/^[A-Za-z0-9 _\-.,;:?!]+$/.test(t))
+    return 'Only letters, digits, space, - , _ and .,;:?!';
+  if (t !== x) return 'No leading or trailing spaces';
+  return undefined;
+}
+
 export function UniswapCreateCoin() {
   const { chainId } = useAppKitNetwork();
   const { currentAccountType } = useAccountStore();
@@ -82,12 +126,16 @@ export function UniswapCreateCoin() {
 
   // URL 验证函数 (用于网站链接)
   const isValidUrl = (url: string): boolean => {
-    if (!url.trim()) return true; // 空值允许通过
+    const raw = url.trim();
+    if (!raw) return true; // 空值允许通过
+
+    // 不允许空格
+    if (/\s/.test(raw)) return false;
 
     try {
       // 检查是否包含协议，如果没有则添加 https://
-      let urlToCheck = url;
-      if (!urlToCheck.match(/^https?:\/\//)) {
+      let urlToCheck = raw;
+      if (!/^https?:\/\//i.test(urlToCheck)) {
         urlToCheck = 'https://' + urlToCheck;
       }
 
@@ -100,310 +148,34 @@ export function UniswapCreateCoin() {
 
       const hostname = urlObj.hostname;
 
-      // 检查是否是 IP 地址
+      // 类型：域名（不允许 IP）
       const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
       if (ipPattern.test(hostname)) {
-        return true; // IP 地址是有效的
-      }
-
-      // 检查域名格式：必须包含至少一个点，且以有效的顶级域名结尾
-      const domainParts = hostname.split('.');
-      if (domainParts.length < 2) {
-        return false; // 至少需要 domain.tld 格式
-      }
-
-      // 检查每个部分不能为空
-      if (domainParts.some((part) => part.length === 0)) {
         return false;
       }
 
-      // 检查顶级域名是否有效
-      const tld = domainParts[domainParts.length - 1].toLowerCase();
-      const validTlds = [
-        // 通用顶级域名
-        'com',
-        'org',
-        'net',
-        'edu',
-        'gov',
-        'mil',
-        'int',
-        'info',
-        'biz',
-        'name',
-        'pro',
-        // 新通用顶级域名
-        'co',
-        'io',
-        'me',
-        'tv',
-        'cc',
-        'ly',
-        'be',
-        'to',
-        'in',
-        'it',
-        'de',
-        'fr',
-        'uk',
-        'us',
-        'ca',
-        'au',
-        'jp',
-        'cn',
-        'ru',
-        'br',
-        'mx',
-        'es',
-        'nl',
-        'se',
-        'no',
-        'dk',
-        'fi',
-        'pl',
-        'tr',
-        'ar',
-        'cl',
-        'pe',
-        've',
-        'ec',
-        'uy',
-        'py',
-        'bo',
-        'gy',
-        'sr',
-        // 国家代码顶级域名
-        'ac',
-        'ad',
-        'ae',
-        'af',
-        'ag',
-        'ai',
-        'al',
-        'am',
-        'ao',
-        'aq',
-        'as',
-        'at',
-        'aw',
-        'ax',
-        'az',
-        'ba',
-        'bb',
-        'bd',
-        'be',
-        'bf',
-        'bg',
-        'bh',
-        'bi',
-        'bj',
-        'bl',
-        'bm',
-        'bn',
-        'bq',
-        'bs',
-        'bt',
-        'bv',
-        'bw',
-        'by',
-        'bz',
-        'cc',
-        'cd',
-        'cf',
-        'cg',
-        'ch',
-        'ci',
-        'ck',
-        'cm',
-        'cr',
-        'cu',
-        'cv',
-        'cw',
-        'cx',
-        'cy',
-        'cz',
-        'dj',
-        'dm',
-        'do',
-        'dz',
-        'ee',
-        'eg',
-        'eh',
-        'er',
-        'et',
-        'eu',
-        'fj',
-        'fk',
-        'fm',
-        'fo',
-        'ga',
-        'gb',
-        'gd',
-        'ge',
-        'gf',
-        'gg',
-        'gh',
-        'gi',
-        'gl',
-        'gm',
-        'gn',
-        'gp',
-        'gq',
-        'gr',
-        'gs',
-        'gt',
-        'gu',
-        'gw',
-        'gy',
-        'hk',
-        'hm',
-        'hn',
-        'hr',
-        'ht',
-        'hu',
-        'id',
-        'ie',
-        'il',
-        'im',
-        'is',
-        'je',
-        'jo',
-        'ke',
-        'kg',
-        'kh',
-        'ki',
-        'km',
-        'kn',
-        'kp',
-        'kr',
-        'kw',
-        'ky',
-        'kz',
-        'la',
-        'lb',
-        'lc',
-        'li',
-        'lk',
-        'lr',
-        'ls',
-        'lt',
-        'lu',
-        'lv',
-        'ly',
-        'ma',
-        'mc',
-        'md',
-        'me',
-        'mf',
-        'mg',
-        'mh',
-        'mk',
-        'ml',
-        'mm',
-        'mn',
-        'mo',
-        'mp',
-        'mq',
-        'mr',
-        'ms',
-        'mt',
-        'mu',
-        'mv',
-        'mw',
-        'my',
-        'mz',
-        'na',
-        'nc',
-        'ne',
-        'nf',
-        'ng',
-        'ni',
-        'nl',
-        'no',
-        'np',
-        'nr',
-        'nu',
-        'nz',
-        'om',
-        'pa',
-        'pe',
-        'pf',
-        'pg',
-        'ph',
-        'pk',
-        'pl',
-        'pm',
-        'pn',
-        'pr',
-        'ps',
-        'pt',
-        'pw',
-        'py',
-        'qa',
-        're',
-        'ro',
-        'rs',
-        'ru',
-        'rw',
-        'sa',
-        'sb',
-        'sc',
-        'sd',
-        'se',
-        'sg',
-        'si',
-        'sj',
-        'sk',
-        'sl',
-        'sm',
-        'sn',
-        'so',
-        'sr',
-        'ss',
-        'st',
-        'sv',
-        'sx',
-        'sy',
-        'sz',
-        'tc',
-        'td',
-        'tf',
-        'tg',
-        'th',
-        'tj',
-        'tk',
-        'tl',
-        'tm',
-        'tn',
-        'to',
-        'tr',
-        'tt',
-        'tv',
-        'tw',
-        'tz',
-        'ua',
-        'ug',
-        'um',
-        'us',
-        'uy',
-        'uz',
-        'va',
-        'vc',
-        've',
-        'vg',
-        'vi',
-        'vn',
-        'vu',
-        'wf',
-        'ws',
-        'ye',
-        'yt',
-        'za',
-        'zm',
-        'zw',
-      ];
+      // 长度：最小 3 字符，最大 253 字符
+      if (hostname.length < 3 || hostname.length > 253) {
+        return false;
+      }
 
-      return validTlds.includes(tld);
+      // 允许的域名部分：字母、数字、连接符；不允许以连接符开头或结尾
+      const parts = hostname.split('.');
+      if (parts.length < 2) return false; // 至少需要 domain.tld
+      if (parts.some((p) => p.length === 0)) return false;
+      const labelRegex = /^[A-Za-z0-9-]+$/;
+      if (parts.some((p) => !labelRegex.test(p))) return false;
+      if (parts.some((p) => p.startsWith('-') || p.endsWith('-'))) return false;
+
+      // 必须以字母开头（忽略 www. 前缀）
+      const hostForStart = hostname.replace(/^www\./i, '');
+      if (!/^[A-Za-z]/.test(hostForStart)) return false;
+
+      // 顶级域名：仅字母，长度 2–63（支持新 gTLD，如 .fun）
+      const tld = parts[parts.length - 1];
+      if (!/^[A-Za-z]{2,63}$/.test(tld)) return false;
+
+      return true;
     } catch {
       return false;
     }
@@ -518,9 +290,21 @@ export function UniswapCreateCoin() {
   const handleInputChange =
     (field: keyof CreateCoinFormData) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setFormData((prev) => ({ ...prev, [field]: e.target.value }));
-      // 清除该字段的错误
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
+      const value = e.target.value;
+      setFormData((prev) => ({ ...prev, [field]: value }));
+
+      // 实时计算并设置该字段的错误，便于立即展示提示
+      let error: string | undefined;
+      if (field === 'tickerName') {
+        error = getTickerNameError(value);
+      } else if (field === 'totalSupply') {
+        error = getTotalSupplyError(value);
+      } else if (field === 'tokenName') {
+        error = getTokenNameError(value);
+      } else if (field === 'description') {
+        error = getDescriptionError(value);
+      }
+      setErrors((prev) => ({ ...prev, [field]: error }));
     };
 
   const validateForm = (): boolean => {
@@ -531,23 +315,17 @@ export function UniswapCreateCoin() {
       newErrors.thumbnail = 'Please upload the token icon';
     }
 
-    if (!formData.tokenName.trim()) {
-      newErrors.tokenName = 'Please enter the token name';
-    }
+    const tokenNameErr = getTokenNameError(formData.tokenName);
+    if (tokenNameErr) newErrors.tokenName = tokenNameErr;
 
-    if (!formData.tickerName.trim()) {
-      newErrors.tickerName = 'Please enter the ticker name';
-    }
+    const tickerErr = getTickerNameError(formData.tickerName);
+    if (tickerErr) newErrors.tickerName = tickerErr;
 
-    if (!formData.totalSupply.trim()) {
-      newErrors.totalSupply = 'Please enter the total supply';
-    } else if (isNaN(Number(formData.totalSupply)) || Number(formData.totalSupply) <= 0) {
-      newErrors.totalSupply = 'Please enter a valid total supply';
-    }
+    const supplyErr = getTotalSupplyError(formData.totalSupply);
+    if (supplyErr) newErrors.totalSupply = supplyErr;
 
-    if (!formData.description.trim()) {
-      newErrors.description = 'Please enter the token description';
-    }
+    const descErr = getDescriptionError(formData.description);
+    if (descErr) newErrors.description = descErr;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -702,11 +480,10 @@ export function UniswapCreateCoin() {
   // Check if all required fields are filled
   const isFormIncomplete = 
     !formData.thumbnail ||
-    !formData.tokenName.trim() ||
-    !formData.tickerName.trim() ||
-    !formData.totalSupply.trim() ||
-    !formData.description.trim() ||
-    (!!formData.totalSupply.trim() && (isNaN(Number(formData.totalSupply)) || Number(formData.totalSupply) <= 0));
+    !!getTokenNameError(formData.tokenName) ||
+    !!getTickerNameError(formData.tickerName) ||
+    !!getTotalSupplyError(formData.totalSupply) ||
+    !!getDescriptionError(formData.description);
 
   function resetForm() {
     setFormData({
@@ -902,7 +679,7 @@ export function UniswapCreateCoin() {
                   <div>
                     <Label className="text-sm font-medium text-foreground">Website Link</Label>
                     <Input
-                      placeholder="Enter website link"
+                      placeholder="eg: http://tadle.com"
                       value={websiteInput}
                       onChange={(e) => {
                         setWebsiteInput(e.target.value);
@@ -961,9 +738,9 @@ export function UniswapCreateCoin() {
                   placeholder="Enter the ticker name"
                   value={formData.tickerName}
                   onChange={handleInputChange('tickerName')}
-                  className={cn('w-full', showErrors && errors.tickerName && 'border-red-500')}
+                  className={cn('w-full', errors.tickerName && 'border-red-500')}
                 />
-                {showErrors && errors.tickerName && (
+                {errors.tickerName && (
                   <p className="text-red-500 text-xs mt-1">{errors.tickerName}</p>
                 )}
               </div>
@@ -983,9 +760,9 @@ export function UniswapCreateCoin() {
                       target: { value: v },
                     } as React.ChangeEvent<HTMLInputElement>)
                   }
-                  className={cn('w-full', showErrors && errors.totalSupply && 'border-red-500')}
+                  className={cn('w-full', errors.totalSupply && 'border-red-500')}
                 />
-                {showErrors && errors.totalSupply && (
+                {errors.totalSupply && (
                   <p className="text-red-500 text-xs mt-1">{errors.totalSupply}</p>
                 )}
               </div>
@@ -1003,9 +780,9 @@ export function UniswapCreateCoin() {
                 placeholder="Enter the token name"
                 value={formData.tokenName}
                 onChange={handleInputChange('tokenName')}
-                className={cn('w-full', showErrors && errors.tokenName && 'border-red-500')}
+                className={cn('w-full', errors.tokenName && 'border-red-500')}
               />
-              {showErrors && errors.tokenName && (
+              {errors.tokenName && (
                 <p className="text-red-500 text-xs mt-1">{errors.tokenName}</p>
               )}
             </div>
@@ -1023,10 +800,10 @@ export function UniswapCreateCoin() {
                 rows={4}
                 className={cn(
                   'w-full px-3 py-2 border border-input rounded-md bg-transparent text-sm focus:outline-none focus:ring-0 focus:ring-ring focus:ring-offset-2 resize-none',
-                  showErrors && errors.description && 'border-red-500'
+                  errors.description && 'border-red-500'
                 )}
               />
-              {showErrors && errors.description && (
+              {errors.description && (
                 <p className="text-red-500 text-xs mt-1">{errors.description}</p>
               )}
             </div>

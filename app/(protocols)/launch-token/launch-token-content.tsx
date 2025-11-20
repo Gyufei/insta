@@ -117,7 +117,7 @@ export function LaunchTokenContent() {
   };
 
   return (
-    <div className="w-full px-4 md:pl-12 md:pr-0 flex justify-center md:justify-start">
+    <div className="w-full px-4 md:px-12 flex justify-center md:justify-start">
       <div className="w-full max-w-4xl">
         {/* Module Selection Tabs */}
         <ProjectSelector

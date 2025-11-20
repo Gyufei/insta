@@ -8,8 +8,10 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { useAprioriClaim } from '@/lib/data/use-apriori-claim';
 import { useGetAprioriClaim } from '@/lib/data/use-get-apriori-claim';
 import { formatNumber } from '@/lib/utils/number';
+import { truncateIfExceeds } from '@/lib/utils/number';
 import { formatBig } from '@/lib/utils/number';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
+import { useAccountStore } from '@/lib/state/account';
 
 type ClaimAction = 'all' | 'ready-to-claim' | 'pending';
 
@@ -21,6 +23,8 @@ type ClaimAction = 'all' | 'ready-to-claim' | 'pending';
 export function ClaimUnstakeSections() {
   const [subAction, setSubAction] = useState<ClaimAction>('all');
   const [selectedClaimIds, setSelectedClaimIds] = useState<Set<string>>(new Set());
+  const { currentAccountType } = useAccountStore();
+  const isEoa = currentAccountType === 'EOA';
 
   // 获取claim记录数据
   const { data: claimRecords = [], isLoading: _isClaimRecordsPending } = useGetAprioriClaim();
@@ -193,6 +197,11 @@ export function ClaimUnstakeSections() {
     };
   }, [claimRecords, selectedClaimIds]);
 
+  // 当账户类型为 EOA 时，前端展示需要为空
+  const uiAvailableToClaim = isEoa ? 0 : availableToClaim;
+  const uiReadyToClaimRecords = isEoa ? [] : readyToClaimRecords;
+  const uiPendingClaimRecords = isEoa ? [] : pendingClaimRecords;
+
   // 计算各种状态的总金额用于显示（保留用于未来可能的用途）
   const _readyToClaimAmount = readyToClaimRecords.reduce(
     (sum, claim) => sum + parseFloat(formatBig(claim.token_amount)),
@@ -212,7 +221,7 @@ export function ClaimUnstakeSections() {
         </div>
         <div className="text-sm text-[#999999] flex items-center justify-center">
           <span className="text-[#A5ADC6]">Available to claim</span>
-          <span className="text-[#6E75F9] ml-2">{availableToClaim} MON</span>
+          <span className="text-[#6E75F9] ml-2">{truncateIfExceeds(String(uiAvailableToClaim), 4)} MON</span>
         </div>
       </div>
       <Separator className="mt-3 mb-5" />
@@ -248,10 +257,10 @@ export function ClaimUnstakeSections() {
 
         {/* Content based on main action and sub action */}
         <TabsContent value="all" className="mt-0">
-          {readyToClaimRecords.length > 0 || pendingClaimRecords.length > 0 ? (
+          {uiReadyToClaimRecords.length > 0 || uiPendingClaimRecords.length > 0 ? (
             <div className="space-y-3">
               {/* Ready to claim records */}
-              {readyToClaimRecords.map((claim) => (
+              {uiReadyToClaimRecords.map((claim) => (
                 <div
                   key={claim.request_id}
                   className="flex items-center justify-between p-3 rounded-lg border border-[#EBEBEB]"
@@ -276,7 +285,7 @@ export function ClaimUnstakeSections() {
               ))}
 
               {/* Pending records */}
-              {pendingClaimRecords.map((claim) => {
+              {uiPendingClaimRecords.map((claim) => {
                 const requestTime = new Date(claim.request_at * 1000);
                 const timeDiff = Date.now() - requestTime.getTime();
                 const tenMinutes = 10 * 60 * 1000;
@@ -309,9 +318,9 @@ export function ClaimUnstakeSections() {
         </TabsContent>
 
         <TabsContent value="ready-to-claim" className="mt-0">
-          {readyToClaimRecords.length > 0 ? (
+          {uiReadyToClaimRecords.length > 0 ? (
             <div className="space-y-3">
-              {readyToClaimRecords.map((claim) => (
+              {uiReadyToClaimRecords.map((claim) => (
                 <div
                   key={claim.request_id}
                   className="flex items-center justify-between p-3 rounded-lg border border-[#EBEBEB]"
@@ -341,9 +350,9 @@ export function ClaimUnstakeSections() {
         </TabsContent>
 
         <TabsContent value="pending" className="mt-0">
-          {pendingClaimRecords.length > 0 ? (
+          {uiPendingClaimRecords.length > 0 ? (
             <div className="space-y-3">
-              {pendingClaimRecords.map((claim) => {
+              {uiPendingClaimRecords.map((claim) => {
                 const requestTime = new Date(claim.request_at * 1000);
                 const timeDiff = Date.now() - requestTime.getTime();
                 const tenMinutes = 10 * 60 * 1000;
@@ -359,7 +368,7 @@ export function ClaimUnstakeSections() {
                           {formatNumber(parseFloat(formatBig(claim.token_amount)))} MON
                         </div>
                       </div>
-                      <p className="text-xs text-[#A5ADC6] ml-7">
+                      <p className="text-xs text-[#A5ADC6] mx-8">
                         Available in ~{remainingMinutes} minutes
                       </p>
                       <span className="text-xs px-2 py-1 rounded-[8px] bg-[#6E75F9] text-white opacity-50">
