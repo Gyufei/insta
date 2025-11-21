@@ -55,7 +55,7 @@ function mapRouterName(project: DexProjectId) {
     case 'uniswap':
       return 'Uniswap V3';
     case 'ambient':
-      return 'Ambient';
+      return 'Ambient Finance';
     default:
       return 'Uniswap V3';
   }

@@ -154,7 +154,7 @@ export function ClaimUnstakeSections() {
         // 检查是否已经过了等待时间（10分钟）
         const requestTime = new Date(claim.request_at * 1000);
         const timeDiff = Date.now() - requestTime.getTime();
-        const tenMinutes = 10 * 60 * 1000;
+const tenMinutes = 18 * 60 * 60 * 1000;
 
         if (timeDiff >= tenMinutes) {
           readyRecords.push(claim);
@@ -221,7 +221,7 @@ export function ClaimUnstakeSections() {
         </div>
         <div className="text-sm text-[#999999] flex items-center justify-center">
           <span className="text-[#A5ADC6]">Available to claim</span>
-          <span className="text-[#6E75F9] ml-2">{truncateIfExceeds(String(uiAvailableToClaim), 4)} MON</span>
+          <span className="text-[#6E75F9] ml-2">{uiAvailableToClaim ? truncateIfExceeds(String(uiAvailableToClaim), 4) : '0'} MON</span>
         </div>
       </div>
       <Separator className="mt-3 mb-5" />
@@ -288,9 +288,13 @@ export function ClaimUnstakeSections() {
               {uiPendingClaimRecords.map((claim) => {
                 const requestTime = new Date(claim.request_at * 1000);
                 const timeDiff = Date.now() - requestTime.getTime();
-                const tenMinutes = 10 * 60 * 1000;
+const tenMinutes = 18 * 60 * 60 * 1000;
                 const remainingTime = Math.max(0, tenMinutes - timeDiff);
                 const remainingMinutes = Math.max(1, Math.ceil(remainingTime / (60 * 1000)));
+                const remainingText =
+                  remainingMinutes >= 60
+                    ? `${Math.ceil(remainingMinutes / 60)} hours`
+                    : `${remainingMinutes} minutes`;
 
                 return (
                   <div key={claim.request_id} className="space-y-2">
@@ -302,7 +306,7 @@ export function ClaimUnstakeSections() {
                         </div>
                       </div>
                       <p className="text-xs text-[#A5ADC6] mx-3">
-                        Available in ~{remainingMinutes} minutes
+                        Available in ~{remainingText}
                       </p>
                       <span className="text-xs px-2 py-1 rounded-[8px] bg-[#6E75F9] text-white opacity-50">
                         Pending
@@ -355,9 +359,13 @@ export function ClaimUnstakeSections() {
               {uiPendingClaimRecords.map((claim) => {
                 const requestTime = new Date(claim.request_at * 1000);
                 const timeDiff = Date.now() - requestTime.getTime();
-                const tenMinutes = 10 * 60 * 1000;
+const tenMinutes = 18 * 60 * 60 * 1000;
                 const remainingTime = Math.max(0, tenMinutes - timeDiff);
                 const remainingMinutes = Math.max(1, Math.ceil(remainingTime / (60 * 1000)));
+                const remainingText =
+                  remainingMinutes >= 60
+                    ? `${Math.ceil(remainingMinutes / 60)} hours`
+                    : `${remainingMinutes} minutes`;
 
                 return (
                   <div key={claim.request_id} className="space-y-2">
@@ -369,7 +377,7 @@ export function ClaimUnstakeSections() {
                         </div>
                       </div>
                       <p className="text-xs text-[#A5ADC6] mx-3">
-                        Available in ~{remainingMinutes} minutes
+                        Available in ~{remainingText}
                       </p>
                       <span className="text-xs px-2 py-1 rounded-[8px] bg-[#6E75F9] text-white opacity-50">
                         Pending

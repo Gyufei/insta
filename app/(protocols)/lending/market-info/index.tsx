@@ -19,7 +19,6 @@ import { useSelectedAccount } from '@/lib/data/account-address/use-selected-acco
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import type { ICurvanceMarketUserItem } from '@/lib/data/use-curvance-market-user-info';
 import type { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
-import { useAccountStore } from '@/lib/state/account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateIfExceeds } from '@/lib/utils/number';
@@ -45,10 +44,8 @@ export function LendingMarketInfo() {
 
   // Hooks must be called unconditionally
   const { address } = useAccount();
-  const { currentAccountType } = useAccountStore();
   const { data: accountInfo } = useSelectedAccount();
-  const walletAddress =
-    currentAccountType === 'EOA' ? address || '' : accountInfo?.sandbox_account || '';
+  const walletAddress = accountInfo?.sandbox_account || address || '';
   const token0 = market?.token0;
   const token1 = market?.token1;
   const isBorrow = actionMode === 'borrow';

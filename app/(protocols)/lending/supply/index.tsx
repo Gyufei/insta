@@ -24,6 +24,8 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
 
 import { useRPCTokenBalance } from '@/lib/data/balance/use-rpc-token-balance';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
+import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useCurvanceDeposit } from '@/lib/data/use-curvance-deposit';
 import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
 import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
@@ -69,7 +71,15 @@ export function LendingSupply() {
   );
 
   const { address } = useAccount();
-  const { balance, isPending: isBalancePending, refetch: refetchWalletBalance } = useRPCTokenBalance(
+  const { data: selectedAccount } = useSelectedAccount();
+  const dsaAddress = selectedAccount?.sandbox_account || address || '';
+  const { balance: dsaBalance, isBalancePending: isDSABalancePending } = useAddressBalance(
+    dsaAddress,
+    token.address,
+    token.decimals,
+    !!dsaAddress
+  );
+  const { balance, refetch: refetchWalletBalance } = useRPCTokenBalance(
     NetworkConfigs.monadTestnet.id,
     address || '',
     token.address,
@@ -297,7 +307,7 @@ export function LendingSupply() {
               <div className="flex items-start justify-between w-full">
                 <div className="text-sm text-[#A5ADC6]">{`$${usdValue}`}</div>
                 <div className="text-right text-sm text-[#A5ADC6] whitespace-nowrap">
-                  Available: <span className="text-[#131E40]">{isBalancePending ? '...' : formatNumber(balance)}</span>
+                  Available: <span className="text-[#131E40]">{isDSABalancePending ? '...' : formatNumber(dsaBalance)}</span>
                   <button
                     type="button"
                     className="ml-2 text-[#6E75F9] font-medium"
