@@ -69,17 +69,33 @@ export function LendingBorrow() {
     );
   }, [marketsQuery.data, props?.market_address]);
   const tokenPrice = useMemo(() => {
-    const p = parseFloat(market?.token1?.price || '0');
-    return Number.isFinite(p) ? p : 0;
+    // SECURITY: Safe price parsing with validation
+    const priceStr = market?.token1?.price;
+    if (!priceStr) return 0;
+    const p = parseFloat(priceStr);
+    // SECURITY: Reject invalid prices (NaN, Infinity, negative)
+    if (!Number.isFinite(p) || p < 0) {
+      console.warn('[BORROW] Invalid token price detected', priceStr);
+      return 0;
+    }
+    return p;
   }, [market?.token1?.price]);
 
   // 基于 /curvance/markets 的 token1.total_debt 估算池子可借规模（单位：token）
   const poolBorrowableTokens = useMemo(() => {
+    // SECURITY: Safe pool liquidity calculation
     const debtTokens = parseFloat(market?.token1?.total_debt || '0');
     if (Number.isFinite(debtTokens) && debtTokens > 0) return debtTokens;
+
+    // Fallback: calculate from USD value
     const debtUSD = parseFloat(market?.token1?.total_debt_in_usd || '0');
     const price = parseFloat(market?.token1?.price || '0');
-    const tokens = price > 0 ? debtUSD / price : 0;
+
+    // SECURITY: Prevent division by zero and validate inputs
+    if (!Number.isFinite(debtUSD) || debtUSD <= 0) return 0;
+    if (!Number.isFinite(price) || price <= 0) return 0;
+
+    const tokens = debtUSD / price;
     return Number.isFinite(tokens) && tokens > 0 ? tokens : 0;
   }, [market?.token1?.total_debt, market?.token1?.total_debt_in_usd, market?.token1?.price]);
 
@@ -131,12 +147,59 @@ export function LendingBorrow() {
     });
     if (!ok) return;
 
+    // ===== SECURITY: Input validation =====
     if (!inputValue || btnDisabled || isPending) return;
+
+    // SECURITY: Validate required addresses to prevent contract call failures
+    if (!token.address || token.address === '0x0') {
+      console.error('[BORROW] Invalid borrowable_token address');
+      return;
+    }
+    if (!props?.borrowable_c_token?.address) {
+      console.error('[BORROW] Missing borrowable_c_token address');
+      return;
+    }
+    if (!props?.market_address) {
+      console.error('[BORROW] Missing market_address');
+      return;
+    }
+
+    // SECURITY: Parse and validate amount
     const amount = parseBig(inputValue, token.decimals);
+    if (!amount || amount.toString() === '0' || amount.toString() === 'NaN') {
+      console.error('[BORROW] Invalid borrow amount', inputValue);
+      return;
+    }
+
+    // SECURITY: Validate numeric inputs are finite
+    const inputNum = parseFloat(inputValue);
+    if (!Number.isFinite(inputNum) || inputNum <= 0) {
+      console.error('[BORROW] Invalid numeric input', inputValue);
+      return;
+    }
+
+    // SECURITY: Check pool liquidity before submitting
+    const poolAvailable = poolBorrowableTokens || 0;
+    if (inputNum > poolAvailable) {
+      console.warn('[BORROW] Insufficient pool liquidity', {
+        requested: inputNum,
+        available: poolAvailable,
+      });
+      // Allow to proceed - backend/contract will reject, but warn user
+    }
+
+    // SECURITY: Validate first borrow minimum ($10 USD equivalent)
+    if (isBelowMinFirstBorrow) {
+      console.warn('[BORROW] First borrow below $10 minimum', {
+        usdValue,
+        isFirstBorrow,
+      });
+      // Allow to proceed - show warning but don't block
+    }
 
     const payload = {
       borrowable_token: token.address,
-      borrowable_c_token: props?.borrowable_c_token?.address || '',
+      borrowable_c_token: props.borrowable_c_token.address,
       borrow_amount: amount.toString(),
     };
 

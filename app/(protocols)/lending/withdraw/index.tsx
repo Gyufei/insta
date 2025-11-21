@@ -77,8 +77,16 @@ export function LendingWithdraw() {
     );
   }, [marketsQuery.data, props?.market_address]);
   const tokenPrice = useMemo(() => {
-    const p = parseFloat(market?.token0?.price || '0');
-    return Number.isFinite(p) ? p : 0;
+    // SECURITY: Safe price parsing with validation
+    const priceStr = market?.token0?.price;
+    if (!priceStr) return 0;
+    const p = parseFloat(priceStr);
+    // SECURITY: Reject invalid prices (NaN, Infinity, negative)
+    if (!Number.isFinite(p) || p < 0) {
+      console.warn('[WITHDRAW] Invalid token price detected', priceStr);
+      return 0;
+    }
+    return p;
   }, [market?.token0?.price]);
   const usdValue = useMemo(() => {
     const amount = parseFloat(inputValue || '0');
@@ -91,10 +99,25 @@ export function LendingWithdraw() {
 
   // 冷却期逻辑：解析 cooldown 字段，禁用按钮并提示剩余时间
   const cooldownRaw = userItem?.cooldown || '';
-  // 优化：后端返回为“绝对 Unix 秒级时间戳”，示例 1763030948
+  // 优化：后端返回为"绝对 Unix 秒级时间戳"，示例 1763030948
   const cooldownEndMs = useMemo(() => {
+    // SECURITY: Safe cooldown timestamp parsing
+    if (!cooldownRaw) return 0;
     const num = Number(cooldownRaw);
-    if (!Number.isFinite(num) || num <= 0) return 0;
+    // SECURITY: Validate timestamp is a valid finite number
+    if (!Number.isFinite(num) || num <= 0) {
+      if (cooldownRaw !== '' && cooldownRaw !== '0') {
+        console.warn('[WITHDRAW] Invalid cooldown timestamp', cooldownRaw);
+      }
+      return 0;
+    }
+    // SECURITY: Sanity check - timestamp should be reasonable (not too far in future)
+    const maxReasonableYears = 10;
+    const maxTimestamp = Date.now() / 1000 + maxReasonableYears * 365 * 24 * 60 * 60;
+    if (num > maxTimestamp) {
+      console.warn('[WITHDRAW] Cooldown timestamp too far in future', num);
+      return 0;
+    }
     return num * 1000; // 将秒转为毫秒
   }, [cooldownRaw]);
   const [nowTs, setNowTs] = useState<number>(() => Date.now());
@@ -133,12 +156,60 @@ export function LendingWithdraw() {
     });
     if (!ok) return;
 
-    if (!inputValue || btnDisabled || isPending || isCooldownActive) return;
+    // ===== SECURITY: Pre-flight checks in priority order =====
+    // SECURITY: Check cooldown FIRST to prevent any attempts during lock period
+    if (isCooldownActive) {
+      console.warn('[WITHDRAW] Blocked: cooldown active', {
+        remainingMs,
+        unlockAtLocal,
+      });
+      return;
+    }
+
+    // SECURITY: Basic input validation
+    if (!inputValue || btnDisabled || isPending) return;
+
+    // SECURITY: Validate required addresses
+    if (!props?.base_token?.address) {
+      console.error('[WITHDRAW] Missing base_token address');
+      return;
+    }
+    if (!props?.base_c_token?.address) {
+      console.error('[WITHDRAW] Missing base_c_token address');
+      return;
+    }
+    if (!props?.market_address) {
+      console.error('[WITHDRAW] Missing market_address');
+      return;
+    }
+
+    // SECURITY: Parse and validate shares amount
     const shares = parseBig(inputValue, token.decimals);
+    if (!shares || shares.toString() === '0' || shares.toString() === 'NaN') {
+      console.error('[WITHDRAW] Invalid withdraw shares', inputValue);
+      return;
+    }
+
+    // SECURITY: Validate numeric input
+    const inputNum = parseFloat(inputValue);
+    if (!Number.isFinite(inputNum) || inputNum <= 0) {
+      console.error('[WITHDRAW] Invalid numeric input', inputValue);
+      return;
+    }
+
+    // SECURITY: Validate shares don't exceed balance
+    const availableShares = parseFloat(sharesBalance || '0');
+    if (!Number.isFinite(availableShares) || inputNum > availableShares) {
+      console.error('[WITHDRAW] Insufficient shares balance', {
+        requested: inputNum,
+        available: availableShares,
+      });
+      return;
+    }
 
     const payload = {
-      base_token: props?.base_token?.address || '',
-      base_c_token: props?.base_c_token?.address || '',
+      base_token: props.base_token.address,
+      base_c_token: props.base_c_token.address,
       withdraw_shares: shares.toString(),
     };
 

@@ -290,7 +290,7 @@ export function ClaimUnstakeSections() {
                 const timeDiff = Date.now() - requestTime.getTime();
                 const tenMinutes = 10 * 60 * 1000;
                 const remainingTime = Math.max(0, tenMinutes - timeDiff);
-                const remainingMinutes = Math.ceil(remainingTime / (60 * 1000));
+                const remainingMinutes = Math.max(1, Math.ceil(remainingTime / (60 * 1000)));
 
                 return (
                   <div key={claim.request_id} className="space-y-2">
@@ -301,7 +301,7 @@ export function ClaimUnstakeSections() {
                           {formatNumber(parseFloat(formatBig(claim.token_amount)))} MON
                         </div>
                       </div>
-                      <p className="text-xs text-[#A5ADC6] ml-7">
+                      <p className="text-xs text-[#A5ADC6] mx-3">
                         Available in ~{remainingMinutes} minutes
                       </p>
                       <span className="text-xs px-2 py-1 rounded-[8px] bg-[#6E75F9] text-white opacity-50">
@@ -357,7 +357,7 @@ export function ClaimUnstakeSections() {
                 const timeDiff = Date.now() - requestTime.getTime();
                 const tenMinutes = 10 * 60 * 1000;
                 const remainingTime = Math.max(0, tenMinutes - timeDiff);
-                const remainingMinutes = Math.ceil(remainingTime / (60 * 1000));
+                const remainingMinutes = Math.max(1, Math.ceil(remainingTime / (60 * 1000)));
 
                 return (
                   <div key={claim.request_id} className="space-y-2">
@@ -368,7 +368,7 @@ export function ClaimUnstakeSections() {
                           {formatNumber(parseFloat(formatBig(claim.token_amount)))} MON
                         </div>
                       </div>
-                      <p className="text-xs text-[#A5ADC6] mx-8">
+                      <p className="text-xs text-[#A5ADC6] mx-3">
                         Available in ~{remainingMinutes} minutes
                       </p>
                       <span className="text-xs px-2 py-1 rounded-[8px] bg-[#6E75F9] text-white opacity-50">

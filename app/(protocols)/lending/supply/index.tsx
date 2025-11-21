@@ -1,21 +1,27 @@
+import { useAppKitNetwork } from '@reown/appkit/react';
 import * as Sentry from '@sentry/nextjs';
 import { useAccount } from 'wagmi';
-import { useAppKitNetwork } from '@reown/appkit/react';
 
 
 
 import { useMemo } from 'react';
 
+
+
 import { NetworkConfigs } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
+
+
 
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/new/action-button';
 import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
-import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
+
+
 
 import { useRPCTokenBalance } from '@/lib/data/balance/use-rpc-token-balance';
 import { useCurvanceDeposit } from '@/lib/data/use-curvance-deposit';
@@ -24,8 +30,8 @@ import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
-import { formatNumber, parseBig } from '@/lib/utils/number';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
+import { formatNumber, parseBig } from '@/lib/utils/number';
 
 
 
@@ -109,12 +115,50 @@ export function LendingSupply() {
     });
     if (!ok) return;
 
+    // ===== SECURITY: Input validation =====
     if (!inputValue || btnDisabled || isPending) return;
+
+    // SECURITY: Validate required addresses
+    if (!token.address || token.address === '0x0') {
+      console.error('[SUPPLY] Invalid base_token address');
+      return;
+    }
+    if (!props?.base_c_token?.address) {
+      console.error('[SUPPLY] Missing base_c_token address');
+      return;
+    }
+    if (!props?.market_address) {
+      console.error('[SUPPLY] Missing market_address');
+      return;
+    }
+
+    // SECURITY: Parse and validate amount
     const amount = parseBig(inputValue, token.decimals);
+    if (!amount || amount.toString() === '0' || amount.toString() === 'NaN') {
+      console.error('[SUPPLY] Invalid deposit amount', inputValue);
+      return;
+    }
+
+    // SECURITY: Validate numeric input
+    const inputNum = parseFloat(inputValue);
+    if (!Number.isFinite(inputNum) || inputNum <= 0) {
+      console.error('[SUPPLY] Invalid numeric input', inputValue);
+      return;
+    }
+
+    // SECURITY: Validate against wallet balance
+    const walletAmount = parseFloat(balance || '0');
+    if (!Number.isFinite(walletAmount) || inputNum > walletAmount) {
+      console.error('[SUPPLY] Insufficient wallet balance', {
+        requested: inputNum,
+        available: walletAmount,
+      });
+      return;
+    }
 
     const payload = {
       base_token: token.address,
-      base_c_token: props?.base_c_token?.address || '',
+      base_c_token: props.base_c_token.address,
       deposit_amount: amount.toString(),
     };
 

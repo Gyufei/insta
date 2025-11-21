@@ -1,10 +1,16 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { useAccount } from 'wagmi';
 
+
+
 import { useMemo } from 'react';
+
+
 
 import { NetworkConfigs } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
+
+
 
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/new/action-button';
@@ -13,6 +19,8 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
+
+
 
 import { useRPCTokenBalance } from '@/lib/data/balance/use-rpc-token-balance';
 import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
@@ -23,6 +31,10 @@ import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 import { formatNumber, parseBig } from '@/lib/utils/number';
+
+
+
+
 
 type LendingRepayProps = {
   market_address: string;
@@ -81,6 +93,7 @@ export function LendingRepay() {
 
   // Use the smaller of wallet vs debt as the input constraint
   const inputConstraintBalance = useMemo(() => {
+    // SECURITY: Safe balance comparison with NaN handling
     const w = parseFloat(walletBalance || '0');
     const d = parseFloat(debtBalance || '0');
     return String(Math.min(w || 0, d || 0));
@@ -125,12 +138,58 @@ export function LendingRepay() {
     });
     if (!ok) return;
 
+    // ===== SECURITY: Input validation =====
     if (!inputValue || btnDisabled || isPending) return;
+
+    // SECURITY: Validate required addresses
+    if (!token.address || token.address === '0x0') {
+      console.error('[REPAY] Invalid borrowable_token address');
+      return;
+    }
+    if (!props?.borrowable_c_token?.address) {
+      console.error('[REPAY] Missing borrowable_c_token address');
+      return;
+    }
+    if (!props?.market_address) {
+      console.error('[REPAY] Missing market_address');
+      return;
+    }
+
+    // SECURITY: Parse and validate amount
     const amount = parseBig(inputValue, token.decimals);
+    if (!amount || amount.toString() === '0' || amount.toString() === 'NaN') {
+      console.error('[REPAY] Invalid repay amount', inputValue);
+      return;
+    }
+
+    // SECURITY: Validate numeric input
+    const inputNum = parseFloat(inputValue);
+    if (!Number.isFinite(inputNum) || inputNum <= 0) {
+      console.error('[REPAY] Invalid numeric input', inputValue);
+      return;
+    }
+
+    // SECURITY: Double-check against wallet balance
+    const wallet = parseFloat(walletBalance || '0');
+    if (!Number.isFinite(wallet) || inputNum > wallet) {
+      console.error('[REPAY] Insufficient wallet balance', {
+        requested: inputNum,
+        available: wallet,
+      });
+      return;
+    }
+
+    // SECURITY: Double-check against debt balance
+    const debt = parseFloat(debtBalance || '0');
+    if (!Number.isFinite(debt)) {
+      console.error('[REPAY] Invalid debt balance', debtBalance);
+      return;
+    }
+    // Note: Allow repaying slightly more than debt to account for accrued interest
 
     const payload = {
       borrowable_token: token.address,
-      borrowable_c_token: props?.borrowable_c_token?.address || '',
+      borrowable_c_token: props.borrowable_c_token.address,
       repay_amount: amount.toString(),
     };
 
