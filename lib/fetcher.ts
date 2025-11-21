@@ -3,7 +3,16 @@ export async function Fetcher<T = unknown>(
   init?: RequestInit | undefined
 ): Promise<T> {
   try {
-    const result = await fetch(input, init);
+    const finalInit: RequestInit = {
+      ...init,
+      // Avoid HTTP cache returning 304 for dynamic data
+      cache: 'no-store',
+      headers: {
+        ...(init?.headers || {}),
+        'Cache-Control': 'no-cache',
+      },
+    };
+    const result = await fetch(input, finalInit);
     const res = await parsedRes(result);
 
     return res;

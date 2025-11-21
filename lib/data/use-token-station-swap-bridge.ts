@@ -37,6 +37,7 @@ export function useTokenStationSwapBridge() {
     },
     SUCCESS_MESSAGES.TOP_UP_SUCCESS,
     ERROR_MESSAGES.TOP_UP_FAILED,
-    { checkAddress: true, checkAccount: false, refreshQueryKey: [] }
+    // Refetch account balance queries on success to keep UI in sync
+    { checkAddress: true, checkAccount: false, refreshQueryKey: ['account', 'balance'] }
   )();
 }

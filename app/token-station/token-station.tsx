@@ -118,12 +118,20 @@ export function TokenStation() {
     return NetworkConfigs.eth;
   }, [mode]);
 
-  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useApiChainBalance(
+  const {
+    balance: fromBalance,
+    isBalancePending: isFromBalancePending,
+    refetch: _refetchFromApiBalance,
+  } = useApiChainBalance(
     currentNet.id,
     tokenFromAddress
   );
 
-  const { balance: toBalance, isBalancePending: isToBalancePending } = useRPCBalance(
+  const {
+    balance: toBalance,
+    isBalancePending: isToBalancePending,
+    refetch: _refetchToBalance,
+  } = useRPCBalance(
     NetworkConfigs.monadTestnet.id,
     toAddress,
     tokenTo.address,
@@ -459,6 +467,7 @@ export function TokenStation() {
         },
         {
           onSuccess: () => {
+
             // Track successful bridge
             trackEvent('TOKEN_BRIDGE', {
               event_category: 'token_station',

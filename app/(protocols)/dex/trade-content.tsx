@@ -9,17 +9,13 @@ import { useAccount } from 'wagmi';
 
 
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 
 
 import Image from 'next/image';
 
-
-
 import { useOddsUserInfo } from '@/app/odds/common/use-user-info';
-
-
 
 import {
   BACKEND_NATIVE_ADDRESS,
@@ -89,15 +85,50 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
 
   const [rotateTimes, setRotateTimes] = useState(0);
 
-  const { balance: fromBalance, isBalancePending: isFromBalancePending } = useAddressBalance(
+  const {
+    balance: fromBalance,
+    isBalancePending: isFromBalancePending,
+    refetch: refetchFromBalance,
+  } = useAddressBalance(
     currentAccountType === 'EOA' ? wallet || '' : accountInfo?.sandbox_account || '',
     sellToken?.address || ''
   );
 
-  const { balance: toBalance, isBalancePending: isToBalancePending } = useAddressBalance(
+  const {
+    balance: toBalance,
+    isBalancePending: isToBalancePending,
+    refetch: refetchToBalance,
+  } = useAddressBalance(
     currentAccountType === 'EOA' ? wallet || '' : accountInfo?.sandbox_account || '',
     buyToken?.address || ''
   );
+
+  // 分阶段余额刷新，缓解后端索引延迟导致的旧数据
+  const refreshTimersRef = useRef<number[]>([]);
+  const scheduleBalanceRefresh = (delays: number[] = [1500]) => {
+    // 清理先前的定时器，避免累积
+    refreshTimersRef.current.forEach((id) => clearTimeout(id));
+    refreshTimersRef.current = [];
+
+    delays.forEach((delay) => {
+      const id = window.setTimeout(() => {
+        // 数据新鲜时 UI 会自动更新
+
+        refetchFromBalance?.();
+
+        refetchToBalance?.();
+      }, delay);
+      refreshTimersRef.current.push(id);
+    });
+  };
+
+  // 组件卸载时清理定时器
+  useEffect(() => {
+    return () => {
+      refreshTimersRef.current.forEach((id) => clearTimeout(id));
+      refreshTimersRef.current = [];
+    };
+  }, []);
 
   const _isBuyMonUsd = isSameAddress(buyToken?.address || '', MonUSD.address);
 
@@ -569,6 +600,8 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
             // 交易成功后置空输入，并让报价与显示重置
             setSellValue('');
             setBuyValue('0.00');
+
+            scheduleBalanceRefresh();
           },
         });
       } catch (err) {
@@ -594,6 +627,8 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
             // 交易成功后置空输入，并让报价与显示重置
             setSellValue('');
             setBuyValue('0.00');
+
+            scheduleBalanceRefresh();
           },
         });
       } catch (err) {
@@ -658,7 +693,11 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
 
   // 当启用自定义收款地址但地址不合法时，禁用 Swap 并在按钮区提示
   const isRecipientInvalid = useMemo(() => {
-    const needRecipient = currentAccountType === 'EOA' && selectedProject === 'uniswap' && !isMonWmonPair && receiveToCustom;
+    const needRecipient =
+      currentAccountType === 'EOA' &&
+      selectedProject === 'uniswap' &&
+      !isMonWmonPair &&
+      receiveToCustom;
     if (!needRecipient) return false;
     return !receiveCustomAddress || !isAddress(receiveCustomAddress as `0x${string}`);
   }, [currentAccountType, selectedProject, isMonWmonPair, receiveToCustom, receiveCustomAddress]);

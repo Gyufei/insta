@@ -10,6 +10,7 @@ interface BalanceResult {
   balance: string;
   isBalancePending: boolean;
   isNative: boolean;
+  refetch?: () => Promise<unknown>;
 }
 
 export function useRPCBalance(
@@ -23,12 +24,20 @@ export function useRPCBalance(
     isSameAddress(tokenAddress, DEFAULT_NATIVE_ADDRESS) ||
     isSameAddress(tokenAddress, BACKEND_NATIVE_ADDRESS);
 
-  const { balance: nativeBalance, isPending: isNativeBalancePending } = useRPCNativeBalance(
+  const {
+    balance: nativeBalance,
+    isPending: isNativeBalancePending,
+    refetch: refetchNative,
+  } = useRPCNativeBalance(
     chainId,
     address
   );
 
-  const { balance: tokenBalance, isPending: isTokenBalancePending } = useRPCTokenBalance(
+  const {
+    balance: tokenBalance,
+    isPending: isTokenBalancePending,
+    refetch: refetchToken,
+  } = useRPCTokenBalance(
     chainId,
     address,
     tokenAddress,
@@ -41,10 +50,12 @@ export function useRPCBalance(
     : truncateNumber(tokenBalance?.balance || '0', 4);
 
   const isBalancePending = Boolean(isNative) ? isNativeBalancePending : isTokenBalancePending;
+  const refetch = isNative ? refetchNative : refetchToken;
 
   return {
     balance,
     isBalancePending,
     isNative,
+    refetch,
   };
 }
