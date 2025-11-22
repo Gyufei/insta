@@ -59,8 +59,19 @@ export function LendingWithdraw() {
       (u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
     );
   }, [userInfoQuery.data, props?.market_address]);
-  const sharesBalance =
-    userItem?.token0?.user_share_display_balance || props?.user_share_display_balance || '0';
+  // 获取市场信息，供后续 shares/price 计算使用
+  const marketsQuery = useCurvanceMarkets(true);
+  const market = useMemo(() => {
+    const list = marketsQuery.data || [];
+    return list.find(
+      (m) => String(m.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
+    );
+  }, [marketsQuery.data, props?.market_address]);
+  const sharesBalance = useMemo(() => {
+    const isToken0 = String(props?.base_token?.address).toLowerCase() === String(market?.token0?.address).toLowerCase();
+    const userShares = isToken0 ? userItem?.token0?.user_share_display_balance : userItem?.token1?.user_share_display_balance;
+    return userShares || props?.user_share_display_balance || '0';
+  }, [props?.base_token?.address, market?.token0?.address, userItem?.token0?.user_share_display_balance, userItem?.token1?.user_share_display_balance, props?.user_share_display_balance]);
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(sharesBalance);
   const { handleSetMax, handleInput } = useSetMax(inputValue, sharesBalance, handleInputChange);
 
@@ -69,25 +80,17 @@ export function LendingWithdraw() {
   const { trackEvent } = useEnhancedAnalytics();
 
   // 获取市场价格以显示美元等值
-  const marketsQuery = useCurvanceMarkets(true);
-  const market = useMemo(() => {
-    const list = marketsQuery.data || [];
-    return list.find(
-      (m) => String(m.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
-    );
-  }, [marketsQuery.data, props?.market_address]);
   const tokenPrice = useMemo(() => {
-    // SECURITY: Safe price parsing with validation
-    const priceStr = market?.token0?.price;
+    const isToken0 = String(props?.base_token?.address).toLowerCase() === String(market?.token0?.address).toLowerCase();
+    const priceStr = isToken0 ? market?.token0?.price : market?.token1?.price;
     if (!priceStr) return 0;
     const p = parseFloat(priceStr);
-    // SECURITY: Reject invalid prices (NaN, Infinity, negative)
     if (!Number.isFinite(p) || p < 0) {
       console.warn('[WITHDRAW] Invalid token price detected', priceStr);
       return 0;
     }
     return p;
-  }, [market?.token0?.price]);
+  }, [props?.base_token?.address, market?.token0?.address, market?.token0?.price, market?.token1?.address, market?.token1?.price]);
   const usdValue = useMemo(() => {
     const amount = parseFloat(inputValue || '0');
     const usd = amount * (tokenPrice || 0);
@@ -334,7 +337,15 @@ export function LendingWithdraw() {
 
           {/* 复用的持仓摘要卡片 */}
           <div className="mt-4">
-            <PositionSummaryCard market={market} user={userItem} />
+            {market && (
+              <PositionSummaryCard
+                market={market}
+                user={userItem}
+                borrowTokenIndex={
+                  String(props?.base_token?.address).toLowerCase() === String(market?.token0?.address).toLowerCase() ? 1 : 0
+                }
+              />
+            )}
           </div>
         </div>
       </SideDrawerLayout>

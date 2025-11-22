@@ -7,14 +7,16 @@ import { IToken } from '@/config/tokens';
 
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
-interface TokenSelectorDropdownProps {
+interface TargetTokenSelectorProps {
   /** Available tokens for selection */
   tokens: IToken[];
   /** Currently selected token */
   selectedToken?: IToken;
   /** Callback when token selection changes */
   onTokenChange: (token: IToken) => void;
-  /** Whether interactions are blocked without greying out */
+  /** Whether the selector is disabled */
+  disabled?: boolean;
+  /** Block interactions without greying out; defaults to disabled semantics */
   blocked?: boolean;
   /** Message to show when blocked trigger is clicked */
   blockedMessage?: string;
@@ -26,19 +28,21 @@ interface TokenSelectorDropdownProps {
  * Simple Token Selector Dropdown Component
  * Provides a clean dropdown interface for token selection without borders
  */
-export function TokenSelectorDropdown({
+export function TargetTokenSelector({
   tokens,
   selectedToken,
   onTokenChange,
-  blocked = false,
+  disabled = false,
+  blocked,
   blockedMessage = 'You cannot deposit as collateral on both tokens.',
   className = '',
-}: TokenSelectorDropdownProps) {
+}: TargetTokenSelectorProps) {
+  const isBlocked = (blocked ?? disabled) || false;
   return (
     <Select
       value={selectedToken?.address}
       onValueChange={(value) => {
-        if (blocked) {
+        if (isBlocked) {
           toast.warning(blockedMessage);
           return;
         }
@@ -55,7 +59,7 @@ export function TokenSelectorDropdown({
           ${className}
         `}
         onClick={(e) => {
-          if (blocked) {
+          if (isBlocked) {
             e.preventDefault();
             e.stopPropagation();
             toast.warning(blockedMessage);
@@ -65,20 +69,32 @@ export function TokenSelectorDropdown({
         <div className="flex items-center gap-2 cursor-pointer">
           {selectedToken && (
             <>
-              <Image src={selectedToken.logo} alt={selectedToken.symbol} width={20} height={20} />
+              <Image
+                src={selectedToken.logo}
+                alt={selectedToken.symbol}
+                className="h-10 w-10 rounded-full"
+                width={20}
+                height={20}
+              />
               <span className="font-medium text-base text-black">{selectedToken.symbol}</span>
             </>
           )}
         </div>
       </SelectTrigger>
-      <SelectContent className="min-w-[200px]">
+      <SelectContent
+        position="popper"
+        className="min-w-[220px] data-[side=bottom]:translate-y-2 rounded-xl border border-slate-200 shadow-md"
+      >
         {tokens.map((token) => (
-          <SelectItem key={token.address} value={token.address}>
-            <div className="flex items-center gap-2">
-              <Image src={token.logo} alt={token.symbol} width={20} height={20} />
+          <SelectItem
+            key={token.address}
+            value={token.address}
+            className="py-3 my-1 gap-3 rounded-md data-[state=checked]:bg-violet-100 data-[state=checked]:text-[#131E40]"
+          >
+            <div className="flex items-center gap-3">
+              <Image src={token.logo} alt={token.symbol} width={24} height={24} />
               <div className="flex flex-col">
-                <span className="font-medium">{token.symbol}</span>
-                {/* <span className="text-xs text-gray-500">{token.name}</span> */}
+                <span className="font-medium text-[16px] leading-5">{token.symbol}</span>
               </div>
             </div>
           </SelectItem>

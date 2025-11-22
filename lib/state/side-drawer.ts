@@ -60,11 +60,13 @@ type SideDrawerState = {
     market?: unknown;
     user?: unknown;
     actionMode?: 'supply' | 'borrow';
+    supplyTokenIndex?: 0 | 1;
   } | null;
   setLendingContext: (ctx: {
     market?: unknown;
     user?: unknown;
     actionMode?: 'supply' | 'borrow';
+    supplyTokenIndex?: 0 | 1;
   } | null) => void;
 };
 

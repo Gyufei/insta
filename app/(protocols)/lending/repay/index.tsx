@@ -88,8 +88,19 @@ export function LendingRepay() {
       (u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
     );
   }, [userInfoQuery.data, props?.market_address]);
-  const debtBalance =
-    userItem?.token1?.user_debt_display_balance || props?.user_debt_display_balance || '0';
+  // 获取市场信息以供后续价格/余额等计算
+  const marketsQuery = useCurvanceMarkets(true);
+  const market = useMemo(() => {
+    const list = marketsQuery.data || [];
+    return list.find(
+      (m) => String(m.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
+    );
+  }, [marketsQuery.data, props?.market_address]);
+  const debtBalance = useMemo(() => {
+    const isToken1 = String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
+    const userDebt = isToken1 ? userItem?.token1?.user_debt_display_balance : userItem?.token0?.user_debt_display_balance;
+    return userDebt || props?.user_debt_display_balance || '0';
+  }, [token.address, market?.token1?.address, userItem?.token1?.user_debt_display_balance, userItem?.token0?.user_debt_display_balance, props?.user_debt_display_balance]);
 
   // Use the smaller of wallet vs debt as the input constraint
   const inputConstraintBalance = useMemo(() => {
@@ -111,18 +122,13 @@ export function LendingRepay() {
   const { mutate: repay, isPending } = useCurvanceRepay();
   const { trackEvent } = useEnhancedAnalytics();
 
-  // 获取市场价格以显示美元等值（Repay 对应 token1）
-  const marketsQuery = useCurvanceMarkets(true);
-  const market = useMemo(() => {
-    const list = marketsQuery.data || [];
-    return list.find(
-      (m) => String(m.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
-    );
-  }, [marketsQuery.data, props?.market_address]);
+  // 获取市场价格以显示美元等值
   const tokenPrice = useMemo(() => {
-    const p = parseFloat(market?.token1?.price || '0');
+    const isToken1 = String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
+    const priceStr = isToken1 ? market?.token1?.price : market?.token0?.price;
+    const p = parseFloat(priceStr || '0');
     return Number.isFinite(p) ? p : 0;
-  }, [market?.token1?.price]);
+  }, [token.address, market?.token0?.address, market?.token1?.address, market?.token0?.price, market?.token1?.price]);
   const usdValue = useMemo(() => {
     const amount = parseFloat(inputValue || '0');
     const usd = amount * (tokenPrice || 0);
@@ -316,7 +322,15 @@ export function LendingRepay() {
 
           {/* 复用的持仓摘要卡片 */}
           <div className="mt-4">
-            <PositionSummaryCard market={market} user={userItem} />
+            {market && (
+              <PositionSummaryCard
+                market={market}
+                user={userItem}
+                borrowTokenIndex={
+                  String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase() ? 1 : 0
+                }
+              />
+            )}
           </div>
         </div>
       </SideDrawerLayout>

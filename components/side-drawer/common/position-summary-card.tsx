@@ -8,27 +8,30 @@ import { formatBig, truncateIfExceeds } from '@/lib/utils/number';
 interface PositionSummaryCardProps {
   market?: ICurvanceMarketInfo;
   user?: ICurvanceMarketUserItem;
+  borrowTokenIndex?: 0 | 1; // which token to denominate in
 }
 
-export function PositionSummaryCard({ market, user }: PositionSummaryCardProps) {
+export function PositionSummaryCard({ market, user, borrowTokenIndex = 1 }: PositionSummaryCardProps) {
   if (!market) return null;
 
-  const token1 = market.token1;
-  const displaySymbol1 = token1?.symbol || token1?.name || '';
+  const borrowedToken = borrowTokenIndex === 0 ? market.token0 : market.token1;
+  const displaySymbol = borrowedToken?.symbol || borrowedToken?.name || '';
 
-  // 显示均以 token1 计价：Collateral/Capacity/Available/当前债务
-  const borrowedToken1 = user?.token1?.user_debt_display_balance || '0';
-  // 借款能力与可借额度：按 USD 18 位精度解码后再按 token1 价格换算
-  const priceToken1Str = token1?.price || '0';
-  const isPricePositive = Number(priceToken1Str) > 0;
+  // 显示均以所选借款代币计价：Collateral/Capacity/Available/当前债务
+  const borrowedAmount = borrowTokenIndex === 0
+    ? user?.token0?.user_debt_display_balance || '0'
+    : user?.token1?.user_debt_display_balance || '0';
+  // 借款能力与可借额度：按 USD 18 位精度解码后再按所选借款代币价格换算
+  const priceStr = borrowedToken?.price || '0';
+  const isPricePositive = Number(priceStr) > 0;
   const totalMaxDebtUSDDec = formatBig(user?.total_max_debt_in_usd || '0', 18);
   const totalDebtUSDDec = formatBig(user?.total_debt_in_usd || '0', 18);
   const totalCollateralUSDDec = formatBig(user?.total_collateral_in_usd || '0', 18);
   const remainingUSDDecRaw = subtract(totalMaxDebtUSDDec, totalDebtUSDDec);
   const remainingUSDDec = String(remainingUSDDecRaw).startsWith('-') ? '0' : remainingUSDDecRaw;
-  const collateralValueToken1 = isPricePositive ? divide(totalCollateralUSDDec, priceToken1Str) : '0';
-  const borrowCapacityToken1 = isPricePositive ? divide(totalMaxDebtUSDDec, priceToken1Str) : '0';
-  const availableToBorrowToken1 = isPricePositive ? divide(remainingUSDDec, priceToken1Str) : '0';
+  const collateralValueInToken = isPricePositive ? divide(totalCollateralUSDDec, priceStr) : '0';
+  const borrowCapacityInToken = isPricePositive ? divide(totalMaxDebtUSDDec, priceStr) : '0';
+  const availableToBorrowInToken = isPricePositive ? divide(remainingUSDDec, priceStr) : '0';
 
   return (
     <div className="rounded-lg border border-[#EBEBEB] bg-white dark:bg-secondary p-5 shadow-sm">
@@ -37,25 +40,25 @@ export function PositionSummaryCard({ market, user }: PositionSummaryCardProps) 
         <div className="flex items-center justify-between">
           <div className="text-xs text-[#A5ADC6]">Collateral Value</div>
           <div className="text-sm font-medium text-[#131E40]">
-            {truncateIfExceeds(String(collateralValueToken1), 4)} {displaySymbol1}
+            {truncateIfExceeds(String(collateralValueInToken), 4)} {displaySymbol}
           </div>
         </div>
         <div className="flex items-center justify-between">
           <div className="text-xs text-[#A5ADC6]">Liquidation Point</div>
           <div className="text-sm font-medium text-[#131E40]">
-            {truncateIfExceeds(borrowedToken1, 4)} {displaySymbol1}
+            {truncateIfExceeds(borrowedAmount, 4)} {displaySymbol}
           </div>
         </div>
         <div className="flex items-center justify-between">
           <div className="text-xs text-[#A5ADC6]">Borrow Capacity</div>
           <div className="text-sm font-medium text-[#131E40]">
-            {truncateIfExceeds(String(borrowCapacityToken1), 4)} {displaySymbol1}
+            {truncateIfExceeds(String(borrowCapacityInToken), 4)} {displaySymbol}
           </div>
         </div>
         <div className="flex items-center justify-between">
           <div className="text-xs text-[#A5ADC6]">Available to Borrow</div>
           <div className="text-sm font-medium text-[#131E40]">
-            {truncateIfExceeds(String(availableToBorrowToken1), 4)} {displaySymbol1}
+            {truncateIfExceeds(String(availableToBorrowInToken), 4)} {displaySymbol}
           </div>
         </div>
       </div>

@@ -60,7 +60,7 @@ export function LendingBorrow() {
   const { mutate: borrow, isPending } = useCurvanceBorrow();
   const { trackEvent } = useEnhancedAnalytics();
 
-  // 获取市场价格（Borrow 对应 token1）
+  // 获取市场价格（Borrow 对应选定的借款代币）
   const marketsQuery = useCurvanceMarkets(true);
   const market = useMemo(() => {
     const list = marketsQuery.data || [];
@@ -69,35 +69,34 @@ export function LendingBorrow() {
     );
   }, [marketsQuery.data, props?.market_address]);
   const tokenPrice = useMemo(() => {
-    // SECURITY: Safe price parsing with validation
-    const priceStr = market?.token1?.price;
+    const isToken1 = String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
+    const priceStr = isToken1 ? market?.token1?.price : market?.token0?.price;
     if (!priceStr) return 0;
     const p = parseFloat(priceStr);
-    // SECURITY: Reject invalid prices (NaN, Infinity, negative)
     if (!Number.isFinite(p) || p < 0) {
       console.warn('[BORROW] Invalid token price detected', priceStr);
       return 0;
     }
     return p;
-  }, [market?.token1?.price]);
+  }, [token.address, market?.token0?.address, market?.token1?.address, market?.token0?.price, market?.token1?.price]);
 
-  // 基于 /curvance/markets 的 token1.total_debt 估算池子可借规模（单位：token）
+  // 基于 /curvance/markets 的所选借款代币 total_debt 估算池子可借规模（单位：token）
   const poolBorrowableTokens = useMemo(() => {
-    // SECURITY: Safe pool liquidity calculation
-    const debtTokens = parseFloat(market?.token1?.total_debt || '0');
+    const isToken1 = String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
+    const t = isToken1 ? market?.token1 : market?.token0;
+    const debtTokens = parseFloat(t?.total_debt || '0');
     if (Number.isFinite(debtTokens) && debtTokens > 0) return debtTokens;
 
     // Fallback: calculate from USD value
-    const debtUSD = parseFloat(market?.token1?.total_debt_in_usd || '0');
-    const price = parseFloat(market?.token1?.price || '0');
+    const debtUSD = parseFloat(t?.total_debt_in_usd || '0');
+    const price = parseFloat(t?.price || '0');
 
-    // SECURITY: Prevent division by zero and validate inputs
     if (!Number.isFinite(debtUSD) || debtUSD <= 0) return 0;
     if (!Number.isFinite(price) || price <= 0) return 0;
 
     const tokens = debtUSD / price;
     return Number.isFinite(tokens) && tokens > 0 ? tokens : 0;
-  }, [market?.token1?.total_debt, market?.token1?.total_debt_in_usd, market?.token1?.price]);
+  }, [token.address, market?.token0, market?.token1]);
 
   // 用户在该市场的摘要数据（/curvance/positions）
   const userInfoQuery = useCurvanceMarketUserInfo(true);
@@ -133,9 +132,12 @@ export function LendingBorrow() {
 
   // 首次借款且输入金额的美元等值低于 10 美元时提示
   const isFirstBorrow = useMemo(() => {
-    const debt = parseFloat(userItem?.token1?.user_debt_display_balance || '0');
+    const isToken1 = String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
+    const debt = parseFloat(
+      isToken1 ? userItem?.token1?.user_debt_display_balance || '0' : userItem?.token0?.user_debt_display_balance || '0'
+    );
     return Number.isFinite(debt) ? debt <= 0 : false;
-  }, [userItem?.token1?.user_debt_display_balance]);
+  }, [token.address, market?.token1?.address, userItem?.token1?.user_debt_display_balance, userItem?.token0?.user_debt_display_balance]);
   const isBelowMinFirstBorrow = useMemo(() => {
     const usd = parseFloat(usdValue || '0');
     return isFirstBorrow && usd > 0 && usd < 10;
@@ -349,7 +351,15 @@ export function LendingBorrow() {
 
           {/* 复用的持仓摘要卡片 */}
           <div className="mt-4">
-            <PositionSummaryCard market={market} user={userItem} />
+            {market && (
+              <PositionSummaryCard
+                market={market}
+                user={userItem}
+                borrowTokenIndex={
+                  String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase() ? 1 : 0
+                }
+              />
+            )}
           </div>
         </div>
       </SideDrawerLayout>

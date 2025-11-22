@@ -101,9 +101,11 @@ export function LendingSupply() {
     return list.find((m) => String(m.market_address).toLowerCase() === String(props?.market_address).toLowerCase());
   }, [marketsQuery.data, props?.market_address]);
   const tokenPrice = useMemo(() => {
-    const p = parseFloat(market?.token0?.price || '0');
+    const isToken0 = String(token.address).toLowerCase() === String(market?.token0?.address).toLowerCase();
+    const priceStr = isToken0 ? market?.token0?.price : market?.token1?.price;
+    const p = parseFloat(priceStr || '0');
     return Number.isFinite(p) ? p : 0;
-  }, [market?.token0?.price]);
+  }, [token.address, market?.token0?.address, market?.token0?.price, market?.token1?.address, market?.token1?.price]);
   const usdValue = useMemo(() => {
     const amount = parseFloat(inputValue || '0');
     const usd = amount * (tokenPrice || 0);
@@ -335,7 +337,15 @@ export function LendingSupply() {
 
           {/* 复用的持仓摘要卡片 */}
           <div className="mt-4">
-            <PositionSummaryCard market={market} user={userItem} />
+            {market && (
+              <PositionSummaryCard
+                market={market}
+                user={userItem}
+                borrowTokenIndex={
+                  String(token.address).toLowerCase() === String(market?.token0?.address).toLowerCase() ? 1 : 0
+                }
+              />
+            )}
           </div>
         </div>
       </SideDrawerLayout>

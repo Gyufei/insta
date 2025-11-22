@@ -35,6 +35,7 @@ export function LendingMarketInfo() {
     market?: ICurvanceMarketInfo;
     user?: ICurvanceMarketUserItem;
     actionMode?: 'supply' | 'borrow';
+    supplyTokenIndex?: 0 | 1;
   };
   const { handleBack: _handleBack } = useUrlPathDrawerChange('/lending');
 
@@ -49,7 +50,10 @@ export function LendingMarketInfo() {
   const token0 = market?.token0;
   const token1 = market?.token1;
   const isBorrow = actionMode === 'borrow';
-  const baseToken = isBorrow ? token1 : token0;
+  const supplyTokenIndex = props.supplyTokenIndex ?? 0;
+  const supplyToken = supplyTokenIndex === 0 ? token0 : token1;
+  const borrowToken = supplyTokenIndex === 0 ? token1 : token0;
+  const baseToken = isBorrow ? borrowToken : supplyToken;
   const tokenAddress = baseToken?.address || '';
   const tokenDecimals = baseToken?.decimals ?? DEFAULT_TOKEN_DECIMALS;
   const { balance: walletBalanceRaw } = useAddressBalance(
@@ -64,8 +68,8 @@ export function LendingMarketInfo() {
   const t0 = market.token0;
   const t1 = market.token1;
   const walletBalanceDisplay = walletBalanceRaw || '0';
-  const supplyRate = t0?.supply_rate || '0';
-  const borrowRate = t1?.borrow_rate || '0';
+  const supplyRate = (supplyTokenIndex === 0 ? t0?.supply_rate : t1?.supply_rate) || '0';
+  const borrowRate = (supplyTokenIndex === 0 ? t1?.borrow_rate : t0?.borrow_rate) || '0';
   const displaySymbol = baseToken?.symbol || baseToken?.name || '';
   const tokenLogo = baseToken?.logoURI || '/icons/token.svg';
 
@@ -106,7 +110,7 @@ export function LendingMarketInfo() {
       </div>
 
       {/* Position summary card */}
-      <PositionSummaryCard market={market} user={user} />
+      <PositionSummaryCard market={market} user={user} borrowTokenIndex={supplyTokenIndex === 0 ? 1 : 0} />
     </div>
   );
 }

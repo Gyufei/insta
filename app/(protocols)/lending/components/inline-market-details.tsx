@@ -2,7 +2,11 @@
 
 import { useAccount } from 'wagmi';
 
-import { useEffect } from 'react';
+
+
+import { useEffect, useMemo, useState } from 'react';
+
+import type { IToken } from '@/config/tokens';
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
@@ -11,6 +15,8 @@ import type { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
 import { useAccountStore } from '@/lib/state/account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { formatBig, truncateIfExceeds } from '@/lib/utils/number';
+
+import { TargetTokenSelector } from './target-token-selector';
 
 type InlineMarketDetailsProps = {
   market: ICurvanceMarketInfo;
@@ -51,14 +57,84 @@ export default function InlineMarketDetails({
   const token0 = market.token0;
   const token1 = market.token1;
   const isBorrow = actionMode === 'borrow';
-  const mainToken = isBorrow ? token1 : token0;
+  // 供给代币选择：默认选择已有份额的代币，否则默认 token0
+  const defaultSupplyIndex = useMemo(() => {
+    const s0 = parseFloat(user?.token0?.user_share_display_balance || '0');
+    const s1 = parseFloat(user?.token1?.user_share_display_balance || '0');
+    if (Number.isFinite(s0) && s0 > 0 && (!Number.isFinite(s1) || s1 <= 0)) return 0;
+    if (Number.isFinite(s1) && s1 > 0 && (!Number.isFinite(s0) || s0 <= 0)) return 1;
+    return 0;
+  }, [user?.token0?.user_share_display_balance, user?.token1?.user_share_display_balance]);
+  const [supplyTokenIndex, setSupplyTokenIndex] = useState<0 | 1>(defaultSupplyIndex as 0 | 1);
+  const hasSuppliedAny = useMemo(() => {
+    const s0 = parseFloat(user?.token0?.user_share_display_balance || '0');
+    const s1 = parseFloat(user?.token1?.user_share_display_balance || '0');
+    return (Number.isFinite(s0) && s0 > 0) || (Number.isFinite(s1) && s1 > 0);
+  }, [user?.token0?.user_share_display_balance, user?.token1?.user_share_display_balance]);
+  const supplyToken = supplyTokenIndex === 0 ? token0 : token1;
+  const borrowToken = supplyTokenIndex === 0 ? token1 : token0;
+  const mainToken = isBorrow ? borrowToken : supplyToken;
+  // 下拉选择器供选择抵押资产（token0 或 token1）
+  const selectorTokens: IToken[] = useMemo(
+    () => [
+      {
+        address: token0.address,
+        name: token0.name,
+        symbol: token0.symbol,
+        logo: token0.logoURI,
+        decimals: token0.decimals,
+      },
+      {
+        address: token1.address,
+        name: token1.name,
+        symbol: token1.symbol,
+        logo: token1.logoURI,
+        decimals: token1.decimals,
+      },
+    ],
+    [
+      token0.address,
+      token0.name,
+      token0.symbol,
+      token0.logoURI,
+      token0.decimals,
+      token1.address,
+      token1.name,
+      token1.symbol,
+      token1.logoURI,
+      token1.decimals,
+    ]
+  );
+  // 头部选择器：在 Borrow 模式下展示借款代币；在 Supply 模式下展示抵押代币
+  const selectedIToken: IToken = useMemo(
+    () => ({
+      address: (isBorrow ? borrowToken : supplyToken).address,
+      name: (isBorrow ? borrowToken : supplyToken).name,
+      symbol: (isBorrow ? borrowToken : supplyToken).symbol,
+      logo: (isBorrow ? borrowToken : supplyToken).logoURI,
+      decimals: (isBorrow ? borrowToken : supplyToken).decimals,
+    }),
+    [
+      isBorrow,
+      borrowToken.address,
+      borrowToken.name,
+      borrowToken.symbol,
+      borrowToken.logoURI,
+      borrowToken.decimals,
+      supplyToken.address,
+      supplyToken.name,
+      supplyToken.symbol,
+      supplyToken.logoURI,
+      supplyToken.decimals,
+    ]
+  );
   // 根据需求：Supply 显示 total_collateral_in_usd，Borrow 显示 total_debt_in_usd；两者均为 18 位美元精度
   const displayUSDStr = isBorrow
     ? formatBig(String(user?.total_debt_in_usd || '0'), 18)
     : formatBig(String(user?.total_collateral_in_usd || '0'), 18);
   const displayUSDNum = parseFloat(displayUSDStr || '0');
-  // 近似代币数量：用 /curvance/markets 接口的 price 计算
-  const price = parseFloat(isBorrow ? token1.price || '0' : token0.price || '0');
+  // 近似代币数量：用 /curvance/markets 接口的 price 计算（按当前主视图代币）
+  const price = parseFloat(mainToken.price || '0');
   const approxTokenAmount = price > 0 ? displayUSDNum / price : 0;
   const walletAddress =
     currentAccountType === 'EOA' ? address || '' : accountInfo?.sandbox_account || '';
@@ -84,85 +160,90 @@ export default function InlineMarketDetails({
       props: {
         market_address: market.market_address,
         base_token: {
-          address: token0.address,
-          name: token0.name,
-          symbol: token0.symbol,
-          decimals: token0.decimals,
-          logo: token0.logoURI,
+          address: supplyToken.address,
+          name: supplyToken.name,
+          symbol: supplyToken.symbol,
+          decimals: supplyToken.decimals,
+          logo: supplyToken.logoURI,
         },
         base_c_token: {
-          address: token0.wrapper_address || '',
-          decimals: token0.wrapper_decimals || token0.decimals,
+          address: supplyToken.wrapper_address || '',
+          decimals: supplyToken.wrapper_decimals || supplyToken.decimals,
         },
       },
     });
   };
 
   const openWithdraw = () => {
+    const userShares =
+      supplyTokenIndex === 0
+        ? user?.token0?.user_share_display_balance || '0'
+        : user?.token1?.user_share_display_balance || '0';
     setCurrentComponent({
       name: 'LendingWithdraw',
       props: {
         market_address: market.market_address,
         base_token: {
-          address: token0.address,
-          name: token0.name,
-          symbol: token0.symbol,
-          decimals: token0.decimals,
-          logo: token0.logoURI,
+          address: supplyToken.address,
+          name: supplyToken.name,
+          symbol: supplyToken.symbol,
+          decimals: supplyToken.decimals,
+          logo: supplyToken.logoURI,
         },
         base_c_token: {
-          address: token0.wrapper_address || '',
-          decimals: token0.wrapper_decimals || token0.decimals,
+          address: supplyToken.wrapper_address || '',
+          decimals: supplyToken.wrapper_decimals || supplyToken.decimals,
         },
-        user_share_display_balance: user?.token0?.user_share_display_balance || '0',
+        user_share_display_balance: userShares,
       },
     });
   };
 
   const openRepay = () => {
-    const token1 = market.token1;
     setCurrentComponent({
       name: 'LendingRepay',
       props: {
         market_address: market.market_address,
         borrowable_token: {
-          address: token1.address,
-          name: token1.name,
-          symbol: token1.symbol,
-          decimals: token1.decimals,
-          logo: token1.logoURI,
+          address: borrowToken.address,
+          name: borrowToken.name,
+          symbol: borrowToken.symbol,
+          decimals: borrowToken.decimals,
+          logo: borrowToken.logoURI,
         },
         borrowable_c_token: {
-          address: token1.wrapper_address || '',
-          decimals: token1.wrapper_decimals || token1.decimals,
+          address: borrowToken.wrapper_address || '',
+          decimals: borrowToken.wrapper_decimals || borrowToken.decimals,
         },
-        user_debt_display_balance: user?.token1?.user_debt_display_balance || '0',
+        user_debt_display_balance:
+          supplyTokenIndex === 0
+            ? user?.token1?.user_debt_display_balance || '0'
+            : user?.token0?.user_debt_display_balance || '0',
       },
     });
   };
 
   const openBorrow = () => {
-    const token1 = market.token1;
     const maxDebtUSD = parseFloat(user?.total_max_debt_in_usd || '0');
     const totalDebtUSD = parseFloat(user?.total_debt_in_usd || '0');
-    const price1 = parseFloat(token1?.price || '0');
+    const priceBorrow = parseFloat(borrowToken?.price || '0');
     const availableUSD = Math.max((maxDebtUSD || 0) - (totalDebtUSD || 0), 0);
-    const tokens = price1 > 0 ? availableUSD / price1 : 0;
+    const tokens = priceBorrow > 0 ? availableUSD / priceBorrow : 0;
 
     setCurrentComponent({
       name: 'LendingBorrow',
       props: {
         market_address: market.market_address,
         borrowable_token: {
-          address: token1.address,
-          name: token1.name,
-          symbol: token1.symbol,
-          decimals: token1.decimals,
-          logo: token1.logoURI,
+          address: borrowToken.address,
+          name: borrowToken.name,
+          symbol: borrowToken.symbol,
+          decimals: borrowToken.decimals,
+          logo: borrowToken.logoURI,
         },
         borrowable_c_token: {
-          address: token1.wrapper_address || '',
-          decimals: token1.wrapper_decimals || token1.decimals,
+          address: borrowToken.wrapper_address || '',
+          decimals: borrowToken.wrapper_decimals || borrowToken.decimals,
         },
         user_max_borrow_display_amount: String(tokens || 0),
       },
@@ -176,9 +257,12 @@ export default function InlineMarketDetails({
     // Detect viewport width directly to avoid initial flicker from mobile hook
     const isMobileViewport = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
     // Persist lending context for header button
-    setLendingContext({ market, user, actionMode });
+    setLendingContext({ market, user, actionMode, supplyTokenIndex });
     if (!isMobileViewport) {
-      setCurrentComponent({ name: 'LendingMarketInfo', props: { market, user, actionMode } });
+      setCurrentComponent({
+        name: 'LendingMarketInfo',
+        props: { market, user, actionMode, supplyTokenIndex },
+      });
     } else {
       // Ensure drawer is not opened on mobile
       setCurrentComponent({ name: 'Balance' });
@@ -187,7 +271,7 @@ export default function InlineMarketDetails({
       setLendingContext(null);
       setCurrentComponent({ name: 'Balance' });
     };
-  }, [market, user, actionMode, setCurrentComponent]);
+  }, [market, user, actionMode, supplyTokenIndex, setCurrentComponent]);
 
   return (
     <div className="w-full px-4 md:px-12">
@@ -205,17 +289,27 @@ export default function InlineMarketDetails({
         <div className="rounded-lg border bg-white dark:bg-secondary p-5">
           <div className="flex flex-col md:flex-row md:items-center gap-3 md:divide-x divide-slate-200">
             <div className="flex items-center gap-3 md:pr-10">
-              <img
-                src={mainToken.logoURI}
-                alt={mainToken.symbol}
-                className="h-10 w-10 rounded-full"
+              <TargetTokenSelector
+                tokens={selectorTokens}
+                selectedToken={selectedIToken}
+                onTokenChange={(t) => {
+                  if (hasSuppliedAny) return; // 已有抵押则锁定选择
+                  const idx =
+                    String(t.address).toLowerCase() === String(token0.address).toLowerCase()
+                      ? 0
+                      : 1;
+                  // Borrow 模式下选择的是“借款代币”，需要将抵押侧切到相反的一枚
+                  const nextIdx = isBorrow ? (idx === 0 ? 1 : 0) : idx;
+                  setSupplyTokenIndex(nextIdx as 0 | 1);
+                }}
+                disabled={hasSuppliedAny}
+                blockedMessage={
+                  isBorrow
+                    ? 'Borrow asset is determined by your collateral token. Withdraw your current collateral to change.'
+                    : 'You cannot deposit as collateral on both tokens.'
+                }
+                className="!h-[24px]"
               />
-              <div className="flex flex-col">
-                <span className="font-medium text-base text-gray-900 dark:text-gray-100">
-                  {mainToken.symbol}
-                </span>
-                <span className="text-xs text-[#A5ADC6]">{market.market_name}</span>
-              </div>
             </div>
             {/* 移动端在标题与指标之间增加分割线 */}
             <div className="md:hidden w-full border-t border-gray-200 dark:border-gray-700 mt-3" />
@@ -276,8 +370,7 @@ export default function InlineMarketDetails({
               })}
             </div>
             <div className="mt-1 text-xs text-[#A5ADC6]">
-              {truncateIfExceeds(String(approxTokenAmount || 0), 4)}{' '}
-              {isBorrow ? token1.symbol : token0.symbol}
+              {truncateIfExceeds(String(approxTokenAmount || 0), 4)} {mainToken.symbol}
             </div>
           </div>
         </div>
@@ -295,24 +388,41 @@ export default function InlineMarketDetails({
             <div className="rounded-md border bg-white dark:bg-secondary">
               {/* Desktop header */}
               <div className="hidden md:grid grid-cols-12 items-center px-4 py-3 text-xs font-medium text-[#A5ADC6]">
-                <div className="col-span-7">Collateral Asset</div>
+                <div className="col-span-7 flex items-center gap-3">
+                  <span>Collateral Asset</span>
+                </div>
                 <div className="col-span-5 text-right">Protocol Balance</div>
               </div>
               {/* Desktop row content */}
               <div className="hidden md:block border-t px-4 py-3">
                 <div className="flex items-center gap-3">
-                  <img src={token0.logoURI} className="h-8 w-8 rounded-full" alt={token0.symbol} />
+                  <img
+                    src={supplyToken.logoURI}
+                    className="h-8 w-8 rounded-full"
+                    alt={supplyToken.symbol}
+                  />
                   <div className="flex-1">
-                    <div className="font-medium">{token0.name}</div>
+                    <div className="font-medium">{supplyToken.name}</div>
                     <div className="text-xs text-[#A5ADC6]">
-                      {token0.symbol} - {truncateIfExceeds(walletBalanceDisplay || '0', 4)} in
-                      wallet
+                      {supplyToken.symbol} -{' '}
+                      {truncateIfExceeds(
+                        supplyTokenIndex === 0
+                          ? walletBalanceDisplay || '0'
+                          : walletBalanceDisplay1 || '0',
+                        4
+                      )}{' '}
+                      in wallet
                     </div>
                   </div>
                   <div className="ml-auto flex items-center gap-3">
                     <div className="text-right">
                       <div className="font-medium">
-                        {truncateIfExceeds(user?.token0?.user_share_display_balance || '0.0000', 4)}
+                        {truncateIfExceeds(
+                          supplyTokenIndex === 0
+                            ? user?.token0?.user_share_display_balance || '0.0000'
+                            : user?.token1?.user_share_display_balance || '0.0000',
+                          4
+                        )}
                       </div>
                     </div>
                     <button
@@ -337,24 +447,35 @@ export default function InlineMarketDetails({
               <div className="md:hidden px-4 py-4">
                 <div className="flex items-center gap-3">
                   <img
-                    src={token0.logoURI}
+                    src={supplyToken.logoURI}
                     className="h-12 w-12 rounded-full"
-                    alt={token0.symbol}
+                    alt={supplyToken.symbol}
                   />
                   <div className="flex-1">
                     <div className="text-2xl font-medium tracking-tight text-[#131E40]">
-                      {token0.name}
+                      {supplyToken.name}
                     </div>
                     <div className="text-sm text-[#A5ADC6]">
-                      {token0.symbol} - {truncateIfExceeds(walletBalanceDisplay || '0', 4)} in
-                      wallet
+                      {supplyToken.symbol} -{' '}
+                      {truncateIfExceeds(
+                        supplyTokenIndex === 0
+                          ? walletBalanceDisplay || '0'
+                          : walletBalanceDisplay1 || '0',
+                        4
+                      )}{' '}
+                      in wallet
                     </div>
                   </div>
                 </div>
                 <div className="my-4 border-t border-gray-200" />
                 <div className="py-1 text-left ml-15">
                   <span className=" font-medium tracking-tight text-[#131E40]">
-                    {truncateIfExceeds(user?.token0?.user_share_display_balance || '0.0000', 4)}
+                    {truncateIfExceeds(
+                      supplyTokenIndex === 0
+                        ? user?.token0?.user_share_display_balance || '0.0000'
+                        : user?.token1?.user_share_display_balance || '0.0000',
+                      4
+                    )}
                   </span>
                   <span className="ml-2 text-[14px] text-[#A5ADC6]">Protocol Balance</span>
                 </div>
@@ -391,22 +512,30 @@ export default function InlineMarketDetails({
                 <div className="border-t px-4 py-3">
                   <div className="flex items-center gap-3">
                     <img
-                      src={token1.logoURI}
+                      src={borrowToken.logoURI}
                       className="h-8 w-8 rounded-full"
-                      alt={token1.symbol}
+                      alt={borrowToken.symbol}
                     />
                     <div className="flex-1">
-                      <div className="font-medium">{token1.name}</div>
+                      <div className="font-medium">{borrowToken.name}</div>
                       <div className="text-xs text-[#A5ADC6]">
-                        {token1.symbol} - {truncateIfExceeds(walletBalanceDisplay1 || '0', 4)} in
-                        wallet
+                        {borrowToken.symbol} -{' '}
+                        {truncateIfExceeds(
+                          supplyTokenIndex === 0
+                            ? walletBalanceDisplay1 || '0'
+                            : walletBalanceDisplay || '0',
+                          4
+                        )}{' '}
+                        in wallet
                       </div>
                     </div>
                     <div className="ml-auto flex items-center gap-3">
                       <div className="text-right">
                         <div className="font-medium">
                           {truncateIfExceeds(
-                            user?.token1?.user_debt_display_balance || '0.0000',
+                            supplyTokenIndex === 0
+                              ? user?.token1?.user_debt_display_balance || '0.0000'
+                              : user?.token0?.user_debt_display_balance || '0.0000',
                             4
                           )}
                         </div>
@@ -434,24 +563,35 @@ export default function InlineMarketDetails({
               <div className="md:hidden px-4 py-4">
                 <div className="flex items-center gap-3">
                   <img
-                    src={token1.logoURI}
+                    src={borrowToken.logoURI}
                     className="h-12 w-12 rounded-full"
-                    alt={token1.symbol}
+                    alt={borrowToken.symbol}
                   />
                   <div className="flex-1">
                     <div className="text-[20px] md:text-2xl font-medium tracking-tight text-[#131E40]">
-                      {token1.name}
+                      {borrowToken.name}
                     </div>
                     <div className="text-sm text-[#A5ADC6]">
-                      {token1.symbol} - {truncateIfExceeds(walletBalanceDisplay1 || '0', 4)} in
-                      wallet
+                      {borrowToken.symbol} -{' '}
+                      {truncateIfExceeds(
+                        supplyTokenIndex === 0
+                          ? walletBalanceDisplay1 || '0'
+                          : walletBalanceDisplay || '0',
+                        4
+                      )}{' '}
+                      in wallet
                     </div>
                   </div>
                 </div>
                 <div className="my-4 border-t border-gray-200" />
                 <div className="text-left">
                   <span className="text-3xl font-medium tracking-tight text-[#131E40]">
-                    {truncateIfExceeds(user?.token1?.user_debt_display_balance || '0.0000', 4)}
+                    {truncateIfExceeds(
+                      supplyTokenIndex === 0
+                        ? user?.token1?.user_debt_display_balance || '0.0000'
+                        : user?.token0?.user_debt_display_balance || '0.0000',
+                      4
+                    )}
                   </span>
                   <span className="ml-2 text-lg text-[#A5ADC6]">Protocol Debt</span>
                 </div>
