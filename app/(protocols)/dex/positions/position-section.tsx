@@ -2,7 +2,7 @@
 
 import { Plus, Search } from 'lucide-react';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { IToken } from '@/config/tokens';
 
@@ -21,6 +21,7 @@ import { isSameAddress } from '@/lib/utils';
 
 import { PositionItem } from './position-item';
 import { TOKENS } from './use-token';
+import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
 
 function getToken(token: Omit<IToken, 'logo'>, tokens: IToken[]): IToken {
   const t = tokens.find((t) => isSameAddress(t.address, token.address));
@@ -38,6 +39,7 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
   const { setCurrentComponent } = useSideDrawerStore();
   const { data: positions, isLoading: isUniswapLoading } = useUniswapPosition();
   const { data: ambientData, isLoading: isAmbientLoading } = useAmbientPosition();
+  const { data: uniswapTokensData } = useUniswapTokens();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -45,7 +47,15 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
   const isUniswapSelected = selectedProject === 'uniswap';
   const isAutoSelected = selectedProject === 'auto-routing';
 
-  const tokens = TOKENS;
+  // 统一代币库：基础内置 + 动态 UniswapTokens
+  const tokens = useMemo(() => {
+    const uniswapTokens = uniswapTokensData?.map((t) => ({
+      ...t,
+      logo: t.logoURI || '',
+      description: t.tokenDescription || '',
+    })) as unknown as IToken[];
+    return [...TOKENS, ...(uniswapTokens || [])];
+  }, [uniswapTokensData]);
   const filteredPositions = positions?.filter((position) => {
     if (position.status === PositionStatus.POSITION_STATUS_CLOSED) {
       return false;
@@ -73,10 +83,16 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
       const token0 = tokens.find((t) => isSameAddress(t.address, position.base));
       const token1 = tokens.find((t) => isSameAddress(t.address, position.quote));
       const searchLower = searchQuery.toLowerCase();
-      return (
-        token0?.symbol.toLowerCase().includes(searchLower) ||
-        token1?.symbol.toLowerCase().includes(searchLower)
-      );
+
+      // 优先按 symbol 搜索；若 symbol 不可用，允许按地址片段匹配
+      const token0Match = token0?.symbol
+        ? token0.symbol.toLowerCase().includes(searchLower)
+        : position.base?.toLowerCase().includes(searchLower);
+      const token1Match = token1?.symbol
+        ? token1.symbol.toLowerCase().includes(searchLower)
+        : position.quote?.toLowerCase().includes(searchLower);
+
+      return Boolean(token0Match || token1Match);
     }
     return true;
   });
