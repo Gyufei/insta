@@ -213,7 +213,7 @@ const tenMinutes = 18 * 60 * 60 * 1000;
   );
 
   return (
-    <div className="rounded-xl border border-[#EBEBEB] bg-white p-6 shadow-sm">
+    <div className="rounded-[8px] border border-[#EBEBEB] bg-white p-6 pb-2 shadow-sm">
       {/* Available to claim info */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
@@ -229,9 +229,9 @@ const tenMinutes = 18 * 60 * 60 * 1000;
       <Tabs
         value={subAction}
         onValueChange={(value) => setSubAction(value as ClaimAction)}
-        className="w-full"
+        className="w-full gap-4"
       >
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2">
           <ButtonWithCheck
             label="All"
             value="all"

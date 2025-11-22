@@ -134,7 +134,7 @@ export function BalanceDisplay({ selectedProject, balance, refetchBalance }: Bal
   };
 
   return (
-    <div className="rounded-xl border border-[#EBEBEB] bg-white p-6 shadow-sm">
+    <div className="rounded-xl border border-[#EBEBEB] bg-white p-6 pb-2 shadow-sm">
       {/* Token Header with Dropdown */}
       <div className="flex items-center justify-between mb-6">
         <TokenSelectorDropdown
@@ -158,7 +158,11 @@ export function BalanceDisplay({ selectedProject, balance, refetchBalance }: Bal
       {selectedProject !== 'magma' && (
         <>
           <Separator className="mt-6 mb-5" />
-          <WithdrawEstReceive receiveToken={monToken} receiveAmount={receiveAmount} />
+          <WithdrawEstReceive
+            receiveToken={monToken}
+            receiveAmount={receiveAmount}
+            inputAmount={inputValue}
+          />
         </>
       )}
       <ActionButton
