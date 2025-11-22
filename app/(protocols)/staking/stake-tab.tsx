@@ -90,8 +90,71 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
     });
     if (!ok) return;
 
+    // ===== SECURITY: Input validation =====
     if (!inputValue || btnDisabled || isPending) return;
-    const amount = parseBig(inputValue, selectedToken?.decimals);
+
+    // SECURITY: Validate selected token
+    if (!selectedToken || !selectedToken.address) {
+      console.error('[STAKE] Invalid selected token', selectedToken);
+      return;
+    }
+
+    // SECURITY: Validate numeric input
+    const inputNum = parseFloat(inputValue);
+    if (!Number.isFinite(inputNum) || inputNum <= 0) {
+      console.error('[STAKE] Invalid stake amount', inputValue);
+      return;
+    }
+
+    // SECURITY: Validate against balance
+    const balanceNum = parseFloat(dsaBalance || '0');
+    if (!Number.isFinite(balanceNum) || balanceNum < 0) {
+      console.error('[STAKE] Invalid balance value', dsaBalance);
+      return;
+    }
+    if (inputNum > balanceNum) {
+      console.error('[STAKE] Insufficient balance', {
+        requested: inputNum,
+        available: balanceNum,
+      });
+      return;
+    }
+
+    // SECURITY: Validate token decimals
+    const decimals = selectedToken.decimals;
+    if (!Number.isFinite(decimals) || decimals < 0 || decimals > 77) {
+      console.error('[STAKE] Invalid token decimals', decimals);
+      return;
+    }
+
+    const amount = parseBig(inputValue, decimals);
+
+    // SECURITY: Validate amount conversion
+    const amountStr = amount.toString();
+    if (!amountStr || amountStr === '0' || amountStr === 'NaN') {
+      console.error('[STAKE] Failed to parse stake amount', {
+        inputValue,
+        decimals,
+        result: amountStr,
+      });
+      return;
+    }
+
+    // SECURITY: Validate output token
+    if (!selectedOutputToken || !selectedOutputToken.address) {
+      console.error('[STAKE] Invalid output token', selectedOutputToken);
+      return;
+    }
+
+    // SECURITY: Log stake parameters
+    console.log('[STAKE] Stake parameters:', {
+      protocol: selectedProject,
+      token: selectedToken.symbol,
+      amount: inputValue,
+      amountWei: amountStr,
+      outputToken: selectedOutputToken.symbol,
+    });
+
     // Determine event name based on selected project
     const eventName = selectedProject === 'magma' ? 'MAGMA_STAKE' : 'APRIORI_STAKE';
 
@@ -124,7 +187,7 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
     });
 
     try {
-      deposit(amount.toString(), {
+      deposit(amountStr, {
         onSuccess: () => {
           Sentry.addBreadcrumb({
             category: 'action',

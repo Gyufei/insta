@@ -48,7 +48,23 @@ export function ClaimUnstakeSections() {
 
   // 处理claim操作 - Enhanced with better state validation
   const handleClaim = () => {
-    if (!canClaim || isClaimPending || selectedClaimIds.size === 0) return;
+    // ===== SECURITY: Pre-claim validation =====
+
+    // SECURITY: Basic state checks
+    if (!canClaim || isClaimPending || selectedClaimIds.size === 0) {
+      console.warn('[CLAIM] Claim blocked', {
+        canClaim,
+        isClaimPending,
+        selectedCount: selectedClaimIds.size,
+      });
+      return;
+    }
+
+    // SECURITY: Validate claim records exist
+    if (!readyToClaimRecords || readyToClaimRecords.length === 0) {
+      console.error('[CLAIM] No ready-to-claim records available');
+      return;
+    }
 
     // 只处理ready-to-claim的记录，过滤掉等待中的记录
     const validClaimIds = Array.from(selectedClaimIds).filter((requestId) => {
@@ -56,15 +72,41 @@ export function ClaimUnstakeSections() {
       return claim && claim.status === 'pending';
     });
 
-    if (validClaimIds.length === 0) return;
+    // SECURITY: Validate we have valid claims to process
+    if (validClaimIds.length === 0) {
+      console.warn('[CLAIM] No valid claim IDs to process');
+      return;
+    }
+
+    console.log('[CLAIM] Processing claims:', {
+      totalSelected: selectedClaimIds.size,
+      validCount: validClaimIds.length,
+    });
 
     // 批量处理所有有效的claim请求
     validClaimIds.forEach((requestId) => {
-      // 获取该请求的金额
+      // ===== SECURITY: Individual claim validation =====
+
+      // SECURITY: Find and validate the claim record
       const claimRecord = readyToClaimRecords.find(
         (record) => String(record.request_id) === requestId
       );
-      const claimAmount = claimRecord ? formatBig(String(claimRecord.token_amount)) : '0';
+
+      if (!claimRecord) {
+        console.error('[CLAIM] Claim record not found for request ID:', requestId);
+        return;
+      }
+
+      // SECURITY: Validate claim amount
+      const claimAmount = formatBig(String(claimRecord.token_amount));
+      const amountNum = parseFloat(claimAmount);
+      if (!Number.isFinite(amountNum) || amountNum <= 0) {
+        console.error('[CLAIM] Invalid claim amount', {
+          requestId,
+          claimAmount,
+        });
+        return;
+      }
 
       // Track claim attempt
       trackEvent('APRIORI_CLAIM', {
