@@ -518,9 +518,53 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
       return;
     }
 
-    if (!quoteData || !sellToken || !buyToken) return;
+    // SECURITY: Validate required data exists
+    if (!quoteData || !sellToken || !buyToken) {
+      console.error('[DEX] Swap blocked: missing required data', {
+        hasQuote: !!quoteData,
+        hasSellToken: !!sellToken,
+        hasBuyToken: !!buyToken,
+      });
+      return;
+    }
 
-    if (Number(sellValue) > Number(fromBalance)) {
+    // SECURITY: Validate token addresses
+    if (!sellToken.address || sellToken.address === '0x0') {
+      toast.error('Invalid sell token');
+      return;
+    }
+    if (!buyToken.address || buyToken.address === '0x0') {
+      toast.error('Invalid buy token');
+      return;
+    }
+
+    // SECURITY: Validate sell amount
+    if (!sellValue || sellValue === '0' || sellValue === '') {
+      console.error('[DEX] Invalid sell amount', sellValue);
+      return;
+    }
+
+    // SECURITY: Validate numeric values
+    const sellNum = parseFloat(sellValue);
+    if (!Number.isFinite(sellNum) || sellNum <= 0) {
+      console.error('[DEX] Invalid sell value (not finite or <= 0)', sellValue);
+      toast.error('Invalid sell amount');
+      return;
+    }
+
+    // SECURITY: Enhanced balance validation
+    const balanceNum = parseFloat(fromBalance || '0');
+    if (!Number.isFinite(balanceNum) || balanceNum < 0) {
+      console.error('[DEX] Invalid balance value', fromBalance);
+      toast.error('Unable to verify balance, please refresh');
+      return;
+    }
+
+    if (sellNum > balanceNum) {
+      console.error('[DEX] Insufficient balance', {
+        requested: sellNum,
+        available: balanceNum,
+      });
       toast.error('Insufficient balance');
       trackEnhancedEvent('ERROR_OCCURRED', {
         event_category: 'trading',
@@ -557,30 +601,95 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
       errorMessage: '',
     });
 
+    // ===== SECURITY: Build and validate swap parameters =====
+
     const routerName = mapRouterName(selectedProject);
-    const amountInWei = parseBig(
-      sellValue,
-      sellToken.decimals ?? DEFAULT_TOKEN_DECIMALS
-    ).toString();
+
+    // SECURITY: Validate and parse amount with proper decimals
+    const decimals = sellToken.decimals ?? DEFAULT_TOKEN_DECIMALS;
+    if (!Number.isFinite(decimals) || decimals < 0 || decimals > 77) {
+      console.error('[DEX] Invalid token decimals', decimals);
+      toast.error('Invalid token configuration');
+      return;
+    }
+
+    const amountInWei = parseBig(sellValue, decimals).toString();
+    if (!amountInWei || amountInWei === '0' || amountInWei === 'NaN') {
+      console.error('[DEX] Failed to parse sell amount to wei', {
+        sellValue,
+        decimals,
+        result: amountInWei,
+      });
+      toast.error('Invalid sell amount');
+      return;
+    }
+
+    // SECURITY: Validate quote output amount
     const amountOutWei = (quoteOutWei as string) ?? '0';
+    if (!amountOutWei || amountOutWei === '0' || amountOutWei === 'NaN') {
+      console.error('[DEX] Invalid quote output amount', quoteOutWei);
+      toast.error('Invalid quote data, please try again');
+      return;
+    }
+
+    // SECURITY: Build and validate swap path
     const fallbackPath = [
       replaceNativeAddressUseBackend(sellToken.address),
       replaceNativeAddressUseBackend(buyToken.address),
     ];
     const path = quotePath && quotePath.length > 0 ? quotePath : fallbackPath;
 
+    // SECURITY: Validate path has at least 2 addresses
+    if (!path || path.length < 2) {
+      console.error('[DEX] Invalid swap path', path);
+      toast.error('Invalid swap route');
+      return;
+    }
+
+    // SECURITY: Log swap parameters for debugging
+    console.log('[DEX] Swap parameters:', {
+      routerName,
+      amountInWei,
+      amountOutWei,
+      pathLength: path.length,
+      isSellNative: isSellTokenNative,
+      isBuyNative: isBuyTokenNative,
+      accountType: currentAccountType,
+    });
+
     if (currentAccountType === 'EOA') {
-      // EOA 自定义收款地址校验（保持与原逻辑一致，仅在 Uniswap 下开启；排除 MON<=>WMON）
+      // ===== SECURITY: EOA-specific validations =====
+
+      // SECURITY: Validate custom recipient address if enabled
       if (selectedProject === 'uniswap' && receiveToCustom && !isMonWmonPair) {
-        if (!receiveCustomAddress || !isAddress(receiveCustomAddress as `0x${string}`)) {
+        if (!receiveCustomAddress) {
+          console.error('[DEX] Custom recipient enabled but address is empty');
+          toast.error('Please enter recipient address');
+          return;
+        }
+        if (!isAddress(receiveCustomAddress as `0x${string}`)) {
+          console.error('[DEX] Invalid custom recipient address', receiveCustomAddress);
           toast.error('Invalid recipient address');
+          return;
+        }
+        // SECURITY: Warn if sending to zero address
+        if (receiveCustomAddress === '0x0000000000000000000000000000000000000000') {
+          console.error('[DEX] Attempted to send to zero address');
+          toast.error('Cannot send to zero address');
           return;
         }
       }
 
+      // SECURITY: Validate router name
+      const finalRouterName = quoteData?.swapRouterName || routerName;
+      if (!finalRouterName || finalRouterName === '') {
+        console.error('[DEX] Missing swap router name');
+        toast.error('Invalid swap configuration');
+        return;
+      }
+
       const args = {
-        // 优先使用报价返回的路由名
-        swap_router_name: quoteData?.swapRouterName || routerName,
+        swap_router_name: finalRouterName,
         path,
         token_in_is_mon: isSellTokenNative,
         token_out_is_mon: isBuyTokenNative,
@@ -608,9 +717,25 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
         throw err;
       }
     } else {
+      // ===== SECURITY: DSA-specific validations =====
+
+      // SECURITY: Validate router name
+      const finalRouterName = quoteData?.swapRouterName || routerName;
+      if (!finalRouterName || finalRouterName === '') {
+        console.error('[DEX] Missing swap router name');
+        toast.error('Invalid swap configuration');
+        return;
+      }
+
+      // SECURITY: Validate DSA account exists
+      if (!accountInfo?.sandbox_account) {
+        console.error('[DEX] DSA account not available');
+        toast.error('DSA account not found, please create one');
+        return;
+      }
+
       const args = {
-        // 优先使用报价返回的路由名
-        swap_router_name: quoteData?.swapRouterName || routerName,
+        swap_router_name: finalRouterName,
         path,
         token_in_is_mon: isSellTokenNative,
         token_out_is_mon: isBuyTokenNative,
