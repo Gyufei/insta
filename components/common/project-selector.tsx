@@ -45,7 +45,7 @@ export function ProjectSelector<T extends ProjectConfig>({
   return (
     <div
       className={cn(
-        'flex flex-nowrap gap-2 p-[4px] mb-5 md:mb-12 w-full md:w-fit bg-[#F5F6F9] rounded-xl overflow-x-auto',
+        'flex flex-nowrap gap-2 p-[4px] mb-5 md:mb-12 w-full md:w-fit bg-[#F5F6F9] rounded-[8px] overflow-x-auto',
         'whitespace-nowrap',
         className
       )}

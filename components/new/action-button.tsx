@@ -119,7 +119,7 @@ export function ActionButton({
 
   return (
     <>
-      <div className={cn('mt-5 flex flex-shrink-0', className)}>
+      <div className={cn('flex flex-shrink-0', className)}>
         <Button
           disabled={isDisabled}
           onClick={handleClick}
@@ -145,7 +145,7 @@ export function ActionButton({
       {/* Exchange Rate */}
       {exchangeRate && (
         <div className="text-sm text-[#999999] text-center flex justify-between px-1">
-          Exchange rate: <span className="text-black font-medium">{exchangeRate}</span>
+          Exchange rate: <span className="text-[#131E40] ">{exchangeRate}</span>
         </div>
       )}
 

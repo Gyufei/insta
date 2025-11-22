@@ -41,7 +41,7 @@ export function AccountSelect({
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       {accountSelectLabel ? (
-        <div className="text-sm text-[#131E40] font-normal">{accountSelectLabel}</div>
+        <div className="text-[16px] md:text-[18px] text-[#131E40] font-normal">{accountSelectLabel}</div>
       ) : null}
       <div className="relative w-full">
         <div className="absolute left-3 top-1/2 -translate-y-1/2">

@@ -37,7 +37,7 @@ export function TokenPairAndStatus({
     <div className={cn('p-4 flex items-start gap-4 w-full md:w-auto', className)}>
       <TokenPairLogo token0={token0} token1={token1} />
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <div className="flex items-center gap-2">
           <span className="text-lg font-semibold text-primary">
             {token0.symbol} / {token1.symbol}

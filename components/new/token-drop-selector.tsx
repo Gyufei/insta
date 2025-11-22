@@ -90,7 +90,7 @@ export function TokenDropSelector({
   const effectivePending = hasValidCustomAddress ? isCustomAddrPending : isBalancePending;
 
   return (
-    <div className={cn('flex flex-col gap-[10px]', className)}>
+    <div className={cn('flex flex-col gap-3 md:gap-4', className)}>
       {/* Account / Wallet selector (move to top as per UI) */}
       <AccountSelect
         accountOptions={accountOptions}

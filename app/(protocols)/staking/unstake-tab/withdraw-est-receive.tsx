@@ -15,21 +15,21 @@ export function WithdrawEstReceive({
       <Card className="relative flex-grow cursor-pointer rounded-[6px] border-[#EBEBEB] p-4 max-lg:w-full">
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <p className="text-blue text-xs font-semibold">Use aPriori</p>
+            <p className="text-blue text-sm font-semibold">Use aPriori</p>
           </div>
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-gray-300">Rate:</p>
-              <p className="text-blue text-xs font-medium">1 : 1</p>
+              <p className="text-sm text-gray-300">Standard:</p>
+              <p className="text-blue text-sm">1 : 1</p>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-gray-300">Wait time:</p>
-              <p className="text-blue text-xs font-medium">10 minutes</p>
+              <p className="text-sm text-gray-300">Wait time:</p>
+              <p className="text-blue text-sm">18 hours</p>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-gray-300">You receive:</p>
-              <p className="text-blue text-xs font-medium">
-                {truncateIfExceeds(receiveAmount || '0', 4)} {receiveToken.symbol}
+              <p className="text-sm text-gray-300">You receive:</p>
+              <p className="text-blue text-sm">
+                {receiveAmount !== '0' ? truncateIfExceeds(receiveAmount || '0', 4) : '0'} {receiveToken.symbol}
               </p>
             </div>
           </div>

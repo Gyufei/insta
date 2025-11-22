@@ -107,7 +107,7 @@ export function StakingContent() {
               <button
                 onClick={() => setActiveTab('stake')}
                 className={cn(
-                  'px-2 py-2 font-medium transition-colors',
+                  'px-2 py-2 font-medium transition-colors text-[16px]',
                   activeTab === 'stake'
                     ? 'text-[var(--color-tab-text-active)] border-b-2 border-[var(--color-tab-border-active)]'
                     : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'
@@ -118,7 +118,7 @@ export function StakingContent() {
               <button
                 onClick={() => setActiveTab('unstake')}
                 className={cn(
-                  'ml-4 px-2 py-2 font-medium transition-colors',
+                  'ml-4 px-2 py-2 font-medium transition-colors text-[16px]',
                   activeTab === 'unstake'
                     ? 'text-[var(--color-tab-text-active)] border-b-2 border-[var(--color-tab-border-active)]'
                     : 'text-[var(--color-tab-text)] hover:text-[var(--color-tab-text-hover)]'

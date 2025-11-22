@@ -7,11 +7,7 @@ import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
-
-
 import { useEffect, useMemo, useRef, useState } from 'react';
-
-
 
 import Image from 'next/image';
 
@@ -705,7 +701,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
   return (
     <>
       <div className="">
-        <div className="flex flex-col justify-between flex-1 gap-0 shadow-none">
+        <div className="flex flex-col justify-between flex-1 gap-0 md:gap-1 shadow-none">
           <Card
             className={cn(
               'flex-1 relative p-5 flex flex-col border border-[#ebebeb] gap-[10px] rounded-md'

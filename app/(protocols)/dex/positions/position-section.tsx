@@ -42,7 +42,8 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
   const [searchQuery, setSearchQuery] = useState('');
 
   const withFilter = Boolean(searchQuery);
-  const isUniswapSelected = selectedProject === 'uniswap' || selectedProject === 'auto-routing';
+  const isUniswapSelected = selectedProject === 'uniswap';
+  const isAutoSelected = selectedProject === 'auto-routing';
 
   const tokens = TOKENS;
   const filteredPositions = positions?.filter((position) => {
@@ -93,6 +94,12 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
     }
   }
 
+  // Aggregate counts for auto-routing display
+  const totalPositionsCount = (positions?.length || 0) + (ambientPositions?.length || 0);
+  const totalFilteredCount = (filteredPositions?.length || 0) + (filteredAmbientPositions?.length || 0);
+
+  const isLoading = isAutoSelected ? (isUniswapLoading || isAmbientLoading) : (isUniswapSelected ? isUniswapLoading : isAmbientLoading);
+
   return (
     <div className="flex w-full flex-grow flex-col px-4 2xl:px-12 mt-[50px]">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -103,7 +110,7 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
               <Input
                 type="text"
                 placeholder="Search position"
-                className="form-input w-full pr-2 leading-none pl-9 py-1 h-8 shadow-none outline-none focus-visible:ring-0"
+                className="form-input w-full pr-2 leading-none pl-9 py-1 h-10 md:h-8 shadow-none outline-none focus-visible:ring-0"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -128,10 +135,26 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
       </div>
 
       <div className="mt-4 flex flex-grow flex-col gap-4 min-h-50">
-        {(isUniswapSelected ? isUniswapLoading : isAmbientLoading) ? (
+        {isLoading ? (
           <div className="py-20 rounded-sm bg-muted/80 flex items-center justify-center">
             <WithLoading isLoading={true} />
           </div>
+        ) : isAutoSelected ? (
+          !totalPositionsCount || (withFilter && !totalFilteredCount) ? (
+            <PositionsEmpty
+              isEmpty={totalPositionsCount === 0}
+              hasFilterApplied={withFilter}
+            />
+          ) : (
+            <>
+              {filteredPositions?.map((position) => (
+                <PositionItem key={position.v3Position.tokenId} protocol="uniswap" position={position} />
+              ))}
+              {filteredAmbientPositions?.map((position) => (
+                <PositionItem key={position.positionId} protocol="ambient" position={position} />
+              ))}
+            </>
+          )
         ) : isUniswapSelected ? (
           !positions?.length || (withFilter && !filteredPositions?.length) ? (
             <PositionsEmpty
