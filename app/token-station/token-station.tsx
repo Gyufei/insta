@@ -44,11 +44,13 @@ import { ensureBaseNetwork, ensureEthNetwork } from '@/lib/utils/network-guard';
 import { formatNumber, truncateNumber } from '@/lib/utils/number';
 import { useIsMobile } from '@/lib/utils/use-mobile';
 
-import {
-  STATION_FROM_TOKENS_BASE,
-  STATION_FROM_TOKENS_ETH,
-  STATION_TO_TOKENS,
-} from './station-config';
+
+
+import { STATION_FROM_TOKENS_BASE, STATION_FROM_TOKENS_ETH, STATION_TO_TOKENS } from './station-config';
+
+
+
+
 
 const MIN_TRANSACTION_AMOUNT = 2;
 
@@ -370,21 +372,15 @@ export function TokenStation() {
       return;
     }
 
-    const switchNetwork = async (target: { id: number }) => {
-      return Promise.resolve(eventBus.publish('toggle-network', target));
-    };
-
     const ensure = async () => {
       if (mode === 'CCIP') {
         return ensureEthNetwork({
           chainId,
-          switchNetwork,
           sentryTags: { area: 'token_station', action: 'confirm', mode: 'CCIP' },
         });
       }
       return ensureBaseNetwork({
         chainId,
-        switchNetwork,
         sentryTags: { area: 'token_station', action: 'confirm', mode: 'BRIDGE' },
       });
     };
@@ -411,27 +407,22 @@ export function TokenStation() {
     }
 
     // Guard the required network strictly before swapping
-    const switchNetwork = async (target: { id: number }) => {
-      return Promise.resolve(eventBus.publish('toggle-network', target));
-    };
     const ensure = async () => {
       if (mode === 'CCIP') {
         return ensureEthNetwork({
           chainId,
-          switchNetwork,
           sentryTags: { area: 'token_station', action: 'swap', mode: 'CCIP' },
         });
       }
       return ensureBaseNetwork({
         chainId,
-        switchNetwork,
         sentryTags: { area: 'token_station', action: 'swap', mode: 'BRIDGE' },
       });
     };
     // Stop the flow if wrong network; user can click again after switch
     // Note: approve flow already guarded in handleConfirm
     // Using sync wait to keep existing function not async
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+
     ensure().then((ok) => {
       if (!ok) return;
 
@@ -467,7 +458,6 @@ export function TokenStation() {
         },
         {
           onSuccess: () => {
-
             // Track successful bridge
             trackEvent('TOKEN_BRIDGE', {
               event_category: 'token_station',

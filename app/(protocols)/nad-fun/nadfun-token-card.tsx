@@ -1,10 +1,20 @@
+import { toast } from 'sonner';
+
+
+
 import Image from 'next/image';
 
+
+
 import { IToken } from '@/config/tokens';
+
+
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+
+
 
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { cn } from '@/lib/utils';
@@ -15,6 +25,8 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
   const { setCurrentComponent } = useSideDrawerStore();
 
   function handleBuy() {
+    toast.warning('Coming soon');
+    return;
     setCurrentComponent({
       name: 'NadFunBuyToken',
       props: { token: { ...token, balance } },
@@ -22,6 +34,8 @@ export function NadFunTokenCard({ token, balance }: { token: IToken; balance: st
   }
 
   function handleSell() {
+    toast.warning('Coming soon');
+    return;
     setCurrentComponent({
       name: 'NadFunSellToken',
       props: { token: { ...token, balance } },

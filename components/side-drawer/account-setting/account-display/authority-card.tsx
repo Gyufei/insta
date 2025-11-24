@@ -11,6 +11,7 @@ import { formatAddress } from '@/lib/utils';
 
 export function AuthorityCard({ manager }: { manager: string }) {
   const network = NetworkConfigs.monadTestnet;
+  const explorerUrl = network.blockExplorers?.default?.url;
 
   const { address } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
@@ -32,17 +33,26 @@ export function AuthorityCard({ manager }: { manager: string }) {
   return (
     <Card className="flex-shrink-0 py-[14px] border border-[#EBEBEB]">
       <CardContent className="flex items-center justify-between px-4">
-        <a
-          rel="noopener noreferrer"
-          target="_blank"
-          href={`${network.blockExplorers.default.url}/address/${manager}`}
-          className="text-sm font-medium text-primary"
-        >
-          {formatAddress(manager, {
-            prefix: 12,
-            suffix: 12,
-          })}
-        </a>
+        {explorerUrl ? (
+          <a
+            rel="noopener noreferrer"
+            target="_blank"
+            href={`${explorerUrl}/address/${manager}`}
+            className="text-sm font-medium text-primary"
+          >
+            {formatAddress(manager, {
+              prefix: 12,
+              suffix: 12,
+            })}
+          </a>
+        ) : (
+          <span className="text-sm font-medium text-primary">
+            {formatAddress(manager, {
+              prefix: 12,
+              suffix: 12,
+            })}
+          </span>
+        )}
         <CardFooter className="ml-4 w-8 border-0 p-0">
           {address !== manager && (
             <Trash2
