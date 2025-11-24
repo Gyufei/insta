@@ -65,10 +65,11 @@ export function LendingMarketInfo() {
 
   if (!market) return null;
   // token references after null-check
+  const t0 = market.token0;
+  const t1 = market.token1;
   const walletBalanceDisplay = walletBalanceRaw || '0';
-  // APR 指标需随 isBorrow 联动：基于当前 baseToken（borrow 模式为借款代币，supply 模式为抵押代币）
-  const supplyRate = (isBorrow ? borrowToken?.supply_rate : supplyToken?.supply_rate) || '0';
-  const borrowRate = (isBorrow ? borrowToken?.borrow_rate : supplyToken?.borrow_rate) || '0';
+  const supplyRate = (supplyTokenIndex === 0 ? t0?.supply_rate : t1?.supply_rate) || '0';
+  const borrowRate = (supplyTokenIndex === 0 ? t1?.borrow_rate : t0?.borrow_rate) || '0';
   const displaySymbol = baseToken?.symbol || baseToken?.name || '';
   const tokenLogo = baseToken?.logoURI || '/icons/token.svg';
 

@@ -224,21 +224,8 @@ export default function InlineMarketsSection({
                         borrowTokensRaw = price1 > 0 ? borrowUSDNum / price1 : 0;
                       }
                       const borrowTokens = formatAbbr(String(borrowTokensRaw));
-                      // 根据用户持有份额选择供给侧 token 的 APY（默认 token0）
-                      const userShare0 = parseFloat(user?.token0?.user_share_display_balance || '0');
-                      const userShare1 = parseFloat(user?.token1?.user_share_display_balance || '0');
-                      const supplyIndex = Number.isFinite(userShare1) && userShare1 > 0 && (!Number.isFinite(userShare0) || userShare0 <= 0) ? 1 : 0;
-                      const supplyApy = formatPct(
-                        supplyIndex === 0
-                          ? m.token0.supply_rate || m.supply_rate || '0'
-                          : m.token1.supply_rate || m.supply_rate || '0'
-                      );
-                      // Borrow APY 也随当前供给侧对应的借款代币联动（供给0 -> 借1；供给1 -> 借0）
-                      const borrowApy = formatPct(
-                        supplyIndex === 0
-                          ? m.token1.borrow_rate || m.borrow_rate || '0'
-                          : m.token0.borrow_rate || m.borrow_rate || '0'
-                      );
+                      const supplyApy = formatPct(m.token0.supply_rate || m.supply_rate || '0');
+                      const borrowApy = formatPct(m.token1.borrow_rate || m.borrow_rate || '0');
                       const maxDebtUSDNum = parseFloat(
                         formatBig(String(user?.total_debt_in_usd || '0'), 18)
                       );
@@ -246,20 +233,9 @@ export default function InlineMarketsSection({
                       const remainingTokens = formatAbbr(
                         String(price1 > 0 ? maxDebtUSDNum / price1 : 0)
                       );
-                      const myTokens = formatAbbr(
-                        supplyIndex === 0
-                          ? user?.token0?.user_asset_display_balance || '0'
-                          : user?.token1?.user_asset_display_balance || '0'
-                      );
+                      const myTokens = formatAbbr(user?.token0?.user_asset_display_balance || '0');
                       const myUSD = formatUSD(
-                        String(
-                          (supplyIndex === 0 ? price0 : price1) *
-                            parseFloat(
-                              supplyIndex === 0
-                                ? user?.token0?.user_asset_display_balance || '0'
-                                : user?.token1?.user_asset_display_balance || '0'
-                            )
-                        )
+                        String(price0 * parseFloat(user?.token0?.user_asset_display_balance || '0'))
                       );
 
                       return (
@@ -378,21 +354,8 @@ export default function InlineMarketsSection({
                       borrowTokensRaw = price1 > 0 ? borrowUSDNum / price1 : 0;
                     }
                     const borrowTokens = formatAbbr(String(borrowTokensRaw));
-                    // 根据用户持有份额选择供给侧 token 的 APY（默认 token0）
-                    const userShare0 = parseFloat(user?.token0?.user_share_display_balance || '0');
-                    const userShare1 = parseFloat(user?.token1?.user_share_display_balance || '0');
-                    const supplyIndex = Number.isFinite(userShare1) && userShare1 > 0 && (!Number.isFinite(userShare0) || userShare0 <= 0) ? 1 : 0;
-                    const supplyApy = formatPct(
-                      supplyIndex === 0
-                        ? m.token0.supply_rate || m.supply_rate || '0'
-                        : m.token1.supply_rate || m.supply_rate || '0'
-                    );
-                    // Borrow APY 也随当前供给侧对应的借款代币联动（供给0 -> 借1；供给1 -> 借0）
-                    const borrowApy = formatPct(
-                      supplyIndex === 0
-                        ? m.token1.borrow_rate || m.borrow_rate || '0'
-                        : m.token0.borrow_rate || m.borrow_rate || '0'
-                    );
+                    const supplyApy = formatPct(m.token0.supply_rate || m.supply_rate || '0');
+                    const borrowApy = formatPct(m.token1.borrow_rate || m.borrow_rate || '0');
                     const maxDebtUSDNum = parseFloat(
                       formatBig(String(user?.total_debt_in_usd || '0'), 18)
                     );
@@ -400,20 +363,9 @@ export default function InlineMarketsSection({
                     const remainingTokens = formatAbbr(
                       String(price1 > 0 ? maxDebtUSDNum / price1 : 0)
                     );
-                    const myTokens = formatAbbr(
-                      supplyIndex === 0
-                        ? user?.token0?.user_asset_display_balance || '0'
-                        : user?.token1?.user_asset_display_balance || '0'
-                    );
+                    const myTokens = formatAbbr(user?.token0?.user_asset_display_balance || '0');
                     const myUSD = formatUSD(
-                      String(
-                        (supplyIndex === 0 ? price0 : price1) *
-                          parseFloat(
-                            supplyIndex === 0
-                              ? user?.token0?.user_asset_display_balance || '0'
-                              : user?.token1?.user_asset_display_balance || '0'
-                          )
-                      )
+                      String(price0 * parseFloat(user?.token0?.user_asset_display_balance || '0'))
                     );
 
                     return (

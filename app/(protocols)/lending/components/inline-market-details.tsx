@@ -2,6 +2,8 @@
 
 import { useAccount } from 'wagmi';
 
+
+
 import { useEffect, useMemo, useState } from 'react';
 
 import type { IToken } from '@/config/tokens';
@@ -136,6 +138,20 @@ export default function InlineMarketDetails({
   const approxTokenAmount = price > 0 ? displayUSDNum / price : 0;
   const walletAddress =
     currentAccountType === 'EOA' ? address || '' : accountInfo?.sandbox_account || '';
+
+
+  // 借款侧指标（基于用户 positions：总债务与最大可借）
+  const userMaxDebtUSD = parseFloat(formatBig(String(user?.total_max_debt_in_usd || '0'), 18));
+  const userTotalDebtUSD = parseFloat(formatBig(String(user?.total_debt_in_usd || '0'), 18));
+  const borrowDebtUSD = Number.isFinite(userMaxDebtUSD) ? userMaxDebtUSD : 0;
+  const borrowAvailableUSD =
+    Number.isFinite(userMaxDebtUSD) && Number.isFinite(userTotalDebtUSD)
+      ? Math.max(userMaxDebtUSD - userTotalDebtUSD, 0)
+      : NaN;
+    const borrowUtilizationPct =
+    Number.isFinite(userMaxDebtUSD) && userMaxDebtUSD > 0 && Number.isFinite(userTotalDebtUSD)
+      ? (userTotalDebtUSD / userMaxDebtUSD) * 100
+      : parseFloat(market.utilization_rate || '0');
   const { balance: walletBalanceRaw } = useAddressBalance(
     walletAddress,
     token0.address,
@@ -316,34 +332,34 @@ export default function InlineMarketDetails({
                 <>
                   <div className="md:text-left text-center flex flex-col px-4">
                     <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatUSD(borrowToken.total_debt_in_usd)}
+                      {formatUSD(borrowDebtUSD)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Total Debt</div>
                   </div>
                   <div className="md:text-left text-center flex flex-col px-4 ">
                     <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatUSD(borrowToken.total_supply_in_usd)}
+                      {formatUSD(borrowAvailableUSD)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Available Liquidity</div>
                   </div>
                   <div className="md:text-left text-center flex flex-col">
                     <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatPct(borrowToken.borrow_rate || market.borrow_rate)}
+                      {formatPct(borrowUtilizationPct)}
                     </div>
-                    <div className="order-2 md:order-1 text-[#A5ADC6]">Borrow vAPY</div>
+                    <div className="order-2 md:order-1 text-[#A5ADC6]">Utilization Rate</div>
                   </div>
                 </>
               ) : (
                 <>
                   <div className="md:text-left text-center flex flex-col px-1">
                     <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatUSD(supplyToken.total_supply_in_usd)}
+                       {formatUSD(market.total_supply_in_usd)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Reserve Size</div>
                   </div>
                   <div className="md:text-left text-center flex flex-col px-1">
                     <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatUSD(market.available_supply_in_usd)}
+                       {formatUSD(market.available_supply_in_usd)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Available Liquidity</div>
                   </div>
