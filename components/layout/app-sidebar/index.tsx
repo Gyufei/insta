@@ -259,6 +259,7 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
           className="h-3 w-3 rounded-full"
         />
       ),
+      disabled: !TAB_ENABLED.nadFun,
     },
     {
       href: getCurrentChainNameHref('/nad-name-service'),
@@ -272,6 +273,7 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
           className="h-3 w-3"
         />
       ),
+      disabled: !TAB_ENABLED.nadNameService,
     },
   ];
 

@@ -5,4 +5,6 @@ export const TAB_ENABLED = {
   lending: false,
   faucet: false,
   odds: false,
+  nadFun: false,
+  nadNameService: false,
 } as const;
