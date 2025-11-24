@@ -24,7 +24,9 @@ import { formatNumber } from '@/lib/utils/number';
 
 
 
-import { TwitterLink } from './twitter-link';
+
+
+// import { TwitterLink } from './twitter-link';
 
 
 
@@ -113,7 +115,7 @@ export default function BalanceSection() {
           </TooltipProvider>
         </h3>
 
-        <TwitterLink />
+        {/* <TwitterLink /> */}
       </div>
       <div className="mt-4 flex justify-between items-stretch w-full">
         <div
