@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 // Next.js imports
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import { DEX_PROJECTS, DEX_PROJECT_IDS } from '@/app/(protocols)/dex/dex-config';
 import { LENDING_PROJECTS, LENDING_PROJECT_IDS } from '@/app/(protocols)/lending/lending-config';
@@ -354,7 +354,6 @@ function createInitialMenuGroups(getCurrentChainNameHref: (href: string) => stri
 const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
   const [isHover, setIsHover] = useState(false);
   const isDisabled = !!item.disabled;
-  const router = useRouter();
 
   return (
     <Link
@@ -363,14 +362,7 @@ const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean })
       onClick={(e) => {
         if (isDisabled) {
           e.preventDefault();
-          const isDex = item.href.includes('/dex');
-          if (isDex) {
-            const tradeHref = item.href.replace('/dex', '/trade');
-            toast.warning('DEX coming soon. Redirecting to Trade');
-            router.push(tradeHref);
-          } else {
-            toast.warning('Coming soon');
-          }
+          toast.warning('Coming soon');
         }
       }}
       href={item.href}
@@ -406,7 +398,6 @@ const isItemActive = (item: MenuItem, pathname: string): boolean => {
 const ExpandedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
   const [isHover, setIsHover] = useState(false);
   const isDisabled = !!item.disabled;
-  const router = useRouter();
 
   return (
     <SidebarMenuItem className="py-0 px-[10px]" key={item.href}>
@@ -416,14 +407,7 @@ const ExpandedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boolea
         onClick={(e) => {
           if (isDisabled) {
             e.preventDefault();
-            const isDex = item.href.includes('/dex');
-            if (isDex) {
-              const tradeHref = item.href.replace('/dex', '/trade');
-              toast.warning('DEX coming soon. Redirecting to Trade');
-              router.push(tradeHref);
-            } else {
-              toast.warning('Coming soon');
-            }
+            toast.warning('Coming soon');
           }
         }}
         href={item.href}
@@ -443,7 +427,6 @@ const ExpandedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boolea
 const CollapsedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
   const [isHover, setIsHover] = useState(false);
   const isDisabled = !!item.disabled;
-  const router = useRouter();
 
   return (
     <SidebarMenuItem key={item.href}>
@@ -457,14 +440,7 @@ const CollapsedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boole
           onClick={(e) => {
             if (isDisabled) {
               e.preventDefault();
-              const isDex = item.href.includes('/dex');
-              if (isDex) {
-                const tradeHref = item.href.replace('/dex', '/trade');
-                toast.warning('DEX coming soon. Redirecting to Trade');
-                router.push(tradeHref);
-              } else {
-                toast.warning('Coming soon');
-              }
+              toast.warning('Coming soon');
             }
           }}
         >
@@ -529,7 +505,6 @@ const CollapsedMenuGroup = ({
   pathname: string;
 }) => {
   const groupIsActive = isGroupActive(group, pathname);
-  const router = useRouter();
 
   return (
     <DropdownMenu>
@@ -554,14 +529,7 @@ const CollapsedMenuGroup = ({
                 onClick={(e) => {
                   if (item.disabled) {
                     e.preventDefault();
-                    const isDex = item.href.includes('/dex');
-                    if (isDex) {
-                      const tradeHref = item.href.replace('/dex', '/trade');
-                      toast.warning('DEX coming soon. Redirecting to Trade');
-                      router.push(tradeHref);
-                    } else {
-                      toast.warning('Coming soon');
-                    }
+                    toast.warning('Coming soon');
                   }
                 }}
               >
