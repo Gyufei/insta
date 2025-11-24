@@ -7,7 +7,6 @@ import { useMemo } from 'react';
 
 
 
-import { NetworkConfigs } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
 
@@ -22,7 +21,8 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
 
 
-import { useRPCTokenBalance } from '@/lib/data/balance/use-rpc-token-balance';
+import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
+import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
 import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
 import { useCurvanceRepay } from '@/lib/data/use-curvance-repay';
@@ -69,17 +69,13 @@ export function LendingRepay() {
   );
 
   const { address } = useAccount();
+  const { data: selectedAccount } = useSelectedAccount();
+  const dsaAddress = selectedAccount?.sandbox_account || address || '';
   const {
-    balance: walletBalance,
-    isPending: isWalletPending,
-    refetch: refetchWalletBalance,
-  } = useRPCTokenBalance(
-    NetworkConfigs.monadTestnet.id,
-    address || '',
-    token.address,
-    [token],
-    true
-  );
+    balance: dsaBalance,
+    isBalancePending: isDSABalancePending,
+    refetch: refetchDSABalance,
+  } = useAddressBalance(dsaAddress, token.address, token.decimals, !!dsaAddress);
 
   const userInfoQuery = useCurvanceMarketUserInfo(true);
   const userItem = useMemo(() => {
@@ -105,10 +101,10 @@ export function LendingRepay() {
   // Use the smaller of wallet vs debt as the input constraint
   const inputConstraintBalance = useMemo(() => {
     // SECURITY: Safe balance comparison with NaN handling
-    const w = parseFloat(walletBalance || '0');
+    const w = parseFloat(dsaBalance || '0');
     const d = parseFloat(debtBalance || '0');
     return String(Math.min(w || 0, d || 0));
-  }, [walletBalance, debtBalance]);
+  }, [dsaBalance, debtBalance]);
 
   const { inputValue, btnDisabled, errorData, handleInputChange } =
     useTokenInput(inputConstraintBalance);
@@ -175,12 +171,12 @@ export function LendingRepay() {
       return;
     }
 
-    // SECURITY: Double-check against wallet balance
-    const wallet = parseFloat(walletBalance || '0');
-    if (!Number.isFinite(wallet) || inputNum > wallet) {
-      console.error('[REPAY] Insufficient wallet balance', {
+    // SECURITY: Double-check against DSA balance
+    const dsa = parseFloat(dsaBalance || '0');
+    if (!Number.isFinite(dsa) || inputNum > dsa) {
+      console.error('[REPAY] Insufficient DSA balance', {
         requested: inputNum,
-        available: wallet,
+        available: dsa,
       });
       return;
     }
@@ -228,11 +224,11 @@ export function LendingRepay() {
         // 保持抽屉打开：清空输入并刷新钱包和持仓数据
         handleInput('');
         try {
-          refetchWalletBalance?.();
-        } catch {}
-        try {
-          userInfoQuery.refetch?.();
-        } catch {}
+          refetchDSABalance?.();
+          } catch {}
+          try {
+            userInfoQuery.refetch?.();
+          } catch {}
       },
       onError: (error: Error) => {
         trackEvent('LENDING_REPAY', {
@@ -291,7 +287,7 @@ export function LendingRepay() {
                     <span>
                       Available:{' '}
                       <span className="text-[#131E40]">
-                        {isWalletPending ? '...' : formatNumber(inputConstraintBalance)}
+                        {isDSABalancePending ? '...' : formatNumber(inputConstraintBalance)}
                       </span>
                     </span>
                     <button

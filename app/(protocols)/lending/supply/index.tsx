@@ -8,7 +8,6 @@ import { useMemo } from 'react';
 
 
 
-import { NetworkConfigs } from '@/config/network-config';
 import { IToken } from '@/config/tokens';
 
 
@@ -23,7 +22,6 @@ import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
 
 
-import { useRPCTokenBalance } from '@/lib/data/balance/use-rpc-token-balance';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useCurvanceDeposit } from '@/lib/data/use-curvance-deposit';
@@ -73,22 +71,19 @@ export function LendingSupply() {
   const { address } = useAccount();
   const { data: selectedAccount } = useSelectedAccount();
   const dsaAddress = selectedAccount?.sandbox_account || address || '';
-  const { balance: dsaBalance, isBalancePending: isDSABalancePending } = useAddressBalance(
+  const {
+    balance: dsaBalance,
+    isBalancePending: isDSABalancePending,
+    refetch: refetchDSABalance,
+  } = useAddressBalance(
     dsaAddress,
     token.address,
     token.decimals,
     !!dsaAddress
   );
-  const { balance, refetch: refetchWalletBalance } = useRPCTokenBalance(
-    NetworkConfigs.monadTestnet.id,
-    address || '',
-    token.address,
-    [token],
-    true
-  );
 
-  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(balance);
-  const { handleSetMax, handleInput } = useSetMax(inputValue, balance, handleInputChange);
+  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(dsaBalance);
+  const { handleSetMax, handleInput } = useSetMax(inputValue, dsaBalance, handleInputChange);
   const { handleBack: _handleBack } = useUrlPathDrawerChange('/lending');
 
   const { mutate: deposit, isPending } = useCurvanceDeposit();
@@ -158,12 +153,12 @@ export function LendingSupply() {
       return;
     }
 
-    // SECURITY: Validate against wallet balance
-    const walletAmount = parseFloat(balance || '0');
-    if (!Number.isFinite(walletAmount) || inputNum > walletAmount) {
-      console.error('[SUPPLY] Insufficient wallet balance', {
+    // SECURITY: Validate against DSA balance
+    const dsaAmount = parseFloat(dsaBalance || '0');
+    if (!Number.isFinite(dsaAmount) || inputNum > dsaAmount) {
+      console.error('[SUPPLY] Insufficient DSA balance', {
         requested: inputNum,
-        available: walletAmount,
+        available: dsaAmount,
       });
       return;
     }
@@ -226,7 +221,7 @@ export function LendingSupply() {
           // 保持抽屉打开：清空输入并刷新余额/持仓
           handleInput('');
           try {
-            refetchWalletBalance?.();
+            refetchDSABalance?.();
           } catch {}
           try {
             userInfoQuery.refetch?.();
