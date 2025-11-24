@@ -22,7 +22,7 @@ export async function GET() {
           action: {
             type: 'launch_frame',
             name: 'Tadle',
-            url: 'https://v3.tadle.com',
+            url: 'https://sandbox.tadle.com',
             splashImageUrl: 'https://cdn.tadle.com/images/thumbnail-1800_945.jpg',
             splashBackgroundColor: '#6e75f9',
           },

@@ -26,7 +26,7 @@ export function TwitterLink() {
 
   // TODO: remove-to-home
   const Host = isProduction
-    ? 'https://v3.tadle.com/uniswap?chain=monad'
+    ? 'https://sandbox.tadle.com/uniswap?chain=monad'
     : 'https://preview-v3.tadle.com/uniswap?chain=monad';
   // 'http://localhost:3000/uniswap?chain=monad';
 
