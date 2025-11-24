@@ -4,7 +4,8 @@ import BalanceSection from './balance-section';
 import BalanceFooterSocial from './footer-social';
 import HelpButton from './help-button';
 import { MobileBalanceHeader } from './mb-balance-header';
-import TokenList from './token-list';
+
+// import TokenList from './token-list';
 
 export function Balance() {
   return (
@@ -14,7 +15,7 @@ export function Balance() {
         <BalanceSection />
         <BalanceActionButtons />
         <HelpButton />
-        <TokenList />
+        {/* <TokenList /> */}
         <BalanceFooterSocial className="absolute bottom-[10px] left-0 right-0" />
       </SideDrawerLayout>
     </>
