@@ -4,7 +4,10 @@ import { useMemo, useState } from 'react';
 
 import Image from 'next/image';
 
-import { MONAD, MonUSD } from '@/config/tokens';
+import {
+  MONAD,
+  // MonUSD
+} from '@/config/tokens';
 
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 import {
@@ -31,7 +34,8 @@ import { useSetMax } from '../common/use-set-max';
 import { SideDrawerBackHeader } from '../side-drawer-back-header';
 import { usePathChangeBack } from '../use-path-change-back';
 
-const TOKENS = [MONAD, MonUSD];
+// const TOKENS = [MONAD, MonUSD];
+const TOKENS = [MONAD];
 
 export function WithdrawToken() {
   const [selectedToken, setSelectedToken] = useState(MONAD.address);
