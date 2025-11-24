@@ -114,6 +114,7 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
       hoverIcon: (
         <Image src="/icons/faucet.svg" alt="faucet" width={12} height={12} className="h-3 w-3" />
       ),
+      disabled: !TAB_ENABLED.faucet,
     },
     // {
     //   href: getCurrentChainNameHref('/trade'),
@@ -134,6 +135,7 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
       hoverIcon: (
         <Image src="/icons/odds.svg" alt="odds" width={12} height={12} className="h-3 w-3" />
       ),
+      disabled: !TAB_ENABLED.odds,
     },
   ];
 

@@ -3,4 +3,6 @@ export const TAB_ENABLED = {
   staking: false,
   launchToken: false,
   lending: false,
+  faucet: false,
+  odds: false,
 } as const;
