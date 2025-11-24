@@ -4,13 +4,14 @@
 // Third-party libraries
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { Minus, Plus, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // Next.js imports
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { DEX_PROJECTS, DEX_PROJECT_IDS } from '@/app/(protocols)/dex/dex-config';
 import { LENDING_PROJECTS, LENDING_PROJECT_IDS } from '@/app/(protocols)/lending/lending-config';
@@ -19,6 +20,7 @@ import { STAKING_PROJECTS, STAKING_PROJECT_IDS } from '@/app/(protocols)/staking
 import { BaseNetUrlPath } from '@/config/env-url';
 // Internal imports
 import { NetworkConfigs } from '@/config/network-config';
+import { TAB_ENABLED } from '@/config/feature-flags';
 
 import { ProjectLogoStack } from '@/components/common/project-logo-stack';
 // UI components
@@ -63,6 +65,7 @@ type MenuItem = {
   icon: React.ReactNode;
   hoverIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  disabled?: boolean;
 };
 
 type MenuGroup = {
@@ -90,6 +93,8 @@ const FALLBACK_APP_VERSION = '3.2.0';
 
 // Global state
 let previousPathname = '';
+
+// Feature flags are managed globally in config/feature-flags.ts
 
 // Menu configuration function
 function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string) {
@@ -191,6 +196,8 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
           className="h-4 w-8"
         />
       ),
+      // Disable navigation when not enabled
+      disabled: !TAB_ENABLED.dex,
     },
     {
       href: getCurrentChainNameHref('/staking'),
@@ -205,6 +212,7 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
           className="h-4 w-8"
         />
       ),
+      disabled: !TAB_ENABLED.staking,
     },
     {
       href: getCurrentChainNameHref('/launch-token'),
@@ -218,6 +226,7 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
           className="h-3 w-3"
         />
       ),
+      disabled: !TAB_ENABLED.launchToken,
     },
     {
       href: getCurrentChainNameHref('/lending'),
@@ -234,6 +243,7 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
           className="h-4 w-[22px]"
         />
       ),
+      disabled: !TAB_ENABLED.lending,
     },
     {
       href: getCurrentChainNameHref('/nad-fun'),
@@ -341,15 +351,31 @@ function createInitialMenuGroups(getCurrentChainNameHref: (href: string) => stri
 // Internal components
 const MenuItemLink = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
   const [isHover, setIsHover] = useState(false);
+  const isDisabled = !!item.disabled;
+  const router = useRouter();
 
   return (
     <Link
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
+      onClick={(e) => {
+        if (isDisabled) {
+          e.preventDefault();
+          const isDex = item.href.includes('/dex');
+          if (isDex) {
+            const tradeHref = item.href.replace('/dex', '/trade');
+            toast.warning('DEX coming soon. Redirecting to Trade');
+            router.push(tradeHref);
+          } else {
+            toast.warning('Coming soon');
+          }
+        }
+      }}
       href={item.href}
       className={cn(
         'flex p-[10px] relative items-center text-pro-gray overflow-visible rounded-md',
-        (isActive || isHover) && 'bg-white text-primary'
+        (isActive || isHover) && 'bg-white text-primary',
+        isDisabled && 'opacity-60 cursor-not-allowed'
       )}
     >
       <div
@@ -377,16 +403,32 @@ const isItemActive = (item: MenuItem, pathname: string): boolean => {
 
 const ExpandedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
   const [isHover, setIsHover] = useState(false);
+  const isDisabled = !!item.disabled;
+  const router = useRouter();
 
   return (
     <SidebarMenuItem className="py-0 px-[10px]" key={item.href}>
       <Link
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
+        onClick={(e) => {
+          if (isDisabled) {
+            e.preventDefault();
+            const isDex = item.href.includes('/dex');
+            if (isDex) {
+              const tradeHref = item.href.replace('/dex', '/trade');
+              toast.warning('DEX coming soon. Redirecting to Trade');
+              router.push(tradeHref);
+            } else {
+              toast.warning('Coming soon');
+            }
+          }
+        }}
         href={item.href}
         className={cn(
           'flex p-[10px] relative items-center text-pro-gray overflow-visible rounded-md',
-          (isActive || isHover) && 'bg-white text-primary'
+          (isActive || isHover) && 'bg-white text-primary',
+          isDisabled && 'opacity-60 cursor-not-allowed'
         )}
       >
         {isActive || isHover ? item.hoverIcon || item.icon : item.icon}
@@ -398,6 +440,8 @@ const ExpandedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boolea
 
 const CollapsedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boolean }) => {
   const [isHover, setIsHover] = useState(false);
+  const isDisabled = !!item.disabled;
+  const router = useRouter();
 
   return (
     <SidebarMenuItem key={item.href}>
@@ -406,7 +450,22 @@ const CollapsedMenuItem = ({ item, isActive }: { item: MenuItem; isActive: boole
         onMouseLeave={() => setIsHover(false)}
         className={cn('ml-2', isActive ? 'text-primary bg-white' : 'text-pro-gray')}
       >
-        <Link href={item.href}>
+        <Link
+          href={item.href}
+          onClick={(e) => {
+            if (isDisabled) {
+              e.preventDefault();
+              const isDex = item.href.includes('/dex');
+              if (isDex) {
+                const tradeHref = item.href.replace('/dex', '/trade');
+                toast.warning('DEX coming soon. Redirecting to Trade');
+                router.push(tradeHref);
+              } else {
+                toast.warning('Coming soon');
+              }
+            }
+          }}
+        >
           {isActive || isHover ? item.hoverIcon || item.icon : item.icon}
         </Link>
       </SidebarMenuButton>
@@ -468,6 +527,7 @@ const CollapsedMenuGroup = ({
   pathname: string;
 }) => {
   const groupIsActive = isGroupActive(group, pathname);
+  const router = useRouter();
 
   return (
     <DropdownMenu>
@@ -486,7 +546,23 @@ const CollapsedMenuGroup = ({
         >
           {group.items.map((item) => (
             <DropdownMenuItem asChild key={item.href}>
-              <Link href={item.href} className="flex items-center">
+              <Link
+                href={item.href}
+                className="flex items-center"
+                onClick={(e) => {
+                  if (item.disabled) {
+                    e.preventDefault();
+                    const isDex = item.href.includes('/dex');
+                    if (isDex) {
+                      const tradeHref = item.href.replace('/dex', '/trade');
+                      toast.warning('DEX coming soon. Redirecting to Trade');
+                      router.push(tradeHref);
+                    } else {
+                      toast.warning('Coming soon');
+                    }
+                  }
+                }}
+              >
                 {groupIsActive ? item.hoverIcon || item.icon : item.icon}
                 <span className="ml-2">{item.label}</span>
                 {item.rightIcon && <div className="ml-auto">{item.rightIcon}</div>}

@@ -1,6 +1,7 @@
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
+import { TAB_ENABLED } from '@/config/feature-flags';
 import { IToken } from '@/config/tokens';
 
 import { Button } from '@/components/ui/button';
@@ -28,18 +29,14 @@ export function BaseTokenCard({
   className,
   onClaim,
 }: BaseTokenCardProps) {
-  const pathname = usePathname();
   const router = useRouter();
 
   function handleTrade() {
-    // When already on /dex, publish event to prefill tokens directly
-    if (pathname.includes('/dex')) {
-      eventBus.publish('trade-token', { name: 'TradeToken', props: { token } });
-    } else {
-      sessionStorage.setItem('token', JSON.stringify(token));
-      // Navigate to the DEX trading page and let it read sessionStorage
-      router.push(`/dex`);
-    }
+    eventBus.publish('trade-token', { name: 'TradeToken', props: { token } });
+
+    sessionStorage.setItem('token', JSON.stringify(token));
+    // Navigate based on feature flag: DEX or legacy Trade module
+    router.push(TAB_ENABLED.dex ? `/dex` : `/trade`);
   }
 
   function handleClaim() {
