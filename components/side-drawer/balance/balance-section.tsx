@@ -1,22 +1,34 @@
 import { HelpCircle } from 'lucide-react';
 import { add, multiply } from 'safebase';
 
+
+
 import { useMemo } from 'react';
 
-import { APR_MONAD, G_MONAD, TokenPriceMap } from '@/config/tokens';
+
+
+// import { APR_MONAD, G_MONAD, TokenPriceMap } from '@/config/tokens';
 
 import { WithLoading } from '@/components/common/with-loading';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+
+
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useApiBalance } from '@/lib/data/balance/use-api-balance';
-import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
-import { useMagmaBalance } from '@/lib/data/use-magma-balance';
+// import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
+// import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useTokenStationPrice } from '@/lib/data/use-token-station-price';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/utils/number';
 
+
+
 import { TwitterLink } from './twitter-link';
+
+
+
+
 
 export default function BalanceSection() {
   const { data: accountInfo } = useSelectedAccount();
@@ -25,18 +37,20 @@ export default function BalanceSection() {
   const { data: balanceData, isPending: isPendingBalance } = useApiBalance();
   const { data: priceData, isPending: isPendingPrice } = useTokenStationPrice();
 
-  const { data: aprioriBalance, isPending: isPendingApr } = useAprioriBalance();
-  const aprBalance = aprioriBalance?.balance || '0';
-  const aprPrice = TokenPriceMap[APR_MONAD.symbol];
+  // const { data: aprioriBalance, isPending: isPendingApr } = useAprioriBalance();
+  // const aprBalance = aprioriBalance?.balance || '0';
+  // const aprPrice = TokenPriceMap[APR_MONAD.symbol];
 
-  const { data: magmaBalance, isPending: isPendingMagma } = useMagmaBalance();
-  const gMonBalance = magmaBalance?.balance || '0';
-  const gMonPrice = TokenPriceMap[G_MONAD.symbol];
+  // const { data: magmaBalance, isPending: isPendingMagma } = useMagmaBalance();
+  // const gMonBalance = magmaBalance?.balance || '0';
+  // const gMonPrice = TokenPriceMap[G_MONAD.symbol];
 
   const isPending =
-    Boolean(account) && (isPendingBalance || isPendingPrice || isPendingApr || isPendingMagma);
+    Boolean(account) && (isPendingBalance || isPendingPrice);
 
-  const ethPrice = priceData?.eth_price;
+    // const isPending =
+    // Boolean(account) && (isPendingBalance || isPendingPrice || isPendingApr || isPendingMagma);
+  // const ethPrice = priceData?.eth_price;
   const monPrice = priceData?.mon_price;
 
   const priceValue = useMemo(() => {
@@ -55,29 +69,30 @@ export default function BalanceSection() {
         if (bRes.token === 'MON') {
           price = add(price, multiply(bRes.formattedBalance, String(monPrice || 0)));
         }
-        if (bRes.token === 'monUSD') {
-          price = add(price, multiply(bRes.formattedBalance, String(1)));
-        }
+        // if (bRes.token === 'monUSD') {
+        //   price = add(price, multiply(bRes.formattedBalance, String(1)));
+        // }
       } else if (['ETH', 'BASE'].includes(bRes.network)) {
-        if (bRes.token === 'ETH') {
-          price = add(price, multiply(bRes.formattedBalance, String(ethPrice || 0)));
-        }
-        if (['USDT', 'USDC'].includes(bRes.token)) {
-          price = add(price, multiply(bRes.formattedBalance, String(1)));
-        }
+        // if (bRes.token === 'ETH') {
+        //   price = add(price, multiply(bRes.formattedBalance, String(ethPrice || 0)));
+        // }
+        // if (['USDT', 'USDC'].includes(bRes.token)) {
+        //   price = add(price, multiply(bRes.formattedBalance, String(1)));
+        // }
       }
     }
 
-    if (aprBalance) {
-      price = add(price, multiply(aprBalance, String(aprPrice)));
-    }
+    // if (aprBalance) {
+    //   price = add(price, multiply(aprBalance, String(aprPrice)));
+    // }
 
-    if (gMonBalance) {
-      price = add(price, multiply(gMonBalance, String(gMonPrice)));
-    }
+    // if (gMonBalance) {
+    //   price = add(price, multiply(gMonBalance, String(gMonPrice)));
+    // }
 
     return price;
-  }, [balanceData, account, monPrice, ethPrice, aprBalance, gMonBalance, aprPrice, gMonPrice]);
+  // }, [balanceData, account, monPrice, ethPrice, aprBalance, gMonBalance, aprPrice, gMonPrice]);
+  }, [balanceData, account, monPrice]);
 
   return (
     <div className="pl-2 mt-6 mb-5 flex w-full flex-shrink-0 flex-col items-start">
