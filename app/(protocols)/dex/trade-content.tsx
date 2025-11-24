@@ -956,6 +956,13 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
                 </span>
               )}
             </Button>
+            {isInsufficientBalance && (
+              <div className="rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2 mt-2">
+                <div className="text-xs leading-5 font-medium text-red-700 dark:text-red-300">
+                  Insufficient balance
+                </div>
+              </div>
+            )}
             {isRecipientInvalid && (
               <div className="rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2 mt-2">
                 <div className="text-xs leading-5 font-medium text-red-700 dark:text-red-300">
