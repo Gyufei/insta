@@ -18,9 +18,9 @@ import { LENDING_PROJECTS, LENDING_PROJECT_IDS } from '@/app/(protocols)/lending
 import { STAKING_PROJECTS, STAKING_PROJECT_IDS } from '@/app/(protocols)/staking/staking-config';
 
 import { BaseNetUrlPath } from '@/config/env-url';
+import { TAB_ENABLED } from '@/config/feature-flags';
 // Internal imports
 import { NetworkConfigs } from '@/config/network-config';
-import { TAB_ENABLED } from '@/config/feature-flags';
 
 import { ProjectLogoStack } from '@/components/common/project-logo-stack';
 // UI components
@@ -115,16 +115,16 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
         <Image src="/icons/faucet.svg" alt="faucet" width={12} height={12} className="h-3 w-3" />
       ),
     },
-    {
-      href: getCurrentChainNameHref('/trade'),
-      label: 'Trade',
-      icon: (
-        <Image src="/icons/trade-gray.svg" alt="trade" width={12} height={12} className="h-3 w-3" />
-      ),
-      hoverIcon: (
-        <Image src="/icons/trade.svg" alt="trade" width={12} height={12} className="h-3 w-3" />
-      ),
-    },
+    // {
+    //   href: getCurrentChainNameHref('/trade'),
+    //   label: 'Trade',
+    //   icon: (
+    //     <Image src="/icons/trade-gray.svg" alt="trade" width={12} height={12} className="h-3 w-3" />
+    //   ),
+    //   hoverIcon: (
+    //     <Image src="/icons/trade.svg" alt="trade" width={12} height={12} className="h-3 w-3" />
+    //   ),
+    // },
     {
       href: getCurrentChainNameHref('/odds'),
       label: 'Odds',

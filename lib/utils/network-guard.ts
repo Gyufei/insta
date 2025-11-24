@@ -12,6 +12,9 @@ type EnsureOptions = {
   sentryExtra?: Record<string, unknown>;
 };
 
+// 兼容 AppKit 的 switchNetwork 签名（返回 void）以及其他返回 Promise 的签名
+type SwitchNetworkFn = (target: unknown) => void | Promise<void>;
+
 export function ensureMonadNetworkSync(options: EnsureOptions): boolean {
   const { chainId, toastMessage, onFailToast = true } = options || {};
   const targetLabel = isProduction ? 'Monad' : 'Monad Testnet';
@@ -31,7 +34,7 @@ export function ensureMonadNetworkSync(options: EnsureOptions): boolean {
 
 export async function ensureMonadNetwork(
   options: EnsureOptions & {
-    switchNetwork?: (target: { id: number }) => Promise<void>;
+    switchNetwork?: SwitchNetworkFn;
   }
 ): Promise<boolean> {
   const {
@@ -48,7 +51,7 @@ export async function ensureMonadNetwork(
   if (!chainId || chainId !== targetId) {
     try {
       if (switchNetwork) {
-        await switchNetwork(NetworkConfigs.monadTestnet);
+        await Promise.resolve(switchNetwork(NetworkConfigs.monadTestnet));
         // 与现有逻辑保持一致：切换后仍提示并阻止继续执行，让用户再次点击操作
       }
       if (onFailToast) {
@@ -93,7 +96,7 @@ export function ensureBaseNetworkSync(options: EnsureOptions): boolean {
 
 export async function ensureBaseNetwork(
   options: EnsureOptions & {
-    switchNetwork?: (target: { id: number }) => Promise<void>;
+    switchNetwork?: SwitchNetworkFn;
   }
 ): Promise<boolean> {
   const {
@@ -110,7 +113,7 @@ export async function ensureBaseNetwork(
   if (!chainId || chainId !== targetId) {
     try {
       if (switchNetwork) {
-        await switchNetwork(NetworkConfigs.base);
+        await Promise.resolve(switchNetwork(NetworkConfigs.base));
       }
       if (onFailToast) {
         toast.error(
@@ -152,7 +155,7 @@ export function ensureEthNetworkSync(options: EnsureOptions): boolean {
 
 export async function ensureEthNetwork(
   options: EnsureOptions & {
-    switchNetwork?: (target: { id: number }) => Promise<void>;
+    switchNetwork?: SwitchNetworkFn;
   }
 ): Promise<boolean> {
   const {
@@ -169,7 +172,7 @@ export async function ensureEthNetwork(
   if (!chainId || chainId !== targetId) {
     try {
       if (switchNetwork) {
-        await switchNetwork(NetworkConfigs.eth);
+        await Promise.resolve(switchNetwork(NetworkConfigs.eth));
       }
       if (onFailToast) {
         toast.error(

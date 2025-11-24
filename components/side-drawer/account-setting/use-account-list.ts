@@ -1,6 +1,8 @@
 import { useAccount } from 'wagmi';
 
 import { useMemo } from 'react';
+import { useAppKitNetwork } from '@reown/appkit/react';
+import { ensureMonadNetwork } from '@/lib/utils/network-guard';
 
 import { NetworkConfigs } from '@/config/network-config';
 
@@ -14,6 +16,7 @@ const GAS_LIMIT_FOR_CREATE_ACCOUNT = 0.0161845008;
 
 export function useAccountList() {
   const { address } = useAccount();
+  const { chainId } = useAppKitNetwork();
   const { data: allAccounts } = useAccounts();
   const { data: currAccountInfo } = useSelectedAccount();
   const { setCurrentAccountAddress } = useAccountStore();
@@ -39,6 +42,10 @@ export function useAccountList() {
 
   async function handleCreateAccount() {
     if (!address) return;
+    const ok = await ensureMonadNetwork({
+      chainId,
+    });
+    if (!ok) return;
     await createAccount(address);
   }
 

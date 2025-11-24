@@ -1,13 +1,16 @@
+import { useAppKitNetwork } from '@reown/appkit/react';
+
 import { DepositIcon } from '@/components/icon/deposit';
 
+import { useAccountStore } from '@/lib/state/account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
+import { ensureMonadNetwork } from '@/lib/utils/network-guard';
 
 import { WithdrawIcon } from '../../icon/withdraw';
-import { useAccountStore } from '@/lib/state/account';
 
 export default function BalanceActionButtons() {
   const { currentAccountType } = useAccountStore();
-  
+
   if (currentAccountType === 'EOA') {
     return null;
   }
@@ -22,8 +25,13 @@ export default function BalanceActionButtons() {
 
 function DepositButton() {
   const { setCurrentComponent } = useSideDrawerStore();
+  const { chainId } = useAppKitNetwork();
 
-  function handleDeposit() {
+  async function handleDeposit() {
+    const ok = await ensureMonadNetwork({
+      chainId,
+    });
+    if (!ok) return;
     setCurrentComponent({ name: 'DepositMon' });
   }
 
@@ -42,8 +50,13 @@ function DepositButton() {
 
 function WithdrawButton() {
   const { setCurrentComponent } = useSideDrawerStore();
+  const { chainId } = useAppKitNetwork();
 
-  function handleWithdraw() {
+  async function handleWithdraw() {
+    const ok = await ensureMonadNetwork({
+      chainId,
+    });
+    if (!ok) return;
     setCurrentComponent({ name: 'WithdrawMon' });
   }
 

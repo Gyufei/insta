@@ -14,12 +14,15 @@ import { Input } from '@/components/ui/input';
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useCreateAuthority } from '@/lib/data/use-create-authority';
 import { cn } from '@/lib/utils';
+import { useAppKitNetwork } from '@reown/appkit/react';
+import { ensureMonadNetwork } from '@/lib/utils/network-guard';
 
 export function AuthorityAdd() {
   const { data: accountInfo } = useSelectedAccount();
   const accountAddress = accountInfo?.sandbox_account;
 
   const { mutateAsync: createAuthority, isPending } = useCreateAuthority();
+  const { chainId } = useAppKitNetwork();
 
   const [isError, setIsError] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -35,6 +38,11 @@ export function AuthorityAdd() {
       toast.warning(ERROR_MESSAGES.ACCOUNT_NOT_CREATED);
       return;
     }
+
+    const ok = await ensureMonadNetwork({
+      chainId,
+    });
+    if (!ok) return;
 
     try {
       await createAuthority(inputValue);
