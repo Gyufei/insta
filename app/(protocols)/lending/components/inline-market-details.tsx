@@ -2,8 +2,6 @@
 
 import { useAccount } from 'wagmi';
 
-
-
 import { useEffect, useMemo, useState } from 'react';
 
 import type { IToken } from '@/config/tokens';
@@ -318,19 +316,19 @@ export default function InlineMarketDetails({
                 <>
                   <div className="md:text-left text-center flex flex-col px-4">
                     <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatUSD(token1.total_debt_in_usd)}
+                      {formatUSD(borrowToken.total_debt_in_usd)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Total Debt</div>
                   </div>
                   <div className="md:text-left text-center flex flex-col px-4 ">
                     <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatUSD(market.available_supply_in_usd)}
+                      {formatUSD(borrowToken.total_supply_in_usd)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Available Liquidity</div>
                   </div>
                   <div className="md:text-left text-center flex flex-col">
                     <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatPct(market.borrow_rate)}
+                      {formatPct(borrowToken.borrow_rate || market.borrow_rate)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Borrow vAPY</div>
                   </div>
@@ -339,7 +337,7 @@ export default function InlineMarketDetails({
                 <>
                   <div className="md:text-left text-center flex flex-col px-1">
                     <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatUSD(market.total_supply_in_usd)}
+                      {formatUSD(supplyToken.total_supply_in_usd)}
                     </div>
                     <div className="order-2 md:order-1 text-[#A5ADC6]">Reserve Size</div>
                   </div>
