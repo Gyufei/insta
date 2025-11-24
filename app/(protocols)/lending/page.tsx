@@ -117,12 +117,13 @@ export default function Lending() {
 
   const sortedMarkets: ICurvanceMarketInfo[] = useMemo(() => {
     const list = (markets || []) as ICurvanceMarketInfo[];
+    return list
     // Basic sort by TVL desc if available
-    return list.slice().sort((a, b) => {
-      const av = parseFloat(a?.total_supply_in_usd || '0');
-      const bv = parseFloat(b?.total_supply_in_usd || '0');
-      return bv - av;
-    });
+    // return list.slice().sort((a, b) => {
+    //   const av = parseFloat(a?.total_supply_in_usd || '0');
+    //   const bv = parseFloat(b?.total_supply_in_usd || '0');
+    //   return bv - av;
+    // });
   }, [markets]);
 
   const selectedMarket = useMemo(() => {

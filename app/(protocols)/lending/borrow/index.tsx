@@ -69,7 +69,8 @@ export function LendingBorrow() {
     );
   }, [marketsQuery.data, props?.market_address]);
   const tokenPrice = useMemo(() => {
-    const isToken1 = String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
+    const isToken1 =
+      String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
     const priceStr = isToken1 ? market?.token1?.price : market?.token0?.price;
     if (!priceStr) return 0;
     const p = parseFloat(priceStr);
@@ -78,11 +79,18 @@ export function LendingBorrow() {
       return 0;
     }
     return p;
-  }, [token.address, market?.token0?.address, market?.token1?.address, market?.token0?.price, market?.token1?.price]);
+  }, [
+    token.address,
+    market?.token0?.address,
+    market?.token1?.address,
+    market?.token0?.price,
+    market?.token1?.price,
+  ]);
 
   // 基于 /curvance/markets 的所选借款代币 total_debt 估算池子可借规模（单位：token）
   const poolBorrowableTokens = useMemo(() => {
-    const isToken1 = String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
+    const isToken1 =
+      String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
     const t = isToken1 ? market?.token1 : market?.token0;
     const debtTokens = parseFloat(t?.total_debt || '0');
     if (Number.isFinite(debtTokens) && debtTokens > 0) return debtTokens;
@@ -132,12 +140,20 @@ export function LendingBorrow() {
 
   // 首次借款且输入金额的美元等值低于 10 美元时提示
   const isFirstBorrow = useMemo(() => {
-    const isToken1 = String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
+    const isToken1 =
+      String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
     const debt = parseFloat(
-      isToken1 ? userItem?.token1?.user_debt_display_balance || '0' : userItem?.token0?.user_debt_display_balance || '0'
+      isToken1
+        ? userItem?.token1?.user_debt_display_balance || '0'
+        : userItem?.token0?.user_debt_display_balance || '0'
     );
     return Number.isFinite(debt) ? debt <= 0 : false;
-  }, [token.address, market?.token1?.address, userItem?.token1?.user_debt_display_balance, userItem?.token0?.user_debt_display_balance]);
+  }, [
+    token.address,
+    market?.token1?.address,
+    userItem?.token1?.user_debt_display_balance,
+    userItem?.token0?.user_debt_display_balance,
+  ]);
   const isBelowMinFirstBorrow = useMemo(() => {
     const usd = parseFloat(usdValue || '0');
     return isFirstBorrow && usd > 0 && usd < 10;
@@ -356,7 +372,10 @@ export function LendingBorrow() {
                 market={market}
                 user={userItem}
                 borrowTokenIndex={
-                  String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase() ? 1 : 0
+                  String(token.address).toLowerCase() ===
+                  String(market?.token1?.address).toLowerCase()
+                    ? 1
+                    : 0
                 }
               />
             )}

@@ -326,7 +326,7 @@ export default function InlineMarketsSection({
                       );
                     })}
                   </div>
-                </div>;
+                </div>
 
                 {
                   /* Mobile: separate card list */
@@ -473,7 +473,7 @@ export default function InlineMarketsSection({
                       </div>
                     );
                   })}
-                </div>;
+                </div>
               </>
             )}
           </div>
