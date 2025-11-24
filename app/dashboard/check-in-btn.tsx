@@ -1,3 +1,4 @@
+import { useAppKitNetwork } from '@reown/appkit/react';
 import { Loader } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
@@ -12,16 +13,18 @@ import { useCheckIn } from '@/lib/data/check-in/use-check-in';
 import { useIsCheckIn } from '@/lib/data/check-in/use-is-check-in';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { cn } from '@/lib/utils';
+import { ensureMonadNetwork } from '@/lib/utils/network-guard';
 import { useWalletConnect } from '@/lib/web3/use-wallet-connect';
 
 export function CheckInBtn() {
   const { address } = useAccount();
   const { openWeb3Modal } = useWalletConnect();
+  const { chainId } = useAppKitNetwork();
   const { data: isCheckInData, isLoading: isCheckInLoading } = useIsCheckIn();
   const { mutate, isPending } = useCheckIn();
   const isCheckIn = isCheckInData?.has_checked_in_today;
   const isMountedRef = useRef(false);
-  
+
   // Enhanced analytics for check-in tracking
   const { trackEvent } = useEnhancedAnalytics();
 
@@ -44,64 +47,73 @@ export function CheckInBtn() {
           page_type: 'dashboard',
         },
       }).catch(console.warn);
-      
+
       openWeb3Modal();
       return;
     }
 
-    // Track check-in attempt
-    trackEvent('BUTTON_CLICK', {
-      event_category: 'check_in',
-      event_label: 'check_in_attempt',
-      include_user_id: true,
-      custom_parameters: {
-        action: 'check_in_attempt',
-        wallet_address: address,
-        page_type: 'dashboard',
-      },
-    }).catch(console.warn);
+    // Ensure wallet is on Monad before proceeding
+    ensureMonadNetwork({
+      chainId,
+    }).then((ok) => {
+      if (!ok) return;
 
-    mutate(undefined, {
-      onSuccess: () => {
-        if (!isMountedRef.current) return;
-        
-        // Track successful check-in
-        trackEvent('CHECK_IN', {
-          event_category: 'check_in',
-          event_label: 'check_in_success',
-          include_user_id: true,
-          custom_parameters: {
-            action: 'check_in_success',
-            wallet_address: address,
-            page_type: 'dashboard',
-          },
-        }).catch(console.warn);
-        
-        toast.success(SUCCESS_MESSAGES.CHECK_IN_SUCCESS);
-      },
-      onError: (e) => {
-        if (!isMountedRef.current) return;
-        
-        // Track check-in error
-        trackEvent('ERROR_OCCURRED', {
-          event_category: 'check_in',
-          event_label: 'check_in_error',
-          include_user_id: true,
-          error_message: e.message,
-          custom_parameters: {
-            action: 'check_in_error',
-            wallet_address: address,
-            page_type: 'dashboard',
-            error_type: e.message.includes('Already') ? 'already_checked_in' : 'transaction_failed',
-          },
-        }).catch(console.warn);
-        
-        if (e.message.includes('Already')) {
-          toast.warning(e.message);
-        } else {
-          toast.error(e.message || ERROR_MESSAGES.CHECK_IN_FAILED);
-        }
-      },
+      // Track check-in attempt
+      trackEvent('BUTTON_CLICK', {
+        event_category: 'check_in',
+        event_label: 'check_in_attempt',
+        include_user_id: true,
+        custom_parameters: {
+          action: 'check_in_attempt',
+          wallet_address: address,
+          page_type: 'dashboard',
+        },
+      }).catch(console.warn);
+
+      mutate(undefined, {
+        onSuccess: () => {
+          if (!isMountedRef.current) return;
+
+          // Track successful check-in
+          trackEvent('CHECK_IN', {
+            event_category: 'check_in',
+            event_label: 'check_in_success',
+            include_user_id: true,
+            custom_parameters: {
+              action: 'check_in_success',
+              wallet_address: address,
+              page_type: 'dashboard',
+            },
+          }).catch(console.warn);
+
+          toast.success(SUCCESS_MESSAGES.CHECK_IN_SUCCESS);
+        },
+        onError: (e) => {
+          if (!isMountedRef.current) return;
+
+          // Track check-in error
+          trackEvent('ERROR_OCCURRED', {
+            event_category: 'check_in',
+            event_label: 'check_in_error',
+            include_user_id: true,
+            error_message: e.message,
+            custom_parameters: {
+              action: 'check_in_error',
+              wallet_address: address,
+              page_type: 'dashboard',
+              error_type: e.message.includes('Already')
+                ? 'already_checked_in'
+                : 'transaction_failed',
+            },
+          }).catch(console.warn);
+
+          if (e.message.includes('Already')) {
+            toast.warning(e.message);
+          } else {
+            toast.error(e.message || ERROR_MESSAGES.CHECK_IN_FAILED);
+          }
+        },
+      });
     });
   }
 
