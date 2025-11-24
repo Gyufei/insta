@@ -27,12 +27,12 @@ const NETWORKS = [
     ...NetworkConfigs.monadTestnet,
     name: MONAD_TESTNET_NAME,
   },
-  {
-    ...NetworkConfigs.base,
-  },
-  {
-    ...NetworkConfigs.eth,
-  },
+  // {
+  //   ...NetworkConfigs.base,
+  // },
+  // {
+  //   ...NetworkConfigs.eth,
+  // },
 ] as const;
 
 let ToastId: number | string | undefined;
