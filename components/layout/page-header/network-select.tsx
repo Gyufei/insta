@@ -69,31 +69,30 @@ export default function NetworkSelect() {
   const [isUnsupportedChain, setIsUnsupportedChain] = useState(false);
 
   function checkIsUnsupported() {
-    if (typeof window === 'undefined')
-      return {
-        isUnSup: false,
-        cId: chainId,
-      };
-    const pageChain = (window?.ethereum as unknown as { chainId: string })?.chainId;
+    // 使用 AppKit 提供的 chainId 作为主依据，避免直接读取 window.ethereum 导致的误判
+    const currentChainId = typeof chainId === 'number' ? chainId : undefined;
 
-    if (!pageChain) {
+    if (!currentChainId) {
       return {
         isUnSup: false,
-        cId: chainId,
+        cId: currentChainId,
       };
     }
 
-    const isSystemChain = (
-      [NetworkConfigs.base.id, NetworkConfigs.eth.id, NetworkConfigs.monadTestnet.id] as number[]
-    ).includes(Number(pageChain));
+    const allowedIds = [
+      NetworkConfigs.base.id,
+      NetworkConfigs.eth.id,
+      NetworkConfigs.monadTestnet.id,
+    ] as number[];
+    const isSystemChain = allowedIds.includes(currentChainId);
 
     const isBadgeGallery = pathname.includes('badge-gallery');
-    const isBase = Number(pageChain) === NetworkConfigs.base.id;
+    const isBase = currentChainId === NetworkConfigs.base.id;
     const isUnSup = (!isBadgeGallery && !isSystemChain) || (isBadgeGallery && !isBase);
 
     return {
       isUnSup,
-      cId: Number(pageChain),
+      cId: currentChainId,
     };
   }
 

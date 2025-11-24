@@ -1,6 +1,5 @@
 'use client';
 
-import { base, baseSepolia, mainnet, monadTestnet, sepolia } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type Config, WagmiProvider, cookieToInitialState } from 'wagmi';
@@ -8,6 +7,7 @@ import { type Config, WagmiProvider, cookieToInitialState } from 'wagmi';
 import React, { type ReactNode } from 'react';
 
 import { projectId, wagmiAdapter } from '../../config/wagmi-config';
+import { NetworkConfigs } from '@/config/network-config';
 
 const queryClient = new QueryClient();
 
@@ -27,11 +27,12 @@ const metadata = {
 createAppKit({
   adapters: [wagmiAdapter],
   projectId,
-  networks: [monadTestnet, mainnet, base, baseSepolia, sepolia],
-  defaultNetwork: monadTestnet,
+  // 统一使用我们自定义的网络配置，生产环境下 Monad 使用主网（id: 143）
+  networks: [NetworkConfigs.monadTestnet, NetworkConfigs.base, NetworkConfigs.eth],
+  defaultNetwork: NetworkConfigs.monadTestnet,
   metadata: metadata,
   features: {
-    analytics: true, // Optional - defaults to your Cloud configuration
+    analytics: true,
     socials: ['x', 'google'],
     swaps: false,
     onramp: false,

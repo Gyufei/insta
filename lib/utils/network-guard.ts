@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 
 import { NetworkConfigs } from '@/config/network-config';
+import { isProduction } from '@/lib/data/api-path';
 
 type EnsureOptions = {
   chainId?: number | string | null;
@@ -13,7 +14,7 @@ type EnsureOptions = {
 
 export function ensureMonadNetworkSync(options: EnsureOptions): boolean {
   const { chainId, toastMessage, onFailToast = true } = options || {};
-  const targetLabel = 'Monad Testnet';
+  const targetLabel = isProduction ? 'Monad' : 'Monad Testnet';
   const targetId = NetworkConfigs.monadTestnet.id;
 
   if (!chainId || chainId !== targetId) {
@@ -41,7 +42,7 @@ export async function ensureMonadNetwork(
     sentryTags,
     sentryExtra,
   } = options || {};
-  const targetLabel = 'Monad Testnet';
+  const targetLabel = isProduction ? 'Monad' : 'Monad Testnet';
   const targetId = NetworkConfigs.monadTestnet.id;
 
   if (!chainId || chainId !== targetId) {

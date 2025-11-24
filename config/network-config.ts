@@ -7,12 +7,38 @@ export interface INetworkConfig extends Chain {
   icon: string;
 }
 
+// ==== Monad Mainnet (temporary: copy missing info from testnet) ====
+const monadMainnet: Chain = {
+  ...monadTestnet,
+  id: 143,
+  name: 'Monad',
+  nativeCurrency: {
+    name: 'Monad',
+    symbol: 'MON',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://gateway.tadle.com/rpc/monad'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'MonadVision',
+      url: 'https://monadvision.com/',
+    },
+  },
+  contracts: {
+    ...monadTestnet.contracts,
+  },
+};
+
 export const NetworkConfigs = {
   monadTestnet: {
-    ...monadTestnet,
+    ...(isProduction ? monadMainnet : monadTestnet),
     icon: '/icons/monad.svg',
     contracts: {
-      ...monadTestnet.contracts,
+      ...(isProduction ? monadMainnet.contracts : monadTestnet.contracts),
     },
   },
   eth: {

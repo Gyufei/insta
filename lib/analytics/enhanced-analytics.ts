@@ -80,11 +80,6 @@ export class EnhancedAnalyticsManager {
 
       // Include user identification data if requested
       if (parameters.include_user_id) {
-        // Debug: Log before data collection
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🔍 Enhanced Analytics - 开始收集用户数据...');
-        }
-
         const userData = await this.userCollector.collectUserIdentification({
           includeWallet: true,
           includeFingerprint: true,
