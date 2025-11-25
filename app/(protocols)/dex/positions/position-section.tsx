@@ -2,26 +2,39 @@
 
 import { Plus, Search } from 'lucide-react';
 
+
+
 import { useMemo, useState } from 'react';
+
+
 
 import { IToken } from '@/config/tokens';
 
-import type { DexProjectId } from '../dex-config';
 
-import { PositionsEmpty } from './common/positions-empty';
+
 import { TitleH2 } from '@/components/common/title-h2';
 import { WithLoading } from '@/components/common/with-loading';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+
+
 import { PositionStatus, useUniswapPosition } from '@/lib/data/use-uniswap-position';
-import { useAmbientPosition } from '@/lib/data/use-ambient-position';
+import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
+// import { useAmbientPosition } from '@/lib/data/use-ambient-position';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { isSameAddress } from '@/lib/utils';
 
+
+
+import type { DexProjectId } from '../dex-config';
+import { PositionsEmpty } from './common/positions-empty';
 import { PositionItem } from './position-item';
 import { TOKENS } from './use-token';
-import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
+
+
+
+
 
 function getToken(token: Omit<IToken, 'logo'>, tokens: IToken[]): IToken {
   const t = tokens.find((t) => isSameAddress(t.address, token.address));
@@ -38,7 +51,7 @@ function getToken(token: Omit<IToken, 'logo'>, tokens: IToken[]): IToken {
 export function PositionsSection({ selectedProject }: { selectedProject: DexProjectId }) {
   const { setCurrentComponent } = useSideDrawerStore();
   const { data: positions, isLoading: isUniswapLoading } = useUniswapPosition();
-  const { data: ambientData, isLoading: isAmbientLoading } = useAmbientPosition();
+  // const { data: ambientData, isLoading: isAmbientLoading } = useAmbientPosition();
   const { data: uniswapTokensData } = useUniswapTokens();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,25 +90,25 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
     return true;
   });
 
-  const ambientPositions = ambientData?.positions;
-  const filteredAmbientPositions = ambientPositions?.filter((position) => {
-    if (searchQuery) {
-      const token0 = tokens.find((t) => isSameAddress(t.address, position.base));
-      const token1 = tokens.find((t) => isSameAddress(t.address, position.quote));
-      const searchLower = searchQuery.toLowerCase();
+  // const ambientPositions = ambientData?.positions;
+  // const filteredAmbientPositions = ambientPositions?.filter((position) => {
+  //   if (searchQuery) {
+  //     const token0 = tokens.find((t) => isSameAddress(t.address, position.base));
+  //     const token1 = tokens.find((t) => isSameAddress(t.address, position.quote));
+  //     const searchLower = searchQuery.toLowerCase();
 
-      // 优先按 symbol 搜索；若 symbol 不可用，允许按地址片段匹配
-      const token0Match = token0?.symbol
-        ? token0.symbol.toLowerCase().includes(searchLower)
-        : position.base?.toLowerCase().includes(searchLower);
-      const token1Match = token1?.symbol
-        ? token1.symbol.toLowerCase().includes(searchLower)
-        : position.quote?.toLowerCase().includes(searchLower);
+  //     // 优先按 symbol 搜索；若 symbol 不可用，允许按地址片段匹配
+  //     const token0Match = token0?.symbol
+  //       ? token0.symbol.toLowerCase().includes(searchLower)
+  //       : position.base?.toLowerCase().includes(searchLower);
+  //     const token1Match = token1?.symbol
+  //       ? token1.symbol.toLowerCase().includes(searchLower)
+  //       : position.quote?.toLowerCase().includes(searchLower);
 
-      return Boolean(token0Match || token1Match);
-    }
-    return true;
-  });
+  //     return Boolean(token0Match || token1Match);
+  //   }
+  //   return true;
+  // });
 
   function handleNewPosition() {
     // Auto Routing follows Uniswap behavior
@@ -111,10 +124,13 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
   }
 
   // Aggregate counts for auto-routing display
-  const totalPositionsCount = (positions?.length || 0) + (ambientPositions?.length || 0);
-  const totalFilteredCount = (filteredPositions?.length || 0) + (filteredAmbientPositions?.length || 0);
+  // const totalPositionsCount = (positions?.length || 0) + (ambientPositions?.length || 0);
+  // const totalFilteredCount = (filteredPositions?.length || 0) + (filteredAmbientPositions?.length || 0);
+  const totalPositionsCount = (positions?.length || 0);
+  const totalFilteredCount = (filteredPositions?.length || 0);
 
-  const isLoading = isAutoSelected ? (isUniswapLoading || isAmbientLoading) : (isUniswapSelected ? isUniswapLoading : isAmbientLoading);
+  // const isLoading = isAutoSelected ? (isUniswapLoading || isAmbientLoading) : (isUniswapSelected ? isUniswapLoading : isAmbientLoading);
+  const isLoading = isAutoSelected ? (isUniswapLoading) : (isUniswapSelected ? isUniswapLoading : false);
 
   return (
     <div className="flex w-full flex-grow flex-col px-4 2xl:px-12 mt-[50px]">
@@ -166,9 +182,9 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
               {filteredPositions?.map((position) => (
                 <PositionItem key={position.v3Position.tokenId} protocol="uniswap" position={position} />
               ))}
-              {filteredAmbientPositions?.map((position) => (
+              {/* {filteredAmbientPositions?.map((position) => (
                 <PositionItem key={position.positionId} protocol="ambient" position={position} />
-              ))}
+              ))} */}
             </>
           )
         ) : isUniswapSelected ? (
@@ -184,16 +200,19 @@ export function PositionsSection({ selectedProject }: { selectedProject: DexProj
               ))}
             </>
           )
-        ) : !ambientPositions?.length || (searchQuery && !filteredAmbientPositions?.length) ? (
-          <PositionsEmpty
-            isEmpty={(ambientPositions?.length || 0) === 0}
-            hasFilterApplied={Boolean(searchQuery)}
-          />
+        // ) : !ambientPositions?.length || (searchQuery && !filteredAmbientPositions?.length) ? (
+        //   <PositionsEmpty
+        //     isEmpty={(ambientPositions?.length || 0) === 0}
+        //     hasFilterApplied={Boolean(searchQuery)}
+        //   />
+        // ) : (
+         ) : false ? (
+          null
         ) : (
           <>
-            {filteredAmbientPositions?.map((position) => (
+            {/* {filteredAmbientPositions?.map((position) => (
               <PositionItem key={position.positionId} protocol="ambient" position={position} />
-            ))}
+            ))} */}
           </>
         )}
       </div>
