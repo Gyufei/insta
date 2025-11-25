@@ -244,20 +244,20 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
       ),
       disabled: !TAB_ENABLED.nadFun,
     },
-    {
-      href: getCurrentChainNameHref('/nad-name-service'),
-      label: 'Nad Name Service',
-      icon: (
-        <Image
-          src="/icons/nad-name-service.svg"
-          alt="nad-name-service"
-          width={12}
-          height={12}
-          className="h-3 w-3"
-        />
-      ),
-      disabled: !TAB_ENABLED.nadNameService,
-    },
+    // {
+    //   href: getCurrentChainNameHref('/nad-name-service'),
+    //   label: 'Nad Name Service',
+    //   icon: (
+    //     <Image
+    //       src="/icons/nad-name-service.svg"
+    //       alt="nad-name-service"
+    //       width={12}
+    //       height={12}
+    //       className="h-3 w-3"
+    //     />
+    //   ),
+    //   disabled: !TAB_ENABLED.nadNameService,
+    // },
   ];
 
   return {
