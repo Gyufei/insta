@@ -17,7 +17,7 @@ export const MONAD = {
   logo: '/icons/mon.svg',
   decimals: 18,
   address: DEFAULT_NATIVE_ADDRESS,
-  description: 'Monad Testnet Gas',
+  description: 'Monad Gas',
 };
 
 export const APR_MONAD = {

@@ -14,7 +14,7 @@ export default function BalanceFooterSocial({ className }: { className?: string 
       hoverSrc: '/icons/twitter-hover.svg',
     },
     {
-      href: 'https://discord.com/invite/nUjeqvDm24',
+      href: 'https://tadle.com/community/discord/join',
       src: '/icons/discord.svg',
       hoverSrc: '/icons/discord-hover.svg',
     },

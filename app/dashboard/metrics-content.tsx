@@ -21,9 +21,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 import { IMetricsItem, useMetrics } from '@/lib/data/use-metrics';
 import { formatNumber, formatNumberUnit } from '@/lib/utils/number';
+import { useIsMobile } from '@/lib/utils/use-mobile';
 
 import { CheckInBtn } from './check-in-btn';
-import { useIsMobile } from '@/lib/utils/use-mobile';
 
 // 注册 Chart.js 组件
 ChartJS.register(
@@ -76,7 +76,7 @@ function MetricsChart({
 
       // Generate all labels first
       const allLabels = series.values.map((v) => formatLabel(v.time));
-      
+
       if (count <= 8) {
         // If data points are few, show all labels
         return allLabels;
@@ -86,11 +86,11 @@ function MetricsChart({
       const maxLabels = isMobile ? 6 : 8; // Mobile shows fewer labels
       const indices = new Set<number>();
       const step = (count - 1) / (maxLabels - 1);
-      
+
       for (let k = 0; k < maxLabels; k++) {
         indices.add(Math.round(k * step));
       }
-      
+
       return allLabels.map((label, idx) => (indices.has(idx) ? label : ''));
     })();
 
@@ -213,7 +213,6 @@ function MetricsChart({
 }
 
 export function MetricsContent() {
-  const leftRange: TimeRange = '30D';
   const rightRange: TimeRange = '30D';
   const { data = [], isLoading, error } = useMetrics();
 
@@ -224,21 +223,10 @@ export function MetricsContent() {
     return data || [];
   }, [data]);
 
-  const leftFiltered = useMemo(
-    () => filterByRange(baseData || [], leftRange),
-    [baseData, leftRange]
-  );
   const rightFiltered = useMemo(
     () => filterByRange(baseData || [], rightRange),
     [baseData, rightRange]
   );
-
-  const holdersSeries = useMemo(() => {
-    return leftFiltered.map((d) => ({
-      time: new Date(d.date).getTime(),
-      value: d.data.holders,
-    }));
-  }, [leftFiltered]);
 
   const activeUsersSeries = useMemo(() => {
     return rightFiltered.map((d) => ({
@@ -246,10 +234,6 @@ export function MetricsContent() {
       value: d.data.activeUsers,
     }));
   }, [rightFiltered]);
-
-  const holdersLatest = leftFiltered.length
-    ? leftFiltered[leftFiltered.length - 1].data.holders
-    : 0;
 
   const activeUsersLatest = rightFiltered.length
     ? rightFiltered[rightFiltered.length - 1].data.activeUsers
@@ -259,30 +243,6 @@ export function MetricsContent() {
     <>
       <CheckInBtn />
       <div className="grid grid-cols-1 gap-4 px-4 2xl:px-12">
-        <Card className="border-[#EBEBEB] rounded-[8px]">
-          <CardHeader className="flex items-start justify-between gap-4 px-5">
-            <div>
-              <CardDescription className="text-[#A5ADC6] text-sm">monUSD Holders</CardDescription>
-              <CardTitle className="text-[32px] font-medium leading-[140%] text-primary mt-[10px]">
-                {formatNumber(holdersLatest)}
-              </CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="px-5">
-            {isLoading ? (
-              <div className="w-full h-[260px] flex items-center justify-center bg-gray-50">
-                <div className="animate-spin w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full"></div>
-              </div>
-            ) : error ? (
-              <div className="w-full h-[260px] flex items-center justify-center text-red-600">
-                {error.message}
-              </div>
-            ) : (
-              <MetricsChart series={{ label: 'Holders', values: holdersSeries }} />
-            )}
-          </CardContent>
-        </Card>
-
         {showSecondChart && (
           <Card className="border-[#EBEBEB] rounded-[8px]">
             <CardHeader className="flex items-start justify-between gap-4 px-5">

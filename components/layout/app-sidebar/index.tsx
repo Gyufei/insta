@@ -268,7 +268,7 @@ function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string
 }
 
 function createInitialMenuGroups(getCurrentChainNameHref: (href: string) => string): MenuGroup[] {
-  const { monadModulesItems, protocolItems } = createMenuItemsConfig(getCurrentChainNameHref);
+  const { protocolItems } = createMenuItemsConfig(getCurrentChainNameHref);
 
   return [
     {
@@ -289,24 +289,6 @@ function createInitialMenuGroups(getCurrentChainNameHref: (href: string) => stri
       ),
       isMenuItem: true,
       items: [],
-    },
-    {
-      id: 'modules',
-      label: 'Modules',
-      icon: (
-        <Image
-          src="/icons/modules-gray.svg"
-          alt="modules"
-          width={12}
-          height={12}
-          className="h-5 w-5"
-        />
-      ),
-      hoverIcon: (
-        <Image src="/icons/modules.svg" alt="modules" width={12} height={12} className="h-5 w-5" />
-      ),
-      items: monadModulesItems,
-      isMenuItem: false,
     },
     {
       id: 'protocols',
@@ -601,39 +583,8 @@ export default function AppSidebar() {
     let groups: MenuGroup[] = [];
 
     if (isBasePath) {
-      const isEth = chainId === NetworkConfigs.eth.id;
-
-      let menuItems: MenuItem[] = baseModulesItems;
-      if (isEth) {
-        menuItems = baseModulesItems.filter((item) => !item.href.includes('badge-gallery'));
-      }
-
-      groups = [
-        {
-          id: 'modules',
-          label: 'Modules',
-          icon: (
-            <Image
-              src="/icons/modules-gray.svg"
-              alt="modules"
-              width={12}
-              height={12}
-              className="h-5 w-5"
-            />
-          ),
-          hoverIcon: (
-            <Image
-              src="/icons/modules.svg"
-              alt="modules"
-              width={12}
-              height={12}
-              className="h-5 w-5"
-            />
-          ),
-          items: menuItems,
-          isMenuItem: false,
-        },
-      ];
+      // Base 路径暂不展示 Modules 组
+      groups = [];
     } else {
       groups = [...initialMenuGroups];
     }
