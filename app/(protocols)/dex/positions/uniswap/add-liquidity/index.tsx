@@ -1,7 +1,7 @@
 import { divide, multiply } from 'safebase';
 
 import { useState } from 'react';
-import { useAppKitNetwork } from '@reown/appkit/react';
+import { useAccount } from 'wagmi';
 
 import { replaceNativeAddressUseBackend } from '@/config/network-config';
 
@@ -26,7 +26,7 @@ import { usePositionDataFormat } from '../../uni-common/use-position-data-format
 import { INFINITY_PRICE } from '../create-position/price-range-selector';
 
 export function UniswapAddLiquidity() {
-  const { chainId } = useAppKitNetwork();
+  const { chainId: walletChainId } = useAccount();
   const { currentComponent } = useSideDrawerStore();
   const { mutate: addLiquidity, isPending } = useUniswapAddLiquidity();
   const { handleBack } = useUrlPathDrawerChange(['/dex']);
@@ -94,7 +94,7 @@ export function UniswapAddLiquidity() {
 
   const handleConfirm = () => {
     const ok = ensureMonadNetworkSync({
-      chainId,
+      chainId: walletChainId,
     });
     if (!ok) return;
 

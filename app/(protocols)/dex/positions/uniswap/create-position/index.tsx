@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { divide, multiply } from 'safebase';
 import { toast } from 'sonner';
-import { useAppKitNetwork } from '@reown/appkit/react';
+import { useAccount } from 'wagmi';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -46,7 +46,7 @@ export enum CreatePositionStep {
 }
 
 export function UniswapCreatePosition() {
-  const { chainId } = useAppKitNetwork();
+  const { chainId: walletChainId } = useAccount();
   const [token0, setToken0] = useState<IToken>();
   const [token1, setToken1] = useState<IToken>();
   const [feeTier, setFeeTier] = useState<string>('0.3');
@@ -153,7 +153,7 @@ export function UniswapCreatePosition() {
 
   function handleNewPosition() {
     const ok = ensureMonadNetworkSync({
-      chainId,
+      chainId: walletChainId,
     });
     if (!ok) return;
 

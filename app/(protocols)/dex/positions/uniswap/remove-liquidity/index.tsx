@@ -1,7 +1,7 @@
 import { divide, multiply } from 'safebase';
 
 import { useState } from 'react';
-import { useAppKitNetwork } from '@reown/appkit/react';
+import { useAccount } from 'wagmi';
 
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/side-drawer/common/action-button';
@@ -22,7 +22,7 @@ import { TwoTokenAmount } from '../../uni-common/two-token-amount';
 import { usePositionDataFormat } from '../../uni-common/use-position-data-format';
 
 export function UniswapRemoveLiquidity() {
-  const { chainId } = useAppKitNetwork();
+  const { chainId: walletChainId } = useAccount();
   const { currentComponent } = useSideDrawerStore();
   const { mutate: removeLiquidity, isPending } = useUniswapRemoveLiquidity();
   const { handleBack } = useUrlPathDrawerChange(['/dex']);
@@ -44,7 +44,7 @@ export function UniswapRemoveLiquidity() {
 
   const handleConfirm = () => {
     const ok = ensureMonadNetworkSync({
-      chainId,
+      chainId: walletChainId,
     });
     if (!ok) return;
 

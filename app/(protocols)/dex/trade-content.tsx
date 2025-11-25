@@ -58,7 +58,7 @@ function mapRouterName(project: DexProjectId) {
 }
 
 export function TradeContent({ selectedProject }: { selectedProject: DexProjectId }) {
-  const { address: wallet } = useAccount();
+  const { address: wallet, chainId: walletChainId } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
   const { data: accounts } = useAccounts();
   const { currentAccountType, setCurrentAccountType, setCurrentAccountAddress } = useAccountStore();
@@ -478,7 +478,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
     });
 
     const okNetwork = ensureMonadNetworkSync({
-      chainId,
+      chainId: walletChainId,
       sentryTags: { page: 'dex', dex_project: selectedProject },
       sentryExtra: { current_chain_id: chainId || undefined },
     });

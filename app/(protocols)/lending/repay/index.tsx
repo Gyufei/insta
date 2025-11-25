@@ -1,4 +1,3 @@
-import { useAppKitNetwork } from '@reown/appkit/react';
 import { useAccount } from 'wagmi';
 
 
@@ -53,7 +52,7 @@ type LendingRepayProps = {
 };
 
 export function LendingRepay() {
-  const { chainId } = useAppKitNetwork();
+  const { chainId: walletChainId } = useAccount();
   const { currentComponent } = useSideDrawerStore();
   const props = (currentComponent?.props || {}) as LendingRepayProps;
 
@@ -136,7 +135,7 @@ export function LendingRepay() {
 
   const handleRepay = () => {
     const ok = ensureMonadNetworkSync({
-      chainId,
+      chainId: walletChainId,
     });
     if (!ok) return;
 

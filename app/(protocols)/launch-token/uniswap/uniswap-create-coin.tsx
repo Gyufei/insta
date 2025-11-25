@@ -1,8 +1,9 @@
 'use client';
 
+import { useAppKitNetwork } from '@reown/appkit/react';
 import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
-import { useAppKitNetwork } from '@reown/appkit/react';
+import { useAccount } from 'wagmi';
 
 import { useEffect, useState } from 'react';
 
@@ -17,11 +18,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 import { useImageUpload } from '@/lib/data/use-image-upload';
 import { useUniswapCreateCoin } from '@/lib/data/use-uniswap-create-coin';
+import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useAccountStore } from '@/lib/state/account';
 import { cn } from '@/lib/utils';
-import { getTwitterInputError, isValidTwitterInput, toCanonicalXUrl } from '@/lib/utils/twitter';
-import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
+import { getTwitterInputError, isValidTwitterInput, toCanonicalXUrl } from '@/lib/utils/twitter';
 
 interface CreateCoinFormData {
   thumbnail: string | null;
@@ -68,8 +69,7 @@ function getTokenNameError(v: string): string | undefined {
   if (!t) return 'Please enter the token name';
   if (t.length < 3 || t.length > 50) return 'Token name must be 3-50 characters';
   if (!/^[A-Za-z]/.test(t)) return 'Token name must start with a letter';
-  if (!/^[A-Za-z0-9 _-]+$/.test(t))
-    return 'Only letters, digits, space, hyphen(-), underscore(_)';
+  if (!/^[A-Za-z0-9 _-]+$/.test(t)) return 'Only letters, digits, space, hyphen(-), underscore(_)';
   if (t !== x) return 'No leading or trailing spaces';
   if (/\s{2,}/.test(t)) return 'No consecutive spaces';
   return undefined;
@@ -80,14 +80,14 @@ function getDescriptionError(v: string): string | undefined {
   const t = x.trim();
   if (!t) return 'Please enter the token description';
   if (t.length > 256) return 'Description must be ≤ 256 characters';
-  if (!/^[A-Za-z0-9 _\-.,;:?!]+$/.test(t))
-    return 'Only letters, digits, space, - , _ and .,;:?!';
+  if (!/^[A-Za-z0-9 _\-.,;:?!]+$/.test(t)) return 'Only letters, digits, space, - , _ and .,;:?!';
   if (t !== x) return 'No leading or trailing spaces';
   return undefined;
 }
 
 export function UniswapCreateCoin() {
   const { chainId } = useAppKitNetwork();
+  const { chainId: walletChainId } = useAccount();
   const { currentAccountType } = useAccountStore();
   const { trackEvent } = useEnhancedAnalytics();
   const [formData, setFormData] = useState<CreateCoinFormData>({
@@ -389,9 +389,8 @@ export function UniswapCreateCoin() {
       initial_supply: formData.totalSupply,
     };
 
-    // 网络检测：确保在 Monad Testnet 上执行创建操作
     const canProceed = ensureMonadNetworkSync({
-      chainId,
+      chainId: walletChainId,
     });
     if (!canProceed) {
       Sentry.addBreadcrumb({
@@ -478,7 +477,7 @@ export function UniswapCreateCoin() {
     showErrors && Object.keys(errors).some((key) => errors[key as keyof FormErrors]);
 
   // Check if all required fields are filled
-  const isFormIncomplete = 
+  const isFormIncomplete =
     !formData.thumbnail ||
     !!getTokenNameError(formData.tokenName) ||
     !!getTickerNameError(formData.tickerName) ||
@@ -782,9 +781,7 @@ export function UniswapCreateCoin() {
                 onChange={handleInputChange('tokenName')}
                 className={cn('w-full', errors.tokenName && 'border-red-500')}
               />
-              {errors.tokenName && (
-                <p className="text-red-500 text-xs mt-1">{errors.tokenName}</p>
-              )}
+              {errors.tokenName && <p className="text-red-500 text-xs mt-1">{errors.tokenName}</p>}
             </div>
           </div>
 

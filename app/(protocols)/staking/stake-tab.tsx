@@ -1,7 +1,8 @@
 'use client';
 
-import { useAppKitNetwork } from '@reown/appkit/react';
 import * as Sentry from '@sentry/nextjs';
+import { multiply } from 'safebase';
+import { useAccount } from 'wagmi';
 
 import { useEffect, useState } from 'react';
 
@@ -24,7 +25,6 @@ import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 import { formatNumber, truncateIfExceeds } from '@/lib/utils/number';
 import { parseBig } from '@/lib/utils/number';
-import { multiply } from 'safebase';
 
 import { type StakingProjectId, getStakingProject } from './staking-config';
 
@@ -33,7 +33,8 @@ interface StakeTabProps {
 }
 
 export function StakeTab({ selectedProject }: StakeTabProps) {
-  const { chainId } = useAppKitNetwork();
+  const { chainId: walletChainId } = useAccount();
+
   // 根据项目配置可选择的代币
   const availableTokens: IToken[] = [MONAD];
   const [selectedToken, setSelectedToken] = useState<IToken>(MONAD);
@@ -104,7 +105,7 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
   })();
   const handleDeposit = () => {
     const ok = ensureMonadNetworkSync({
-      chainId,
+      chainId: walletChainId,
     });
 
     if (!ok) return;
@@ -342,7 +343,9 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
 
         {/* Amount Display */}
         <div className="text-[32px] font-medium text-black mb-1">
-          {receiveAmount ? truncateIfExceeds(String(receiveAmount || '0'), 4) : '0'}
+          {receiveAmount && receiveAmount !== '0'
+            ? truncateIfExceeds(String(receiveAmount || '0'), 4)
+            : '0'}
         </div>
       </div>
       <ActionButton

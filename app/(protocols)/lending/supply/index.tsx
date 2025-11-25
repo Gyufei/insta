@@ -1,4 +1,3 @@
-import { useAppKitNetwork } from '@reown/appkit/react';
 import * as Sentry from '@sentry/nextjs';
 import { useAccount } from 'wagmi';
 
@@ -53,7 +52,7 @@ type LendingSupplyProps = {
 };
 
 export function LendingSupply() {
-  const { chainId } = useAppKitNetwork();
+  const { chainId: walletChainId } = useAccount();
   const { currentComponent } = useSideDrawerStore();
   const props = (currentComponent?.props || {}) as LendingSupplyProps;
 
@@ -117,7 +116,7 @@ export function LendingSupply() {
 
   const handleDeposit = () => {
     const ok = ensureMonadNetworkSync({
-      chainId,
+      chainId: walletChainId,
       toastMessage: 'Switch to Monad Testnet to supply.',
     });
     if (!ok) return;

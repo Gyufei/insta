@@ -1,6 +1,6 @@
 'use client';
 
-import { useAppKitNetwork } from '@reown/appkit/react';
+import { useAccount } from 'wagmi';
 
 import { useMemo } from 'react';
 
@@ -40,7 +40,7 @@ type LendingBorrowProps = {
 };
 
 export function LendingBorrow() {
-  const { chainId } = useAppKitNetwork();
+  const { chainId: walletChainId } = useAccount();
   const { currentComponent } = useSideDrawerStore();
   const props = (currentComponent?.props || {}) as LendingBorrowProps;
 
@@ -161,7 +161,7 @@ export function LendingBorrow() {
 
   const handleBorrow = () => {
     const ok = ensureMonadNetworkSync({
-      chainId,
+      chainId: walletChainId,
     });
     if (!ok) return;
 

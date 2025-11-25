@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useAppKitNetwork } from '@reown/appkit/react';
+import { useAccount } from 'wagmi';
 
 import { IToken } from '@/config/tokens';
 
@@ -37,7 +37,7 @@ type LendingWithdrawProps = {
 };
 
 export function LendingWithdraw() {
-  const { chainId } = useAppKitNetwork();
+  const { chainId: walletChainId } = useAccount();
   const { currentComponent } = useSideDrawerStore();
   const props = (currentComponent?.props || {}) as LendingWithdrawProps;
 
@@ -155,7 +155,7 @@ export function LendingWithdraw() {
 
   const handleWithdraw = () => {
     const ok = ensureMonadNetworkSync({
-      chainId,
+      chainId: walletChainId,
     });
     if (!ok) return;
 

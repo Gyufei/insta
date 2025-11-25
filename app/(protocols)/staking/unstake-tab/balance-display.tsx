@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAppKitNetwork } from '@reown/appkit/react';
+import { useAccount } from 'wagmi';
 
 import { MONAD, type IToken } from '@/config/tokens';
 
@@ -33,7 +33,7 @@ interface BalanceDisplayProps {
  * Displays the current staked token balance with project-specific token information
  */
 export function BalanceDisplay({ selectedProject, balance, refetchBalance }: BalanceDisplayProps) {
-  const { chainId } = useAppKitNetwork();
+  const { chainId: walletChainId } = useAccount();
   const monToken = MONAD;
   const project = getStakingProject(selectedProject);
   
@@ -66,7 +66,7 @@ export function BalanceDisplay({ selectedProject, balance, refetchBalance }: Bal
 
   const handleWithdraw = () => {
     const ok = ensureMonadNetworkSync({
-      chainId,
+      chainId: walletChainId,
     });
     if (!ok) return;
 
