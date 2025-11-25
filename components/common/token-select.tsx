@@ -257,7 +257,7 @@ export function TokenSelect({
           className
         )}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full">
           {selectedToken ? (
             <>
               <div className="relative w-6 h-6">
@@ -286,15 +286,15 @@ export function TokenSelect({
               </div>
             </>
           ) : (
-            <>
-              <div className="relative w-6 h-6">
-                <div className="w-6 h-6 rounded-full bg-[#EBEBEB]" />
-              </div>
-              <div className="flex items-center  gap-1">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2 w-full">
+                <div className="relative w-6 h-6">
+                  <div className="w-6 h-6 rounded-full bg-[#EBEBEB]" />
+                </div>
                 <span className="text-[#131E40] text-sm font-medium">{label}</span>
-                <span className="text-xs text-[#A5ADC6]">Not Selected</span>
               </div>
-            </>
+              <span className="text-xs text-[#A5ADC6]">Select token</span>
+            </div>
           )}
         </div>
       </SelectTrigger>

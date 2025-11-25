@@ -53,7 +53,9 @@ export const NetworkConfigs = {
 
 export const MONAD_TESTNET_NAME = 'Monad';
 
-export const DEFAULT_NATIVE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+export const DEFAULT_NATIVE_ADDRESS = isProduction
+  ? '0x0000000000000000000000000000000000000000'
+  : '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
 export const BACKEND_NATIVE_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 
@@ -65,6 +67,7 @@ export const UniversalRouterAddressPermit = '0x000000000022D473030F116dDEE9F6B43
 export const TOKEN_DECIMALS: Record<string, Record<string, number>> = {
   [NetworkConfigs.monadTestnet.id]: {
     '0xf817257fed379853cDe0fa4F97AB987181B1E5Ea': 6,
+    '0x754704Bc059F8C67012fEd69BC8A327a5aafb603': 6,
   },
 };
 

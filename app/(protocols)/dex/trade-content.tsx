@@ -839,7 +839,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
               onValueChange={setSellValue}
               balance={fromBalance}
               isBalancePending={isFromBalancePending}
-              label="From"
+              label="Sell"
               placeholder="0.00"
               showMaxButton={true}
               onMaxClick={handleMaxClick}
@@ -876,7 +876,7 @@ export function TradeContent({ selectedProject }: { selectedProject: DexProjectI
               onValueChange={setBuyValue}
               balance={toBalance}
               isBalancePending={isToBalancePending}
-              label="To"
+              label="Buy"
               placeholder="0.00"
               fromTokenSymbol={sellToken?.symbol}
               fromTokenAmount={sellValue}
