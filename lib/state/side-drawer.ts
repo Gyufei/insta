@@ -1,26 +1,30 @@
 import { create } from 'zustand';
 
+
+
 import { IMarketData } from '@/app/odds/common/use-market-detail';
+
+
 
 import { IToken } from '../../config/tokens';
 import { IAmbientPosition } from '../data/use-ambient-position';
 import { IUniswapPosition } from '../data/use-uniswap-position';
+
+
+
+
 
 export type SideDrawerComponent =
   | 'Balance'
   | 'AccountSetting'
   | 'DepositMon'
   | 'WithdrawMon'
-  | 'AprioriDeposit'
-  | 'AprioriWithdraw'
   | 'NadFunCreateToken'
   | 'NadFunBuyToken'
   | 'NadFunSellToken'
   | 'NadNameSetPrimary'
   | 'NadNameRegister'
   | 'NadNameTransfer'
-  | 'MagmaDeposit'
-  | 'MagmaWithdraw'
   | 'UniswapCreatePosition'
   | 'UniswapAddLiquidity'
   | 'UniswapRemoveLiquidity'
