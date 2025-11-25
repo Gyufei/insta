@@ -3,15 +3,9 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
 import * as Sentry from '@sentry/nextjs';
 
-
-
 import { useEffect, useState } from 'react';
 
-
-
-import { type IToken, MONAD } from '@/config/tokens';
-
-
+import { APR_MONAD, type IToken, MONAD } from '@/config/tokens';
 
 import { TokenSelectorDropdown } from '@/components/common/token-selector-dropdown';
 import { WithLoading } from '@/components/common/with-loading';
@@ -20,11 +14,10 @@ import { TokenInput } from '@/components/new/token-input';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
-
-
 import { useDSAMonadNativeBalance } from '@/lib/data/balance/use-dsa-monad-native-balance';
 import { useAprioriBalance } from '@/lib/data/use-apriori-balance';
 import { useAprioriDeposit } from '@/lib/data/use-apriori-deposit';
+import { useAprioriQuote } from '@/lib/data/use-apriori-quote';
 import { useMagmaBalance } from '@/lib/data/use-magma-balance';
 import { useMagmaDeposit } from '@/lib/data/use-magma-deposit';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
@@ -84,10 +77,23 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
 
   const receiveAmount = inputValue || 0;
 
+  // ===== Apriori dynamic exchange rate =====
+  const quoteParams =
+    selectedProject === 'apriori'
+      ? { token_in: MONAD.symbol, token_out: APR_MONAD.symbol, amount: '1' }
+      : undefined;
+  const { data: aprioriQuoteResult } = useAprioriQuote(quoteParams);
+  const dynamicExchangeRate = (() => {
+    const out = aprioriQuoteResult?.amount_out;
+    if (!out) return '';
+    const formatted = truncateIfExceeds(String(out), 4);
+    return `1 ${MONAD.symbol} = ${formatted} ${APR_MONAD.symbol}`;
+  })();
   const handleDeposit = () => {
     const ok = ensureMonadNetworkSync({
       chainId,
     });
+
     if (!ok) return;
 
     // ===== SECURITY: Input validation =====
@@ -331,7 +337,11 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
         onClick={handleDeposit}
         isPending={isPending}
         error={errorData}
-        exchangeRate={project.exchangeRate}
+        exchangeRate={
+          selectedProject === 'apriori'
+            ? dynamicExchangeRate || project.exchangeRate
+            : project.exchangeRate
+        }
       >
         Stake
       </ActionButton>

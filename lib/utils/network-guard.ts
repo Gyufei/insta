@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 
 import { NetworkConfigs } from '@/config/network-config';
+
 import { isProduction } from '@/lib/data/api-path';
 
 type EnsureOptions = {
@@ -85,9 +86,7 @@ export function ensureBaseNetworkSync(options: EnsureOptions): boolean {
 
   if (!chainId || chainId !== targetId) {
     if (onFailToast) {
-      toast.error(
-        toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
-      );
+      toast.error(toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`);
     }
     return false;
   }
@@ -116,9 +115,7 @@ export async function ensureBaseNetwork(
         await Promise.resolve(switchNetwork(NetworkConfigs.base));
       }
       if (onFailToast) {
-        toast.error(
-          toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
-        );
+        toast.error(toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`);
       }
     } catch (error) {
       Sentry.captureException(error, {
@@ -126,9 +123,7 @@ export async function ensureBaseNetwork(
         extra: { ...(sentryExtra || {}), current_chain_id: chainId },
       });
       if (onFailToast) {
-        toast.error(
-          toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
-        );
+        toast.error(toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`);
       }
     }
     return false;
@@ -144,9 +139,7 @@ export function ensureEthNetworkSync(options: EnsureOptions): boolean {
 
   if (!chainId || chainId !== targetId) {
     if (onFailToast) {
-      toast.error(
-        toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
-      );
+      toast.error(toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`);
     }
     return false;
   }
@@ -175,9 +168,7 @@ export async function ensureEthNetwork(
         await Promise.resolve(switchNetwork(NetworkConfigs.eth));
       }
       if (onFailToast) {
-        toast.error(
-          toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
-        );
+        toast.error(toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`);
       }
     } catch (error) {
       Sentry.captureException(error, {
@@ -185,9 +176,7 @@ export async function ensureEthNetwork(
         extra: { ...(sentryExtra || {}), current_chain_id: chainId },
       });
       if (onFailToast) {
-        toast.error(
-          toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`
-        );
+        toast.error(toastMessage || `Wrong network detected! Please switch to ${targetLabel}.`);
       }
     }
     return false;
