@@ -174,23 +174,6 @@ export const trackEvent = (
       ...serializeCustomParameters(parameters.custom_parameters),
     };
 
-    // Debug logging to verify data is being sent
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔍 GA Event Debug:', {
-        eventName: eventAction,
-        userIdentificationData: {
-          user_fingerprint: parameters.user_fingerprint,
-          real_ip: parameters.real_ip,
-          vpn_ip: parameters.vpn_ip,
-          cloudflare_visitor_id: parameters.cloudflare_visitor_id,
-          session_id: parameters.session_id,
-        },
-        customParameters: parameters.custom_parameters,
-        serializedCustomParameters: serializeCustomParameters(parameters.custom_parameters),
-        fullEventData: gaEventData,
-      });
-    }
-
     window.gtag('event', eventAction, gaEventData);
   }
 };
