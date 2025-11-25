@@ -99,23 +99,6 @@ let previousPathname = '';
 // Menu configuration function
 function createMenuItemsConfig(getCurrentChainNameHref: (href: string) => string) {
   const monadModulesItems: MenuItem[] = [
-    {
-      href: getCurrentChainNameHref('/faucet'),
-      label: 'Faucet',
-      icon: (
-        <Image
-          src="/icons/faucet-gray.svg"
-          alt="faucet"
-          width={12}
-          height={12}
-          className="h-3 w-3"
-        />
-      ),
-      hoverIcon: (
-        <Image src="/icons/faucet.svg" alt="faucet" width={12} height={12} className="h-3 w-3" />
-      ),
-      disabled: !TAB_ENABLED.faucet,
-    },
     // {
     //   href: getCurrentChainNameHref('/trade'),
     //   label: 'Trade',

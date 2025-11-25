@@ -3,15 +3,25 @@ import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 
+
+
 import { useEffect } from 'react';
 
+
+
 import TwitterLinkIcon from '@/components/icon/twitter-link-icon';
+
+
 
 import { isProduction } from '@/lib/data/api-path';
 import { useSaveXBind } from '@/lib/data/use-save-x-bind';
 import { useTwitterInfo } from '@/lib/data/use-twitter-info';
 import { cn } from '@/lib/utils';
 import { useTwitterSign } from '@/lib/utils/use-twitter-sign';
+
+
+
+
 
 export function TwitterLink() {
   const { address } = useAccount();
@@ -26,8 +36,8 @@ export function TwitterLink() {
 
   // TODO: remove-to-home
   const Host = isProduction
-    ? 'https://sandbox.tadle.com/uniswap?chain=monad'
-    : 'https://preview-v3.tadle.com/uniswap?chain=monad';
+    ? 'https://sandbox.tadle.com/dashboard?chain=monad'
+    : 'https://preview-v3.tadle.com/dashboard?chain=monad';
   // 'http://localhost:3000/uniswap?chain=monad';
 
   function getCallbackUrl() {
