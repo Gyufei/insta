@@ -1,22 +1,16 @@
 import { IToken } from '@/config/tokens';
-import { truncateIfExceeds, formatPercentage } from '@/lib/utils/number';
+import { truncateIfExceeds } from '@/lib/utils/number';
 
 import { Card } from '@/components/ui/card';
 
 export function WithdrawEstReceive({
   receiveToken,
   receiveAmount,
-  inputAmount,
 }: {
   receiveToken: IToken;
   receiveAmount: string;
   inputAmount?: string;
 }) {
-  // 计算 Fee 百分比：以输入金额为基准，(输入-接收)/输入
-  const input = Number(inputAmount ?? receiveAmount ?? '0');
-  const output = Number(receiveAmount ?? '0');
-  const feeFraction = input > 0 ? Math.max(0, (input - output) / input) : 0;
-  const feeText = formatPercentage(feeFraction);
   return (
     <>
       <Card className="relative flex-grow cursor-pointer rounded-[6px] border-[#EBEBEB] p-4 max-lg:w-full">
@@ -27,7 +21,7 @@ export function WithdrawEstReceive({
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-300">Fee:</p>
-              <p className="text-blue text-sm">{feeText}</p>
+              <p className="text-blue text-sm">0.1%</p>
             </div>
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-300">Wait time:</p>

@@ -161,7 +161,6 @@ export function BalanceDisplay({ selectedProject, balance, refetchBalance }: Bal
           <WithdrawEstReceive
             receiveToken={monToken}
             receiveAmount={receiveAmount}
-            inputAmount={inputValue}
           />
         </>
       )}
