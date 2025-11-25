@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 import { cn } from '@/lib/utils';
 
@@ -12,6 +13,7 @@ export interface ProjectConfig {
   id: string;
   name: string;
   icon?: string;
+  disabled?: boolean;
 }
 
 /**
@@ -52,15 +54,25 @@ export function ProjectSelector<T extends ProjectConfig>({
     >
       {projectIds.map((projectId) => {
         const projectConfig = getProject(projectId);
+        const isDisabled = !!projectConfig?.disabled;
         return (
           <button
             key={projectId}
-            onClick={() => onProjectSelect(projectId)}
+            onClick={(e) => {
+              if (isDisabled) {
+                e.preventDefault();
+                toast.warning('Coming soon');
+                return;
+              }
+              onProjectSelect(projectId);
+            }}
+            aria-disabled={isDisabled}
             className={cn(
               'flex items-center gap-2 rounded-[6px] px-4 py-2 md:py-[10px] transition-all duration-200 shrink-0',
               selectedProject === projectId
                 ? 'bg-[#FFFFFF] shadow-sm'
-                : 'bg-[#F5F5F5] text-[#A5ADC6] hover:bg-[#EBEBEB]'
+                : 'bg-[#F5F5F5] text-[#A5ADC6] hover:bg-[#EBEBEB]',
+              isDisabled && 'opacity-60 cursor-not-allowed'
             )}
           >
             {projectConfig.icon && (

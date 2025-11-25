@@ -8,6 +8,7 @@ export interface StakingProject {
   id: StakingProjectId;
   name: string;
   icon: string;
+  disabled?: boolean;
   token: {
     name: string;
     symbol: string;
@@ -40,6 +41,7 @@ export const STAKING_PROJECTS: Record<StakingProjectId, Omit<StakingProject, 'us
     id: 'magma',
     name: 'Magma',
     icon: '/icons/magma.svg',
+    disabled: true,
     token: G_MONAD,
     exchangeRate: '1 MON = 1 gMON',
     depositComponent: 'MagmaDeposit',

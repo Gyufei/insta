@@ -1,6 +1,6 @@
 export const TAB_ENABLED = {
-  dex: false,
-  staking: false,
+  dex: true,
+  staking: true,
   launchToken: false,
   lending: false,
   faucet: false,

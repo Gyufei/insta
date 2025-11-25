@@ -4,6 +4,7 @@ export interface DexProject {
   id: DexProjectId;
   name: string;
   icon?: string;
+  disabled?: boolean;
 }
 
 // Staking projects configuration
@@ -21,6 +22,7 @@ export const DEX_PROJECTS: Record<DexProjectId, Omit<DexProject, 'useBalance'>> 
     id: 'ambient',
     name: 'Ambient',
     icon: '/icons/ambient.svg',
+    disabled: true,
   },
 };
 
