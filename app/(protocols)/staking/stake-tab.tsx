@@ -24,6 +24,7 @@ import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 import { formatNumber, truncateIfExceeds } from '@/lib/utils/number';
 import { parseBig } from '@/lib/utils/number';
+import { multiply } from 'safebase';
 
 import { type StakingProjectId, getStakingProject } from './staking-config';
 
@@ -75,7 +76,7 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
   const balance = currentBalanceResult.data?.balance || '0';
   const isLoading = currentBalanceResult.isLoading;
 
-  const receiveAmount = inputValue || 0;
+  // 移至报价逻辑之后计算
 
   // ===== Apriori dynamic exchange rate =====
   const quoteParams =
@@ -88,6 +89,18 @@ export function StakeTab({ selectedProject }: StakeTabProps) {
     if (!out) return '';
     const formatted = truncateIfExceeds(String(out), 4);
     return `1 ${MONAD.symbol} = ${formatted} ${APR_MONAD.symbol}`;
+  })();
+  // 根据 span 展示的汇率计算接收数量
+  const receiveAmount = (() => {
+    if (selectedProject !== 'apriori') return inputValue || 0;
+    const rateOut = aprioriQuoteResult?.amount_out;
+    if (!rateOut || !inputValue) return '0';
+    try {
+      return multiply(String(inputValue), String(rateOut));
+    } catch {
+      const num = Number(inputValue) * Number(rateOut);
+      return isFinite(num) ? String(num) : '0';
+    }
   })();
   const handleDeposit = () => {
     const ok = ensureMonadNetworkSync({
