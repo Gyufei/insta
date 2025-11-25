@@ -1,7 +1,5 @@
 import { APR_MONAD, G_MONAD } from '@/config/tokens';
 
-import { SideDrawerComponent } from '@/lib/state/side-drawer';
-
 export type StakingProjectId = 'apriori' | 'magma';
 
 export interface StakingProject {
@@ -18,8 +16,6 @@ export interface StakingProject {
     description?: string;
   };
   exchangeRate: string;
-  depositComponent: SideDrawerComponent;
-  withdrawComponent: SideDrawerComponent;
   useBalance: () => {
     data: { balance: string } | undefined;
     isLoading: boolean;
@@ -34,8 +30,6 @@ export const STAKING_PROJECTS: Record<StakingProjectId, Omit<StakingProject, 'us
     icon: '/icons/apriori.svg',
     token: APR_MONAD,
     exchangeRate: '1 MON = 1 aprMON',
-    depositComponent: 'AprioriDeposit',
-    withdrawComponent: 'AprioriWithdraw',
   },
   magma: {
     id: 'magma',
@@ -44,8 +38,6 @@ export const STAKING_PROJECTS: Record<StakingProjectId, Omit<StakingProject, 'us
     disabled: true,
     token: G_MONAD,
     exchangeRate: '1 MON = 1 gMON',
-    depositComponent: 'MagmaDeposit',
-    withdrawComponent: 'MagmaWithdraw',
   },
 };
 
