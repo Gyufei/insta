@@ -2,9 +2,15 @@
 
 import { useAccount } from 'wagmi';
 
+
+
 import { useMemo } from 'react';
 
+
+
 import { IToken } from '@/config/tokens';
+
+
 
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/new/action-button';
@@ -14,6 +20,8 @@ import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
+
+
 import { useCurvanceBorrow } from '@/lib/data/use-curvance-borrow';
 import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
 import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
@@ -22,6 +30,10 @@ import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 import { formatBig, formatNumber, parseBig } from '@/lib/utils/number';
+
+
+
+
 
 type LendingBorrowProps = {
   market_address: string;
@@ -117,7 +129,15 @@ export function LendingBorrow() {
 
   // Remaining Credit 采用 total_max_debt_in_usd（18位精度）/ price 得到代币数量
   const borrowLimit = useMemo(() => {
-    const maxDebtUSD = parseFloat(formatBig(String(userItem?.total_max_debt_in_usd || '0'), 18));
+    const maxDebtUSD = parseFloat(
+      formatBig(
+        String(
+          Number(userItem?.total_max_debt_in_usd || 0) - Number(userItem?.total_debt_in_usd || 0) ||
+            0
+        ),
+        18
+      )
+    );
     const tokens = tokenPrice > 0 ? maxDebtUSD / tokenPrice : 0;
     if (Number.isFinite(tokens) && tokens > 0) return String(tokens);
     // 回退到 props 提供的约束
