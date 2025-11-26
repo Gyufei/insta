@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { APR_MONAD, G_MONAD, IToken, MONAD } from '@/config/tokens';
+
+
+import { APR_MONAD, G_MONAD, IToken, MONAD, USDC_TOKEN, WMONAD_TOKEN } from '@/config/tokens';
 
 import { useApiBalance } from '@/lib/data/balance/use-api-balance';
 import { useUniswapTokens } from '@/lib/data/use-uniswap-tokens';
@@ -11,7 +13,7 @@ import { MagmaMonTokenCard } from './magma-mon-token-card';
 import { NoSearchResult } from './no-search-result';
 import SearchBar from './search-bar';
 
-const MonadTokenData = [MONAD, APR_MONAD, G_MONAD];
+const MonadTokenData = [MONAD, APR_MONAD, G_MONAD, WMONAD_TOKEN, USDC_TOKEN];
 
 function filterTokenByQuery(tokens: IToken[], query: string) {
   return tokens.filter(

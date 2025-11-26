@@ -1,6 +1,12 @@
 import { DEFAULT_NATIVE_ADDRESS } from '@/config/network-config';
 
+
+
 import { isProduction } from '@/lib/data/api-path';
+
+
+
+
 
 export interface IToken {
   name: string;
@@ -65,12 +71,22 @@ export const TokenPriceMap: Record<string, number> = {
 //   decimals: 6,
 // };
 
+export const USDC_TOKEN: IToken = {
+  address: isProduction
+    ? '0x754704Bc059F8C67012fEd69BC8A327a5aafb603'
+    : '0xf817257fed379853cDe0fa4F97AB987181B1E5Ea',
+  name: 'USDC',
+  symbol: 'USDC',
+  logo: '/icons/usdc.svg',
+  decimals: 6,
+};
+
 export const WMONAD_TOKEN: IToken = {
   address: isProduction
     ? '0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A'
     : '0x760AfE86e5de5fa0Ee542fc7B7B713e1c5425701',
-  name: 'Wrapped Monad',
-  symbol: 'wMON',
+  name: 'Wrapped MON',
+  symbol: 'WMON',
   logo: '/icons/wmon.svg',
   decimals: 18,
 };
