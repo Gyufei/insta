@@ -141,17 +141,54 @@ export default function InlineMarketDetails({
 
 
   // 借款侧指标（基于用户 positions：总债务与最大可借）
-  const userMaxDebtUSD = parseFloat(formatBig(String(user?.total_max_debt_in_usd || '0'), 18));
-  const userTotalDebtUSD = parseFloat(formatBig(String(user?.total_debt_in_usd || '0'), 18));
-  const borrowDebtUSD = Number.isFinite(userMaxDebtUSD) ? userMaxDebtUSD : 0;
+  // 头部指标：改为基于 token 级别的池子总量（USD）来展示
+  const borrowTokenSupplyUSD = parseFloat(borrowToken.total_supply_in_usd || '0');
+  const borrowTokenDebtUSD = parseFloat(borrowToken.total_debt_in_usd || '0');
+  const borrowDebtUSD = Number.isFinite(borrowTokenDebtUSD) ? Math.max(borrowTokenDebtUSD, 0) : 0; // Reserve Size（Borrow 模式，非负）
   const borrowAvailableUSD =
-    Number.isFinite(userMaxDebtUSD) && Number.isFinite(userTotalDebtUSD)
-      ? Math.max(userMaxDebtUSD - userTotalDebtUSD, 0)
-      : NaN;
-    const borrowUtilizationPct =
-    Number.isFinite(userMaxDebtUSD) && userMaxDebtUSD > 0 && Number.isFinite(userTotalDebtUSD)
-      ? (userTotalDebtUSD / userMaxDebtUSD) * 100
-      : parseFloat(market.utilization_rate || '0');
+    Number.isFinite(borrowTokenSupplyUSD) && Number.isFinite(borrowTokenDebtUSD)
+      ? Math.max(borrowTokenSupplyUSD - borrowTokenDebtUSD, 0)
+      : NaN; // Available Liquidity（Borrow 模式）
+  const borrowUtilizationPct = (() => {
+    if (
+      Number.isFinite(borrowTokenSupplyUSD) &&
+      borrowTokenSupplyUSD > 0 &&
+      Number.isFinite(borrowTokenDebtUSD)
+    ) {
+      const v = (borrowTokenDebtUSD / borrowTokenSupplyUSD) * 100;
+      return v >= 0 ? v : 0;
+    }
+    const v = parseFloat(market.utilization_rate || '0');
+    return v >= 0 ? v : 0;
+  })();
+
+  // Supply 侧指标（基于 token 级总量）
+  const supplyTokenSupplyUSD = parseFloat(supplyToken.total_supply_in_usd || '0');
+  const supplyTokenDebtUSD = parseFloat(supplyToken.total_debt_in_usd || '0');
+  const supplyReserveUSD = Number.isFinite(supplyTokenSupplyUSD)
+    ? Math.max(supplyTokenSupplyUSD, 0)
+    : 0; // Reserve Size（Supply 模式，非负）
+  const supplyAvailableUSD =
+    Number.isFinite(supplyTokenSupplyUSD) && Number.isFinite(supplyTokenDebtUSD)
+      ? Math.max(supplyTokenSupplyUSD - supplyTokenDebtUSD, 0)
+      : NaN; // Available Liquidity（Supply 模式）
+  const supplyUtilizationPct = (() => {
+    if (
+      Number.isFinite(supplyTokenSupplyUSD) &&
+      supplyTokenSupplyUSD > 0 &&
+      Number.isFinite(supplyTokenDebtUSD)
+    ) {
+      const v = (supplyTokenDebtUSD / supplyTokenSupplyUSD) * 100;
+      return v >= 0 ? v : 0;
+    }
+    const v = parseFloat(market.utilization_rate || '0');
+    return v >= 0 ? v : 0;
+  })();
+
+  // 通用展示指标（按当前模式）
+  const reserveUSD = Math.max(0, isBorrow ? borrowDebtUSD : supplyReserveUSD);
+  const availableUSD = Math.max(0, isBorrow ? borrowAvailableUSD : supplyAvailableUSD);
+  const utilizationPct = Math.max(0, isBorrow ? borrowUtilizationPct : supplyUtilizationPct);
   const { balance: walletBalanceRaw } = useAddressBalance(
     walletAddress,
     token0.address,
@@ -328,49 +365,26 @@ export default function InlineMarketDetails({
             {/* 移动端在标题与指标之间增加分割线 */}
             <div className="md:hidden w-full border-t border-gray-200 dark:border-gray-700 mt-3" />
             <div className="w-full md:w-auto md:ml-auto grid grid-cols-3 text-sm md:gap-8 mt-3 md:mt-0 divide-x md:divide-none divide-slate-200">
-              {isBorrow ? (
-                <>
-                  <div className="md:text-left text-center flex flex-col px-4">
-                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatUSD(borrowDebtUSD)}
-                    </div>
-                    <div className="order-2 md:order-1 text-[#A5ADC6]">Total Debt</div>
+              <>
+                <div className="md:text-left text-center flex flex-col px-4">
+                  <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
+                    {formatUSD(reserveUSD)}
                   </div>
-                  <div className="md:text-left text-center flex flex-col px-4 ">
-                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatUSD(borrowAvailableUSD)}
-                    </div>
-                    <div className="order-2 md:order-1 text-[#A5ADC6]">Available Liquidity</div>
+                  <div className="order-2 md:order-1 text-[#A5ADC6]">Reserve Size</div>
+                </div>
+                <div className="md:text-left text-center flex flex-col px-4">
+                  <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
+                    {formatUSD(availableUSD)}
                   </div>
-                  <div className="md:text-left text-center flex flex-col">
-                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatPct(borrowUtilizationPct)}
-                    </div>
-                    <div className="order-2 md:order-1 text-[#A5ADC6]">Utilization Rate</div>
+                  <div className="order-2 md:order-1 text-[#A5ADC6]">Available Liquidity</div>
+                </div>
+                <div className="md:text-left text-center flex flex-col px-4">
+                  <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
+                    {formatPct(utilizationPct)}
                   </div>
-                </>
-              ) : (
-                <>
-                  <div className="md:text-left text-center flex flex-col px-1">
-                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                       {formatUSD(market.total_supply_in_usd)}
-                    </div>
-                    <div className="order-2 md:order-1 text-[#A5ADC6]">Reserve Size</div>
-                  </div>
-                  <div className="md:text-left text-center flex flex-col px-1">
-                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                       {formatUSD(market.available_supply_in_usd)}
-                    </div>
-                    <div className="order-2 md:order-1 text-[#A5ADC6]">Available Liquidity</div>
-                  </div>
-                  <div className="md:text-left text-center flex flex-col px-1">
-                    <div className="order-1 md:order-2 text-lg font-medium mb-1 md:mb-0">
-                      {formatPct(market.utilization_rate)}
-                    </div>
-                    <div className="order-2 md:order-1 text-[#A5ADC6]">Utilization Rate</div>
-                  </div>
-                </>
-              )}
+                  <div className="order-2 md:order-1 text-[#A5ADC6]">Utilization Rate</div>
+                </div>
+              </>
             </div>
           </div>
           <div className="mt-4 border-t border-gray-200 dark:border-gray-700" />

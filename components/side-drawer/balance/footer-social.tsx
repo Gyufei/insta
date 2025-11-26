@@ -23,6 +23,11 @@ export default function BalanceFooterSocial({ className }: { className?: string 
       src: '/icons/telegram.svg',
       hoverSrc: '/icons/telegram-hover.svg',
     },
+    // {
+    //   href: 'https://github.com/tadle-com',
+    //   src: '/icons/github.svg',
+    //   hoverSrc: '/icons/github-hover.svg',
+    // },
     // { href: '/', src: '/icons/setting-two.svg', hoverSrc: '/icons/setting-two-hover.svg' },
   ];
 
