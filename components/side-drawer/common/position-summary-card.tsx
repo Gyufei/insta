@@ -1,6 +1,6 @@
 'use client';
 
-import { divide, subtract } from 'safebase';
+import { divide, subtract, multiply } from 'safebase';
 import type { ICurvanceMarketUserItem } from '@/lib/data/use-curvance-market-user-info';
 import type { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
 import { formatBig, truncateIfExceeds } from '@/lib/utils/number';
@@ -33,6 +33,21 @@ export function PositionSummaryCard({ market, user, borrowTokenIndex = 1 }: Posi
   const borrowCapacityInToken = isPricePositive ? divide(totalMaxDebtUSDDec, priceStr) : '0';
   const availableToBorrowInToken = isPricePositive ? divide(remainingUSDDec, priceStr) : '0';
 
+  // 最大抵押率 LTV_max = total_max_debt_in_usd / total_collateral_in_usd
+  const maxCollateralRatio = totalCollateralUSDDec === '0' ? '0' : divide(totalMaxDebtUSDDec, totalCollateralUSDDec);
+  const userCollateralShares = borrowTokenIndex === 0
+    ? user?.token1?.user_share_display_balance || '0'
+    : user?.token0?.user_share_display_balance || '0';
+  const userDebtAmount = borrowedAmount; // 已按所选借款代币选择
+  const isDebtPositive = Number(userDebtAmount) > 0;
+  // 清算价格（借币单位/每1个抵押币）：USDC per 1 MON = user_debt_balance / (user_share_balance * LTV_max)
+  const denomForBorrowedPrice = multiply(userCollateralShares, maxCollateralRatio);
+  const isDenomPositive = Number(denomForBorrowedPrice) > 0;
+  const liquidationPriceBorrowedRaw = isDebtPositive && isDenomPositive
+    ? divide(userDebtAmount, denomForBorrowedPrice)
+    : '0';
+  const liquidationPriceBorrowed = String(liquidationPriceBorrowedRaw).startsWith('-') ? '0' : liquidationPriceBorrowedRaw;
+
   return (
     <div className="rounded-lg border border-[#EBEBEB] bg-white dark:bg-secondary p-5 shadow-sm">
       <div className="text-base font-medium text-[#131E40]">Position Summary</div>
@@ -46,7 +61,7 @@ export function PositionSummaryCard({ market, user, borrowTokenIndex = 1 }: Posi
         <div className="flex items-center justify-between">
           <div className="text-xs text-[#A5ADC6]">Liquidation Point</div>
           <div className="text-sm font-medium text-[#131E40]">
-            {truncateIfExceeds(borrowedAmount, 4)} {displaySymbol}
+            {truncateIfExceeds(String(liquidationPriceBorrowed), 4)} {displaySymbol}
           </div>
         </div>
         <div className="flex items-center justify-between">
