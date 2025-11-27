@@ -2,10 +2,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { divide, multiply } from 'safebase';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
-import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
+
+
 
 import { useEffect, useMemo, useState } from 'react';
 
+import { SlippageSettings } from '@/app/(protocols)/dex/positions/common/slippage-settings';
 import { useTokenSelector } from '@/app/(protocols)/dex/positions/uni-common/use-token-selector';
 
 import {
@@ -16,7 +18,7 @@ import {
 import { IToken, MONAD, MonUSD } from '@/config/tokens';
 import { WMONAD_TOKEN } from '@/config/tokens';
 
-import { ActionButton } from '@/components/side-drawer/common/action-button';
+import { ActionButton } from '@/components/new/action-button';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
@@ -25,6 +27,7 @@ import { useUniswapPositionInfo } from '@/lib/data/use-uniswap-position-info';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { ErrorVO } from '@/lib/model/error-vo';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
+import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 import { truncateNumber } from '@/lib/utils/number';
 
 import TokenSelector from '../../uni-common/token-selector';
@@ -55,6 +58,7 @@ export function UniswapCreatePosition() {
   const [amount0, setAmount0] = useState('');
   const [amount1, setAmount1] = useState('');
   const [initPrice, setInitPrice] = useState<string>('');
+  const [slippagePercent, setSlippagePercent] = useState<string>('2.5');
 
   const [errorData, setErrorData] = useState<ErrorVO>({
     showError: false,
@@ -130,6 +134,10 @@ export function UniswapCreatePosition() {
     setInitPrice(value);
   }
 
+  function handleSlippageChange(value: string) {
+    setSlippagePercent(value);
+  }
+
   const handleTokenSelectWrapper = (token: IToken) => {
     const result = handleTokenSelect(token);
 
@@ -175,7 +183,8 @@ export function UniswapCreatePosition() {
       price_upper: priceRangeMax,
       amount_a: amount0,
       amount_b: amount1,
-      slippage: '10000000000000000', // 1%
+      // 将百分比（如 "1" 表示 1%）转换为 1e18 基准（1% = 1e16）
+      slippage: multiply(slippagePercent || '1', '10000000000000000'),
       decimals_a: token0.decimals.toString(),
       decimals_b: token1.decimals.toString(),
     };
@@ -334,6 +343,7 @@ export function UniswapCreatePosition() {
                   setFeeTier={setFeeTier}
                   feeTier={feeTier}
                 />
+                <SlippageSettings onSlippageChange={handleSlippageChange} />
                 <ActionButton
                   disabled={!token0 || !token1 || !feeTier}
                   isPending={isPending}

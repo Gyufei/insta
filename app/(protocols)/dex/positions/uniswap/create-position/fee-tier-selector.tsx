@@ -47,7 +47,7 @@ export default function FeeTierSelector({ selectedTier = '0.3', onChange }: FeeT
   return (
     <div className="flex flex-col gap-2 pointer-events-auto">
       <div className="text-base font-medium text-primary">Fee tier</div>
-      <div className="border border-[#ebebeb] bg-white rounded-xl">
+      <div className="border border-[#ebebeb] bg-white rounded-[8px]">
         <div className="flex flex-row justify-between items-center px-4 py-2">
           <div className="flex-grow flex-shrink min-w-0 flex flex-col gap-1">
             <span className="text-sm text-primary">{selectedTier}% fee tier</span>
@@ -55,11 +55,8 @@ export default function FeeTierSelector({ selectedTier = '0.3', onChange }: FeeT
           </div>
           <button
             onClick={handleToggleExpand}
-            className="flex flex-row-reverse items-center justify-center gap-1 px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-xl max-w-fit border border-transparent"
+            className=""
           >
-            <span className="text-xs font-medium text-gray-800 whitespace-nowrap overflow-hidden text-ellipsis">
-              {isExpanded ? 'Less' : 'More'}
-            </span>
             <ChevronDown
               className={`w-4 h-4 text-gray-900 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
             />
