@@ -134,18 +134,7 @@ export function LendingWithdraw() {
     return Math.max(cooldownEndMs - nowTs, 0);
   }, [cooldownEndMs, nowTs]);
   const isCooldownActive = remainingMs > 0;
-  const formattedCooldown = useMemo(() => {
-    let s = Math.floor(remainingMs / 1000);
-    const d = Math.floor(s / 86400);
-    s -= d * 86400;
-    const h = Math.floor(s / 3600);
-    s -= h * 3600;
-    const m = Math.floor(s / 60);
-    const sec = s - m * 60;
-    const pad = (n: number) => String(n).padStart(2, '0');
-    if (d > 0) return `${d}d ${pad(h)}:${pad(m)}:${pad(sec)}`;
-    return `${pad(h)}:${pad(m)}:${pad(sec)}`;
-  }, [remainingMs]);
+
   const unlockAtLocal = useMemo(() => {
     if (!cooldownEndMs) return '';
     const d = new Date(cooldownEndMs);
@@ -319,7 +308,7 @@ export function LendingWithdraw() {
               <div className="mt-3 rounded-sm bg-yellow-400/15 dark:bg-yellow-500/10 p-2">
                 <div className="text-xs font-medium leading-4 text-yellow-700 dark:text-yellow-300">
                   <ul className="list-disc pl-4">
-                    <li>{`Withdrawal in cooldown. Remaining: ${formattedCooldown}. Estimated unlock at ${unlockAtLocal}`}</li>
+                    <li>{`Withdrawal in cooldown. Estimated unlock at ${unlockAtLocal}`}</li>
                   </ul>
                 </div>
               </div>

@@ -84,9 +84,9 @@ export default function InlineMarketsSection({
             )}
             {marketsLoading && !marketsError && (
               <>
-                {/* Desktop skeleton: table-like */}
-                <div className="hidden md:block rounded-2xl border border-slate-200 bg-white overflow-hidden">
-                  <div className="grid grid-cols-[280px_1fr_1fr_1fr_140px] px-6 py-3 text-xs text-slate-500">
+                {/* Desktop skeleton: table-like (match real content layout) */}
+                <div className="hidden md:block rounded-xl border border-slate-200 bg-white overflow-hidden px-[20px]">
+                  <div className="grid grid-cols-[220px_1fr_1fr_1fr_80px] pt-[16px] pb-[12px] px-1 text-xs font-medium text-[#A5ADC6] border-b border-slate-200">
                     <div>Asset</div>
                     {actionMode === 'borrow' ? (
                       <>
@@ -105,7 +105,7 @@ export default function InlineMarketsSection({
                   </div>
                   <div className="divide-y divide-slate-200">
                     {Array.from({ length: 6 }).map((_, i) => (
-                      <div key={i} className="grid grid-cols-[280px_1fr_1fr_1fr_140px] items-center px-6 py-4">
+                      <div key={i} className="grid grid-cols-[220px_1fr_1fr_1fr_80px] items-center py-4 px-1">
                         <div className="flex items-center gap-3">
                           <div className="flex -space-x-2">
                             <Skeleton className="inline-block h-7 w-7 rounded-full" />
@@ -133,10 +133,10 @@ export default function InlineMarketsSection({
                   </div>
                 </div>
 
-                {/* Mobile skeleton: card-like */}
-                <div className="md:hidden space-y-4">
+                {/* Mobile skeleton: card-like (match real content layout) */}
+                <div className="md:hidden space-y-3">
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="rounded-2xl border border-slate-200 bg-white overflow-hidden px-6 py-4">
+                    <div key={i} className="rounded-xl border border-slate-200 bg-white dark:bg-secondary/80 overflow-hidden px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="flex -space-x-2">
                           <Skeleton className="inline-block h-7 w-7 rounded-full" />
@@ -149,23 +149,24 @@ export default function InlineMarketsSection({
                       </div>
                       <div className="border-t border-slate-200 mt-3 pt-3" />
                       <div className="grid grid-cols-3 divide-x divide-slate-200 w-full mt-1">
-                        <div className="px-4">
-                          <Skeleton className="h-4 w-16 mb-1" />
+                        <div className="px-4 text-center">
                           <Skeleton className="h-3 w-24" />
+                          <Skeleton className="h-4 w-16 mt-1" />
                           <Skeleton className="h-3 w-20 mt-1" />
                         </div>
-                        <div className="px-4">
-                          <Skeleton className="h-4 w-12 mb-1" />
+                        <div className="px-4 text-center">
+                          <Skeleton className="h-3 w-8" />
+                          <Skeleton className="h-4 w-12 mt-1" />
                           <Skeleton className="h-3 w-20 mt-1" />
                         </div>
-                        <div className="px-4">
-                          <Skeleton className="h-4 w-16 mb-1" />
+                        <div className="px-4 text-center">
                           <Skeleton className="h-3 w-24" />
+                          <Skeleton className="h-4 w-16 mt-1" />
                           <Skeleton className="h-3 w-20 mt-1" />
                         </div>
                       </div>
                       <div className="mt-4 w-full">
-                        <Skeleton className="h-9 w-full rounded-md" />
+                        <Skeleton className="h-8 w-full rounded-md" />
                       </div>
                     </div>
                   ))}
@@ -181,7 +182,7 @@ export default function InlineMarketsSection({
               <>
                 {/* Desktop: table style container */}
                 <div className="hidden md:block rounded-xl border border-slate-200 bg-white overflow-hidden px-[20px]">
-                  <div className="grid grid-cols-[220px_1fr_1fr_1fr_80px] pt-[16px] pb-[12px] text-xs font-medium text-[#A5ADC6] border-b border-slate-200">
+                  <div className="grid grid-cols-[220px_1fr_1fr_1fr_80px] pt-[16px] pb-[12px] px-1 text-xs font-medium text-[#A5ADC6] border-b border-slate-200">
                     <div>Asset</div>
                     {actionMode === 'borrow' ? (
                       <>
@@ -241,7 +242,7 @@ export default function InlineMarketsSection({
                       return (
                         <div
                           key={m.market_address}
-                          className="grid grid-cols-[220px_1fr_1fr_1fr_80px] items-center py-4 hover:bg-slate-50 cursor-pointer dark:hover:bg-secondary/80"
+                          className="grid grid-cols-[220px_1fr_1fr_1fr_80px] items-center py-4 px-1 hover:bg-slate-50 cursor-pointer dark:hover:bg-secondary/80"
                           role="button"
                           tabIndex={0}
                           onClick={() => onDetails?.(m.market_address)}
