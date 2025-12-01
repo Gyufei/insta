@@ -2,15 +2,9 @@
 
 import { useAccount } from 'wagmi';
 
-
-
 import { useMemo } from 'react';
 
-
-
 import { IToken } from '@/config/tokens';
-
-
 
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/new/action-button';
@@ -20,8 +14,6 @@ import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
-
-
 import { useCurvanceBorrow } from '@/lib/data/use-curvance-borrow';
 import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
 import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
@@ -30,10 +22,6 @@ import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 import { formatBig, formatNumber, parseBig } from '@/lib/utils/number';
-
-
-
-
 
 type LendingBorrowProps = {
   market_address: string;

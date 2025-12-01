@@ -144,20 +144,20 @@ export function TokenSelect({
   // }
 
   const allTokens = useMemo(() => {
-    const uniswapTokens = uniswapTokensData?.map((token) => ({
-      ...token,
-      logo: token.logoURI,
-      description: token.tokenDescription,
-    }));
+    // const uniswapTokens = uniswapTokensData?.map((token) => ({
+    //   ...token,
+    //   logo: token.logoURI,
+    //   description: token.tokenDescription,
+    // }));
 
-    let allToken = [...tokens, ...(uniswapTokens || [])];
+    let allToken = [...tokens];
 
     if (filterByBalance) {
-      const monBalanceTokens = balanceData?.filter((t) => t.network === 'MON');
-      const hasBalanceTokens = uniswapTokens?.filter((token) =>
-        monBalanceTokens?.some((bToken) => bToken.address === token.address)
-      );
-      allToken = [...tokens, ...(hasBalanceTokens || [])];
+      // const monBalanceTokens = balanceData?.filter((t) => t.network === 'MON');
+      // const hasBalanceTokens = uniswapTokens?.filter((token) =>
+      //   monBalanceTokens?.some((bToken) => bToken.address === token.address)
+      // );
+      allToken = [...tokens];
     }
 
     if (disableMonUsd) {
