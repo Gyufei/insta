@@ -1,24 +1,18 @@
 'use client';
 
-import { useAccount } from 'wagmi';
-
-
-
 import { DEFAULT_TOKEN_DECIMALS } from '@/config/network-config';
 
-
-
+import { WithLoading } from '@/components/common/with-loading';
 // 图标统一使用 markets 的 logoURI，不在本组件维护映射
 
 import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 
-
-
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import type { ICurvanceMarketUserItem } from '@/lib/data/use-curvance-market-user-info';
 import type { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
+import { useAccountStore } from '@/lib/state/account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { truncateIfExceeds } from '@/lib/utils/number';
@@ -42,11 +36,11 @@ export function LendingMarketInfo() {
   const market = props.market as ICurvanceMarketInfo | undefined;
   const user = props.user as ICurvanceMarketUserItem | undefined;
   const actionMode = props.actionMode || 'supply';
+  const { currentAccountType } = useAccountStore();
 
   // Hooks must be called unconditionally
-  const { address } = useAccount();
   const { data: accountInfo } = useSelectedAccount();
-  const walletAddress = accountInfo?.sandbox_account || address || '';
+  const walletAddress = accountInfo?.sandbox_account || '';
   const token0 = market?.token0;
   const token1 = market?.token1;
   const isBorrow = actionMode === 'borrow';
@@ -56,11 +50,11 @@ export function LendingMarketInfo() {
   const baseToken = isBorrow ? borrowToken : supplyToken;
   const tokenAddress = baseToken?.address || '';
   const tokenDecimals = baseToken?.decimals ?? DEFAULT_TOKEN_DECIMALS;
-  const { balance: walletBalanceRaw } = useAddressBalance(
+  const { balance: walletBalanceRaw, isBalancePending: isWalletBalancePending } = useAddressBalance(
     walletAddress,
     tokenAddress,
     tokenDecimals,
-    !!walletAddress && !!tokenAddress
+    !!walletAddress && !!tokenAddress && currentAccountType === 'DSA'
   );
 
   if (!market) return null;
@@ -84,7 +78,12 @@ export function LendingMarketInfo() {
         <div className="text-[16px] font-medium text-[#131E40]">{displaySymbol} Wallet Balance</div>
         <div className="mt-2 flex items-center justify-between">
           <div className="text-[32px] font-medium tracking-tight text-[#131E40]">
-            {truncateIfExceeds(walletBalanceDisplay || '0', 4)}
+            <WithLoading
+              isLoading={currentAccountType === 'DSA' && isWalletBalancePending}
+              className="h-5 w-5"
+            >
+              {currentAccountType === 'DSA' ? truncateIfExceeds(walletBalanceDisplay || '0', 4) : 0}
+            </WithLoading>
           </div>
           <img
             src={tokenLogo}
@@ -110,7 +109,11 @@ export function LendingMarketInfo() {
       </div>
 
       {/* Position summary card */}
-      <PositionSummaryCard market={market} user={user} borrowTokenIndex={supplyTokenIndex === 0 ? 1 : 0} />
+      <PositionSummaryCard
+        market={market}
+        user={user}
+        borrowTokenIndex={supplyTokenIndex === 0 ? 1 : 0}
+      />
     </div>
   );
 }

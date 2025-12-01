@@ -35,20 +35,25 @@ export function useCurvanceMarketUserInfo(enabled?: boolean) {
       currentAccountType === 'EOA' ? `${wallet}+${wallet}` : `${wallet}+${account}`,
     ],
     (url, account) => {
-      if (!wallet || (currentAccountType === 'DSA' && !account)) {
+      // 在 EOA 模式下，不发送依赖 sandbox_account 的请求
+      if (currentAccountType === 'EOA') {
+        return null;
+      }
+
+      // 仅在 DSA 下继续；同时需要 wallet 与 sandbox_account
+      if (!wallet || !account) {
         return null;
       }
 
       url.searchParams.set('wallet', wallet);
-      url.searchParams.set(
-        'sandbox_account',
-        currentAccountType === 'EOA' ? wallet : account || ''
-      );
+      // EOA 已在上方直接返回；此处必为 DSA，直接使用 sandbox_account
+      url.searchParams.set('sandbox_account', account || '');
 
       return url;
     },
     {
-      withAccount: currentAccountType === 'EOA' ? false : true,
+      // 始终要求 DSA 账户；EOA 通过上方返回 null 来禁用查询
+      withAccount: true,
       enabled,
       staleTime: 30_000,
     }

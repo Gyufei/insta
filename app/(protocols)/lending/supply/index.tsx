@@ -12,6 +12,7 @@ import { IToken } from '@/config/tokens';
 
 
 import { NumberInput } from '@/components/common/number-input';
+import { WithLoading } from '@/components/common/with-loading';
 import { ActionButton } from '@/components/new/action-button';
 import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
@@ -19,22 +20,17 @@ import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
-
-
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
 import { useCurvanceDeposit } from '@/lib/data/use-curvance-deposit';
 import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
 import { useCurvanceMarkets } from '@/lib/data/use-curvance-markets';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
+import { useAccountStore } from '@/lib/state/account';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 import { formatNumber, parseBig } from '@/lib/utils/number';
-
-
-
-
 
 type LendingSupplyProps = {
   market_address: string;
@@ -67,9 +63,10 @@ export function LendingSupply() {
     [props?.base_token]
   );
 
-  const { address } = useAccount();
   const { data: selectedAccount } = useSelectedAccount();
-  const dsaAddress = selectedAccount?.sandbox_account || address || '';
+  const { currentAccountType } = useAccountStore();
+  const dsaAddress = selectedAccount?.sandbox_account || '';
+  console.log('🚀 ~ LendingSupply ~ dsaAddress:', dsaAddress);
   const {
     balance: dsaBalance,
     isBalancePending: isDSABalancePending,
@@ -78,8 +75,9 @@ export function LendingSupply() {
     dsaAddress,
     token.address,
     token.decimals,
-    !!dsaAddress
+    !!dsaAddress && currentAccountType === 'DSA'
   );
+  console.log('🚀 ~ LendingSupply ~ dsaBalance:', dsaBalance);
 
   const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(dsaBalance);
   const { handleSetMax, handleInput } = useSetMax(inputValue, dsaBalance, handleInputChange);
@@ -92,14 +90,23 @@ export function LendingSupply() {
   const marketsQuery = useCurvanceMarkets(true);
   const market = useMemo(() => {
     const list = marketsQuery.data || [];
-    return list.find((m) => String(m.market_address).toLowerCase() === String(props?.market_address).toLowerCase());
+    return list.find(
+      (m) => String(m.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
+    );
   }, [marketsQuery.data, props?.market_address]);
   const tokenPrice = useMemo(() => {
-    const isToken0 = String(token.address).toLowerCase() === String(market?.token0?.address).toLowerCase();
+    const isToken0 =
+      String(token.address).toLowerCase() === String(market?.token0?.address).toLowerCase();
     const priceStr = isToken0 ? market?.token0?.price : market?.token1?.price;
     const p = parseFloat(priceStr || '0');
     return Number.isFinite(p) ? p : 0;
-  }, [token.address, market?.token0?.address, market?.token0?.price, market?.token1?.address, market?.token1?.price]);
+  }, [
+    token.address,
+    market?.token0?.address,
+    market?.token0?.price,
+    market?.token1?.address,
+    market?.token1?.price,
+  ]);
   const usdValue = useMemo(() => {
     const amount = parseFloat(inputValue || '0');
     const usd = amount * (tokenPrice || 0);
@@ -111,7 +118,9 @@ export function LendingSupply() {
   const userInfoQuery = useCurvanceMarketUserInfo(true);
   const userItem = useMemo(() => {
     const list = userInfoQuery.data || [];
-    return list.find((u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase());
+    return list.find(
+      (u) => String(u.market_address).toLowerCase() === String(props?.market_address).toLowerCase()
+    );
   }, [userInfoQuery.data, props?.market_address]);
 
   const handleDeposit = () => {
@@ -303,7 +312,10 @@ export function LendingSupply() {
               <div className="flex items-start justify-between w-full">
                 <div className="text-sm text-[#A5ADC6]">{`$${usdValue}`}</div>
                 <div className="text-right text-sm text-[#A5ADC6] whitespace-nowrap">
-                  Available: <span className="text-[#131E40]">{isDSABalancePending ? '...' : formatNumber(dsaBalance)}</span>
+                  Available:{' '}
+                  <WithLoading isLoading={currentAccountType === 'DSA' && isDSABalancePending}>
+                    <span className="text-[#131E40]">{formatNumber(dsaBalance)}</span>
+                  </WithLoading>
                   <button
                     type="button"
                     className="ml-2 text-[#6E75F9] font-medium"
@@ -336,7 +348,10 @@ export function LendingSupply() {
                 market={market}
                 user={userItem}
                 borrowTokenIndex={
-                  String(token.address).toLowerCase() === String(market?.token0?.address).toLowerCase() ? 1 : 0
+                  String(token.address).toLowerCase() ===
+                  String(market?.token0?.address).toLowerCase()
+                    ? 1
+                    : 0
                 }
               />
             )}
