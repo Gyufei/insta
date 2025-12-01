@@ -13,7 +13,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 import { ICurvanceMarketUserItem } from '@/lib/data/use-curvance-market-user-info';
 import { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
-import { formatBig } from '@/lib/utils/number';
 
 
 
@@ -206,18 +205,32 @@ export default function InlineMarketsSection({
                         | undefined;
                       const price0 = parseFloat(m.token0.price || '0');
                       const price1 = parseFloat(m.token1.price || '0');
-                      const supplyUSD = formatUSD(
-                        m.token0.total_supply_in_usd || m.total_supply_in_usd || '0'
+
+                      // 用户在两端的 supply（显示值）
+                      const userSupply0 = parseFloat(
+                        user?.token0?.user_asset_display_balance || '0'
                       );
-                      let supplyTokensRaw = parseFloat(m.token0.total_supply || '0');
+                      const userSupply1 = parseFloat(
+                        user?.token1?.user_asset_display_balance || '0'
+                      );
+                      const useToken1ForSupply = userSupply1 > userSupply0;
+
+                      // 市场总供应（根据用户持仓的代币选择对应侧）
+                      const supplyUSDRaw = useToken1ForSupply
+                        ? (m.token1.total_supply_in_usd || '0')
+                        : (m.token0.total_supply_in_usd || m.total_supply_in_usd || '0');
+                      const supplyUSD = formatUSD(String(supplyUSDRaw));
+                      let supplyTokensRaw = useToken1ForSupply
+                        ? parseFloat(m.token1.total_supply || '0')
+                        : parseFloat(m.token0.total_supply || '0');
                       if (!isFinite(supplyTokensRaw) || supplyTokensRaw === 0) {
-                        const supplyUSDNum = parseFloat(
-                          m.token0.total_supply_in_usd || m.total_supply_in_usd || '0'
-                        );
-                        supplyTokensRaw = price0 > 0 ? supplyUSDNum / price0 : 0;
+                        const supplyUSDNum = parseFloat(String(supplyUSDRaw || '0'));
+                        const price = useToken1ForSupply ? price1 : price0;
+                        supplyTokensRaw = price > 0 ? supplyUSDNum / price : 0;
                       }
                       const supplyTokens = formatAbbr(String(supplyTokensRaw));
 
+                      // 市场总借出（借贷只显示借币侧）
                       const borrowUSDNum = parseFloat(m.token1.total_debt_in_usd || '0');
                       const borrowUSD = formatUSD(String(borrowUSDNum));
                       let borrowTokensRaw = parseFloat(m.token1.total_debt || '0');
@@ -225,19 +238,31 @@ export default function InlineMarketsSection({
                         borrowTokensRaw = price1 > 0 ? borrowUSDNum / price1 : 0;
                       }
                       const borrowTokens = formatAbbr(String(borrowTokensRaw));
-                      const supplyApy = formatPct(m.token0.supply_rate || m.supply_rate || '0');
+
+                      const supplyApy = formatPct(
+                        (useToken1ForSupply ? m.token1.supply_rate : m.token0.supply_rate) ||
+                          m.supply_rate ||
+                          '0'
+                      );
                       const borrowApy = formatPct(m.token1.borrow_rate || m.borrow_rate || '0');
-                      const maxDebtUSDNum = parseFloat(
-                        formatBig(String(user?.total_debt_in_usd || '0'), 18)
+
+                      // 我的供应（根据用户真实持仓的代币侧展示）
+                      const mySupplyTokens = useToken1ForSupply ? userSupply1 : userSupply0;
+                      const mySupplyPrice = useToken1ForSupply ? price1 : price0;
+                      const myTokens = formatAbbr(String(mySupplyTokens));
+                      const myUSD = formatUSD(String(mySupplyPrice * mySupplyTokens));
+
+                      // 我的负债（根据用户真实负债的代币侧展示）
+                      const userDebt0 = parseFloat(
+                        user?.token0?.user_debt_display_balance || '0'
                       );
-                      const remainingUSD = formatUSD(String(maxDebtUSDNum));
-                      const remainingTokens = formatAbbr(
-                        String(price1 > 0 ? maxDebtUSDNum / price1 : 0)
+                      const userDebt1 = parseFloat(
+                        user?.token1?.user_debt_display_balance || '0'
                       );
-                      const myTokens = formatAbbr(user?.token0?.user_asset_display_balance || '0');
-                      const myUSD = formatUSD(
-                        String(price0 * parseFloat(user?.token0?.user_asset_display_balance || '0'))
-                      );
+                      const useToken1ForDebt = userDebt1 >= userDebt0;
+                      const myDebtTokens = useToken1ForDebt ? userDebt1 : userDebt0;
+                      const myDebtPrice = useToken1ForDebt ? price1 : price0;
+                      const myDebtUSD = formatUSD(String(myDebtPrice * myDebtTokens));
 
                       return (
                         <div
@@ -301,9 +326,9 @@ export default function InlineMarketsSection({
                           {actionMode === 'borrow' ? (
                             <div>
                               <div className="text-sm font-medium text-slate-900">
-                                {remainingTokens}
+                                {formatAbbr(String(myDebtTokens))}
                               </div>
-                              <div className="text-xs text-slate-500">{remainingUSD}</div>
+                              <div className="text-xs text-slate-500">{myDebtUSD}</div>
                             </div>
                           ) : (
                             <div>
@@ -337,15 +362,26 @@ export default function InlineMarketsSection({
                     const user = byMarket[m.market_address] as ICurvanceMarketUserItem | undefined;
                     const price0 = parseFloat(m.token0.price || '0');
                     const price1 = parseFloat(m.token1.price || '0');
-                    const supplyUSD = formatUSD(
-                      m.token0.total_supply_in_usd || m.total_supply_in_usd || '0'
+                    // 用户 supply 侧选择
+                    const userSupply0 = parseFloat(
+                      user?.token0?.user_asset_display_balance || '0'
                     );
-                    let supplyTokensRaw = parseFloat(m.token0.total_supply || '0');
+                    const userSupply1 = parseFloat(
+                      user?.token1?.user_asset_display_balance || '0'
+                    );
+                    const useToken1ForSupply = userSupply1 > userSupply0;
+
+                    const supplyUSDRaw = useToken1ForSupply
+                      ? (m.token1.total_supply_in_usd || '0')
+                      : (m.token0.total_supply_in_usd || m.total_supply_in_usd || '0');
+                    const supplyUSD = formatUSD(String(supplyUSDRaw));
+                    let supplyTokensRaw = useToken1ForSupply
+                      ? parseFloat(m.token1.total_supply || '0')
+                      : parseFloat(m.token0.total_supply || '0');
                     if (!isFinite(supplyTokensRaw) || supplyTokensRaw === 0) {
-                      const supplyUSDNum = parseFloat(
-                        m.token0.total_supply_in_usd || m.total_supply_in_usd || '0'
-                      );
-                      supplyTokensRaw = price0 > 0 ? supplyUSDNum / price0 : 0;
+                      const supplyUSDNum = parseFloat(String(supplyUSDRaw || '0'));
+                      const price = useToken1ForSupply ? price1 : price0;
+                      supplyTokensRaw = price > 0 ? supplyUSDNum / price : 0;
                     }
                     const supplyTokens = formatAbbr(String(supplyTokensRaw));
                     const borrowUSDNum = parseFloat(m.token1.total_debt_in_usd || '0');
@@ -355,19 +391,29 @@ export default function InlineMarketsSection({
                       borrowTokensRaw = price1 > 0 ? borrowUSDNum / price1 : 0;
                     }
                     const borrowTokens = formatAbbr(String(borrowTokensRaw));
-                    const supplyApy = formatPct(m.token0.supply_rate || m.supply_rate || '0');
+                    const supplyApy = formatPct(
+                      (useToken1ForSupply ? m.token1.supply_rate : m.token0.supply_rate) ||
+                        m.supply_rate ||
+                        '0'
+                    );
                     const borrowApy = formatPct(m.token1.borrow_rate || m.borrow_rate || '0');
-                    const maxDebtUSDNum = parseFloat(
-                      formatBig(String(user?.total_debt_in_usd || '0'), 18)
+                    // 我的供应（根据用户真实持仓的代币侧展示）
+                    const mySupplyTokens = useToken1ForSupply ? userSupply1 : userSupply0;
+                    const mySupplyPrice = useToken1ForSupply ? price1 : price0;
+                    const myTokens = formatAbbr(String(mySupplyTokens));
+                    const myUSD = formatUSD(String(mySupplyPrice * mySupplyTokens));
+
+                    // 我的负债（根据用户真实负债的代币侧展示）
+                    const userDebt0 = parseFloat(
+                      user?.token0?.user_debt_display_balance || '0'
                     );
-                    const remainingUSD = formatUSD(String(maxDebtUSDNum));
-                    const remainingTokens = formatAbbr(
-                      String(price1 > 0 ? maxDebtUSDNum / price1 : 0)
+                    const userDebt1 = parseFloat(
+                      user?.token1?.user_debt_display_balance || '0'
                     );
-                    const myTokens = formatAbbr(user?.token0?.user_asset_display_balance || '0');
-                    const myUSD = formatUSD(
-                      String(price0 * parseFloat(user?.token0?.user_asset_display_balance || '0'))
-                    );
+                    const useToken1ForDebt = userDebt1 >= userDebt0;
+                    const myDebtTokens = useToken1ForDebt ? userDebt1 : userDebt0;
+                    const myDebtPrice = useToken1ForDebt ? price1 : price0;
+                    const myDebtUSD = formatUSD(String(myDebtPrice * myDebtTokens));
 
                     return (
                       <div
@@ -443,9 +489,9 @@ export default function InlineMarketsSection({
                           <div className="px-4 text-center">
                             {actionMode === 'borrow' ? (
                               <>
-                                <div className="text-xs text-slate-500">{remainingUSD}</div>
+                                <div className="text-xs text-slate-500">{myDebtUSD}</div>
                                 <div className="text-sm font-medium text-slate-900">
-                                  {remainingTokens}
+                                  {formatAbbr(String(myDebtTokens))}
                                 </div>
                                 <div className="text-xs text-[#A5ADC6] mt-1">MY Debt</div>
                               </>

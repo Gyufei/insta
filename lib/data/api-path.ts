@@ -1,13 +1,15 @@
 export const isPreview = process.env.NEXT_PUBLIC_IS_PREVIEW === '1';
-export const isProduction = process.env.NODE_ENV === 'production' && !isPreview;
-// export const isProduction = true;
+// export const isPreview = true;
+// export const isProduction = process.env.NODE_ENV === 'production' && !isPreview;
+export const isProduction = true;
 
-const ProdHost = 'https://sb-api.tadle.com';
-const DevHost = 'https://preview-sandbox-api.tadle.com';
+const ProdHost = 'https://sb-api.tadle.com'; // 主网生产环境
+const PreHost = 'https://api-sandbox.tadle.com'; // 测试网生产环境
+const DevHost = 'https://preview-sandbox-api.tadle.com'; // 主网测试环境
 const OddsProdHost = 'https://odds-api.tadle.com';
 const OddsDevHost = 'https://preview-odds-api.tadle.com';
 
-export const ApiHost = isProduction ? ProdHost : DevHost;
+export const ApiHost = isProduction ? ProdHost : isPreview ? PreHost : DevHost;
 export const OddsApiHost = isProduction ? OddsProdHost : OddsDevHost;
 
 export function WithCDN(path: string) {

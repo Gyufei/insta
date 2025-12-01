@@ -1,12 +1,6 @@
 import { DEFAULT_NATIVE_ADDRESS } from '@/config/network-config';
 
-
-
 import { isProduction } from '@/lib/data/api-path';
-
-
-
-
 
 export interface IToken {
   name: string;
@@ -112,4 +106,76 @@ export const S_MONAD: IToken = {
   logo: '/icons/smon.png',
   decimals: 18,
   description: 'Kintsu Staked Monad Liquid Staked Token',
+};
+
+export const mu_BOND: IToken = {
+  address: '0x336D414754967C6682B5A665C7DAF6F1409E63e8',
+  name: 'mu Bond',
+  symbol: 'muBOND',
+  logo: '/icons/mubond.svg',
+  decimals: 18,
+  description: 'mu Bond',
+};
+
+export const AUSD: IToken = {
+  address: '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a',
+  name: 'AUSD',
+  symbol: 'AUSD',
+  logo: '/icons/ausd.svg',
+  decimals: 18,
+  description: 'AUSD',
+};
+
+export const WETH: IToken = {
+  address: '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a',
+  name: 'WETH',
+  symbol: 'WETH',
+  logo: '/icons/weth.svg',
+  decimals: 18,
+  description: 'WETH',
+};
+
+export const ezETH: IToken = {
+  address: '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a',
+  name: 'ezETH',
+  symbol: 'ezETH',
+  logo: '/icons/ezeth.svg',
+  decimals: 18,
+  description: 'ezETH',
+};
+
+export const sAUSD: IToken = {
+  address: '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a',
+  name: 'sAUSD',
+  symbol: 'sAUSD',
+  logo: '/icons/ausd.svg',
+  decimals: 18,
+  description: 'AUSD',
+};
+
+export const earnAUSD: IToken = {
+  address: '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a',
+  name: 'earnAUSD',
+  symbol: 'earnAUSD',
+  logo: '/icons/ausd.svg',
+  decimals: 18,
+  description: 'AUSD',
+};
+
+export const WBTC: IToken = {
+  address: '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a',
+  name: 'WBTC',
+  symbol: 'WBTC',
+  logo: '/icons/wbtc.svg',
+  decimals: 18,
+  description: 'WBTC',
+};
+
+export const loAZND: IToken = {
+  address: '0x9c82eB49B51F7Dc61e22Ff347931CA32aDc6cd90',
+  name: 'loAZND',
+  symbol: 'loAZND',
+  logo: '/icons/loaznd.svg',
+  decimals: 18,
+  description: 'loAZND',
 };

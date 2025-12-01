@@ -1,15 +1,22 @@
 import { useMemo } from 'react';
 
-
-
 import {
   APR_MONAD,
+  AUSD,
   G_MONAD,
   MONAD,
   MonUSD,
   SH_MONAD,
   S_MONAD,
+  USDC_TOKEN,
+  WBTC,
+  WETH,
   WMONAD_TOKEN,
+  earnAUSD,
+  ezETH,
+  loAZND,
+  mu_BOND,
+  sAUSD,
 } from '@/config/tokens';
 
 import { ApiPath } from './api-path';
@@ -85,6 +92,16 @@ export function useCurvanceMarkets(enabled?: boolean) {
       [MonUSD.symbol.toUpperCase(), MonUSD.logo],
       [SH_MONAD.symbol.toUpperCase(), SH_MONAD.logo],
       [S_MONAD.symbol.toUpperCase(), S_MONAD.logo],
+      [earnAUSD.symbol.toUpperCase(), earnAUSD.logo],
+      [WBTC.symbol.toUpperCase(), WBTC.logo],
+      [WETH.symbol.toUpperCase(), WETH.logo],
+      [mu_BOND.symbol.toUpperCase(), mu_BOND.logo],
+      [AUSD.symbol.toUpperCase(), AUSD.logo],
+      [ezETH.symbol.toUpperCase(), ezETH.logo],
+      [sAUSD.symbol.toUpperCase(), sAUSD.logo],
+      [earnAUSD.symbol.toUpperCase(), earnAUSD.logo],
+      [USDC_TOKEN.symbol.toUpperCase(), USDC_TOKEN.logo],
+      [loAZND.symbol.toUpperCase(), loAZND.logo],
     ]);
 
     const attachLogo = (token: ICurvanceTokenInfo): ICurvanceTokenInfo => {
