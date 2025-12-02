@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { useAccountStore } from '../../state/account';
 import { useAccounts } from './use-account';
@@ -7,9 +7,13 @@ export function useSelectedAccount() {
   const { data: accountInfo, isLoading, isSuccess } = useAccounts();
   const {
     currentAccountAddress,
+    currentAccountType,
     setCurrentAccountType,
     setCurrentAccountAddress,
   } = useAccountStore();
+
+  // Track if we've already set EOA mode to prevent infinite loops
+  const hasSetEOAMode = useRef(false);
 
   const findAccountByAddress = useMemo(() => {
     return (address: string | null) => {
@@ -32,10 +36,18 @@ export function useSelectedAccount() {
   }, [currentAccountAddress, accountInfo, setCurrentAccountAddress, findAccountByAddress]);
 
   useEffect(() => {
-    if (isSuccess && accountInfo && !accountInfo.length) {
+    // Only set EOA mode once when we successfully fetch empty account data
+    // and we're not already in EOA mode
+    if (isSuccess && accountInfo && accountInfo.length === 0 && currentAccountType !== 'EOA' && !hasSetEOAMode.current) {
+      hasSetEOAMode.current = true;
       setCurrentAccountType('EOA');
     }
-  }, [accountInfo, isSuccess, setCurrentAccountType]);
+
+    // Reset the flag if accounts are found (user created an account)
+    if (accountInfo && accountInfo.length > 0) {
+      hasSetEOAMode.current = false;
+    }
+  }, [accountInfo, isSuccess, currentAccountType, setCurrentAccountType]);
 
   return {
     isLoading,
