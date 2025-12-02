@@ -88,7 +88,7 @@ export function LendingMarketInfo() {
           <img
             src={tokenLogo}
             alt={`${baseToken?.symbol || ''} logo`}
-            className="h-8 w-8 rounded-full"
+            className="h-8 w-8 rounded-full bg-[#201f1e]"
           />
         </div>
         <div className="mt-4 border-t border-[#EBEBEB]" />

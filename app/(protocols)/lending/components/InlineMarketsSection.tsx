@@ -2,21 +2,13 @@
 
 import Image from 'next/image';
 
-
-
 // import Link from 'next/link';
 
 import { TitleH2 } from '@/components/common/title-h2';
 import { Skeleton } from '@/components/ui/skeleton';
 
-
-
 import { ICurvanceMarketUserItem } from '@/lib/data/use-curvance-market-user-info';
 import { ICurvanceMarketInfo } from '@/lib/data/use-curvance-markets';
-
-
-
-
 
 type InlineMarketsSectionProps = {
   isCurvanceSelected: boolean;
@@ -53,8 +45,6 @@ function formatPct(v?: string) {
   if (!isFinite(n)) return '0%';
   return `${n.toFixed(2)}%`;
 }
-
-
 
 export default function InlineMarketsSection({
   isCurvanceSelected,
@@ -104,7 +94,10 @@ export default function InlineMarketsSection({
                   </div>
                   <div className="divide-y divide-slate-200">
                     {Array.from({ length: 6 }).map((_, i) => (
-                      <div key={i} className="grid grid-cols-[220px_1fr_1fr_1fr_80px] items-center py-4 px-1">
+                      <div
+                        key={i}
+                        className="grid grid-cols-[220px_1fr_1fr_1fr_80px] items-center py-4 px-1"
+                      >
                         <div className="flex items-center gap-3">
                           <div className="flex -space-x-2">
                             <Skeleton className="inline-block h-7 w-7 rounded-full" />
@@ -135,7 +128,10 @@ export default function InlineMarketsSection({
                 {/* Mobile skeleton: card-like (match real content layout) */}
                 <div className="md:hidden space-y-3">
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="rounded-xl border border-slate-200 bg-white dark:bg-secondary/80 overflow-hidden px-6 py-4">
+                    <div
+                      key={i}
+                      className="rounded-xl border border-slate-200 bg-white dark:bg-secondary/80 overflow-hidden px-6 py-4"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="flex -space-x-2">
                           <Skeleton className="inline-block h-7 w-7 rounded-full" />
@@ -217,8 +213,8 @@ export default function InlineMarketsSection({
 
                       // 市场总供应（根据用户持仓的代币选择对应侧）
                       const supplyUSDRaw = useToken1ForSupply
-                        ? (m.token1.total_supply_in_usd || '0')
-                        : (m.token0.total_supply_in_usd || m.total_supply_in_usd || '0');
+                        ? m.token1.total_supply_in_usd || '0'
+                        : m.token0.total_supply_in_usd || m.total_supply_in_usd || '0';
                       const supplyUSD = formatUSD(String(supplyUSDRaw));
                       let supplyTokensRaw = useToken1ForSupply
                         ? parseFloat(m.token1.total_supply || '0')
@@ -253,12 +249,8 @@ export default function InlineMarketsSection({
                       const myUSD = formatUSD(String(mySupplyPrice * mySupplyTokens));
 
                       // 我的负债（根据用户真实负债的代币侧展示）
-                      const userDebt0 = parseFloat(
-                        user?.token0?.user_debt_display_balance || '0'
-                      );
-                      const userDebt1 = parseFloat(
-                        user?.token1?.user_debt_display_balance || '0'
-                      );
+                      const userDebt0 = parseFloat(user?.token0?.user_debt_display_balance || '0');
+                      const userDebt1 = parseFloat(user?.token1?.user_debt_display_balance || '0');
                       const useToken1ForDebt = userDebt1 >= userDebt0;
                       const myDebtTokens = useToken1ForDebt ? userDebt1 : userDebt0;
                       const myDebtPrice = useToken1ForDebt ? price1 : price0;
@@ -285,14 +277,14 @@ export default function InlineMarketsSection({
                                 alt={m.token0.symbol}
                                 width={28}
                                 height={28}
-                                className="inline-block h-7 w-7 rounded-full ring-2 ring-white"
+                                className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-[#201f1e]"
                               />
                               <Image
                                 src={m.token1.logoURI || '/icons/token.svg'}
                                 alt={m.token1.symbol}
                                 width={28}
                                 height={28}
-                                className="inline-block h-7 w-7 rounded-full ring-2 ring-white"
+                                className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-[#201f1e]"
                               />
                             </div>
                             <div>
@@ -354,26 +346,20 @@ export default function InlineMarketsSection({
                   </div>
                 </div>
 
-                {
-                  /* Mobile: separate card list */
-                }
+                {/* Mobile: separate card list */}
                 <div className="md:hidden space-y-3">
                   {sortedMarkets.map((m) => {
                     const user = byMarket[m.market_address] as ICurvanceMarketUserItem | undefined;
                     const price0 = parseFloat(m.token0.price || '0');
                     const price1 = parseFloat(m.token1.price || '0');
                     // 用户 supply 侧选择
-                    const userSupply0 = parseFloat(
-                      user?.token0?.user_asset_display_balance || '0'
-                    );
-                    const userSupply1 = parseFloat(
-                      user?.token1?.user_asset_display_balance || '0'
-                    );
+                    const userSupply0 = parseFloat(user?.token0?.user_asset_display_balance || '0');
+                    const userSupply1 = parseFloat(user?.token1?.user_asset_display_balance || '0');
                     const useToken1ForSupply = userSupply1 > userSupply0;
 
                     const supplyUSDRaw = useToken1ForSupply
-                      ? (m.token1.total_supply_in_usd || '0')
-                      : (m.token0.total_supply_in_usd || m.total_supply_in_usd || '0');
+                      ? m.token1.total_supply_in_usd || '0'
+                      : m.token0.total_supply_in_usd || m.total_supply_in_usd || '0';
                     const supplyUSD = formatUSD(String(supplyUSDRaw));
                     let supplyTokensRaw = useToken1ForSupply
                       ? parseFloat(m.token1.total_supply || '0')
@@ -404,12 +390,8 @@ export default function InlineMarketsSection({
                     const myUSD = formatUSD(String(mySupplyPrice * mySupplyTokens));
 
                     // 我的负债（根据用户真实负债的代币侧展示）
-                    const userDebt0 = parseFloat(
-                      user?.token0?.user_debt_display_balance || '0'
-                    );
-                    const userDebt1 = parseFloat(
-                      user?.token1?.user_debt_display_balance || '0'
-                    );
+                    const userDebt0 = parseFloat(user?.token0?.user_debt_display_balance || '0');
+                    const userDebt1 = parseFloat(user?.token1?.user_debt_display_balance || '0');
                     const useToken1ForDebt = userDebt1 >= userDebt0;
                     const myDebtTokens = useToken1ForDebt ? userDebt1 : userDebt0;
                     const myDebtPrice = useToken1ForDebt ? price1 : price0;
@@ -436,14 +418,14 @@ export default function InlineMarketsSection({
                               alt={m.token0.symbol}
                               width={28}
                               height={28}
-                              className="inline-block h-7 w-7 rounded-full ring-2 ring-white"
+                              className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-[#201f1e]"
                             />
                             <Image
                               src={m.token1.logoURI || '/icons/token.svg'}
                               alt={m.token1.symbol}
                               width={28}
                               height={28}
-                              className="inline-block h-7 w-7 rounded-full ring-2 ring-white"
+                              className="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-[#201f1e]"
                             />
                           </div>
                           <div>

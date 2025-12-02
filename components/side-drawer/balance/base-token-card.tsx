@@ -54,7 +54,7 @@ export function BaseTokenCard({
                   width={40}
                   height={40}
                   src={token.logo || '/placeholder.svg'}
-                  className="h-10 w-10 flex-grow object-contain"
+                  className="h-10 w-10 flex-grow object-contain rounded-full bg-[#201f1e]"
                   alt={token.name}
                 />
               ) : (

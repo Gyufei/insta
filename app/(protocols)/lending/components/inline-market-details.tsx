@@ -339,7 +339,7 @@ export default function InlineMarketDetails({
       <div className="">
         <div className="rounded-lg border bg-white dark:bg-secondary p-5">
           <div className="flex flex-col md:flex-row md:items-center gap-3 md:divide-x divide-slate-200">
-            <div className="flex items-center gap-3 md:pr-10">
+            <div className="flex items-center gap-3 md:pr-10 min-w-[200px]">
               <TargetTokenSelector
                 tokens={selectorTokens}
                 selectedToken={selectedIToken}
@@ -426,7 +426,7 @@ export default function InlineMarketDetails({
                 <div className="flex items-center gap-3">
                   <img
                     src={supplyToken.logoURI}
-                    className="h-8 w-8 rounded-full"
+                    className="h-8 w-8 rounded-full bg-[#201f1e]"
                     alt={supplyToken.symbol}
                   />
                   <div className="flex-1">
@@ -541,7 +541,7 @@ export default function InlineMarketDetails({
                   <div className="flex items-center gap-3">
                     <img
                       src={borrowToken.logoURI}
-                      className="h-8 w-8 rounded-full"
+                      className="h-8 w-8 rounded-full bg-[#201f1e]"
                       alt={borrowToken.symbol}
                     />
                     <div className="flex-1">

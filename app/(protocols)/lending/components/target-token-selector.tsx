@@ -72,7 +72,7 @@ export function TargetTokenSelector({
               <Image
                 src={selectedToken.logo}
                 alt={selectedToken.symbol}
-                className="h-10 w-10 rounded-full"
+                className="h-10 w-10 rounded-full bg-[#201f1e]"
                 width={20}
                 height={20}
               />
@@ -92,7 +92,7 @@ export function TargetTokenSelector({
             className="py-3 my-1 gap-3 rounded-md data-[state=checked]:bg-violet-100 data-[state=checked]:text-[#131E40]"
           >
             <div className="flex items-center gap-3">
-              <Image src={token.logo} alt={token.symbol} width={24} height={24} />
+              <Image src={token.logo} alt={token.symbol} width={24} height={24} className="rounded-full bg-[#201f1e]" />
               <div className="flex flex-col">
                 <span className="font-medium text-[16px] leading-5">{token.symbol}</span>
               </div>

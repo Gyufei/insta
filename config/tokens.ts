@@ -1,6 +1,12 @@
 import { DEFAULT_NATIVE_ADDRESS } from '@/config/network-config';
 
+
+
 import { isProduction } from '@/lib/data/api-path';
+
+
+
+
 
 export interface IToken {
   name: string;
@@ -122,13 +128,13 @@ export const AUSD: IToken = {
   name: 'AUSD',
   symbol: 'AUSD',
   logo: '/icons/ausd.svg',
-  decimals: 18,
+  decimals: 6,
   description: 'AUSD',
 };
 
 export const WETH: IToken = {
-  address: '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a',
-  name: 'WETH',
+  address: '0xEE8c0E9f1BFFb4Eb878d8f15f368A02a35481242',
+  name: 'Wrapped Ether',
   symbol: 'WETH',
   logo: '/icons/weth.svg',
   decimals: 18,
@@ -136,7 +142,7 @@ export const WETH: IToken = {
 };
 
 export const ezETH: IToken = {
-  address: '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a',
+  address: '0x2416092f143378750bb29b79eD961ab195CcEea5',
   name: 'ezETH',
   symbol: 'ezETH',
   logo: '/icons/ezeth.svg',
@@ -145,35 +151,35 @@ export const ezETH: IToken = {
 };
 
 export const sAUSD: IToken = {
-  address: '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a',
+  address: '0xD793c04B87386A6bb84ee61D98e0065FdE7fdA5E',
   name: 'sAUSD',
   symbol: 'sAUSD',
-  logo: '/icons/ausd.svg',
-  decimals: 18,
+  logo: '/icons/sausd.svg',
+  decimals: 6,
   description: 'AUSD',
 };
 
 export const earnAUSD: IToken = {
-  address: '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a',
+  address: '0x103222f020e98Bba0AD9809A011FDF8e6F067496',
   name: 'earnAUSD',
   symbol: 'earnAUSD',
-  logo: '/icons/ausd.svg',
-  decimals: 18,
+  logo: '/icons/earnausd.svg',
+  decimals: 6,
   description: 'AUSD',
 };
 
 export const WBTC: IToken = {
-  address: '0x00000000eFE302BEAA2b3e6e1b18d08D69a9012a',
-  name: 'WBTC',
+  address: '0x0555E30da8f98308EdB960aa94C0Db47230d2B9c',
+  name: 'Wrapped BTC',
   symbol: 'WBTC',
   logo: '/icons/wbtc.svg',
-  decimals: 18,
+  decimals: 8,
   description: 'WBTC',
 };
 
 export const loAZND: IToken = {
   address: '0x9c82eB49B51F7Dc61e22Ff347931CA32aDc6cd90',
-  name: 'loAZND',
+  name: 'Locked AZND',
   symbol: 'loAZND',
   logo: '/icons/loaznd.svg',
   decimals: 18,
