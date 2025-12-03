@@ -72,8 +72,59 @@ export function LendingWithdraw() {
     const userShares = isToken0 ? userItem?.token0?.user_share_display_balance : userItem?.token1?.user_share_display_balance;
     return userShares || props?.user_share_display_balance || '0';
   }, [props?.base_token?.address, market?.token0?.address, userItem?.token0?.user_share_display_balance, userItem?.token1?.user_share_display_balance, props?.user_share_display_balance]);
-  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(sharesBalance);
-  const { handleSetMax, handleInput } = useSetMax(inputValue, sharesBalance, handleInputChange);
+  // 基于公式：存款金额 - 借款金额 / (最大可借的 / 总存入的)
+  // 计算该 base_token 的可提取 shares 数量（将资产换算为 shares）
+  const maxWithdrawShares = useMemo(() => {
+    try {
+      const isToken0 = String(props?.base_token?.address).toLowerCase() === String(market?.token0?.address).toLowerCase();
+      const userAssetsStr = isToken0
+        ? userItem?.token0?.user_asset_display_balance
+        : userItem?.token1?.user_asset_display_balance;
+      const userSharesStr = isToken0
+        ? userItem?.token0?.user_share_display_balance
+        : userItem?.token1?.user_share_display_balance;
+
+      const assets = parseFloat(userAssetsStr || '0');
+      const shares = parseFloat(userSharesStr || '0');
+      const price = (() => {
+        const priceStr = isToken0 ? market?.token0?.price : market?.token1?.price;
+        const p = parseFloat(priceStr || '0');
+        return Number.isFinite(p) && p > 0 ? p : 0;
+      })();
+
+      const totalDebtUSD = parseFloat(userItem?.total_debt_in_usd || '0');
+      const totalMaxDebtUSD = parseFloat(userItem?.total_max_debt_in_usd || '0');
+      const totalCollateralUSD = parseFloat(userItem?.total_collateral_in_usd || '0');
+
+      // 保护：任意关键值缺失时，回退到 sharesBalance
+      if (!Number.isFinite(assets) || assets <= 0) return sharesBalance;
+      if (!Number.isFinite(price) || price <= 0) return sharesBalance;
+      if (!Number.isFinite(totalMaxDebtUSD) || totalMaxDebtUSD <= 0) return sharesBalance;
+      if (!Number.isFinite(totalCollateralUSD) || totalCollateralUSD <= 0) return sharesBalance;
+
+      const ltv = totalMaxDebtUSD / totalCollateralUSD; // (最大可借的 / 总存入的)
+      if (!Number.isFinite(ltv) || ltv <= 0) return sharesBalance;
+
+      const depositUSD = assets * price; // 存款金额（按该 token 的资产余额折算美元）
+      const usedCollateralUSD = totalDebtUSD / ltv; // 借款金额 / (最大可借的 / 总存入的)
+      const availableUSD = depositUSD - usedCollateralUSD;
+
+      // 可用美元不可为负；若为负则表示该 token 的存款已全部占用
+      const safeAvailableUSD = Math.max(0, Number.isFinite(availableUSD) ? availableUSD : 0);
+      const availableAssets = price > 0 ? safeAvailableUSD / price : 0;
+
+      // 将资产数量换算为 shares：用用户当前的 share/asset 比率近似换算
+      const sharesPerAsset = assets > 0 && Number.isFinite(shares) ? shares / assets : 1;
+      const availableShares = availableAssets * sharesPerAsset;
+      if (!Number.isFinite(availableShares) || availableShares < 0) return '0';
+      return String(availableShares);
+    } catch {
+      return sharesBalance;
+    }
+  }, [props?.base_token?.address, market?.token0?.address, market?.token0?.price, market?.token1?.price, userItem?.token0?.user_asset_display_balance, userItem?.token1?.user_asset_display_balance, userItem?.token0?.user_share_display_balance, userItem?.token1?.user_share_display_balance, userItem?.total_debt_in_usd, userItem?.total_max_debt_in_usd, userItem?.total_collateral_in_usd, sharesBalance]);
+
+  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(maxWithdrawShares);
+  const { handleSetMax, handleInput } = useSetMax(inputValue, maxWithdrawShares, handleInputChange);
 
   const { handleBack: _handleBack } = useUrlPathDrawerChange('/lending');
   const { mutate: withdraw, isPending } = useCurvanceWithdraw();
@@ -190,7 +241,7 @@ export function LendingWithdraw() {
     }
 
     // SECURITY: Validate shares don't exceed balance
-    const availableShares = parseFloat(sharesBalance || '0');
+    const availableShares = parseFloat(maxWithdrawShares || '0');
     if (!Number.isFinite(availableShares) || inputNum > availableShares) {
       console.error('[WITHDRAW] Insufficient shares balance', {
         requested: inputNum,
@@ -290,7 +341,7 @@ export function LendingWithdraw() {
               <div className="flex items-start justify-between w-full">
                 <div className="text-sm text-[#A5ADC6]">{`$${usdValue}`}</div>
                 <div className="text-right text-sm text-[#A5ADC6] whitespace-nowrap">
-                  Available: <span className="text-[#131E40]">{formatNumber(sharesBalance)}</span>
+                  Available: <span className="text-[#131E40]">{formatNumber(maxWithdrawShares)}</span>
                   <button
                     type="button"
                     className="ml-2 text-[#6E75F9] font-medium"
