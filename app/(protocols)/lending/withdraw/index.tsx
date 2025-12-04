@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
+
+import { useEffect, useMemo, useState } from 'react';
 
 import { IToken } from '@/config/tokens';
 
@@ -7,8 +8,8 @@ import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/new/action-button';
 import { PositionSummaryCard } from '@/components/side-drawer/common/position-summary-card';
 import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-layout';
-import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
+import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
 
 import { useCurvanceMarketUserInfo } from '@/lib/data/use-curvance-market-user-info';
@@ -17,8 +18,8 @@ import { useCurvanceWithdraw } from '@/lib/data/use-curvance-withdraw';
 import { useEnhancedAnalytics } from '@/lib/hooks/use-enhanced-analytics';
 import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
-import { formatNumber, parseBig } from '@/lib/utils/number';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
+import { formatBig, formatNumber, parseBig } from '@/lib/utils/number';
 
 type LendingWithdrawProps = {
   market_address: string;
@@ -68,15 +69,27 @@ export function LendingWithdraw() {
     );
   }, [marketsQuery.data, props?.market_address]);
   const sharesBalance = useMemo(() => {
-    const isToken0 = String(props?.base_token?.address).toLowerCase() === String(market?.token0?.address).toLowerCase();
-    const userShares = isToken0 ? userItem?.token0?.user_share_display_balance : userItem?.token1?.user_share_display_balance;
+    const isToken0 =
+      String(props?.base_token?.address).toLowerCase() ===
+      String(market?.token0?.address).toLowerCase();
+    const userShares = isToken0
+      ? userItem?.token0?.user_share_display_balance
+      : userItem?.token1?.user_share_display_balance;
     return userShares || props?.user_share_display_balance || '0';
-  }, [props?.base_token?.address, market?.token0?.address, userItem?.token0?.user_share_display_balance, userItem?.token1?.user_share_display_balance, props?.user_share_display_balance]);
+  }, [
+    props?.base_token?.address,
+    market?.token0?.address,
+    userItem?.token0?.user_share_display_balance,
+    userItem?.token1?.user_share_display_balance,
+    props?.user_share_display_balance,
+  ]);
   // 基于公式：存款金额 - 借款金额 / (最大可借的 / 总存入的)
   // 计算该 base_token 的可提取 shares 数量（将资产换算为 shares）
   const maxWithdrawShares = useMemo(() => {
     try {
-      const isToken0 = String(props?.base_token?.address).toLowerCase() === String(market?.token0?.address).toLowerCase();
+      const isToken0 =
+        String(props?.base_token?.address).toLowerCase() ===
+        String(market?.token0?.address).toLowerCase();
       const userAssetsStr = isToken0
         ? userItem?.token0?.user_asset_display_balance
         : userItem?.token1?.user_asset_display_balance;
@@ -92,9 +105,14 @@ export function LendingWithdraw() {
         return Number.isFinite(p) && p > 0 ? p : 0;
       })();
 
-      const totalDebtUSD = parseFloat(userItem?.total_debt_in_usd || '0');
-      const totalMaxDebtUSD = parseFloat(userItem?.total_max_debt_in_usd || '0');
-      const totalCollateralUSD = parseFloat(userItem?.total_collateral_in_usd || '0');
+      // 后端返回的 USD 数值为 18 位精度，需解码
+      const totalDebtUSD = parseFloat(formatBig(String(userItem?.total_debt_in_usd || '0'), 18));
+      const totalMaxDebtUSD = parseFloat(
+        formatBig(String(userItem?.total_max_debt_in_usd || '0'), 18)
+      );
+      const totalCollateralUSD = parseFloat(
+        formatBig(String(userItem?.total_collateral_in_usd || '0'), 18)
+      );
 
       // 保护：任意关键值缺失时，回退到 sharesBalance
       if (!Number.isFinite(assets) || assets <= 0) return sharesBalance;
@@ -111,6 +129,7 @@ export function LendingWithdraw() {
 
       // 可用美元不可为负；若为负则表示该 token 的存款已全部占用
       const safeAvailableUSD = Math.max(0, Number.isFinite(availableUSD) ? availableUSD : 0);
+      console.log('🚀 ~ LendingWithdraw ~ safeAvailableUSD:', depositUSD, usedCollateralUSD);
       const availableAssets = price > 0 ? safeAvailableUSD / price : 0;
 
       // 将资产数量换算为 shares：用用户当前的 share/asset 比率近似换算
@@ -121,9 +140,23 @@ export function LendingWithdraw() {
     } catch {
       return sharesBalance;
     }
-  }, [props?.base_token?.address, market?.token0?.address, market?.token0?.price, market?.token1?.price, userItem?.token0?.user_asset_display_balance, userItem?.token1?.user_asset_display_balance, userItem?.token0?.user_share_display_balance, userItem?.token1?.user_share_display_balance, userItem?.total_debt_in_usd, userItem?.total_max_debt_in_usd, userItem?.total_collateral_in_usd, sharesBalance]);
+  }, [
+    props?.base_token?.address,
+    market?.token0?.address,
+    market?.token0?.price,
+    market?.token1?.price,
+    userItem?.token0?.user_asset_display_balance,
+    userItem?.token1?.user_asset_display_balance,
+    userItem?.token0?.user_share_display_balance,
+    userItem?.token1?.user_share_display_balance,
+    userItem?.total_debt_in_usd,
+    userItem?.total_max_debt_in_usd,
+    userItem?.total_collateral_in_usd,
+    sharesBalance,
+  ]);
 
-  const { inputValue, btnDisabled, errorData, handleInputChange } = useTokenInput(maxWithdrawShares);
+  const { inputValue, btnDisabled, errorData, handleInputChange } =
+    useTokenInput(maxWithdrawShares);
   const { handleSetMax, handleInput } = useSetMax(inputValue, maxWithdrawShares, handleInputChange);
 
   const { handleBack: _handleBack } = useUrlPathDrawerChange('/lending');
@@ -132,7 +165,9 @@ export function LendingWithdraw() {
 
   // 获取市场价格以显示美元等值
   const tokenPrice = useMemo(() => {
-    const isToken0 = String(props?.base_token?.address).toLowerCase() === String(market?.token0?.address).toLowerCase();
+    const isToken0 =
+      String(props?.base_token?.address).toLowerCase() ===
+      String(market?.token0?.address).toLowerCase();
     const priceStr = isToken0 ? market?.token0?.price : market?.token1?.price;
     if (!priceStr) return 0;
     const p = parseFloat(priceStr);
@@ -141,7 +176,13 @@ export function LendingWithdraw() {
       return 0;
     }
     return p;
-  }, [props?.base_token?.address, market?.token0?.address, market?.token0?.price, market?.token1?.address, market?.token1?.price]);
+  }, [
+    props?.base_token?.address,
+    market?.token0?.address,
+    market?.token0?.price,
+    market?.token1?.address,
+    market?.token1?.price,
+  ]);
   const usdValue = useMemo(() => {
     const amount = parseFloat(inputValue || '0');
     const usd = amount * (tokenPrice || 0);
@@ -311,7 +352,10 @@ export function LendingWithdraw() {
         <div className="pt-2 pb-10 sm:pt-4">
           {/* Mobile back header */}
           <div className="md:hidden">
-            <SideDrawerBackHeader title={`Withdraw ${props?.base_token?.symbol || 'Token'}`} onClick={_handleBack} />
+            <SideDrawerBackHeader
+              title={`Withdraw ${props?.base_token?.symbol || 'Token'}`}
+              onClick={_handleBack}
+            />
           </div>
           {/* 主卡片：标题 + 大号数字输入 + 可用/Max + 操作按钮 */}
           <div className="rounded-lg border border-[#EBEBEB] bg-white p-5 shadow-sm dark:bg-secondary">
@@ -341,7 +385,8 @@ export function LendingWithdraw() {
               <div className="flex items-start justify-between w-full">
                 <div className="text-sm text-[#A5ADC6]">{`$${usdValue}`}</div>
                 <div className="text-right text-sm text-[#A5ADC6] whitespace-nowrap">
-                  Available: <span className="text-[#131E40]">{formatNumber(maxWithdrawShares)}</span>
+                  Available:{' '}
+                  <span className="text-[#131E40]">{formatNumber(maxWithdrawShares)}</span>
                   <button
                     type="button"
                     className="ml-2 text-[#6E75F9] font-medium"
@@ -382,7 +427,10 @@ export function LendingWithdraw() {
                 market={market}
                 user={userItem}
                 borrowTokenIndex={
-                  String(props?.base_token?.address).toLowerCase() === String(market?.token0?.address).toLowerCase() ? 1 : 0
+                  String(props?.base_token?.address).toLowerCase() ===
+                  String(market?.token0?.address).toLowerCase()
+                    ? 1
+                    : 0
                 }
               />
             )}
