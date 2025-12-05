@@ -1,14 +1,8 @@
 import { useAccount } from 'wagmi';
 
-
-
-import { useMemo } from 'react';
-
-
+import { useEffect, useMemo } from 'react';
 
 import { IToken } from '@/config/tokens';
-
-
 
 import { NumberInput } from '@/components/common/number-input';
 import { ActionButton } from '@/components/new/action-button';
@@ -17,8 +11,6 @@ import { SideDrawerLayout } from '@/components/side-drawer/common/side-drawer-la
 import { useSetMax } from '@/components/side-drawer/common/use-set-max';
 import { SideDrawerBackHeader } from '@/components/side-drawer/side-drawer-back-header';
 import { useTokenInput } from '@/components/side-drawer/use-token-input';
-
-
 
 import { useSelectedAccount } from '@/lib/data/account-address/use-selected-account';
 import { useAddressBalance } from '@/lib/data/balance/use-address-balance';
@@ -30,10 +22,6 @@ import { useSideDrawerStore } from '@/lib/state/side-drawer';
 import { useUrlPathDrawerChange } from '@/lib/state/use-url-path-drawer-change';
 import { ensureMonadNetworkSync } from '@/lib/utils/network-guard';
 import { formatNumber, parseBig } from '@/lib/utils/number';
-
-
-
-
 
 type LendingRepayProps = {
   market_address: string;
@@ -92,10 +80,19 @@ export function LendingRepay() {
     );
   }, [marketsQuery.data, props?.market_address]);
   const debtBalance = useMemo(() => {
-    const isToken1 = String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
-    const userDebt = isToken1 ? userItem?.token1?.user_debt_display_balance : userItem?.token0?.user_debt_display_balance;
+    const isToken1 =
+      String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
+    const userDebt = isToken1
+      ? userItem?.token1?.user_debt_display_balance
+      : userItem?.token0?.user_debt_display_balance;
     return userDebt || props?.user_debt_display_balance || '0';
-  }, [token.address, market?.token1?.address, userItem?.token1?.user_debt_display_balance, userItem?.token0?.user_debt_display_balance, props?.user_debt_display_balance]);
+  }, [
+    token.address,
+    market?.token1?.address,
+    userItem?.token1?.user_debt_display_balance,
+    userItem?.token0?.user_debt_display_balance,
+    props?.user_debt_display_balance,
+  ]);
 
   // Use the smaller of wallet vs debt as the input constraint
   const inputConstraintBalance = useMemo(() => {
@@ -105,7 +102,7 @@ export function LendingRepay() {
     return String(Math.min(w || 0, d || 0));
   }, [dsaBalance, debtBalance]);
 
-  const { inputValue, btnDisabled, errorData, handleInputChange } =
+  const { inputValue, btnDisabled, errorData, setErrorData, handleInputChange } =
     useTokenInput(inputConstraintBalance);
   const {
     isMax: _isMax,
@@ -119,17 +116,50 @@ export function LendingRepay() {
 
   // 获取市场价格以显示美元等值
   const tokenPrice = useMemo(() => {
-    const isToken1 = String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
+    const isToken1 =
+      String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase();
     const priceStr = isToken1 ? market?.token1?.price : market?.token0?.price;
     const p = parseFloat(priceStr || '0');
     return Number.isFinite(p) ? p : 0;
-  }, [token.address, market?.token0?.address, market?.token1?.address, market?.token0?.price, market?.token1?.price]);
+  }, [
+    token.address,
+    market?.token0?.address,
+    market?.token1?.address,
+    market?.token0?.price,
+    market?.token1?.price,
+  ]);
   const usdValue = useMemo(() => {
     const amount = parseFloat(inputValue || '0');
     const usd = amount * (tokenPrice || 0);
     if (!Number.isFinite(usd)) return '0.00';
     return usd.toFixed(4);
   }, [inputValue, tokenPrice]);
+
+  // 当输入金额与钱包余额几乎相等时，提示需预留该币的手续费以避免还款接口报错
+  const showFeeWarning = useMemo(() => {
+    const w = parseFloat(dsaBalance || '0');
+    const v = parseFloat(inputValue || '0');
+    if (!Number.isFinite(w) || !Number.isFinite(v)) return false;
+    if (v <= 0) return false;
+    // 允许极小浮动误差（1e-9 对齐不同浏览器浮点差异）
+    const epsilon = Math.max(1e-9, w * 1e-12);
+    return Math.abs(v - w) <= epsilon;
+  }, [dsaBalance, inputValue]);
+
+  // 将提示透传到按钮下方的 ErrorMessage，以不改变按钮可用性
+  // 使用 useEffect 避免在渲染期间 setState 导致循环渲染
+
+  useEffect(() => {
+    if (showFeeWarning) {
+      // 偶现一次，暂时不提示
+      // setErrorData({
+      //   showError: true,
+      //   errorMessage: `Please leave a small amount of ${token.symbol} for gas fees. If your wallet balance equals the repayment amount, the transaction may fail.`,
+      // });
+    } else if (errorData.showError && errorData.errorMessage.includes('gas fees')) {
+      setErrorData({ showError: false, errorMessage: '' });
+    }
+  }, [showFeeWarning]);
 
   // 用户在该市场的摘要数据（已在上方声明 userInfoQuery 与 userItem）
 
@@ -224,10 +254,10 @@ export function LendingRepay() {
         handleInput('');
         try {
           refetchDSABalance?.();
-          } catch {}
-          try {
-            userInfoQuery.refetch?.();
-          } catch {}
+        } catch {}
+        try {
+          userInfoQuery.refetch?.();
+        } catch {}
       },
       onError: (error: Error) => {
         trackEvent('LENDING_REPAY', {
@@ -322,7 +352,10 @@ export function LendingRepay() {
                 market={market}
                 user={userItem}
                 borrowTokenIndex={
-                  String(token.address).toLowerCase() === String(market?.token1?.address).toLowerCase() ? 1 : 0
+                  String(token.address).toLowerCase() ===
+                  String(market?.token1?.address).toLowerCase()
+                    ? 1
+                    : 0
                 }
               />
             )}
