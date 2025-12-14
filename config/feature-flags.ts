@@ -2,7 +2,7 @@ export const TAB_ENABLED = {
   dex: true,
   staking: true,
   launchToken: false,
-  lending: true,
+  lending: false,
   faucet: false,
   odds: false,
   nadFun: false,
