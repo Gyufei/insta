@@ -362,11 +362,7 @@ export function LendingBorrow() {
               return (
                 <div className="mt-2 rounded-sm bg-red-400/15 dark:bg-red-500/10 p-2">
                   <div className="text-xs font-medium text-red-700 dark:text-red-300">
-                    <ul className="list-disc pl-4">
-                      <li>
                         {`Insufficient pool liquidity: current cap ~ ${formatNumber(String(poolBorrowableTokens || 0))} ${token.symbol}`}
-                      </li>
-                    </ul>
                   </div>
                 </div>
               );
